@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { sql } from '@/lib/db/neon';
 import { Calendar, Clock, ArrowRight, BookOpen, Brain, Target, Users, Blocks } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { Newsletter } from '@/components/sections/Newsletter';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -283,24 +284,8 @@ export default async function KennisbankPage() {
         )}
 
         {/* Newsletter CTA */}
-        <div className="mt-20 bg-gradient-to-br from-slate-900 to-slate-800 rounded-3xl p-10 md:p-16 text-center text-white">
-          <h2 className="text-3xl font-bold mb-4">
-            Blijf op de hoogte van nieuwe artikelen
-          </h2>
-          <p className="text-slate-400 mb-8 max-w-xl mx-auto">
-            Schrijf je in voor de nieuwsbrief en ontvang maandelijks inzichten
-            over AI, welzijn en sociale innovatie.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
-            <input
-              type="email"
-              placeholder="je@email.com"
-              className="flex-1 px-4 py-3 rounded-lg bg-slate-800 border border-slate-700 text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-orange-500"
-            />
-            <button className="px-6 py-3 bg-orange-600 text-white font-medium rounded-lg hover:bg-orange-700 transition-colors">
-              Aanmelden
-            </button>
-          </div>
+        <div className="mt-20">
+          <Newsletter source="kennisbank" />
         </div>
       </div>
     </div>
