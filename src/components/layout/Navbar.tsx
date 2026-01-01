@@ -10,6 +10,7 @@ const navItems = [
   { label: 'MANIFEST', href: '/#visie' },
   { label: 'EXPERTISE', href: '/#pijlers' },
   { label: 'AI SCAN', href: '/#scan', icon: Sparkles, highlight: true },
+  { label: 'BLOG', href: '/blog' },
   { label: 'KENNISBANK', href: '/kennisbank', icon: BookOpen },
   { label: 'VENTURES', href: '/#ventures' },
   { label: 'VINCENT', href: '/#over' },
