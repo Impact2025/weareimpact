@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
+import { useRouter, useParams } from 'next/navigation';
 import {
   ArrowLeft,
   Save,
@@ -40,12 +40,16 @@ import { RichTextEditor } from '@/components/BlogEditor/RichTextEditor';
 
 type TabType = 'editor' | 'seo' | 'social' | 'settings';
 
-export default function NewBlogPostPage() {
+export default function EditBlogPostPage() {
   const router = useRouter();
+  const params = useParams();
+  const postId = params.id as string;
+
   const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingData, setIsLoadingData] = useState(true);
   const [isGenerating, setIsGenerating] = useState(false);
   const [activeTab, setActiveTab] = useState<TabType>('editor');
-  const [showAIPanel, setShowAIPanel] = useState(true);
+  const [showAIPanel, setShowAIPanel] = useState(false);
 
   const [formData, setFormData] = useState({
     title: '',
@@ -73,6 +77,48 @@ export default function NewBlogPostPage() {
     tone: 'professioneel maar toegankelijk',
     length: 'medium' as 'short' | 'medium' | 'long',
   });
+
+  useEffect(() => {
+    loadPost();
+  }, [postId]);
+
+  const loadPost = async () => {
+    try {
+      const response = await fetch(`/api/blog?id=${postId}`);
+      if (!response.ok) {
+        throw new Error('Failed to load post');
+      }
+
+      const data = await response.json();
+      const post = data.posts?.[0];
+
+      if (post) {
+        setFormData({
+          title: post.title || '',
+          slug: post.slug || '',
+          excerpt: post.excerpt || '',
+          content: post.content || '',
+          category: post.category || '',
+          tags: Array.isArray(post.tags) ? post.tags.join(', ') : '',
+          coverImage: post.cover_image || '',
+          published: post.status === 'published',
+          seoTitle: post.seo_title || post.title || '',
+          seoDescription: post.seo_description || post.excerpt || '',
+          seoKeywords: '',
+          socialInstagram: '',
+          socialFacebook: '',
+          socialLinkedIn: '',
+          socialTwitter: '',
+          imagePrompt: '',
+        });
+      }
+    } catch (error) {
+      console.error('Error loading post:', error);
+      alert('Kon blog post niet laden');
+    } finally {
+      setIsLoadingData(false);
+    }
+  };
 
   const generateSlug = (title: string) => {
     return title
@@ -146,9 +192,10 @@ export default function NewBlogPostPage() {
 
     try {
       const response = await fetch('/api/blog', {
-        method: 'POST',
+        method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          id: postId,
           ...formData,
           tags: formData.tags.split(',').map(t => t.trim()).filter(Boolean),
         }),
@@ -167,6 +214,14 @@ export default function NewBlogPostPage() {
     }
   };
 
+  if (isLoadingData) {
+    return (
+      <div className="max-w-7xl mx-auto flex items-center justify-center h-96">
+        <Loader2 className="h-8 w-8 animate-spin text-orange-600" />
+      </div>
+    );
+  }
+
   return (
     <div className="max-w-7xl mx-auto space-y-6">
       {/* Header */}
@@ -179,8 +234,8 @@ export default function NewBlogPostPage() {
             <ArrowLeft size={20} />
           </Link>
           <div>
-            <h1 className="text-3xl font-bold text-slate-900">Nieuwe Blog Post</h1>
-            <p className="text-slate-500 mt-1">Schrijf professionele content of laat AI het voor je doen</p>
+            <h1 className="text-3xl font-bold text-slate-900">Bewerk Blog Post</h1>
+            <p className="text-slate-500 mt-1">Update je artikel of laat AI nieuwe content genereren</p>
           </div>
         </div>
         <div className="flex gap-3">
@@ -229,7 +284,7 @@ export default function NewBlogPostPage() {
                 <Card>
                   <CardHeader>
                     <CardTitle>Artikel Inhoud</CardTitle>
-                    <CardDescription>Schrijf je artikel met de rich text editor</CardDescription>
+                    <CardDescription>Bewerk je artikel met de rich text editor</CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div className="space-y-2">
@@ -572,7 +627,7 @@ export default function NewBlogPostPage() {
                 ) : (
                   <Save size={18} className="mr-2" />
                 )}
-                {formData.published ? 'Publiceren' : 'Opslaan als Concept'}
+                Wijzigingen Opslaan
               </Button>
             </div>
           </form>
@@ -597,7 +652,7 @@ export default function NewBlogPostPage() {
                   </Button>
                 </div>
                 <CardDescription>
-                  Laat AI een complete blog post genereren
+                  Laat AI nieuwe content genereren (overschrijft huidige tekst)
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -701,13 +756,13 @@ export default function NewBlogPostPage() {
                   ) : (
                     <>
                       <Sparkles size={18} className="mr-2" />
-                      Genereer Artikel
+                      Genereer Nieuwe Content
                     </>
                   )}
                 </Button>
 
                 <p className="text-xs text-slate-500 text-center">
-                  AI genereert content, SEO metadata en social media posts
+                  Let op: Dit overschrijft de huidige content
                 </p>
               </CardContent>
             </Card>

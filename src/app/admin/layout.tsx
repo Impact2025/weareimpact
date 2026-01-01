@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import {
   LayoutDashboard,
   FileText,
@@ -29,7 +29,27 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [loggingOut, setLoggingOut] = useState(false);
   const pathname = usePathname();
+  const router = useRouter();
+
+  // Don't render admin layout on login page
+  if (pathname === '/admin/login') {
+    return <>{children}</>;
+  }
+
+  const handleLogout = async () => {
+    setLoggingOut(true);
+    try {
+      await fetch('/api/admin/auth', { method: 'DELETE' });
+      router.push('/admin/login');
+      router.refresh();
+    } catch (error) {
+      console.error('Logout failed:', error);
+    } finally {
+      setLoggingOut(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-slate-100">
@@ -50,9 +70,14 @@ export default function AdminLayout({
           <Link href="/" className="text-sm text-slate-500 hover:text-slate-700">
             Bekijk site
           </Link>
-          <Button variant="outline" size="sm">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleLogout}
+            disabled={loggingOut}
+          >
             <LogOut size={16} className="mr-2" />
-            Uitloggen
+            {loggingOut ? 'Uitloggen...' : 'Uitloggen'}
           </Button>
         </div>
       </header>
