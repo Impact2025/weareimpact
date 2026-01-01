@@ -1,8 +1,14 @@
+'use client';
+
 import Link from 'next/link';
 import { Coffee, CheckCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 export function Contact() {
+  const openBookingChat = () => {
+    window.dispatchEvent(new CustomEvent('openBooking'));
+  };
+
   return (
     <section id="contact" className="py-24 bg-[#FDFBF7]">
       <div className="container mx-auto px-6 max-w-4xl">
@@ -32,17 +38,12 @@ export function Contact() {
 
           <div className="flex flex-col sm:flex-row justify-center gap-4 relative z-10">
             <Button
-              asChild
               size="lg"
-              className="px-8 py-4 bg-orange-600 text-white rounded-full font-bold hover:bg-orange-700 transition-all shadow-lg shadow-orange-500/30"
+              onClick={openBookingChat}
+              className="px-8 py-4 bg-orange-600 text-white rounded-full font-bold hover:bg-orange-700 transition-all shadow-lg shadow-orange-500/30 flex items-center gap-2"
             >
-              <Link
-                href="mailto:v.munster@weareimpact.nl"
-                className="flex items-center gap-2"
-              >
-                <Coffee size={20} />
-                Plan een koffiemoment
-              </Link>
+              <Coffee size={20} />
+              Plan een koffiemoment
             </Button>
             <Button
               asChild

@@ -311,6 +311,26 @@ export function DigitalTwin() {
     }]);
   }, []);
 
+  // Listen for global openBooking event (must be after addMessage definition)
+  useEffect(() => {
+    const handleOpenBooking = () => {
+      setIsOpen(true);
+      // Start booking flow after a short delay
+      setTimeout(() => {
+        if (messages.length === 0) {
+          const greeting = getTimeBasedGreeting();
+          addMessage('assistant', `${greeting}! Leuk dat je een gesprek wilt plannen. Wat voor type gesprek past het beste bij je?`);
+        } else {
+          addMessage('assistant', 'Laten we een gesprek plannen. Wat voor type past het beste bij je?');
+        }
+        setBookingStep('select_type');
+      }, 300);
+    };
+
+    window.addEventListener('openBooking', handleOpenBooking);
+    return () => window.removeEventListener('openBooking', handleOpenBooking);
+  }, [messages.length, addMessage]);
+
   const detectBookingIntent = (text: string): boolean => {
     const lower = text.toLowerCase();
     return BOOKING_KEYWORDS.some(keyword => lower.includes(keyword));

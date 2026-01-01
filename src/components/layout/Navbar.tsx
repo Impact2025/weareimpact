@@ -80,10 +80,10 @@ export function Navbar() {
         {/* CTA Button */}
         <div className="hidden md:block">
           <Button
-            asChild
+            onClick={() => window.dispatchEvent(new CustomEvent('openBooking'))}
             className="px-6 py-2.5 bg-slate-900 text-white text-sm font-medium rounded-full hover:bg-orange-600 transition-all duration-300 shadow-lg hover:shadow-orange-500/30"
           >
-            <Link href="/#contact">Let&apos;s Talk</Link>
+            Let&apos;s Talk
           </Button>
         </div>
 
@@ -112,13 +112,15 @@ export function Navbar() {
               {item.label}
             </Link>
           ))}
-          <Link
-            href="/#contact"
-            onClick={() => setIsMobileMenuOpen(false)}
+          <button
+            onClick={() => {
+              setIsMobileMenuOpen(false);
+              window.dispatchEvent(new CustomEvent('openBooking'));
+            }}
             className="text-left py-2 text-orange-600 font-bold"
           >
-            CONTACT
-          </Link>
+            PLAN GESPREK
+          </button>
         </div>
       )}
     </nav>
