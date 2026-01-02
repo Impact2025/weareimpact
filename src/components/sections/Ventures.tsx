@@ -28,7 +28,7 @@ const labs = [
     name: 'DatingAssistent',
     tagline: 'Verbinden zonder Ruis',
     description:
-      'Tegenwicht aan de wegwerp-cultuur van dating-apps. Met een "Privacy First" aanpak en AI-coach Iris helpen we singles patronen te doorbreken en duurzame relaties te vinden.',
+      'Wat in 2009 begon als pionierswerk met LiefdevoorIedereen.nl en in 2014 startte als de eerste DatingAssistent, is nu geëvolueerd tot Iris: onze geavanceerde AI-coach.',
     color: 'text-pink-500',
   },
   {
