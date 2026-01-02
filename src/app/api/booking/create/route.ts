@@ -131,48 +131,51 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    // Create the booking in Google Calendar
-    const result = await createBooking({
-      bookingType: bookingType as BookingTypeSlug,
-      startTime,
-      customer: {
-        name: customer.name,
-        email: customer.email,
-        phone: customer.phone,
-        organization: customer.organization,
-      },
-    });
+    // Try to create the booking in Google Calendar
+    let result: { success: boolean; booking?: unknown; error?: string } = { success: false };
 
-    if (!result.success) {
-      console.error('Google Calendar booking failed:', result.error);
-
-      // Fallback: store as lead
-      const leadResult = await storeBookingAsLead(bookingType, startTime, customer);
-      if (leadResult.success) {
-        const type = BOOKING_TYPES[bookingType as BookingTypeSlug];
-        return NextResponse.json({
-          success: true,
-          booking: {
-            id: `lead-${Date.now()}`,
-            typeName: type.name,
-            startTime,
-            endTime: new Date(start.getTime() + type.duration * 60000).toISOString(),
-            duration: type.duration,
-          },
-          message: 'Je aanvraag is ontvangen! Vincent neemt binnen 24 uur contact met je op om de afspraak te bevestigen.',
-        });
-      }
-
-      return NextResponse.json(
-        { error: 'Er ging iets mis. Probeer het later opnieuw of mail naar v.munster@weareimpact.nl' },
-        { status: 500 }
-      );
+    try {
+      result = await createBooking({
+        bookingType: bookingType as BookingTypeSlug,
+        startTime,
+        customer: {
+          name: customer.name,
+          email: customer.email,
+          phone: customer.phone,
+          organization: customer.organization,
+        },
+      });
+    } catch (gcalError) {
+      console.error('Google Calendar exception:', gcalError);
+      result = { success: false, error: String(gcalError) };
     }
 
+    if (result.success) {
+      // Google Calendar booking succeeded
+      return NextResponse.json({
+        success: true,
+        booking: result.booking,
+        message: 'Je afspraak is bevestigd! Je ontvangt een bevestiging per e-mail.',
+      });
+    }
+
+    // Google Calendar failed, use fallback
+    console.error('Google Calendar booking failed:', result.error);
+
+    // Store as lead (this always returns success now)
+    await storeBookingAsLead(bookingType, startTime, customer);
+
+    const type = BOOKING_TYPES[bookingType as BookingTypeSlug];
     return NextResponse.json({
       success: true,
-      booking: result.booking,
-      message: 'Je afspraak is bevestigd! Je ontvangt een bevestiging per e-mail.',
+      booking: {
+        id: `lead-${Date.now()}`,
+        typeName: type.name,
+        startTime,
+        endTime: new Date(start.getTime() + type.duration * 60000).toISOString(),
+        duration: type.duration,
+      },
+      message: 'Je aanvraag is ontvangen! Vincent neemt binnen 24 uur contact met je op om de afspraak te bevestigen.',
     });
   } catch (error) {
     console.error('Error creating booking:', error);
