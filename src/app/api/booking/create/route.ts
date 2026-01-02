@@ -165,13 +165,6 @@ export async function POST(request: NextRequest) {
     // Store as lead (this always returns success now)
     await storeBookingAsLead(bookingType, startTime, customer);
 
-    // DEBUG: Include error in response temporarily
-    console.log('GCAL_DEBUG:', {
-      calendarId: process.env.GOOGLE_CALENDAR_ID,
-      hasPrivateKey: !!process.env.GOOGLE_PRIVATE_KEY,
-      error: result.error,
-    });
-
     const type = BOOKING_TYPES[bookingType as BookingTypeSlug];
     return NextResponse.json({
       success: true,
@@ -183,7 +176,6 @@ export async function POST(request: NextRequest) {
         duration: type.duration,
       },
       message: 'Je aanvraag is ontvangen! Vincent neemt binnen 24 uur contact met je op om de afspraak te bevestigen.',
-      _debug: { gcalError: result.error, calendarId: process.env.GOOGLE_CALENDAR_ID?.substring(0, 10) },
     });
   } catch (error) {
     console.error('Error creating booking:', error);
