@@ -20,7 +20,7 @@ export function Footer() {
         </div>
         <div className="flex space-x-6">
           <Link
-            href="https://linkedin.com/in/vincentvanmunster"
+            href="https://www.linkedin.com/in/vincent-van-münster"
             target="_blank"
             rel="noopener noreferrer"
             className="hover:text-orange-600 transition-colors"

@@ -15,7 +15,7 @@ export const personSchema = {
   url: BASE_URL,
   image: `${BASE_URL}/vincent-avatar.jpg`,
   sameAs: [
-    'https://www.linkedin.com/in/vincentvanmunster/',
+    'https://www.linkedin.com/in/vincent-van-münster',
     'https://twitter.com/vincentvmunster',
   ],
   knowsAbout: [
