@@ -245,16 +245,6 @@ Geboekt via weareimpact.nl
           dateTime: endTime.toISOString(),
           timeZone: 'Europe/Amsterdam',
         },
-        attendees: [
-          { email: data.customer.email, displayName: data.customer.name },
-        ],
-        reminders: {
-          useDefault: false,
-          overrides: [
-            { method: 'email', minutes: 24 * 60 }, // 1 day before
-            { method: 'email', minutes: 60 }, // 1 hour before
-          ],
-        },
       },
     });
 
