@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import {
   Sparkles, ArrowRight, RefreshCw, CheckCircle, Calendar, ArrowLeft,
   Heart, Landmark, Briefcase, Users, Cpu,
@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { trackEvents } from '@/components/analytics';
 
 // Types
 interface ScanOption {
@@ -262,9 +263,10 @@ export function AIScanner() {
     const newAnswers = { ...answers, [step + 1]: value };
     setAnswers(newAnswers);
 
-    // If this is the sector question, update selectedSector
+    // Track scan start on first question
     if (step === 0) {
       setSelectedSector(value);
+      trackEvents.aiScanStart();
     }
 
     if (step < 2) {
@@ -328,11 +330,13 @@ export function AIScanner() {
       }
 
       setResult(fullText);
+      trackEvents.aiScanComplete(100); // 100 = completed successfully
     } catch (error) {
       console.error('Analysis error:', error);
       setResult(
         'Er is iets misgegaan bij de analyse. Probeer het later opnieuw of neem direct contact op.'
       );
+      trackEvents.error('ai_scan', 'Analysis failed');
     } finally {
       setIsAnalyzing(false);
     }

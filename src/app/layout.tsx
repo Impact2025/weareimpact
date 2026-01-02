@@ -6,6 +6,7 @@ import { Footer } from '@/components/layout/Footer';
 import { DigitalTwin } from '@/components/features/DigitalTwin';
 import { VoiceInterface } from '@/components/features/VoiceInterface';
 import { Toaster } from '@/components/ui/sonner';
+import { GoogleAnalytics } from '@/components/analytics';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -94,6 +95,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <GoogleAnalytics />
         <Navbar />
         <main>{children}</main>
         <Footer />

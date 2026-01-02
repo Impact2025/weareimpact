@@ -3,10 +3,16 @@
 import Link from 'next/link';
 import { Coffee, CheckCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { trackEvents } from '@/components/analytics';
 
 export function Contact() {
   const openBookingChat = () => {
+    trackEvents.ctaClick('plan_koffie', 'contact_section');
     window.dispatchEvent(new CustomEvent('openBooking'));
+  };
+
+  const handleCallClick = () => {
+    trackEvents.ctaClick('bel_direct', 'contact_section');
   };
 
   return (
@@ -51,7 +57,7 @@ export function Contact() {
               size="lg"
               className="px-8 py-4 bg-white text-slate-900 border border-slate-200 rounded-full font-bold hover:bg-slate-50 transition-all"
             >
-              <Link href="tel:0614470977">Bel direct</Link>
+              <Link href="tel:0614470977" onClick={handleCallClick}>Bel direct</Link>
             </Button>
           </div>
         </div>

@@ -2,6 +2,7 @@
 
 import { useState, FormEvent } from 'react';
 import { Mail, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
+import { trackEvents } from '@/components/analytics';
 
 interface NewsletterProps {
   source?: string;
@@ -45,6 +46,7 @@ export function Newsletter({ source = 'blog', variant = 'default' }: NewsletterP
       setStatus('success');
       setMessage(data.message);
       setEmail('');
+      trackEvents.newsletterSubscribe(source);
 
       // Reset to idle after 5 seconds
       setTimeout(() => {

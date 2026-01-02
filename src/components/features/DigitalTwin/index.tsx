@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
 import { IrisAvatar, IrisInline, useIris, type IrisMoment } from '@/components/features/IrisAvatar';
+import { trackEvents } from '@/components/analytics';
 
 // Types
 interface SuggestedArticle {
@@ -511,6 +512,7 @@ export function DigitalTwin() {
     addMessage('user', userMessage);
     setInput('');
     setIsLoading(true);
+    trackEvents.chatbotMessage();
 
     // Check for booking intent
     if (detectBookingIntent(userMessage)) {
@@ -559,7 +561,7 @@ export function DigitalTwin() {
         fullContent += chunk;
 
         // Don't show the article marker while streaming
-        const displayContent = fullContent.replace(/<!--ARTICLES:.*?-->/s, '');
+        const displayContent = fullContent.replace(/<!--ARTICLES:[\s\S]*?-->/, '');
 
         setMessages(prev =>
           prev.map(m =>
@@ -570,7 +572,7 @@ export function DigitalTwin() {
 
       // Parse article suggestions from response
       let suggestedArticles: SuggestedArticle[] = [];
-      const articlesMatch = fullContent.match(/<!--ARTICLES:(.*?)-->/s);
+      const articlesMatch = fullContent.match(/<!--ARTICLES:([\s\S]*?)-->/);
       if (articlesMatch) {
         try {
           suggestedArticles = JSON.parse(articlesMatch[1]);
@@ -580,7 +582,7 @@ export function DigitalTwin() {
       }
 
       // Remove article marker from content
-      const cleanContent = fullContent.replace(/<!--ARTICLES:.*?-->/s, '').trim();
+      const cleanContent = fullContent.replace(/<!--ARTICLES:[\s\S]*?-->/, '').trim();
 
       // Mark streaming as complete and enable quick replies
       setMessages(prev =>
@@ -661,6 +663,7 @@ export function DigitalTwin() {
         setBookingResult(data.booking);
         setBookingStep('confirmed');
         addMessage('assistant', `Bevestigd. Je ontvangt een e-mail op ${customerData.email} met de details en videocall link.`);
+        trackEvents.bookingComplete(selectedType.slug);
       } else {
         addMessage('assistant', 'Er ging iets mis. Probeer opnieuw of mail naar v.munster@weareimpact.nl');
       }
@@ -695,6 +698,7 @@ export function DigitalTwin() {
   };
 
   const startBooking = (showIrisFirst = false) => {
+    trackEvents.bookingStart('iris_chat');
     if (showIrisFirst) {
       // Show Iris booking video first, then proceed
       showIris('booking');
@@ -714,7 +718,10 @@ export function DigitalTwin() {
     <>
       {/* Floating Button */}
       <button
-        onClick={() => setIsOpen(true)}
+        onClick={() => {
+          setIsOpen(true);
+          trackEvents.chatbotOpen();
+        }}
         className={cn(
           'fixed bottom-6 right-6 z-50 p-4 bg-slate-900 text-white rounded-full shadow-lg transition-all duration-300 hover:bg-slate-800 hover:scale-105 hover:shadow-xl',
           'animate-in fade-in-0 zoom-in-95 duration-300',
