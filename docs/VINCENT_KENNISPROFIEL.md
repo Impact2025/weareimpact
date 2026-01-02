@@ -134,8 +134,7 @@ gebied van relaties en dating was er niets. Dit werd de start van zijn dating-in
 ### 3. Talent-First Benadering
 
 **Kernprincipe:**
-> "Ik geloof dat ieder mens een talent heeft en creëer de ruimte om dat
-> tot bloei te laten komen."
+> "Ik geloof dat technologie er is om menselijk talent te laten bloeien, niet om het te vervangen."
 
 **In de praktijk:**
 - Niet focussen op diagnose of beperking
@@ -243,7 +242,7 @@ in plaats van verbindt, is het geen goede app - hoe slim de AI ook is.
 - "Een iPhone van €180 verslaat een enterprise systeem van €180.000."
 
 ### Over mensen
-- "Ik geloof dat ieder mens een talent heeft."
+- "Ik geloof dat technologie er is om menselijk talent te laten bloeien, niet om het te vervangen."
 - "Niet focussen op de beperking, maar op wat iemand kán."
 - "Bij liefde gaat het niet om hoe je eruitziet - het gaat over wie je bent."
 

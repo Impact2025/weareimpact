@@ -415,7 +415,7 @@ Als technologie ons helpt om meer aanwezig te zijn, minder gestrest, beter voorb
 
 Als technologie ons afleidt, verwart, of onmenselijk maakt - dan moeten we het niet gebruiken.
 
-> "Ik geloof dat ieder mens een talent heeft. Technologie moet helpen dat talent tot bloei te laten komen - niet het vervangen."
+> "Ik geloof dat technologie er is om menselijk talent te laten bloeien, niet om het te vervangen."
 
 ---
 

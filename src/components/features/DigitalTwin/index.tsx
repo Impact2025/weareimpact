@@ -1,11 +1,12 @@
 'use client';
 
 import { useState, useRef, useEffect, useCallback } from 'react';
-import { Send, X, MessageSquare, Calendar, User, Mail, Building, Phone, Check, Loader2, ArrowLeft, ChevronRight } from 'lucide-react';
+import { Send, X, MessageSquare, Calendar, User, Mail, Building, Phone, Check, Loader2, ArrowLeft, ChevronRight, Play } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
+import { IrisAvatar, IrisInline, useIris, type IrisMoment } from '@/components/features/IrisAvatar';
 
 // Types
 interface Message {
@@ -47,6 +48,7 @@ type BookingStep = 'none' | 'select_type' | 'select_time' | 'fill_form' | 'confi
 
 // Constants
 const VINCENT_AVATAR = '/vincent-avatar.jpg'; // Add Vincent's photo to public folder
+const IRIS_AVATAR = '/iris-avatar.png'; // Iris face photo
 
 const BOOKING_TYPES: BookingType[] = [
   {
@@ -90,6 +92,14 @@ const BOOKING_KEYWORDS = [
   'kennismaken', 'sessie', 'boeken', 'agenda', 'beschikbaar', 'wanneer'
 ];
 
+// Keywords that trigger Iris video moments
+const IRIS_TRIGGERS: Record<IrisMoment, string[]> = {
+  'welcome': [], // Triggered on first open
+  'ai-expert': ['ai', 'artificial intelligence', 'kunstmatige intelligentie', 'chatgpt', 'automatiseren', 'welzijn', 'zorg', 'innovatie'],
+  'lego-play': ['lego', 'serious play', 'workshop', 'team', 'teambuilding', 'bouwen', 'creativiteit'],
+  'booking': [], // Triggered by booking flow
+};
+
 // Utility functions
 const generateId = () => `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 
@@ -111,7 +121,48 @@ const storeName = (name: string) => {
   }
 };
 
-// Avatar Component
+// Iris Avatar Component (met Iris gezicht)
+function IrisAvatarSmall({ size = 'md', showStatus = false }: { size?: 'sm' | 'md' | 'lg'; showStatus?: boolean }) {
+  const sizeClasses = {
+    sm: 'w-7 h-7',
+    md: 'w-10 h-10',
+    lg: 'w-14 h-14',
+  };
+
+  const [imgError, setImgError] = useState(false);
+
+  return (
+    <div className={cn('relative flex-shrink-0', sizeClasses[size])}>
+      {!imgError ? (
+        <Image
+          src={IRIS_AVATAR}
+          alt="Iris"
+          fill
+          className="rounded-full object-cover"
+          onError={() => setImgError(true)}
+        />
+      ) : (
+        <div className={cn(
+          'rounded-full bg-gradient-to-br from-orange-100 to-orange-50 flex items-center justify-center',
+          sizeClasses[size]
+        )}>
+          <Image
+            src="/WeAreImpact_hart.png"
+            alt="Iris"
+            width={size === 'sm' ? 20 : size === 'md' ? 28 : 40}
+            height={size === 'sm' ? 20 : size === 'md' ? 28 : 40}
+            className="object-contain"
+          />
+        </div>
+      )}
+      {showStatus && (
+        <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-emerald-500 rounded-full border-2 border-white" />
+      )}
+    </div>
+  );
+}
+
+// Vincent Avatar Component
 function VincentAvatar({ size = 'md', showStatus = false }: { size?: 'sm' | 'md' | 'lg'; showStatus?: boolean }) {
   const sizeClasses = {
     sm: 'w-7 h-7',
@@ -209,7 +260,7 @@ function AnimatedMessage({
       )}
     >
       {message.role === 'assistant' && (
-        <VincentAvatar size="sm" />
+        <IrisAvatarSmall size="sm" />
       )}
       <div className="flex flex-col gap-2 max-w-[80%]">
         <div
@@ -254,6 +305,17 @@ export function DigitalTwin() {
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [userName, setUserName] = useState<string | null>(null);
+  const [hasSeenWelcome, setHasSeenWelcome] = useState(false);
+
+  // Iris welcome video state
+  const [showWelcomeVideo, setShowWelcomeVideo] = useState(false);
+  const [welcomeVideoFading, setWelcomeVideoFading] = useState(false);
+  const [showWelcomeTyping, setShowWelcomeTyping] = useState(false);
+  const [welcomeMessageStep, setWelcomeMessageStep] = useState(0);
+  const welcomeVideoRef = useRef<HTMLVideoElement>(null);
+
+  // Iris state
+  const { currentMoment, isVisible: isIrisVisible, showIris, hideIris } = useIris();
 
   // Booking state
   const [bookingStep, setBookingStep] = useState<BookingStep>('none');
@@ -270,10 +332,84 @@ export function DigitalTwin() {
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // Load stored name on mount
+  // Load stored name and check for first visit
   useEffect(() => {
     setUserName(getStoredName());
+    // Check if user has seen Iris welcome before
+    const hasSeenIris = localStorage.getItem('weareimpact_iris_welcome');
+    setHasSeenWelcome(!!hasSeenIris);
   }, []);
+
+  // Show Iris welcome video on first chat open
+  useEffect(() => {
+    if (isOpen && !hasSeenWelcome && messages.length === 0) {
+      // Start welcome video flow
+      const timer = setTimeout(() => {
+        setShowWelcomeVideo(true);
+        localStorage.setItem('weareimpact_iris_welcome', 'true');
+        setHasSeenWelcome(true);
+      }, 300);
+      return () => clearTimeout(timer);
+    }
+  }, [isOpen, hasSeenWelcome, messages.length]);
+
+  // Handle welcome video end - start the fade and typing sequence
+  const handleWelcomeVideoEnd = () => {
+    // Start fade out
+    setWelcomeVideoFading(true);
+
+    // After fade, show typing indicator
+    setTimeout(() => {
+      setShowWelcomeVideo(false);
+      setWelcomeVideoFading(false);
+      setShowWelcomeTyping(true);
+
+      // Show first message after typing
+      setTimeout(() => {
+        setWelcomeMessageStep(1);
+
+        // Show second message
+        setTimeout(() => {
+          setShowWelcomeTyping(false);
+          setWelcomeMessageStep(2);
+        }, 1500);
+      }, 1200);
+    }, 800);
+  };
+
+  // Skip welcome video
+  const skipWelcomeVideo = () => {
+    handleWelcomeVideoEnd();
+  };
+
+  // Detect Iris triggers in messages
+  const detectIrisMoment = (text: string): IrisMoment | null => {
+    const lower = text.toLowerCase();
+    for (const [moment, keywords] of Object.entries(IRIS_TRIGGERS)) {
+      if (keywords.length > 0 && keywords.some(k => lower.includes(k))) {
+        return moment as IrisMoment;
+      }
+    }
+    return null;
+  };
+
+  // Handle Iris action callbacks
+  const handleIrisAction = (action: string) => {
+    hideIris();
+    switch (action) {
+      case 'ai-sector':
+        sendMessage('Hoe kan AI mijn sector versterken?');
+        break;
+      case 'booking':
+        startBooking();
+        break;
+      case 'show-calendar':
+        setBookingStep('select_type');
+        break;
+      default:
+        break;
+    }
+  };
 
   // Scroll to bottom
   useEffect(() => {
@@ -503,10 +639,15 @@ export function DigitalTwin() {
     sendMessage(input);
   };
 
-  const startBooking = () => {
-    addMessage('user', 'Ik wil een gesprek plannen');
-    addMessage('assistant', 'Welk type gesprek past het beste bij je situatie?');
-    setBookingStep('select_type');
+  const startBooking = (showIrisFirst = false) => {
+    if (showIrisFirst) {
+      // Show Iris booking video first, then proceed
+      showIris('booking');
+    } else {
+      addMessage('user', 'Ik wil een gesprek plannen');
+      addMessage('assistant', 'Welk type gesprek past het beste bij je situatie?');
+      setBookingStep('select_type');
+    }
   };
 
   const greeting = getTimeBasedGreeting();
@@ -535,12 +676,12 @@ export function DigitalTwin() {
           {/* Header */}
           <div className="bg-slate-900 text-white px-5 py-4 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <VincentAvatar size="md" showStatus={true} />
+              <IrisAvatarSmall size="md" showStatus={true} />
               <div>
-                <div className="font-semibold tracking-tight">Vincent van Munster</div>
+                <div className="font-semibold tracking-tight">Iris</div>
                 <div className="text-xs text-slate-400 flex items-center gap-1.5">
                   <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full" />
-                  Online — antwoordt direct
+                  Digitale collega van Vincent
                 </div>
               </div>
             </div>
@@ -554,16 +695,112 @@ export function DigitalTwin() {
 
           {/* Messages Area */}
           <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-50">
-            {/* Empty State */}
-            {messages.length === 0 && bookingStep === 'none' && (
+            {/* Welcome Video Flow */}
+            {showWelcomeVideo && messages.length === 0 && bookingStep === 'none' && (
+              <div className={cn(
+                "relative flex flex-col items-center justify-center h-full transition-opacity duration-700",
+                welcomeVideoFading && "opacity-0"
+              )}>
+                <div className="relative w-full max-w-[280px] aspect-[9/16] rounded-2xl overflow-hidden shadow-xl bg-slate-800">
+                  <video
+                    ref={welcomeVideoRef}
+                    src="/videos/iris/welcome.mp4"
+                    className="w-full h-full object-cover"
+                    autoPlay
+                    playsInline
+                    muted={false}
+                    onEnded={handleWelcomeVideoEnd}
+                    onError={handleWelcomeVideoEnd}
+                  />
+                  {/* Skip button */}
+                  <button
+                    onClick={skipWelcomeVideo}
+                    className="absolute bottom-4 right-4 px-3 py-1.5 bg-black/50 hover:bg-black/70 rounded-full text-white text-xs transition-colors"
+                  >
+                    Overslaan →
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Welcome Messages after video (uitgestoken hand) */}
+            {!showWelcomeVideo && welcomeMessageStep > 0 && messages.length === 0 && bookingStep === 'none' && (
+              <div className="py-4 space-y-4">
+                {/* Typing indicator */}
+                {showWelcomeTyping && (
+                  <div className="flex gap-3 justify-start animate-in fade-in-0 slide-in-from-bottom-2 duration-300">
+                    <IrisAvatarSmall size="sm" />
+                    <div className="bg-white border border-slate-200 px-4 py-3 rounded-2xl rounded-bl-sm shadow-sm">
+                      <div className="flex gap-1.5">
+                        <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                        <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                        <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* First message: Koffie */}
+                {welcomeMessageStep >= 1 && !showWelcomeTyping && (
+                  <div className="flex gap-3 justify-start animate-in fade-in-0 slide-in-from-bottom-2 duration-300">
+                    <IrisAvatarSmall size="sm" />
+                    <div className="bg-white border border-slate-200 px-4 py-3 rounded-2xl rounded-bl-sm shadow-sm max-w-[85%]">
+                      <p className="text-slate-700 text-sm">De (virtuele) koffie staat klaar! ☕</p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Second message: Uitnodiging */}
+                {welcomeMessageStep >= 2 && (
+                  <div className="flex gap-3 justify-start animate-in fade-in-0 slide-in-from-bottom-2 duration-500">
+                    <IrisAvatarSmall size="sm" />
+                    <div className="bg-white border border-slate-200 px-4 py-3 rounded-2xl rounded-bl-sm shadow-sm max-w-[85%]">
+                      <p className="text-slate-700 text-sm leading-relaxed">
+                        Vincent zit vol verhalen en ideeën, maar hij is vooral benieuwd naar jou.
+                        Zullen we dat gesprek inplannen om samen impact te maken?
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Action buttons after welcome */}
+                {welcomeMessageStep >= 2 && (
+                  <div className="space-y-2 mt-6 animate-in fade-in-0 slide-in-from-bottom-2 duration-500" style={{ animationDelay: '200ms' }}>
+                    <button
+                      onClick={() => startBooking()}
+                      className="w-full p-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-xl text-sm font-medium hover:from-orange-600 hover:to-orange-700 transition-all duration-200 flex items-center justify-center gap-2 shadow-lg shadow-orange-500/20"
+                    >
+                      <Calendar size={16} />
+                      Ja, plan een gesprek
+                    </button>
+
+                    <div className="space-y-2">
+                      {STARTER_PROMPTS.map((prompt, idx) => (
+                        <button
+                          key={idx}
+                          onClick={() => sendMessage(prompt)}
+                          className="w-full text-left p-3 bg-white rounded-lg border border-slate-200 text-sm text-slate-700 hover:border-slate-300 hover:bg-slate-50 transition-all duration-200 flex items-center justify-between group"
+                        >
+                          <span>{prompt}</span>
+                          <ChevronRight size={16} className="text-slate-300 group-hover:text-slate-500 group-hover:translate-x-0.5 transition-all" />
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Regular Empty State (for returning visitors) */}
+            {!showWelcomeVideo && welcomeMessageStep === 0 && messages.length === 0 && bookingStep === 'none' && hasSeenWelcome && (
               <div className="py-6 animate-in fade-in-0 duration-500">
                 <div className="text-center mb-6">
-                  <VincentAvatar size="lg" showStatus={true} />
+                  <IrisAvatarSmall size="lg" showStatus={true} />
                   <p className="text-slate-600 text-sm mt-4 leading-relaxed">
                     {personalGreeting}
                   </p>
                   <p className="text-xs text-slate-400 mt-1">
-                    500+ gesprekken gevoerd
+                    Iris, digitale collega van Vincent
                   </p>
                 </div>
 
@@ -582,7 +819,7 @@ export function DigitalTwin() {
                 </div>
 
                 <button
-                  onClick={startBooking}
+                  onClick={() => startBooking()}
                   className="w-full p-3 bg-slate-900 text-white rounded-lg text-sm font-medium hover:bg-slate-800 transition-all duration-200 flex items-center justify-center gap-2 animate-in fade-in-0 slide-in-from-bottom-2"
                   style={{ animationDelay: '225ms' }}
                 >
@@ -796,7 +1033,7 @@ export function DigitalTwin() {
             {/* Loading indicator */}
             {isLoading && messages.length > 0 && messages[messages.length - 1]?.role === 'user' && bookingStep === 'none' && (
               <div className="flex gap-3 justify-start animate-in fade-in-0 slide-in-from-bottom-2 duration-300">
-                <VincentAvatar size="sm" />
+                <IrisAvatarSmall size="sm" />
                 <div className="bg-white border border-slate-200 px-4 py-3 rounded-2xl rounded-bl-sm shadow-sm">
                   <div className="flex gap-1.5">
                     <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
@@ -836,7 +1073,7 @@ export function DigitalTwin() {
               </form>
               {messages.length > 0 && (
                 <button
-                  onClick={startBooking}
+                  onClick={() => startBooking()}
                   className="mt-2 w-full text-xs text-slate-500 hover:text-slate-700 transition-colors flex items-center justify-center gap-1"
                 >
                   <Calendar size={12} />
@@ -882,6 +1119,16 @@ export function DigitalTwin() {
             </div>
           )}
         </div>
+      )}
+
+      {/* Iris Avatar Modal */}
+      {currentMoment && (
+        <IrisAvatar
+          moment={currentMoment}
+          isVisible={isIrisVisible}
+          onClose={hideIris}
+          onAction={handleIrisAction}
+        />
       )}
     </>
   );

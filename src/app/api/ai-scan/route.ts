@@ -3,70 +3,136 @@ import { getOpenRouter, DEFAULT_MODELS } from '@/lib/ai/openrouter';
 
 export const runtime = 'edge';
 
-const SYSTEM_PROMPT = `Je bent de AI-adviseur van Vincent van Munster, expert in AI & Welzijn strategie.
+// Sector-specific expertise that Vincent brings
+const SECTOR_EXPERTISE: Record<string, string> = {
+  zorg: `
+Vincent's expertise in Zorg & Welzijn:
+- Directeur van Stichting de Baan (sociale werkvoorziening)
+- Coördineert 180 vrijwilligers en 700 deelnemers
+- Heeft succesvol fondsen geworven voor vastgoed en verduurzaming
+- Begrijpt de spanning tussen administratiedruk en cliënttijd
+- Weet hoe je met beperkte middelen maximale impact creëert`,
 
-Je taak is om op basis van de antwoorden van de gebruiker een kort maar krachtig strategisch advies te geven.
+  overheid: `
+Vincent's expertise in Onderwijs & Overheid:
+- Ervaring met complexe stakeholder-landschappen
+- Snapt de spanning tussen beleidscycli en innovatie
+- LEGO Serious Play facilitator voor strategische sessies
+- Weet hoe je draagvlak creëert voor verandering
+- Ervaring met publiek-private samenwerkingen`,
 
-Stijl:
-- Schrijf in het Nederlands
-- Wees direct en concreet
-- Geef 2-3 specifieke aanbevelingen
-- Eindig met een uitnodiging om verder te praten
-- Maximaal 200 woorden
-- Tone: professioneel maar warm
+  mkb: `
+Vincent's expertise voor MKB:
+- Zelf ondernemer met meerdere ventures (DAAR, DatingAssistent, Bewaardvoorjou)
+- Weet wat schaalbaarheid betekent met beperkte middelen
+- AI-implementatie specialist die praktisch denkt
+- Focus op ROI en directe tijdsbesparing
+- Snapt de balans tussen operatie en groei`,
 
-Context over Vincent's expertise:
-- AI implementatie voor welzijnsorganisaties
-- Privacy-first technologie
-- LEGO® Serious Play facilitator
-- Ventures: DAAR (vrijwilligerswerk software), DatingAssistent (AI-coach voor singles), Bewaardvoorjou (levensverhalen)`;
+  nonprofit: `
+Vincent's expertise voor Non-profit/Stichtingen:
+- Zelf directeur van een stichting
+- Expert in vrijwilligersmanagement (180+ vrijwilligers)
+- Succesvol in fondsenwerving en subsidie-aanvragen
+- Weet hoe je met kleine teams grote impact maakt
+- Combineert sociaal hart met zakelijke daadkracht`,
+};
+
+// Challenge-specific AI opportunities
+const CHALLENGE_SOLUTIONS: Record<string, string> = {
+  // Zorg & Welzijn
+  administratie: 'AI kan 40-60% van rapportagetijd besparen door slimme templates, automatische samenvattingen en spraak-naar-tekst voor cliëntnotities.',
+  subsidies: 'AI kan subsidie-scanners inzetten, automatisch conceptaanvragen genereren en de kans op toekenning voorspellen op basis van historische data.',
+  roosters: 'AI kan roosters optimaliseren, no-shows voorspellen, en automatisch inspringen op acute situaties. Minder puzzelen, meer overzicht.',
+  personeel: 'AI kan de onboarding van vrijwilligers versnellen, matching verbeteren, en signalen van uitval vroeg detecteren.',
+
+  // Onderwijs & Overheid
+  bureaucratie: 'AI kan vergaderingen automatisch samenvatten, actiepunten extraheren, en besluitvorming versnellen door relevante informatie proactief aan te bieden.',
+  begroting: 'AI kan begrotingsscenario\'s doorrekenen, afwijkingen signaleren, en voorspellen waar budgetproblemen ontstaan.',
+  legacy: 'AI kan als "vertaallaag" tussen systemen fungeren, data integreren zonder grote IT-projecten, en kennissilo\'s doorbreken.',
+  vergrijzing: 'AI kan kennisbanken bouwen uit ervaring van vertrekkende medewerkers, interactieve overdracht faciliteren, en expertise doorzoekbaar maken.',
+
+  // MKB
+  brandjes: 'AI kan repetitieve taken automatiseren, prioriteiten voorstellen, en je agenda beschermen zodat je aan groei kunt werken.',
+  cashflow: 'AI kan cashflowprognoses maken, factuurherinneringen automatiseren, en betalingsgedrag voorspellen.',
+  handmatig: 'AI kan data-invoer automatiseren, documenten verwerken, en processen standaardiseren zonder dure maatwerksoftware.',
+
+  // Non-profit
+  capaciteit: 'AI kan als "extra teamlid" fungeren: e-mails beantwoorden, rapporten schrijven, social media beheren.',
+  drukte: 'AI kan processen analyseren en direct de grootste tijdwinsten identificeren — focus op wat écht impact heeft.',
+  vrijwilligers: 'AI kan matching verbeteren, communicatie personaliseren, en waardering automatisch inplannen op de juiste momenten.',
+};
+
+const BASE_SYSTEM_PROMPT = `Je bent de AI-adviseur van Vincent van Munster, expert in AI-strategie met een sociaal hart.
+
+BELANGRIJK: Je spreekt namens Vincent — niet als een generieke AI. Gebruik "ik" en "Vincent" waar passend.
+
+Schrijfstijl:
+- Direct, geen wollige taal
+- Concreet met voorbeelden
+- Empathisch maar geen holle praatjes
+- Maximaal 180 woorden
+- Gebruik opsommingstekens voor actie-items
+- Sluit af met een uitnodiging voor een gesprek
+
+Structuur:
+1. Erken de specifieke pijn (1-2 zinnen, toon dat je het snapt)
+2. Geef 2-3 concrete AI-kansen voor hun situatie
+3. Noem één quick win die ze morgen kunnen starten
+4. Uitnodiging: "Wil je zien hoe dit er voor jouw organisatie uitziet?"`;
 
 export async function POST(request: NextRequest) {
   try {
-    const { answers } = await request.json();
+    const { answers, sectorConfig } = await request.json();
 
-    // Build context from answers
+    // Extract answers
     const sector = answers[1] || 'onbekend';
     const challenge = answers[2] || 'onbekend';
     const aiUsage = answers[3] || 'onbekend';
 
-    const sectorMap: Record<string, string> = {
-      zorg: 'Zorg & Welzijn',
-      overheid: 'Onderwijs & Overheid',
-      mkb: 'MKB / Commercieel',
-      nonprofit: 'Non-profit / Stichting',
-    };
+    // Get sector-specific expertise
+    const sectorExpertise = SECTOR_EXPERTISE[sector] || '';
 
-    const challengeMap: Record<string, string> = {
-      tijd: 'te weinig tijd en capaciteit',
-      geld: 'het vinden van financiering',
-      tech: 'verouderde processen en systemen',
-      team: 'teamontwikkeling en cultuur',
-    };
+    // Get challenge-specific solution hints
+    const challengeSolution = CHALLENGE_SOLUTIONS[challenge] || '';
 
+    // Build rich context
     const aiMap: Record<string, string> = {
-      nee: 'nog geen AI gebruikt',
-      beetje: 'beperkt AI gebruikt (ChatGPT)',
-      ja: 'al actief AI geïntegreerd',
+      nee: 'nog geen concrete AI-ervaring (beginnersniveau)',
+      beetje: 'experimenteert met tools zoals ChatGPT (verkennend)',
+      ja: 'actief bezig met AI-implementatie (gevorderd)',
     };
+
+    // Use the rich sector config from the frontend
+    const sectorName = sectorConfig?.sectorName || sector;
+    const challengeLabel = sectorConfig?.challengeLabel || challenge;
+    const challengeContext = sectorConfig?.challengeContext || '';
 
     const userContext = `
-Sector: ${sectorMap[sector] || sector}
-Grootste uitdaging: ${challengeMap[challenge] || challenge}
-AI-volwassenheid: ${aiMap[aiUsage] || aiUsage}
+PROFIEL VAN DEZE BEZOEKER:
+
+Sector: ${sectorName}
+Grootste energielek: ${challengeLabel}
+Context: "${challengeContext}"
+AI-niveau: ${aiMap[aiUsage] || aiUsage}
+
+${sectorExpertise}
+
+SPECIFIEKE KANS VOOR DIT PROBLEEM:
+${challengeSolution}
 `;
 
     const response = await getOpenRouter().chat.completions.create({
       model: DEFAULT_MODELS.scanner,
       messages: [
-        { role: 'system', content: SYSTEM_PROMPT },
+        { role: 'system', content: BASE_SYSTEM_PROMPT },
         {
           role: 'user',
-          content: `Analyseer deze situatie en geef strategisch advies:\n${userContext}`,
+          content: `Analyseer dit profiel en geef persoonlijk, sectorspecifiek advies:\n${userContext}`,
         },
       ],
       stream: true,
-      max_tokens: 500,
+      max_tokens: 600,
       temperature: 0.7,
     });
 

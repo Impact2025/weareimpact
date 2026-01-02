@@ -42,9 +42,9 @@ export function Navbar() {
         <Link href="/" className="cursor-pointer">
           {!logoError ? (
             <Image
-              src="/logo.webp"
+              src="/WeAreImpact_hart.png"
               alt="WeAreImpact Logo"
-              width={120}
+              width={48}
               height={48}
               className="h-12 w-auto object-contain hover:opacity-90 transition-opacity"
               onError={() => setLogoError(true)}

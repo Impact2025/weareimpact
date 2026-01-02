@@ -14,8 +14,8 @@ export function About() {
         </div>
 
         <h2 className="text-3xl md:text-4xl font-bold mb-6">
-          &ldquo;Ik geloof dat ieder mens een talent heeft en creëer de ruimte
-          om dat tot bloei te laten komen.&rdquo;
+          &ldquo;Ik geloof dat technologie er is om menselijk talent te laten
+          bloeien, niet om het te vervangen.&rdquo;
         </h2>
 
         <p className="text-slate-400 text-lg mb-10 leading-relaxed">
