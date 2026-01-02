@@ -234,7 +234,6 @@ Geboekt via weareimpact.nl
   try {
     const event = await calendar.events.insert({
       calendarId,
-      conferenceDataVersion: 1,
       requestBody: {
         summary: `${type.name} - ${data.customer.name}`,
         description,
@@ -249,12 +248,6 @@ Geboekt via weareimpact.nl
         attendees: [
           { email: data.customer.email, displayName: data.customer.name },
         ],
-        conferenceData: {
-          createRequest: {
-            requestId: `weareimpact-${Date.now()}`,
-            conferenceSolutionKey: { type: 'hangoutsMeet' },
-          },
-        },
         reminders: {
           useDefault: false,
           overrides: [
@@ -273,7 +266,6 @@ Geboekt via weareimpact.nl
         startTime: startTime.toISOString(),
         endTime: endTime.toISOString(),
         duration: type.duration,
-        meetLink: event.data.hangoutLink || undefined,
       },
     };
   } catch (error: unknown) {
