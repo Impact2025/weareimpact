@@ -1,15 +1,19 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { notFound } from 'next/navigation';
-import { sql } from '@/lib/db/neon';
+import fs from 'fs';
+import path from 'path';
+import matter from 'gray-matter';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import { ArrowLeft, Calendar, Clock, Linkedin, Twitter, BookOpen, Download, HelpCircle, Building2, Brain, Users, Target, DollarSign, Blocks } from 'lucide-react';
+import { ArrowLeft, Calendar, Clock, Linkedin, Twitter, BookOpen, Download, HelpCircle, Building2, Brain, Users, Target, DollarSign, Blocks, ChevronRight } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { KennisbankChat } from '@/components/features/KennisbankChat';
+import { ArticleJsonLd, BreadcrumbJsonLd } from '@/components/seo/JsonLd';
 import type { Metadata } from 'next';
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 3600; // ISR: revalidate every hour
 
 interface Article {
   id: string;
@@ -60,22 +64,48 @@ const difficultyLabels: Record<string, string> = {
 
 async function getArticle(slug: string): Promise<Article | null> {
   try {
-    const articles = await sql`
-      SELECT id, title, subtitle, slug, excerpt, content, category_slug, tags,
-             author_name, author_title, reading_time, difficulty, published_at, views,
-             faq_items, lead_magnet_title, lead_magnet_description, lead_magnet_type,
-             seo_title, seo_description
-      FROM kb_articles
-      WHERE slug = ${slug} AND status = 'published'
-      LIMIT 1
-    `;
+    const kennisbankDir = path.join(process.cwd(), 'content', 'kennisbank');
 
-    if (articles.length === 0) return null;
+    if (!fs.existsSync(kennisbankDir)) {
+      return null;
+    }
 
-    // Increment view count
-    await sql`UPDATE kb_articles SET views = views + 1 WHERE slug = ${slug}`;
+    const files = fs.readdirSync(kennisbankDir).filter(file => file.endsWith('.md'));
 
-    return articles[0] as Article;
+    for (const file of files) {
+      const filePath = path.join(kennisbankDir, file);
+      const fileContents = fs.readFileSync(filePath, 'utf8');
+      const { data, content } = matter(fileContents);
+
+      if (data.slug === slug) {
+        const stats = fs.statSync(filePath);
+
+        return {
+          id: `kb-${slug}`,
+          title: data.title || '',
+          subtitle: data.subtitle || null,
+          slug: data.slug,
+          excerpt: data.excerpt || '',
+          content: content,
+          category_slug: data.category_slug || 'algemeen',
+          tags: data.tags || [],
+          author_name: data.author_name || 'Vincent van Munster',
+          author_title: data.author_title || 'Sociaal Ondernemer & AI Expert',
+          reading_time: data.reading_time || 5,
+          difficulty: data.difficulty || 'beginner',
+          published_at: data.published_at || stats.mtime.toISOString(),
+          views: 0,
+          faq_items: data.faq_items || [],
+          lead_magnet_title: data.lead_magnet_title || null,
+          lead_magnet_description: data.lead_magnet_description || null,
+          lead_magnet_type: data.lead_magnet_type || null,
+          seo_title: data.seo_title || null,
+          seo_description: data.seo_description || null,
+        };
+      }
+    }
+
+    return null;
   } catch (error) {
     console.error('Error fetching article:', error);
     return null;
@@ -84,14 +114,35 @@ async function getArticle(slug: string): Promise<Article | null> {
 
 async function getRelatedArticles(category: string, currentSlug: string): Promise<RelatedArticle[]> {
   try {
-    const articles = await sql`
-      SELECT id, title, slug, category_slug, reading_time, difficulty
-      FROM kb_articles
-      WHERE status = 'published' AND category_slug = ${category} AND slug != ${currentSlug}
-      ORDER BY published_at DESC
-      LIMIT 3
-    `;
-    return articles as RelatedArticle[];
+    const kennisbankDir = path.join(process.cwd(), 'content', 'kennisbank');
+
+    if (!fs.existsSync(kennisbankDir)) {
+      return [];
+    }
+
+    const files = fs.readdirSync(kennisbankDir).filter(file => file.endsWith('.md'));
+    const related: RelatedArticle[] = [];
+
+    for (const file of files) {
+      const filePath = path.join(kennisbankDir, file);
+      const fileContents = fs.readFileSync(filePath, 'utf8');
+      const { data } = matter(fileContents);
+
+      if (data.category_slug === category && data.slug !== currentSlug) {
+        related.push({
+          id: `kb-${data.slug}`,
+          title: data.title || file.replace('.md', ''),
+          slug: data.slug || file.replace('.md', ''),
+          category_slug: data.category_slug || 'algemeen',
+          reading_time: data.reading_time || 5,
+          difficulty: data.difficulty || 'beginner',
+        });
+      }
+
+      if (related.length >= 3) break;
+    }
+
+    return related;
   } catch (error) {
     console.error('Error fetching related articles:', error);
     return [];
@@ -100,6 +151,23 @@ async function getRelatedArticles(category: string, currentSlug: string): Promis
 
 interface Props {
   params: Promise<{ slug: string }>;
+}
+
+// Generate static params for ISR
+export async function generateStaticParams() {
+  try {
+    const kennisbankDir = path.join(process.cwd(), 'content', 'kennisbank');
+    if (!fs.existsSync(kennisbankDir)) return [];
+
+    const files = fs.readdirSync(kennisbankDir).filter(file => file.endsWith('.md'));
+    return files.map(file => {
+      const fileContents = fs.readFileSync(path.join(kennisbankDir, file), 'utf8');
+      const { data } = matter(fileContents);
+      return { slug: data.slug || file.replace('.md', '') };
+    });
+  } catch {
+    return [];
+  }
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -112,15 +180,36 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     };
   }
 
+  const title = article.seo_title || article.title;
+  const description = article.seo_description || article.excerpt;
+
   return {
-    title: article.seo_title || article.title,
-    description: article.seo_description || article.excerpt,
+    title,
+    description,
+    alternates: {
+      canonical: `/kennisbank/${slug}`,
+    },
     openGraph: {
-      title: article.seo_title || article.title,
-      description: article.seo_description || article.excerpt,
+      title,
+      description,
       type: 'article',
+      url: `https://weareimpact.nl/kennisbank/${slug}`,
       publishedTime: article.published_at,
       authors: [article.author_name || 'Vincent van Munster'],
+      images: [
+        {
+          url: '/og-image.jpg',
+          width: 1200,
+          height: 630,
+          alt: title,
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: ['/og-image.jpg'],
     },
   };
 }
@@ -138,9 +227,42 @@ export default async function KennisbankArticlePage({ params }: Props) {
   const CategoryIcon = categoryInfo.icon;
   const faqItems = article.faq_items || [];
 
+  const breadcrumbItems = [
+    { name: 'Home', url: '/' },
+    { name: 'Kennisbank', url: '/kennisbank' },
+    { name: categoryInfo.label, url: `/kennisbank/categorie/${article.category_slug}` },
+    { name: article.title, url: `/kennisbank/${article.slug}` },
+  ];
+
   return (
     <article className="min-h-screen bg-[#FDFBF7] pt-32 pb-24">
+      {/* JSON-LD Structured Data */}
+      <ArticleJsonLd
+        article={{
+          title: article.title,
+          description: article.excerpt,
+          slug: `kennisbank/${article.slug}`,
+          publishedAt: article.published_at,
+          authorName: article.author_name || 'Vincent van Munster',
+          category: article.category_slug,
+          tags: article.tags,
+          readingTime: article.reading_time,
+        }}
+      />
+      <BreadcrumbJsonLd items={breadcrumbItems} />
+
       <div className="container mx-auto px-6 max-w-3xl">
+        {/* Breadcrumb Navigation */}
+        <nav className="flex items-center gap-2 text-sm text-slate-500 mb-6 flex-wrap">
+          <Link href="/" className="hover:text-slate-900 transition-colors">Home</Link>
+          <ChevronRight size={14} />
+          <Link href="/kennisbank" className="hover:text-slate-900 transition-colors">Kennisbank</Link>
+          <ChevronRight size={14} />
+          <Link href={`/kennisbank/categorie/${article.category_slug}`} className="hover:text-slate-900 transition-colors">{categoryInfo.label}</Link>
+          <ChevronRight size={14} />
+          <span className="text-slate-900 truncate max-w-[200px]">{article.title}</span>
+        </nav>
+
         {/* Back Link */}
         <Link
           href="/kennisbank"

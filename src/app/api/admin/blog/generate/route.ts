@@ -96,37 +96,73 @@ Begin nu met het schrijven van het artikel!`;
     const apiKey = process.env.OPENROUTER_API_KEY;
     if (!apiKey) {
       return NextResponse.json(
-        { error: 'OpenRouter API key niet geconfigureerd' },
+        { error: 'OpenRouter API key niet geconfigureerd. Voeg OPENROUTER_API_KEY toe aan je environment variables.' },
         { status: 500 }
       );
     }
 
-    const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${apiKey}`,
-        'Content-Type': 'application/json',
-        'HTTP-Referer': 'https://weareimpact.nl',
-        'X-Title': 'WeAreImpact Blog Generator'
-      },
-      body: JSON.stringify({
-        model: 'anthropic/claude-3.5-sonnet',
-        messages: [
-          {
-            role: 'user',
-            content: prompt
-          }
-        ],
-        temperature: 0.7,
-        max_tokens: 4000
-      })
-    });
+    // Try models in order of preference (OpenRouter model IDs)
+    const models = [
+      'anthropic/claude-sonnet-4',
+      'anthropic/claude-3.5-sonnet:beta',
+      'openai/gpt-4o',
+      'google/gemini-2.0-flash-001',
+    ];
 
-    if (!response.ok) {
-      const error = await response.text();
-      console.error('OpenRouter API error:', error);
+    let response: Response | null = null;
+    let lastError = '';
+
+    for (const model of models) {
+      try {
+        response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${apiKey}`,
+            'Content-Type': 'application/json',
+            'HTTP-Referer': 'https://weareimpact.nl',
+            'X-Title': 'WeAreImpact Blog Generator'
+          },
+          body: JSON.stringify({
+            model,
+            messages: [
+              {
+                role: 'user',
+                content: prompt
+              }
+            ],
+            temperature: 0.7,
+            max_tokens: 8000
+          })
+        });
+
+        if (response.ok) {
+          console.log(`Successfully used model: ${model}`);
+          break;
+        }
+
+        lastError = await response.text();
+        console.log(`Model ${model} failed, trying next...`);
+      } catch (e) {
+        console.error(`Error with model ${model}:`, e);
+        lastError = String(e);
+      }
+    }
+
+    if (!response || !response.ok) {
+      console.error('All models failed. Last error:', lastError);
+
+      let errorMessage = 'AI generatie mislukt - alle modellen gefaald';
+      try {
+        const errorJson = JSON.parse(lastError);
+        if (errorJson.error?.message) {
+          errorMessage = `AI fout: ${errorJson.error.message}`;
+        }
+      } catch {
+        // Use default error message
+      }
+
       return NextResponse.json(
-        { error: 'AI generatie mislukt' },
+        { error: errorMessage, details: lastError },
         { status: 500 }
       );
     }

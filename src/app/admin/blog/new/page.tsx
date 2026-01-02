@@ -105,11 +105,14 @@ export default function NewBlogPostPage() {
         body: JSON.stringify(aiFormData),
       });
 
+      const result = await response.json();
+
       if (!response.ok) {
-        throw new Error('AI generatie mislukt');
+        console.error('API Error:', result);
+        alert(result.error || 'AI generatie mislukt');
+        return;
       }
 
-      const result = await response.json();
       const { data } = result;
 
       // Update form with AI generated content
@@ -134,7 +137,7 @@ export default function NewBlogPostPage() {
       alert('AI content succesvol gegenereerd! Pas het aan naar wens.');
     } catch (error) {
       console.error('Error generating content:', error);
-      alert('Er ging iets fout bij het genereren van content');
+      alert('Er ging iets fout bij het genereren van content. Controleer de console voor details.');
     } finally {
       setIsGenerating(false);
     }

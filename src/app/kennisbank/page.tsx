@@ -1,5 +1,8 @@
 import Link from 'next/link';
-import { sql } from '@/lib/db/neon';
+import Image from 'next/image';
+import fs from 'fs';
+import path from 'path';
+import matter from 'gray-matter';
 import { Calendar, Clock, ArrowRight, BookOpen, Brain, Target, Users, Blocks, DollarSign, Building2 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Newsletter } from '@/components/sections/Newsletter';
@@ -9,9 +12,19 @@ export const metadata: Metadata = {
   title: 'Kennisbank - Praktische Gidsen voor Sociale Organisaties',
   description:
     'Ontdek praktische gidsen, stappenplannen en handleidingen over AI, vrijwilligers, subsidies en sociale innovatie.',
+  alternates: {
+    canonical: '/kennisbank',
+  },
+  openGraph: {
+    title: 'Kennisbank - Praktische Gidsen voor Sociale Organisaties',
+    description: 'Ontdek praktische gidsen, stappenplannen en handleidingen over AI, vrijwilligers, subsidies en sociale innovatie.',
+    url: 'https://weareimpact.nl/kennisbank',
+    type: 'website',
+    images: [{ url: '/og-image.jpg', width: 1200, height: 630 }],
+  },
 };
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 3600; // ISR: revalidate every hour
 
 interface Article {
   id: string;
@@ -97,13 +110,42 @@ const difficultyLabels: Record<string, string> = {
 
 async function getArticles(): Promise<Article[]> {
   try {
-    const articles = await sql`
-      SELECT id, title, slug, excerpt, category_slug, published_at, reading_time, featured_image, tags, difficulty
-      FROM kb_articles
-      WHERE status = 'published'
-      ORDER BY published_at DESC NULLS LAST
-    `;
-    return articles as Article[];
+    const kennisbankDir = path.join(process.cwd(), 'content', 'kennisbank');
+
+    // Check if directory exists
+    if (!fs.existsSync(kennisbankDir)) {
+      console.log('Kennisbank directory not found, returning empty array');
+      return [];
+    }
+
+    const files = fs.readdirSync(kennisbankDir).filter(file => file.endsWith('.md'));
+
+    const articles: Article[] = files.map((file, index) => {
+      const filePath = path.join(kennisbankDir, file);
+      const fileContents = fs.readFileSync(filePath, 'utf8');
+      const { data } = matter(fileContents);
+
+      // Get file stats for published_at fallback
+      const stats = fs.statSync(filePath);
+
+      return {
+        id: `kb-${index + 1}`,
+        title: data.title || file.replace('.md', ''),
+        slug: data.slug || file.replace('.md', ''),
+        excerpt: data.excerpt || '',
+        category_slug: data.category_slug || 'algemeen',
+        published_at: data.published_at || stats.mtime.toISOString(),
+        reading_time: data.reading_time || 5,
+        featured_image: data.featured_image || null,
+        tags: data.tags || [],
+        difficulty: data.difficulty || 'beginner',
+      };
+    });
+
+    // Sort by published_at descending
+    articles.sort((a, b) => new Date(b.published_at).getTime() - new Date(a.published_at).getTime());
+
+    return articles;
   } catch (error) {
     console.error('Error fetching kennisbank articles:', error);
     return [];
@@ -158,10 +200,13 @@ export default async function KennisbankPage() {
                     {/* Cover Image */}
                     <div className={`${index === 0 ? 'aspect-[2/1]' : 'aspect-video'} bg-gradient-to-br from-slate-100 to-slate-200 relative`}>
                       {article.featured_image ? (
-                        <img
+                        <Image
                           src={article.featured_image}
                           alt={article.title}
-                          className="absolute inset-0 w-full h-full object-cover"
+                          fill
+                          sizes={index === 0 ? '(max-width: 768px) 100vw, 66vw' : '(max-width: 768px) 100vw, 33vw'}
+                          className="object-cover"
+                          loading={index < 3 ? 'eager' : 'lazy'}
                         />
                       ) : (
                         <div className="absolute inset-0 flex items-center justify-center">
@@ -284,10 +329,13 @@ export default async function KennisbankPage() {
                   >
                     <div className="aspect-video bg-gradient-to-br from-slate-100 to-slate-200 relative">
                       {article.featured_image ? (
-                        <img
+                        <Image
                           src={article.featured_image}
                           alt={article.title}
-                          className="absolute inset-0 w-full h-full object-cover"
+                          fill
+                          sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                          className="object-cover"
+                          loading="lazy"
                         />
                       ) : (
                         <div className="absolute inset-0 flex items-center justify-center">

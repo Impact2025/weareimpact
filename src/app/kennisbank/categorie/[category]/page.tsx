@@ -1,11 +1,14 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { notFound } from 'next/navigation';
-import { sql } from '@/lib/db/neon';
+import fs from 'fs';
+import path from 'path';
+import matter from 'gray-matter';
 import { Calendar, Clock, ArrowRight, ArrowLeft, Brain, Target, Users, Blocks, DollarSign, Building2 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import type { Metadata } from 'next';
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 3600; // ISR: revalidate every hour
 
 const categories: Record<string, {
   label: string;
@@ -90,17 +93,51 @@ interface Props {
 
 async function getArticlesByCategory(category: string): Promise<Article[]> {
   try {
-    const articles = await sql`
-      SELECT id, title, slug, excerpt, category_slug, published_at, reading_time, tags, difficulty, featured_image
-      FROM kb_articles
-      WHERE status = 'published' AND category_slug = ${category}
-      ORDER BY published_at DESC NULLS LAST
-    `;
-    return articles as Article[];
+    const kennisbankDir = path.join(process.cwd(), 'content', 'kennisbank');
+
+    if (!fs.existsSync(kennisbankDir)) {
+      return [];
+    }
+
+    const files = fs.readdirSync(kennisbankDir).filter(file => file.endsWith('.md'));
+    const articles: Article[] = [];
+
+    for (const file of files) {
+      const filePath = path.join(kennisbankDir, file);
+      const fileContents = fs.readFileSync(filePath, 'utf8');
+      const { data } = matter(fileContents);
+
+      if (data.category_slug === category) {
+        const stats = fs.statSync(filePath);
+
+        articles.push({
+          id: `kb-${data.slug}`,
+          title: data.title || file.replace('.md', ''),
+          slug: data.slug || file.replace('.md', ''),
+          excerpt: data.excerpt || '',
+          category_slug: data.category_slug || 'algemeen',
+          published_at: data.published_at || stats.mtime.toISOString(),
+          reading_time: data.reading_time || 5,
+          tags: data.tags || [],
+          difficulty: data.difficulty || 'beginner',
+          featured_image: data.featured_image || null,
+        });
+      }
+    }
+
+    // Sort by published_at descending
+    articles.sort((a, b) => new Date(b.published_at).getTime() - new Date(a.published_at).getTime());
+
+    return articles;
   } catch (error) {
     console.error('Error fetching articles:', error);
     return [];
   }
+}
+
+// Generate static params for all categories
+export async function generateStaticParams() {
+  return Object.keys(categories).map((category) => ({ category }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -114,6 +151,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: `${cat.label} - Kennisbank`,
     description: cat.description,
+    alternates: {
+      canonical: `/kennisbank/categorie/${category}`,
+    },
+    openGraph: {
+      title: `${cat.label} - Kennisbank`,
+      description: cat.description,
+      url: `https://weareimpact.nl/kennisbank/categorie/${category}`,
+      type: 'website',
+      images: [{ url: '/og-image.jpg', width: 1200, height: 630 }],
+    },
   };
 }
 
@@ -172,10 +219,13 @@ export default async function CategoryPage({ params }: Props) {
                 {/* Cover */}
                 <div className="aspect-video bg-gradient-to-br from-slate-100 to-slate-200 relative">
                   {article.featured_image ? (
-                    <img
+                    <Image
                       src={article.featured_image}
                       alt={article.title}
-                      className="absolute inset-0 w-full h-full object-cover"
+                      fill
+                      sizes="(max-width: 768px) 100vw, 50vw"
+                      className="object-cover"
+                      loading="lazy"
                     />
                   ) : (
                     <div className="absolute inset-0 flex items-center justify-center">
