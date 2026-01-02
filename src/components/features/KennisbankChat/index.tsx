@@ -123,7 +123,7 @@ export function KennisbankChat({ articleTitle, articleSlug, suggestedQuestions }
         const chunk = decoder.decode(value);
         fullContent += chunk;
 
-        const displayContent = fullContent.replace(/<!--ARTICLES:.*?-->/s, '');
+        const displayContent = fullContent.replace(/<!--ARTICLES:[\s\S]*?-->/, '');
         setMessages(prev =>
           prev.map(m =>
             m.id === assistantId ? { ...m, content: displayContent } : m
@@ -133,7 +133,7 @@ export function KennisbankChat({ articleTitle, articleSlug, suggestedQuestions }
 
       // Parse article suggestions
       let suggestedArticles: Array<{ title: string; slug: string; excerpt: string }> = [];
-      const articlesMatch = fullContent.match(/<!--ARTICLES:(.*?)-->/s);
+      const articlesMatch = fullContent.match(/<!--ARTICLES:([\s\S]*?)-->/);
       if (articlesMatch) {
         try {
           suggestedArticles = JSON.parse(articlesMatch[1]);
@@ -146,7 +146,7 @@ export function KennisbankChat({ articleTitle, articleSlug, suggestedQuestions }
         }
       }
 
-      const cleanContent = fullContent.replace(/<!--ARTICLES:.*?-->/s, '').trim();
+      const cleanContent = fullContent.replace(/<!--ARTICLES:[\s\S]*?-->/, '').trim();
       setMessages(prev =>
         prev.map(m =>
           m.id === assistantId ? {
