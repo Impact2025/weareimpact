@@ -1,53 +1,164 @@
 import { NextRequest } from 'next/server';
 import { getOpenRouter, DEFAULT_MODELS } from '@/lib/ai/openrouter';
 import { getKennisbankContext } from '@/lib/ai/kennisbank-search';
+import { sql } from '@/lib/db/neon';
 
 export const dynamic = 'force-dynamic';
 
+// Helper to log chat messages to database
+async function logChatMessage(sessionId: string, role: string, content: string) {
+  try {
+    await sql`
+      INSERT INTO chat_messages (session_id, role, content)
+      VALUES (${sessionId}::uuid, ${role}, ${content})
+    `;
+  } catch (error) {
+    // Log error but don't fail the request
+    console.error('Failed to log chat message:', error);
+  }
+}
+
+// Helper to create or get session
+async function getOrCreateSession(visitorId: string, sessionId: string | null, source: string, pageUrl: string | null) {
+  try {
+    // If we have a valid session ID, verify it exists
+    if (sessionId) {
+      const existing = await sql`SELECT id FROM chat_sessions WHERE id = ${sessionId}::uuid`;
+      if (existing.length > 0) {
+        return sessionId;
+      }
+    }
+
+    // Create new session
+    const result = await sql`
+      INSERT INTO chat_sessions (visitor_id, source, page_url, status)
+      VALUES (${visitorId}, ${source}, ${pageUrl}, 'active')
+      RETURNING id
+    `;
+
+    const newSessionId = result[0]?.id;
+
+    // Log activity
+    await sql`
+      INSERT INTO activity_log (type, title, description, metadata)
+      VALUES ('chat', 'Chat gesprek gestart', ${pageUrl || 'Onbekende pagina'}, ${JSON.stringify({ sessionId: newSessionId, source })})
+    `;
+
+    return newSessionId;
+  } catch (error) {
+    console.error('Failed to create chat session:', error);
+    return null;
+  }
+}
+
 const SYSTEM_PROMPT = `Je bent Iris, de digitale assistent van WeAreImpact en Vincent van Munster. Je helpt bezoekers met vragen over AI, welzijn, sociale innovatie en Vincent's diensten.
 
-OVER VINCENT:
-- Vincent is een sociaal ondernemer en AI Welzijn Expert
-- Hij is gecertificeerd LEGO® Serious Play facilitator
-- Hij heeft 15+ jaar ervaring in welzijn, zorg en technologie
-- Zijn missie: technologie gebruiken om echte menselijke verbinding te versterken
-- Quote: "Ik geloof dat technologie er is om menselijk talent te laten bloeien, niet om het te vervangen."
+═══════════════════════════════════════
+VINCENT VAN MUNSTER - COMPLETE PROFIEL
+═══════════════════════════════════════
 
-ZIJN VENTURES:
+ACHTERGROND & REIS:
+- Begon als ondernemer met internetbureau 365 Ways en Creative Design
+- Werkte als manager in de hotellerie en sanitairbranche
+- Maakte bewust de overstap van commercie naar sociaal ondernemerschap
+- Volgde opleiding Sociaal Ondernemen aan Nyenrode (2017)
+- Nu: Directeur bij Stichting de Baan + oprichter impactbureau WeAreImpact
+- Geboren: 25 maart 1977
+- Woont: Nieuw-Vennep / Hoofddorp
+
+ZIJN "WAAROM":
+- Missie: "Ieder mens heeft een talent - ik creëer de ruimte om dat tot bloei te laten komen"
+- Identiteit: Een bruggenbouwer met een sociaal hart
+- Altijd oog voor de bedoeling: waarom doen we wat we doen?
+- Doel: Duurzame impact realiseren en geluksmomenten creëren
+
+WERKSTIJL & EXPERTISE:
+- Enthousiast, respectvol, met humor en daadkracht
+- Verbindt strategie moeiteloos met uitvoering
+- Combineert sociale doelen met moderne techniek
+- Expert in AI-tools: ChatGPT, Claude, Perplexity
+- Gecertificeerd LEGO® Serious Play facilitator
+- Werkt zelfstandig maar floreert in samenwerking
+- Zorgt dat vrijwilligers, bestuur en partners zich gehoord voelen
+
+BEWEZEN TRACK RECORD:
+- 70.000+ geluksmomenten per jaar bij Stichting de Baan
+- Impact voor 700+ deelnemers en 180 vrijwilligers
+- Succesvolle fondsenwerving bij: Rabobank Foundation, Oranje Fonds, Kansfonds, Stichting DOEN, Ruigrok Stichting, Aviok
+- Winnaar "Groenste Idee" met De BioExpress
+- Banenscreatie voor mensen met afstand tot arbeidsmarkt (De Impact Box)
+- Bestrijding eenzaamheid via Stichting Philia
+
+DOELGROEPEN:
+- Mensen met een verstandelijke beperking
+- Mensen met afstand tot de arbeidsmarkt ("Happy Impact Makers")
+- Gemeenten en vermogensfondsen
+- Bedrijven die zoeken naar: MVO-invulling, teambuilding, duurzame relatiegeschenken
+
+WEAREIMPACT VENTURES:
 1. DAAR - Software voor vrijwilligerswerk, maakt 'Geluksmomenten' meetbaar
-2. DatingAssistent - Privacy-first dating app met AI-coach
+2. DatingAssistent - Privacy-first dating app met AI-coach, leert van je date-geschiedenis
 3. Bewaardvoorjou - AI-tool voor het vastleggen van levensverhalen van ouderen
 4. SteentjeBijSteentje - Platform voor relatiewerk met LEGO® Serious Play
 
-VINCENT'S VISIE:
+VINCENT'S VISIE & QUOTES:
 - "Ik verkoop geen data, ik verkoop impact"
 - "Tech moet ons menselijker maken, niet verslaafd"
-- Privacy-first is geen keuze, het is een vereiste
-- AI moet dienen als enabler voor echt contact
+- "Privacy-first is geen keuze, het is een vereiste"
+- "AI moet dienen als enabler voor echt contact"
 
-KENNISBANK:
-Je hebt toegang tot artikelen uit de WeAreImpact kennisbank. Als er relevante artikelen zijn bij de vraag, gebruik dan die informatie in je antwoord en verwijs naar de artikelen.
+PERSOONLIJK:
+- Getrouwd, trotse vader van Alex en Maya
+- Interesses: Tennis, lezen, koken, wandelen en fietsen in de natuur
+- Passies: Reizen, andere culturen ontdekken, nieuwe technologieën verkennen
 
-STIJL:
+CONTACT:
+- Telefoon: 06-144 709 77
+- E-mail: v.munster@weareimpact.nl
+- Locatie: Nieuw-Vennep / Hoofddorp
+
+═══════════════════════════════════════
+KENNISBANK
+═══════════════════════════════════════
+Je hebt toegang tot artikelen uit de WeAreImpact kennisbank. Als er relevante artikelen zijn bij de vraag, gebruik dan die informatie en verwijs naar de artikelen.
+
+═══════════════════════════════════════
+JOUW STIJL ALS IRIS
+═══════════════════════════════════════
 - Antwoord in het Nederlands
-- Wees warm maar professioneel
-- Wees concreet en praktisch
+- Wees warm, persoonlijk en toegankelijk (zoals Vincent zelf)
+- Wees concreet en praktisch - geen vage beloftes
+- Deel relevante voorbeelden uit Vincent's track record
 - Als er kennisbank artikelen beschikbaar zijn, verwijs daarnaar
 - Als je iets niet weet, zeg dat eerlijk
-- Verwijs naar een persoonlijk gesprek voor complexe vragen
 - Houd antwoorden beknopt (max 150 woorden)
 
-BELANGRIJK:
+═══════════════════════════════════════
+BELANGRIJK - AFSPRAKEN
+═══════════════════════════════════════
 - Je bent Iris, de digitale collega van Vincent
-- Verwijs bezoekers door naar v.munster@weareimpact.nl voor concrete samenwerkingen
+- Voor een gesprek met Vincent: ALTIJD doorverwijzen naar de AFSPRAAK TOOL in deze chat (niet naar email!)
+- Zeg bijvoorbeeld: "Zal ik een gesprek met Vincent voor je inplannen?" of "Klik op 'Gesprek plannen' om direct een moment te prikken"
+- Email (v.munster@weareimpact.nl) alleen voor specifieke vragen, NIET voor afspraken
 - Als je kennisbank artikelen noemt, gebruik dan de format: [Titel](/kennisbank/slug)`;
 
 export async function POST(request: NextRequest) {
   try {
-    const { messages, includeKennisbank = true } = await request.json();
+    const { messages, includeKennisbank = true, visitorId, sessionId, source = 'widget', pageUrl } = await request.json();
 
     // Get the last user message for RAG search
     const lastUserMessage = [...messages].reverse().find(m => m.role === 'user')?.content || '';
+
+    // Get or create session for logging (don't block on this)
+    let activeSessionId = sessionId;
+    if (visitorId) {
+      activeSessionId = await getOrCreateSession(visitorId, sessionId, source, pageUrl);
+
+      // Log the user message
+      if (activeSessionId && lastUserMessage) {
+        logChatMessage(activeSessionId, 'user', lastUserMessage);
+      }
+    }
 
     // Search kennisbank for relevant context
     let kennisbankContext = '';
@@ -81,6 +192,7 @@ export async function POST(request: NextRequest) {
     });
 
     const encoder = new TextEncoder();
+    let fullAssistantContent = '';
 
     // Create stream with article suggestions appended at the end
     const stream = new ReadableStream({
@@ -89,13 +201,23 @@ export async function POST(request: NextRequest) {
           for await (const chunk of response) {
             const content = chunk.choices[0]?.delta?.content || '';
             if (content) {
+              fullAssistantContent += content;
               controller.enqueue(encoder.encode(content));
             }
           }
 
-          // Append article suggestions if any (as JSON marker for frontend)
-          if (suggestedArticles.length > 0) {
-            const marker = `\n\n<!--ARTICLES:${JSON.stringify(suggestedArticles)}-->`;
+          // Log assistant message to database
+          if (activeSessionId && fullAssistantContent) {
+            logChatMessage(activeSessionId, 'assistant', fullAssistantContent);
+          }
+
+          // Append session ID and article suggestions as JSON marker for frontend
+          const metadata: Record<string, unknown> = {};
+          if (activeSessionId) metadata.sessionId = activeSessionId;
+          if (suggestedArticles.length > 0) metadata.articles = suggestedArticles;
+
+          if (Object.keys(metadata).length > 0) {
+            const marker = `\n\n<!--META:${JSON.stringify(metadata)}-->`;
             controller.enqueue(encoder.encode(marker));
           }
 
