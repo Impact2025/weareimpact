@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useRef, useEffect, useCallback } from 'react';
-import { Send, X, MessageSquare, Calendar, User, Mail, Building, Phone, Check, Loader2, ArrowLeft, ChevronRight, Play } from 'lucide-react';
+import { Send, X, MessageSquare, Calendar, User, Mail, Building, Phone, Check, Loader2, ArrowLeft, ChevronRight, Play, BookOpen } from 'lucide-react';
+import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
@@ -9,12 +10,19 @@ import Image from 'next/image';
 import { IrisAvatar, IrisInline, useIris, type IrisMoment } from '@/components/features/IrisAvatar';
 
 // Types
+interface SuggestedArticle {
+  title: string;
+  slug: string;
+  excerpt: string;
+}
+
 interface Message {
   id: string;
   role: 'user' | 'assistant';
   content: string;
   isStreaming?: boolean;
   showQuickReplies?: boolean;
+  suggestedArticles?: SuggestedArticle[];
 }
 
 interface BookingType {
@@ -279,6 +287,30 @@ function AnimatedMessage({
           </p>
         </div>
 
+        {/* Suggested Articles from Kennisbank */}
+        {showReplies && message.role === 'assistant' && message.suggestedArticles && message.suggestedArticles.length > 0 && (
+          <div className="mt-2 space-y-2 animate-in fade-in-0 slide-in-from-bottom-1 duration-300">
+            <div className="flex items-center gap-1.5 text-xs text-slate-500">
+              <BookOpen size={12} />
+              <span>Relevante artikelen:</span>
+            </div>
+            {message.suggestedArticles.map((article) => (
+              <Link
+                key={article.slug}
+                href={`/kennisbank/${article.slug}`}
+                className="block p-3 bg-gradient-to-r from-orange-50 to-white border border-orange-100 rounded-lg hover:border-orange-300 hover:shadow-sm transition-all group"
+              >
+                <div className="font-medium text-sm text-slate-800 group-hover:text-orange-600 transition-colors">
+                  {article.title}
+                </div>
+                <div className="text-xs text-slate-500 line-clamp-1 mt-0.5">
+                  {article.excerpt}
+                </div>
+              </Link>
+            ))}
+          </div>
+        )}
+
         {/* Quick Replies */}
         {showReplies && message.role === 'assistant' && onQuickReply && (
           <div className="flex gap-2 animate-in fade-in-0 slide-in-from-bottom-1 duration-200">
@@ -526,17 +558,40 @@ export function DigitalTwin() {
         const chunk = decoder.decode(value);
         fullContent += chunk;
 
+        // Don't show the article marker while streaming
+        const displayContent = fullContent.replace(/<!--ARTICLES:.*?-->/s, '');
+
         setMessages(prev =>
           prev.map(m =>
-            m.id === assistantId ? { ...m, content: fullContent } : m
+            m.id === assistantId ? { ...m, content: displayContent } : m
           )
         );
       }
 
+      // Parse article suggestions from response
+      let suggestedArticles: SuggestedArticle[] = [];
+      const articlesMatch = fullContent.match(/<!--ARTICLES:(.*?)-->/s);
+      if (articlesMatch) {
+        try {
+          suggestedArticles = JSON.parse(articlesMatch[1]);
+        } catch (e) {
+          console.error('Failed to parse article suggestions:', e);
+        }
+      }
+
+      // Remove article marker from content
+      const cleanContent = fullContent.replace(/<!--ARTICLES:.*?-->/s, '').trim();
+
       // Mark streaming as complete and enable quick replies
       setMessages(prev =>
         prev.map(m =>
-          m.id === assistantId ? { ...m, isStreaming: false, showQuickReplies: true } : m
+          m.id === assistantId ? {
+            ...m,
+            content: cleanContent,
+            isStreaming: false,
+            showQuickReplies: true,
+            suggestedArticles: suggestedArticles.length > 0 ? suggestedArticles : undefined
+          } : m
         )
       );
     } catch (error) {

@@ -1,35 +1,46 @@
 import Link from 'next/link';
 import { sql } from '@/lib/db/neon';
-import { Calendar, Clock, ArrowRight, BookOpen, Brain, Target, Users, Blocks } from 'lucide-react';
+import { Calendar, Clock, ArrowRight, BookOpen, Brain, Target, Users, Blocks, DollarSign, Building2 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Newsletter } from '@/components/sections/Newsletter';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Kennisbank',
+  title: 'Kennisbank - Praktische Gidsen voor Sociale Organisaties',
   description:
-    'Ontdek artikelen, inzichten en praktische gidsen over AI, welzijn, strategie en sociale innovatie.',
+    'Ontdek praktische gidsen, stappenplannen en handleidingen over AI, vrijwilligers, subsidies en sociale innovatie.',
 };
 
 export const dynamic = 'force-dynamic';
 
-interface Post {
+interface Article {
   id: string;
   title: string;
   slug: string;
   excerpt: string;
-  category: string;
+  category_slug: string;
   published_at: string;
   reading_time: number;
-  cover_image: string | null;
+  featured_image: string | null;
   tags: string[];
+  difficulty: string;
 }
 
 const categories = [
   {
-    value: 'ai',
+    value: 'sociaal-ondernemen',
+    label: 'Sociaal Ondernemen',
+    description: 'Van startup tot certificering - alles over sociaal ondernemerschap',
+    icon: Building2,
+    color: 'bg-orange-500',
+    bgColor: 'bg-orange-50',
+    textColor: 'text-orange-700',
+    borderColor: 'border-orange-200',
+  },
+  {
+    value: 'ai-tech',
     label: 'AI & Technologie',
-    description: 'Praktische inzichten over kunstmatige intelligentie en technologie voor de sociale sector',
+    description: 'Praktische AI-toepassingen voor non-profits en welzijnsorganisaties',
     icon: Brain,
     color: 'bg-blue-500',
     bgColor: 'bg-blue-50',
@@ -37,63 +48,79 @@ const categories = [
     borderColor: 'border-blue-200',
   },
   {
-    value: 'impact',
-    label: 'Impact & Welzijn',
-    description: 'Methoden om impact te meten en welzijn te verbeteren in organisaties',
-    icon: Target,
+    value: 'vrijwilligers',
+    label: 'Vrijwilligersmanagement',
+    description: 'Beleid, werving en behoud van vrijwilligers',
+    icon: Users,
     color: 'bg-green-500',
     bgColor: 'bg-green-50',
     textColor: 'text-green-700',
     borderColor: 'border-green-200',
   },
   {
-    value: 'strategie',
-    label: 'Strategie & Methodiek',
-    description: 'Strategische frameworks en methodieken voor sociale innovatie',
-    icon: Users,
+    value: 'impact-meten',
+    label: 'Impact Meten',
+    description: 'Methoden en tools om je maatschappelijke impact te meten',
+    icon: Target,
     color: 'bg-purple-500',
     bgColor: 'bg-purple-50',
     textColor: 'text-purple-700',
     borderColor: 'border-purple-200',
   },
   {
-    value: 'nieuws',
-    label: 'Nieuws & Updates',
-    description: 'Het laatste nieuws over WeAreImpact, projecten en ontwikkelingen',
+    value: 'subsidie-funding',
+    label: 'Subsidie & Funding',
+    description: 'Fondsenwerving, subsidies en financiering',
+    icon: DollarSign,
+    color: 'bg-yellow-500',
+    bgColor: 'bg-yellow-50',
+    textColor: 'text-yellow-700',
+    borderColor: 'border-yellow-200',
+  },
+  {
+    value: 'lego-serious-play',
+    label: 'LEGO Serious Play',
+    description: 'Methode, toepassingen en facilitatie',
     icon: Blocks,
-    color: 'bg-orange-500',
-    bgColor: 'bg-orange-50',
-    textColor: 'text-orange-700',
-    borderColor: 'border-orange-200',
+    color: 'bg-red-500',
+    bgColor: 'bg-red-50',
+    textColor: 'text-red-700',
+    borderColor: 'border-red-200',
   },
 ];
 
-async function getPosts(): Promise<Post[]> {
+const difficultyLabels: Record<string, string> = {
+  beginner: 'Beginner',
+  intermediate: 'Gemiddeld',
+  advanced: 'Gevorderd',
+};
+
+async function getArticles(): Promise<Article[]> {
   try {
-    const posts = await sql`
-      SELECT id, title, slug, excerpt, category, published_at, reading_time, cover_image, tags
-      FROM posts
+    const articles = await sql`
+      SELECT id, title, slug, excerpt, category_slug, published_at, reading_time, featured_image, tags, difficulty
+      FROM kb_articles
       WHERE status = 'published'
       ORDER BY published_at DESC NULLS LAST
     `;
-    return posts as Post[];
+    return articles as Article[];
   } catch (error) {
-    console.error('Error fetching posts:', error);
+    console.error('Error fetching kennisbank articles:', error);
     return [];
   }
 }
 
 export default async function KennisbankPage() {
-  const allPosts = await getPosts();
+  const allArticles = await getArticles();
 
-  // Group posts by category
-  const postsByCategory: Record<string, Post[]> = {};
+  // Group articles by category
+  const articlesByCategory: Record<string, Article[]> = {};
   for (const category of categories) {
-    postsByCategory[category.value] = allPosts.filter(p => p.category === category.value).slice(0, 4);
+    articlesByCategory[category.value] = allArticles.filter(a => a.category_slug === category.value).slice(0, 4);
   }
 
-  // Get featured posts (most recent 3)
-  const featuredPosts = allPosts.slice(0, 3);
+  // Get featured articles (most recent 3)
+  const featuredArticles = allArticles.slice(0, 3);
 
   return (
     <div className="min-h-screen bg-[#FDFBF7] pt-32 pb-24">
@@ -105,79 +132,87 @@ export default async function KennisbankPage() {
             Kennisbank
           </div>
           <h1 className="text-4xl md:text-5xl font-bold text-slate-900 mb-6">
-            Kennis voor Sociale Innovatie
+            Praktische Gidsen voor Sociale Organisaties
           </h1>
           <p className="text-xl text-slate-600 max-w-2xl mx-auto">
-            Praktische artikelen, inzichten en gidsen over hoe technologie kan
-            bijdragen aan een betere wereld. Geschreven door Vincent van Munster.
+            Stappenplannen, handleidingen en praktische kennis over AI, vrijwilligers,
+            subsidies en meer. Geschreven door Vincent van Munster.
           </p>
         </div>
 
-        {/* Featured Posts */}
-        {featuredPosts.length > 0 && (
+        {/* Featured Articles */}
+        {featuredArticles.length > 0 && (
           <section className="mb-20">
             <h2 className="text-2xl font-bold text-slate-900 mb-8">Uitgelicht</h2>
             <div className="grid gap-8 md:grid-cols-3">
-              {featuredPosts.map((post, index) => (
-                <Link
-                  key={post.id}
-                  href={`/kennisbank/${post.slug}`}
-                  className={`group bg-white rounded-2xl border border-slate-100 overflow-hidden hover:shadow-xl hover:border-orange-200 transition-all ${
-                    index === 0 ? 'md:col-span-2 md:row-span-2' : ''
-                  }`}
-                >
-                  {/* Cover Image */}
-                  <div className={`${index === 0 ? 'aspect-[2/1]' : 'aspect-video'} bg-gradient-to-br from-slate-100 to-slate-200 relative`}>
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <span className={`${index === 0 ? 'text-6xl' : 'text-4xl'} font-bold text-slate-300`}>
-                        {post.title[0]}
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className={`p-6 ${index === 0 ? 'md:p-8' : ''}`}>
-                    <div className="flex items-center gap-3 mb-3">
-                      <Badge
-                        className={
-                          categories.find((c) => c.value === post.category)?.bgColor +
-                          ' ' +
-                          categories.find((c) => c.value === post.category)?.textColor
-                        }
-                      >
-                        {categories.find((c) => c.value === post.category)?.label || post.category}
-                      </Badge>
-                      <div className="flex items-center gap-1 text-xs text-slate-400">
-                        <Clock size={12} />
-                        {post.reading_time} min
-                      </div>
+              {featuredArticles.map((article, index) => {
+                const category = categories.find(c => c.value === article.category_slug);
+                return (
+                  <Link
+                    key={article.id}
+                    href={`/kennisbank/${article.slug}`}
+                    className={`group bg-white rounded-2xl border border-slate-100 overflow-hidden hover:shadow-xl hover:border-orange-200 transition-all ${
+                      index === 0 ? 'md:col-span-2 md:row-span-2' : ''
+                    }`}
+                  >
+                    {/* Cover Image */}
+                    <div className={`${index === 0 ? 'aspect-[2/1]' : 'aspect-video'} bg-gradient-to-br from-slate-100 to-slate-200 relative`}>
+                      {article.featured_image ? (
+                        <img
+                          src={article.featured_image}
+                          alt={article.title}
+                          className="absolute inset-0 w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <span className={`${index === 0 ? 'text-6xl' : 'text-4xl'} font-bold text-slate-300`}>
+                            {article.title[0]}
+                          </span>
+                        </div>
+                      )}
                     </div>
 
-                    <h3 className={`${index === 0 ? 'text-2xl' : 'text-xl'} font-bold text-slate-900 mb-2 group-hover:text-orange-600 transition-colors`}>
-                      {post.title}
-                    </h3>
-
-                    <p className="text-slate-600 text-sm mb-4 line-clamp-2">
-                      {post.excerpt}
-                    </p>
-
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-1 text-xs text-slate-400">
-                        <Calendar size={12} />
-                        {post.published_at
-                          ? new Date(post.published_at).toLocaleDateString('nl-NL', {
-                              day: 'numeric',
-                              month: 'long',
-                              year: 'numeric',
-                            })
-                          : 'Binnenkort'}
+                    <div className={`p-6 ${index === 0 ? 'md:p-8' : ''}`}>
+                      <div className="flex items-center gap-3 mb-3 flex-wrap">
+                        <Badge className={`${category?.bgColor || 'bg-slate-100'} ${category?.textColor || 'text-slate-700'}`}>
+                          {category?.label || article.category_slug}
+                        </Badge>
+                        <Badge variant="outline" className="text-xs">
+                          {difficultyLabels[article.difficulty] || article.difficulty}
+                        </Badge>
+                        <div className="flex items-center gap-1 text-xs text-slate-400">
+                          <Clock size={12} />
+                          {article.reading_time} min
+                        </div>
                       </div>
-                      <div className="text-orange-600 group-hover:translate-x-1 transition-transform">
-                        <ArrowRight size={18} />
+
+                      <h3 className={`${index === 0 ? 'text-2xl' : 'text-xl'} font-bold text-slate-900 mb-2 group-hover:text-orange-600 transition-colors`}>
+                        {article.title}
+                      </h3>
+
+                      <p className="text-slate-600 text-sm mb-4 line-clamp-2">
+                        {article.excerpt}
+                      </p>
+
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-1 text-xs text-slate-400">
+                          <Calendar size={12} />
+                          {article.published_at
+                            ? new Date(article.published_at).toLocaleDateString('nl-NL', {
+                                day: 'numeric',
+                                month: 'long',
+                                year: 'numeric',
+                              })
+                            : 'Binnenkort'}
+                        </div>
+                        <div className="text-orange-600 group-hover:translate-x-1 transition-transform">
+                          <ArrowRight size={18} />
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </Link>
-              ))}
+                  </Link>
+                );
+              })}
             </div>
           </section>
         )}
@@ -185,10 +220,10 @@ export default async function KennisbankPage() {
         {/* Categories */}
         <section className="mb-20">
           <h2 className="text-2xl font-bold text-slate-900 mb-8">Categorieën</h2>
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {categories.map((category) => {
               const Icon = category.icon;
-              const postCount = allPosts.filter(p => p.category === category.value).length;
+              const articleCount = allArticles.filter(a => a.category_slug === category.value).length;
 
               return (
                 <Link
@@ -206,7 +241,7 @@ export default async function KennisbankPage() {
                     {category.description}
                   </p>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-slate-500">{postCount} artikelen</span>
+                    <span className="text-sm text-slate-500">{articleCount} artikelen</span>
                     <ArrowRight className={`${category.textColor} group-hover:translate-x-1 transition-transform`} size={18} />
                   </div>
                 </Link>
@@ -215,10 +250,10 @@ export default async function KennisbankPage() {
           </div>
         </section>
 
-        {/* Posts by Category */}
+        {/* Articles by Category */}
         {categories.map((category) => {
-          const categoryPosts = postsByCategory[category.value] || [];
-          if (categoryPosts.length === 0) return null;
+          const categoryArticles = articlesByCategory[category.value] || [];
+          if (categoryArticles.length === 0) return null;
 
           const Icon = category.icon;
 
@@ -241,26 +276,36 @@ export default async function KennisbankPage() {
               </div>
 
               <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-                {categoryPosts.map((post) => (
+                {categoryArticles.map((article) => (
                   <Link
-                    key={post.id}
-                    href={`/kennisbank/${post.slug}`}
+                    key={article.id}
+                    href={`/kennisbank/${article.slug}`}
                     className="group bg-white rounded-xl border border-slate-100 overflow-hidden hover:shadow-lg hover:border-orange-200 transition-all"
                   >
                     <div className="aspect-video bg-gradient-to-br from-slate-100 to-slate-200 relative">
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <span className="text-3xl font-bold text-slate-300">
-                          {post.title[0]}
-                        </span>
-                      </div>
+                      {article.featured_image ? (
+                        <img
+                          src={article.featured_image}
+                          alt={article.title}
+                          className="absolute inset-0 w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <span className="text-3xl font-bold text-slate-300">
+                            {article.title[0]}
+                          </span>
+                        </div>
+                      )}
                     </div>
                     <div className="p-4">
                       <div className="flex items-center gap-2 mb-2">
                         <Clock size={12} className="text-slate-400" />
-                        <span className="text-xs text-slate-400">{post.reading_time} min</span>
+                        <span className="text-xs text-slate-400">{article.reading_time} min</span>
+                        <span className="text-xs text-slate-300">|</span>
+                        <span className="text-xs text-slate-400">{difficultyLabels[article.difficulty]}</span>
                       </div>
                       <h3 className="font-semibold text-slate-900 group-hover:text-orange-600 transition-colors line-clamp-2">
-                        {post.title}
+                        {article.title}
                       </h3>
                     </div>
                   </Link>
@@ -271,14 +316,14 @@ export default async function KennisbankPage() {
         })}
 
         {/* Empty State */}
-        {allPosts.length === 0 && (
+        {allArticles.length === 0 && (
           <div className="text-center py-20">
             <BookOpen className="mx-auto text-slate-300 mb-4" size={64} />
             <h3 className="text-xl font-bold text-slate-600 mb-2">
               De kennisbank wordt gevuld
             </h3>
             <p className="text-slate-500">
-              Binnenkort vind je hier artikelen over AI, welzijn en sociale innovatie.
+              Binnenkort vind je hier praktische gidsen en stappenplannen.
             </p>
           </div>
         )}

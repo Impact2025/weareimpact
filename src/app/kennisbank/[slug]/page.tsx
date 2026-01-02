@@ -3,83 +3,97 @@ import { notFound } from 'next/navigation';
 import { sql } from '@/lib/db/neon';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import { ArrowLeft, Calendar, Clock, Linkedin, Twitter, BookOpen } from 'lucide-react';
+import { ArrowLeft, Calendar, Clock, Linkedin, Twitter, BookOpen, Download, HelpCircle, Building2, Brain, Users, Target, DollarSign, Blocks } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { KennisbankChat } from '@/components/features/KennisbankChat';
 import type { Metadata } from 'next';
 
 export const dynamic = 'force-dynamic';
 
-interface Post {
+interface Article {
   id: string;
   title: string;
+  subtitle: string | null;
   slug: string;
   excerpt: string;
   content: string;
-  category: string;
+  category_slug: string;
   tags: string[];
   author_name: string;
+  author_title: string;
   reading_time: number;
+  difficulty: string;
   published_at: string;
   views: number;
+  faq_items: Array<{ question: string; answer: string }>;
+  lead_magnet_title: string | null;
+  lead_magnet_description: string | null;
+  lead_magnet_type: string | null;
+  seo_title: string | null;
+  seo_description: string | null;
 }
 
-interface RelatedPost {
+interface RelatedArticle {
   id: string;
   title: string;
   slug: string;
-  category: string;
+  category_slug: string;
   reading_time: number;
+  difficulty: string;
 }
 
-const categoryColors: Record<string, { bg: string; text: string }> = {
-  ai: { bg: 'bg-blue-100', text: 'text-blue-700' },
-  impact: { bg: 'bg-green-100', text: 'text-green-700' },
-  strategie: { bg: 'bg-purple-100', text: 'text-purple-700' },
-  nieuws: { bg: 'bg-orange-100', text: 'text-orange-700' },
+const categoryConfig: Record<string, { label: string; bg: string; text: string; icon: React.ElementType }> = {
+  'sociaal-ondernemen': { label: 'Sociaal Ondernemen', bg: 'bg-orange-100', text: 'text-orange-700', icon: Building2 },
+  'ai-tech': { label: 'AI & Technologie', bg: 'bg-blue-100', text: 'text-blue-700', icon: Brain },
+  'vrijwilligers': { label: 'Vrijwilligersmanagement', bg: 'bg-green-100', text: 'text-green-700', icon: Users },
+  'impact-meten': { label: 'Impact Meten', bg: 'bg-purple-100', text: 'text-purple-700', icon: Target },
+  'subsidie-funding': { label: 'Subsidie & Funding', bg: 'bg-yellow-100', text: 'text-yellow-700', icon: DollarSign },
+  'lego-serious-play': { label: 'LEGO Serious Play', bg: 'bg-red-100', text: 'text-red-700', icon: Blocks },
 };
 
-const categoryLabels: Record<string, string> = {
-  ai: 'AI & Technologie',
-  impact: 'Impact & Welzijn',
-  strategie: 'Strategie & Methodiek',
-  nieuws: 'Nieuws & Updates',
+const difficultyLabels: Record<string, string> = {
+  beginner: 'Beginner',
+  intermediate: 'Gemiddeld',
+  advanced: 'Gevorderd',
 };
 
-async function getPost(slug: string): Promise<Post | null> {
+async function getArticle(slug: string): Promise<Article | null> {
   try {
-    const posts = await sql`
-      SELECT id, title, slug, excerpt, content, category, tags,
-             author_name, reading_time, published_at, views
-      FROM posts
+    const articles = await sql`
+      SELECT id, title, subtitle, slug, excerpt, content, category_slug, tags,
+             author_name, author_title, reading_time, difficulty, published_at, views,
+             faq_items, lead_magnet_title, lead_magnet_description, lead_magnet_type,
+             seo_title, seo_description
+      FROM kb_articles
       WHERE slug = ${slug} AND status = 'published'
       LIMIT 1
     `;
 
-    if (posts.length === 0) return null;
+    if (articles.length === 0) return null;
 
     // Increment view count
-    await sql`UPDATE posts SET views = views + 1 WHERE slug = ${slug}`;
+    await sql`UPDATE kb_articles SET views = views + 1 WHERE slug = ${slug}`;
 
-    return posts[0] as Post;
+    return articles[0] as Article;
   } catch (error) {
-    console.error('Error fetching post:', error);
+    console.error('Error fetching article:', error);
     return null;
   }
 }
 
-async function getRelatedPosts(category: string, currentSlug: string): Promise<RelatedPost[]> {
+async function getRelatedArticles(category: string, currentSlug: string): Promise<RelatedArticle[]> {
   try {
-    const posts = await sql`
-      SELECT id, title, slug, category, reading_time
-      FROM posts
-      WHERE status = 'published' AND category = ${category} AND slug != ${currentSlug}
+    const articles = await sql`
+      SELECT id, title, slug, category_slug, reading_time, difficulty
+      FROM kb_articles
+      WHERE status = 'published' AND category_slug = ${category} AND slug != ${currentSlug}
       ORDER BY published_at DESC
       LIMIT 3
     `;
-    return posts as RelatedPost[];
+    return articles as RelatedArticle[];
   } catch (error) {
-    console.error('Error fetching related posts:', error);
+    console.error('Error fetching related articles:', error);
     return [];
   }
 }
@@ -90,37 +104,39 @@ interface Props {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const post = await getPost(slug);
+  const article = await getArticle(slug);
 
-  if (!post) {
+  if (!article) {
     return {
       title: 'Artikel niet gevonden',
     };
   }
 
   return {
-    title: post.title,
-    description: post.excerpt,
+    title: article.seo_title || article.title,
+    description: article.seo_description || article.excerpt,
     openGraph: {
-      title: post.title,
-      description: post.excerpt,
+      title: article.seo_title || article.title,
+      description: article.seo_description || article.excerpt,
       type: 'article',
-      publishedTime: post.published_at,
-      authors: [post.author_name || 'Vincent van Munster'],
+      publishedTime: article.published_at,
+      authors: [article.author_name || 'Vincent van Munster'],
     },
   };
 }
 
 export default async function KennisbankArticlePage({ params }: Props) {
   const { slug } = await params;
-  const post = await getPost(slug);
+  const article = await getArticle(slug);
 
-  if (!post) {
+  if (!article) {
     notFound();
   }
 
-  const relatedPosts = await getRelatedPosts(post.category, slug);
-  const colors = categoryColors[post.category] || { bg: 'bg-slate-100', text: 'text-slate-700' };
+  const relatedArticles = await getRelatedArticles(article.category_slug, slug);
+  const categoryInfo = categoryConfig[article.category_slug] || { label: article.category_slug, bg: 'bg-slate-100', text: 'text-slate-700', icon: BookOpen };
+  const CategoryIcon = categoryInfo.icon;
+  const faqItems = article.faq_items || [];
 
   return (
     <article className="min-h-screen bg-[#FDFBF7] pt-32 pb-24">
@@ -136,21 +152,29 @@ export default async function KennisbankArticlePage({ params }: Props) {
 
         {/* Header */}
         <header className="mb-12">
-          <div className="flex items-center gap-3 mb-4">
-            <Badge className={`${colors.bg} ${colors.text}`}>
-              {categoryLabels[post.category] || post.category}
+          <div className="flex items-center gap-3 mb-4 flex-wrap">
+            <Badge className={`${categoryInfo.bg} ${categoryInfo.text} gap-1`}>
+              <CategoryIcon size={14} />
+              {categoryInfo.label}
+            </Badge>
+            <Badge variant="outline" className="text-xs">
+              {difficultyLabels[article.difficulty] || article.difficulty}
             </Badge>
             <div className="flex items-center gap-1 text-sm text-slate-400">
               <Clock size={14} />
-              {post.reading_time} min leestijd
+              {article.reading_time} min leestijd
             </div>
           </div>
 
-          <h1 className="text-4xl md:text-5xl font-bold text-slate-900 mb-6 leading-tight">
-            {post.title}
+          <h1 className="text-4xl md:text-5xl font-bold text-slate-900 mb-4 leading-tight">
+            {article.title}
           </h1>
 
-          <p className="text-xl text-slate-600 mb-8">{post.excerpt}</p>
+          {article.subtitle && (
+            <p className="text-xl text-slate-500 mb-4">{article.subtitle}</p>
+          )}
+
+          <p className="text-xl text-slate-600 mb-8">{article.excerpt}</p>
 
           <div className="flex items-center justify-between py-6 border-y border-slate-200">
             <div className="flex items-center gap-4">
@@ -159,15 +183,17 @@ export default async function KennisbankArticlePage({ params }: Props) {
               </div>
               <div>
                 <div className="font-medium text-slate-900">
-                  {post.author_name || 'Vincent van Munster'}
+                  {article.author_name || 'Vincent van Munster'}
                 </div>
-                <div className="text-sm text-slate-500">AI Welzijn Expert</div>
+                <div className="text-sm text-slate-500">
+                  {article.author_title || 'Sociaal Ondernemer & AI Expert'}
+                </div>
               </div>
             </div>
             <div className="flex items-center gap-1 text-sm text-slate-400">
               <Calendar size={14} />
-              {post.published_at
-                ? new Date(post.published_at).toLocaleDateString('nl-NL', {
+              {article.published_at
+                ? new Date(article.published_at).toLocaleDateString('nl-NL', {
                     day: 'numeric',
                     month: 'long',
                     year: 'numeric',
@@ -180,14 +206,75 @@ export default async function KennisbankArticlePage({ params }: Props) {
         {/* Content */}
         <div className="prose prose-lg prose-slate max-w-none mb-12 prose-headings:text-slate-900 prose-a:text-orange-600 prose-a:no-underline hover:prose-a:underline prose-img:rounded-xl prose-pre:bg-slate-900">
           <ReactMarkdown remarkPlugins={[remarkGfm]}>
-            {post.content}
+            {article.content}
           </ReactMarkdown>
         </div>
 
+        {/* Iris Kennisbank Chat */}
+        <div className="mb-12">
+          <KennisbankChat
+            articleTitle={article.title}
+            articleSlug={article.slug}
+            suggestedQuestions={[
+              'Leg dit artikel in eenvoudige taal uit',
+              'Wat zijn de belangrijkste punten?',
+              'Hoe pas ik dit toe in mijn organisatie?',
+            ]}
+          />
+        </div>
+
+        {/* Lead Magnet */}
+        {article.lead_magnet_title && (
+          <div className="bg-gradient-to-br from-orange-50 to-orange-100 border border-orange-200 rounded-2xl p-6 mb-12">
+            <div className="flex items-start gap-4">
+              <div className="w-12 h-12 bg-orange-500 rounded-xl flex items-center justify-center flex-shrink-0">
+                <Download className="text-white" size={24} />
+              </div>
+              <div className="flex-1">
+                <h3 className="text-lg font-bold text-slate-900 mb-2">
+                  {article.lead_magnet_title}
+                </h3>
+                {article.lead_magnet_description && (
+                  <p className="text-slate-600 mb-4">{article.lead_magnet_description}</p>
+                )}
+                <Button className="bg-orange-600 hover:bg-orange-700">
+                  <Download size={16} className="mr-2" />
+                  Download {article.lead_magnet_type === 'pdf' ? 'PDF' : article.lead_magnet_type === 'checklist' ? 'Checklist' : article.lead_magnet_type === 'template' ? 'Template' : 'Bestand'}
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* FAQ Section */}
+        {faqItems.length > 0 && (
+          <section className="mb-12">
+            <div className="flex items-center gap-2 mb-6">
+              <HelpCircle className="text-orange-600" size={24} />
+              <h2 className="text-2xl font-bold text-slate-900">Veelgestelde vragen</h2>
+            </div>
+            <div className="space-y-4">
+              {faqItems.map((faq, index) => (
+                <div
+                  key={index}
+                  className="bg-white border border-slate-100 rounded-xl p-6"
+                >
+                  <h3 className="font-bold text-slate-900 mb-3">{faq.question}</h3>
+                  <div className="prose prose-slate prose-sm">
+                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                      {faq.answer}
+                    </ReactMarkdown>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
         {/* Tags */}
-        {post.tags && post.tags.length > 0 && (
+        {article.tags && article.tags.length > 0 && (
           <div className="flex flex-wrap gap-2 mb-12">
-            {post.tags.map((tag: string) => (
+            {article.tags.map((tag: string) => (
               <span
                 key={tag}
                 className="px-3 py-1 bg-slate-100 text-slate-600 text-sm rounded-full"
@@ -205,9 +292,9 @@ export default async function KennisbankArticlePage({ params }: Props) {
             <Button variant="outline" size="sm" asChild>
               <a
                 href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(
-                  post.title
+                  article.title
                 )}&url=${encodeURIComponent(
-                  `https://weareimpact.nl/kennisbank/${post.slug}`
+                  `https://weareimpact.nl/kennisbank/${article.slug}`
                 )}`}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -218,7 +305,7 @@ export default async function KennisbankArticlePage({ params }: Props) {
             <Button variant="outline" size="sm" asChild>
               <a
                 href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(
-                  `https://weareimpact.nl/kennisbank/${post.slug}`
+                  `https://weareimpact.nl/kennisbank/${article.slug}`
                 )}`}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -229,14 +316,14 @@ export default async function KennisbankArticlePage({ params }: Props) {
           </div>
         </div>
 
-        {/* Related Posts */}
-        {relatedPosts.length > 0 && (
+        {/* Related Articles */}
+        {relatedArticles.length > 0 && (
           <section className="mt-16">
             <h2 className="text-2xl font-bold text-slate-900 mb-6">
               Gerelateerde artikelen
             </h2>
             <div className="grid gap-4">
-              {relatedPosts.map((related) => (
+              {relatedArticles.map((related) => (
                 <Link
                   key={related.id}
                   href={`/kennisbank/${related.slug}`}
@@ -253,6 +340,8 @@ export default async function KennisbankArticlePage({ params }: Props) {
                       <div className="flex items-center gap-2 text-sm text-slate-400">
                         <Clock size={12} />
                         {related.reading_time} min
+                        <span className="text-slate-300">|</span>
+                        {difficultyLabels[related.difficulty]}
                       </div>
                     </div>
                   </div>
@@ -269,8 +358,8 @@ export default async function KennisbankArticlePage({ params }: Props) {
             Wil je meer weten over dit onderwerp?
           </h3>
           <p className="text-slate-400 mb-6">
-            Plan een vrijblijvend gesprek en ontdek hoe AI jouw organisatie kan
-            versterken.
+            Plan een vrijblijvend gesprek en ontdek hoe ik jouw organisatie kan
+            ondersteunen.
           </p>
           <Button
             asChild

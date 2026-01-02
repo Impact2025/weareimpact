@@ -19,7 +19,9 @@
       "Bash(tee:*)",
       "Bash(git fetch:*)",
       "Bash(start http://localhost:5050)",
-      "Bash(echo:*)"
+      "Bash(echo:*)",
+      "Bash(curl:*)",
+      "Bash(node scripts/setup-kennisbank.js:*)"
     ]
   }
 }

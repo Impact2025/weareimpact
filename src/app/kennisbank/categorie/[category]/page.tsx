@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { sql } from '@/lib/db/neon';
-import { Calendar, Clock, ArrowRight, ArrowLeft, Brain, Target, Users, Blocks } from 'lucide-react';
+import { Calendar, Clock, ArrowRight, ArrowLeft, Brain, Target, Users, Blocks, DollarSign, Building2 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import type { Metadata } from 'next';
 
@@ -15,66 +15,90 @@ const categories: Record<string, {
   bgColor: string;
   textColor: string;
 }> = {
-  ai: {
+  'sociaal-ondernemen': {
+    label: 'Sociaal Ondernemen',
+    description: 'Van startup tot certificering - alles over sociaal ondernemerschap',
+    icon: Building2,
+    color: 'bg-orange-500',
+    bgColor: 'bg-orange-50',
+    textColor: 'text-orange-700',
+  },
+  'ai-tech': {
     label: 'AI & Technologie',
-    description: 'Praktische inzichten over kunstmatige intelligentie en technologie voor de sociale sector',
+    description: 'Praktische AI-toepassingen voor non-profits en welzijnsorganisaties',
     icon: Brain,
     color: 'bg-blue-500',
     bgColor: 'bg-blue-50',
     textColor: 'text-blue-700',
   },
-  impact: {
-    label: 'Impact & Welzijn',
-    description: 'Methoden om impact te meten en welzijn te verbeteren in organisaties',
-    icon: Target,
+  'vrijwilligers': {
+    label: 'Vrijwilligersmanagement',
+    description: 'Beleid, werving en behoud van vrijwilligers',
+    icon: Users,
     color: 'bg-green-500',
     bgColor: 'bg-green-50',
     textColor: 'text-green-700',
   },
-  strategie: {
-    label: 'Strategie & Methodiek',
-    description: 'Strategische frameworks en methodieken voor sociale innovatie',
-    icon: Users,
+  'impact-meten': {
+    label: 'Impact Meten',
+    description: 'Methoden en tools om je maatschappelijke impact te meten',
+    icon: Target,
     color: 'bg-purple-500',
     bgColor: 'bg-purple-50',
     textColor: 'text-purple-700',
   },
-  nieuws: {
-    label: 'Nieuws & Updates',
-    description: 'Het laatste nieuws over WeAreImpact, projecten en ontwikkelingen',
+  'subsidie-funding': {
+    label: 'Subsidie & Funding',
+    description: 'Fondsenwerving, subsidies en financiering',
+    icon: DollarSign,
+    color: 'bg-yellow-500',
+    bgColor: 'bg-yellow-50',
+    textColor: 'text-yellow-700',
+  },
+  'lego-serious-play': {
+    label: 'LEGO Serious Play',
+    description: 'Methode, toepassingen en facilitatie',
     icon: Blocks,
-    color: 'bg-orange-500',
-    bgColor: 'bg-orange-50',
-    textColor: 'text-orange-700',
+    color: 'bg-red-500',
+    bgColor: 'bg-red-50',
+    textColor: 'text-red-700',
   },
 };
 
-interface Post {
+const difficultyLabels: Record<string, string> = {
+  beginner: 'Beginner',
+  intermediate: 'Gemiddeld',
+  advanced: 'Gevorderd',
+};
+
+interface Article {
   id: string;
   title: string;
   slug: string;
   excerpt: string;
-  category: string;
+  category_slug: string;
   published_at: string;
   reading_time: number;
   tags: string[];
+  difficulty: string;
+  featured_image: string | null;
 }
 
 interface Props {
   params: Promise<{ category: string }>;
 }
 
-async function getPostsByCategory(category: string): Promise<Post[]> {
+async function getArticlesByCategory(category: string): Promise<Article[]> {
   try {
-    const posts = await sql`
-      SELECT id, title, slug, excerpt, category, published_at, reading_time, tags
-      FROM posts
-      WHERE status = 'published' AND category = ${category}
+    const articles = await sql`
+      SELECT id, title, slug, excerpt, category_slug, published_at, reading_time, tags, difficulty, featured_image
+      FROM kb_articles
+      WHERE status = 'published' AND category_slug = ${category}
       ORDER BY published_at DESC NULLS LAST
     `;
-    return posts as Post[];
+    return articles as Article[];
   } catch (error) {
-    console.error('Error fetching posts:', error);
+    console.error('Error fetching articles:', error);
     return [];
   }
 }
@@ -88,7 +112,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 
   return {
-    title: cat.label,
+    title: `${cat.label} - Kennisbank`,
     description: cat.description,
   };
 }
@@ -101,7 +125,7 @@ export default async function CategoryPage({ params }: Props) {
     notFound();
   }
 
-  const posts = await getPostsByCategory(category);
+  const articles = await getArticlesByCategory(category);
   const Icon = cat.icon;
 
   return (
@@ -130,54 +154,65 @@ export default async function CategoryPage({ params }: Props) {
                 {cat.description}
               </p>
               <p className="text-slate-500 mt-4">
-                {posts.length} {posts.length === 1 ? 'artikel' : 'artikelen'}
+                {articles.length} {articles.length === 1 ? 'artikel' : 'artikelen'}
               </p>
             </div>
           </div>
         </div>
 
-        {/* Posts */}
-        {posts.length > 0 ? (
+        {/* Articles */}
+        {articles.length > 0 ? (
           <div className="grid gap-6 md:grid-cols-2">
-            {posts.map((post) => (
+            {articles.map((article) => (
               <Link
-                key={post.id}
-                href={`/kennisbank/${post.slug}`}
+                key={article.id}
+                href={`/kennisbank/${article.slug}`}
                 className="group bg-white rounded-2xl border border-slate-100 overflow-hidden hover:shadow-xl hover:border-orange-200 transition-all"
               >
-                {/* Cover Placeholder */}
+                {/* Cover */}
                 <div className="aspect-video bg-gradient-to-br from-slate-100 to-slate-200 relative">
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <span className="text-5xl font-bold text-slate-300">
-                      {post.title[0]}
-                    </span>
-                  </div>
+                  {article.featured_image ? (
+                    <img
+                      src={article.featured_image}
+                      alt={article.title}
+                      className="absolute inset-0 w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <span className="text-5xl font-bold text-slate-300">
+                        {article.title[0]}
+                      </span>
+                    </div>
+                  )}
                 </div>
 
                 <div className="p-6">
-                  <div className="flex items-center gap-3 mb-3">
+                  <div className="flex items-center gap-3 mb-3 flex-wrap">
                     <Badge className={`${cat.bgColor} ${cat.textColor}`}>
                       {cat.label}
                     </Badge>
+                    <Badge variant="outline" className="text-xs">
+                      {difficultyLabels[article.difficulty]}
+                    </Badge>
                     <div className="flex items-center gap-1 text-xs text-slate-400">
                       <Clock size={12} />
-                      {post.reading_time} min
+                      {article.reading_time} min
                     </div>
                   </div>
 
                   <h2 className="text-xl font-bold text-slate-900 mb-2 group-hover:text-orange-600 transition-colors">
-                    {post.title}
+                    {article.title}
                   </h2>
 
                   <p className="text-slate-600 text-sm mb-4 line-clamp-2">
-                    {post.excerpt}
+                    {article.excerpt}
                   </p>
 
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-1 text-xs text-slate-400">
                       <Calendar size={12} />
-                      {post.published_at
-                        ? new Date(post.published_at).toLocaleDateString('nl-NL', {
+                      {article.published_at
+                        ? new Date(article.published_at).toLocaleDateString('nl-NL', {
                             day: 'numeric',
                             month: 'long',
                             year: 'numeric',
@@ -190,9 +225,9 @@ export default async function CategoryPage({ params }: Props) {
                   </div>
 
                   {/* Tags */}
-                  {post.tags && post.tags.length > 0 && (
+                  {article.tags && article.tags.length > 0 && (
                     <div className="flex flex-wrap gap-1 mt-4 pt-4 border-t border-slate-100">
-                      {post.tags.slice(0, 3).map((tag) => (
+                      {article.tags.slice(0, 3).map((tag) => (
                         <span
                           key={tag}
                           className="px-2 py-0.5 bg-slate-100 text-slate-500 text-xs rounded"
