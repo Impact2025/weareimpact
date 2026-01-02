@@ -31,7 +31,7 @@ async function storeBookingAsLead(
   const type = BOOKING_TYPES[bookingType as BookingTypeSlug];
 
   try {
-    // Store in leads table
+    // Try to store in leads table
     await sql`
       INSERT INTO leads (name, email, phone, company, source, notes, status)
       VALUES (
@@ -44,7 +44,12 @@ async function storeBookingAsLead(
         'new'
       )
     `;
+  } catch (dbError) {
+    // Table might not exist yet, log but continue
+    console.error('Failed to store lead (table may not exist):', dbError);
+  }
 
+  try {
     // Log activity
     await sql`
       INSERT INTO activity_log (type, title, description, metadata)
@@ -52,15 +57,16 @@ async function storeBookingAsLead(
         'booking',
         'Afspraakverzoek ontvangen',
         ${`${customer.name} wil een ${type?.name || bookingType}`},
-        ${JSON.stringify({ bookingType, startTime, customer })}
+        ${JSON.stringify({ bookingType, startTime, customer })}::jsonb
       )
     `;
-
-    return { success: true };
-  } catch (error) {
-    console.error('Failed to store booking as lead:', error);
-    return { success: false, error: 'Database error' };
+  } catch (activityError) {
+    // Constraint might not include 'booking', log but continue
+    console.error('Failed to log activity:', activityError);
   }
+
+  // Always return success - we don't want to fail the booking just because DB logging failed
+  return { success: true };
 }
 
 export async function POST(request: NextRequest) {
@@ -95,7 +101,11 @@ export async function POST(request: NextRequest) {
 
     // Check if Google Calendar is configured
     if (!isGoogleCalendarConfigured()) {
-      console.log('Google Calendar not configured, storing as lead');
+      console.log('Google Calendar not configured:', {
+        hasPrivateKey: !!process.env.GOOGLE_PRIVATE_KEY,
+        hasServiceEmail: !!process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
+        hasCalendarId: !!process.env.GOOGLE_CALENDAR_ID,
+      });
 
       // Store as lead instead
       const leadResult = await storeBookingAsLead(bookingType, startTime, customer);

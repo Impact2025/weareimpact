@@ -276,8 +276,18 @@ Geboekt via weareimpact.nl
         meetLink: event.data.hangoutLink || undefined,
       },
     };
-  } catch (error) {
-    console.error('Error creating booking:', error);
-    return { success: false, error: 'Failed to create booking' };
+  } catch (error: unknown) {
+    const err = error as { message?: string; code?: number; errors?: Array<{ message: string }> };
+    console.error('Error creating booking:', {
+      message: err?.message,
+      code: err?.code,
+      errors: err?.errors,
+      calendarId,
+      startTime: startTime.toISOString(),
+    });
+    return {
+      success: false,
+      error: err?.message || 'Failed to create booking'
+    };
   }
 }
