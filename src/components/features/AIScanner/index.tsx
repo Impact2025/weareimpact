@@ -1,7 +1,17 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Sparkles, ArrowRight, RefreshCw, CheckCircle, Calendar, ArrowLeft, Building2, Heart, Landmark, Briefcase, Users, Cpu } from 'lucide-react';
+import {
+  Sparkles, ArrowRight, RefreshCw, CheckCircle, Calendar, ArrowLeft,
+  Heart, Landmark, Briefcase, Users, Cpu,
+  // Challenge icons
+  ClipboardList, Coins, Flame, UserCheck,
+  MessageSquare, PieChart, Layers, GraduationCap,
+  AlertTriangle, Wallet, RotateCcw, Target,
+  Theater, Dices, Clock, Handshake,
+  // AI maturity icons
+  Sprout, FlaskConical, Rocket
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
@@ -33,25 +43,25 @@ const SECTOR_CONFIG: Record<string, SectorConfig> = {
         label: 'Administratiedruk & Regels',
         value: 'administratie',
         context: 'Meer tijd kwijt aan papierwerk en verantwoording dan aan cliënten of innovatie.',
-        icon: <span className="text-lg">📋</span>,
+        icon: <ClipboardList size={20} className="text-rose-400" />,
       },
       {
         label: 'Subsidies & Fondsenwerving',
         value: 'subsidies',
         context: 'De ambities zijn er, maar aanvragen schrijven en middelen werven vreet tijd.',
-        icon: <span className="text-lg">💰</span>,
+        icon: <Coins size={20} className="text-rose-400" />,
       },
       {
         label: 'Waan van de dag & Roosters',
         value: 'roosters',
         context: 'Van crisis naar crisis. Geen ruimte om strategisch vooruit te kijken.',
-        icon: <span className="text-lg">🔥</span>,
+        icon: <Flame size={20} className="text-rose-400" />,
       },
       {
         label: 'Vrijwilligers & Personeelsbehoud',
         value: 'personeel',
         context: 'Mensen vinden, binden en boeien — betaald én onbetaald — is een dagtaak.',
-        icon: <span className="text-lg">👥</span>,
+        icon: <UserCheck size={20} className="text-rose-400" />,
       },
     ],
   },
@@ -65,25 +75,25 @@ const SECTOR_CONFIG: Record<string, SectorConfig> = {
         label: 'Vergadercultuur & Bureaucratie',
         value: 'bureaucratie',
         context: 'Te veel overleg, te weinig uitvoering. Besluitvorming duurt eindeloos.',
-        icon: <span className="text-lg">🗣️</span>,
+        icon: <MessageSquare size={20} className="text-blue-400" />,
       },
       {
         label: 'Begrotingscycli & Verantwoording',
         value: 'begroting',
         context: 'Jaarlijks vechten om budget terwijl de wereld om je heen verandert.',
-        icon: <span className="text-lg">📊</span>,
+        icon: <PieChart size={20} className="text-blue-400" />,
       },
       {
         label: 'Legacy-systemen & Eilandjes',
         value: 'legacy',
         context: 'Afdelingen die niet samenwerken, systemen die niet praten.',
-        icon: <span className="text-lg">🏝️</span>,
+        icon: <Layers size={20} className="text-blue-400" />,
       },
       {
         label: 'Kennisoverdracht & Vergrijzing',
         value: 'vergrijzing',
         context: 'Ervaren mensen lopen de deur uit, kennis verdwijnt mee.',
-        icon: <span className="text-lg">🎓</span>,
+        icon: <GraduationCap size={20} className="text-blue-400" />,
       },
     ],
   },
@@ -97,25 +107,25 @@ const SECTOR_CONFIG: Record<string, SectorConfig> = {
         label: 'Operationele brandjes',
         value: 'brandjes',
         context: 'Hele dag bezig met "vandaag", geen tijd voor groei en innovatie.',
-        icon: <span className="text-lg">🧯</span>,
+        icon: <AlertTriangle size={20} className="text-emerald-400" />,
       },
       {
         label: 'Cashflow & Investeringsruimte',
         value: 'cashflow',
         context: 'Je wílt investeren in verbetering, maar het geld zit vast in de operatie.',
-        icon: <span className="text-lg">💸</span>,
+        icon: <Wallet size={20} className="text-emerald-400" />,
       },
       {
         label: 'Handmatig werk & Inefficiëntie',
         value: 'handmatig',
         context: 'Dezelfde dingen steeds opnieuw doen. Copy-paste is je tweede natuur.',
-        icon: <span className="text-lg">🔄</span>,
+        icon: <RotateCcw size={20} className="text-emerald-400" />,
       },
       {
         label: 'Goed personeel vinden',
         value: 'personeel',
         context: 'Het juiste talent aantrekken en behouden is een constante strijd.',
-        icon: <span className="text-lg">🎯</span>,
+        icon: <Target size={20} className="text-emerald-400" />,
       },
     ],
   },
@@ -129,25 +139,25 @@ const SECTOR_CONFIG: Record<string, SectorConfig> = {
         label: 'Alles zelf doen',
         value: 'capaciteit',
         context: 'Kleine bezetting, grote ambities. Je bent directeur, secretaris én conciërge.',
-        icon: <span className="text-lg">🎭</span>,
+        icon: <Theater size={20} className="text-purple-400" />,
       },
       {
         label: 'Subsidie-afhankelijkheid',
         value: 'subsidies',
         context: 'Elk jaar onzekerheid. Wordt de subsidie verlengd of niet?',
-        icon: <span className="text-lg">🎲</span>,
+        icon: <Dices size={20} className="text-purple-400" />,
       },
       {
         label: 'Te druk om te verbeteren',
         value: 'drukte',
         context: 'Je weet dat het slimmer kan, maar wanneer dan? De agenda is vol.',
-        icon: <span className="text-lg">⏰</span>,
+        icon: <Clock size={20} className="text-purple-400" />,
       },
       {
         label: 'Vrijwilligerscoördinatie',
         value: 'vrijwilligers',
         context: 'Mensen motiveren, roosteren en behouden — zonder salaris als lokmiddel.',
-        icon: <span className="text-lg">🤝</span>,
+        icon: <Handshake size={20} className="text-purple-400" />,
       },
     ],
   },
@@ -187,19 +197,19 @@ const AI_MATURITY: ScanOption[] = [
     label: 'Nog helemaal niet',
     value: 'nee',
     context: 'We hebben het er weleens over, maar concreet nog niets gedaan.',
-    icon: <span className="text-lg">🌱</span>,
+    icon: <Sprout size={20} className="text-orange-400" />,
   },
   {
     label: 'We experimenteren',
     value: 'beetje',
     context: 'Sommige collega\'s gebruiken ChatGPT, maar het is niet gestructureerd.',
-    icon: <span className="text-lg">🧪</span>,
+    icon: <FlaskConical size={20} className="text-orange-400" />,
   },
   {
     label: 'Actief mee bezig',
     value: 'ja',
     context: 'We hebben pilots gedraaid of tools geïmplementeerd.',
-    icon: <span className="text-lg">🚀</span>,
+    icon: <Rocket size={20} className="text-orange-400" />,
   },
 ];
 
