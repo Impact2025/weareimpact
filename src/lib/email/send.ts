@@ -1,7 +1,17 @@
 import { Resend } from 'resend';
 
-// Initialize Resend with API key
-const resend = new Resend(process.env.RESEND_API_KEY);
+// Lazy initialization to avoid build-time errors
+let resend: Resend | null = null;
+
+function getResendClient(): Resend | null {
+  if (!process.env.RESEND_API_KEY) {
+    return null;
+  }
+  if (!resend) {
+    resend = new Resend(process.env.RESEND_API_KEY);
+  }
+  return resend;
+}
 
 export interface SendEmailOptions {
   to: string | string[];
@@ -16,8 +26,9 @@ export async function sendEmail(options: SendEmailOptions): Promise<{
   messageId?: string;
   error?: string;
 }> {
-  // Check if Resend is configured
-  if (!process.env.RESEND_API_KEY) {
+  const client = getResendClient();
+
+  if (!client) {
     console.error('RESEND_API_KEY not configured');
     return {
       success: false,
@@ -29,7 +40,7 @@ export async function sendEmail(options: SendEmailOptions): Promise<{
   const fromEmail = process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev';
 
   try {
-    const result = await resend.emails.send({
+    const result = await client.emails.send({
       from: fromEmail,
       to: Array.isArray(options.to) ? options.to : [options.to],
       subject: options.subject,
