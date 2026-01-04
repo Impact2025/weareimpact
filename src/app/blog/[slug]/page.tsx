@@ -7,8 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ArticleJsonLd, BreadcrumbJsonLd } from '@/components/seo/JsonLd';
 import type { Metadata } from 'next';
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
+import parse from 'html-react-parser';
 
 export const dynamic = 'force-dynamic';
 
@@ -237,9 +236,7 @@ export default async function BlogPostPage({ params }: Props) {
                      prose-img:rounded-xl prose-pre:bg-slate-900
                      [&>*:first-child]:mt-0"
         >
-          <ReactMarkdown remarkPlugins={[remarkGfm]}>
-            {post.content}
-          </ReactMarkdown>
+          {parse(post.content)}
         </div>
 
         {/* Tags */}
