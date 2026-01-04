@@ -248,7 +248,15 @@ export default function EditBlogPostPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           id: postId,
-          ...formData,
+          title: formData.title,
+          slug: formData.slug,
+          excerpt: formData.excerpt,
+          content: formData.content,
+          category: formData.category,
+          coverImage: formData.coverImage,
+          status: formData.published ? 'published' : 'draft',
+          seoTitle: formData.seoTitle,
+          seoDescription: formData.seoDescription,
           tags: formData.tags.split(',').map(t => t.trim()).filter(Boolean),
         }),
       });
