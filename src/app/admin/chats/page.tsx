@@ -1,17 +1,20 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import {
   Search,
   MessageSquare,
   Clock,
   User,
   ChevronRight,
+  ChevronLeft,
   Download,
   Filter,
   Calendar,
   Bot,
   Trash2,
+  Loader2,
+  RefreshCw,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -19,7 +22,6 @@ import { Badge } from '@/components/ui/badge';
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
@@ -46,188 +48,144 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 
-// Types
 interface ChatMessage {
+  id: string;
   role: 'user' | 'assistant';
   content: string;
-  timestamp: string;
+  createdAt: string;
 }
 
 interface ChatSession {
   id: string;
   visitorId: string;
+  source: 'widget' | 'booking' | 'scan' | 'kennisbank';
+  status: 'active' | 'completed';
+  pageUrl?: string;
+  device?: string;
+  messageCount: number;
+  preview: string;
   startedAt: string;
   endedAt: string | null;
-  messageCount: number;
-  source: 'widget' | 'booking' | 'scan';
-  status: 'active' | 'completed';
-  preview: string;
-  messages: ChatMessage[];
-  metadata?: {
-    page?: string;
-    referrer?: string;
-    device?: string;
-  };
+  messages?: ChatMessage[];
 }
 
-// Mock data - will be replaced with Supabase queries
-const mockChats: ChatSession[] = [
-  {
-    id: 'chat-001',
-    visitorId: 'visitor-abc123',
-    startedAt: '2024-01-15T14:30:00Z',
-    endedAt: '2024-01-15T14:45:00Z',
-    messageCount: 8,
-    source: 'widget',
-    status: 'completed',
-    preview: 'Ik wil graag meer weten over LEGO Serious Play...',
-    messages: [
-      {
-        role: 'user',
-        content: 'Hallo, ik wil graag meer weten over LEGO Serious Play workshops',
-        timestamp: '2024-01-15T14:30:00Z',
-      },
-      {
-        role: 'assistant',
-        content: 'Welkom! Als Vincent\'s digitale tweeling help ik je graag verder. LEGO® Serious Play is een krachtige methodiek waarbij teams complexe vraagstukken verkennen door te bouwen met LEGO. Dit maakt abstracte ideeën tastbaar.',
-        timestamp: '2024-01-15T14:30:15Z',
-      },
-      {
-        role: 'user',
-        content: 'Wat kost zo\'n workshop?',
-        timestamp: '2024-01-15T14:32:00Z',
-      },
-      {
-        role: 'assistant',
-        content: 'De investering hangt af van de grootte van je team en de duur van de sessie. Voor een exacte offerte nodig ik je uit om contact op te nemen via v.munster@weareimpact.nl. Zo kunnen we bespreken wat bij jullie situatie past.',
-        timestamp: '2024-01-15T14:32:20Z',
-      },
-    ],
-    metadata: {
-      page: '/diensten',
-      device: 'desktop',
-    },
-  },
-  {
-    id: 'chat-002',
-    visitorId: 'visitor-def456',
-    startedAt: '2024-01-15T10:15:00Z',
-    endedAt: '2024-01-15T10:28:00Z',
-    messageCount: 12,
-    source: 'booking',
-    status: 'completed',
-    preview: 'Ik wil een strategiesessie inplannen...',
-    messages: [
-      {
-        role: 'user',
-        content: 'Ik wil een strategiesessie inplannen',
-        timestamp: '2024-01-15T10:15:00Z',
-      },
-      {
-        role: 'assistant',
-        content: 'Geweldig! Ik help je graag bij het inplannen van een strategiesessie met Vincent. Wat is de aanleiding voor deze sessie?',
-        timestamp: '2024-01-15T10:15:20Z',
-      },
-    ],
-    metadata: {
-      page: '/contact',
-      device: 'mobile',
-    },
-  },
-  {
-    id: 'chat-003',
-    visitorId: 'visitor-ghi789',
-    startedAt: '2024-01-14T16:45:00Z',
-    endedAt: null,
-    messageCount: 3,
-    source: 'widget',
-    status: 'active',
-    preview: 'Hoe kan AI helpen in de zorg?',
-    messages: [
-      {
-        role: 'user',
-        content: 'Hoe kan AI helpen in de zorg?',
-        timestamp: '2024-01-14T16:45:00Z',
-      },
-      {
-        role: 'assistant',
-        content: 'Goede vraag! AI kan in de zorg op veel manieren helpen: van administratieve taken automatiseren tot het ondersteunen van cliëntcontact. Het belangrijkste is dat we technologie inzetten als enabler voor menselijk contact, niet als vervanging.',
-        timestamp: '2024-01-14T16:45:30Z',
-      },
-    ],
-    metadata: {
-      page: '/',
-      device: 'tablet',
-    },
-  },
-  {
-    id: 'chat-004',
-    visitorId: 'visitor-jkl012',
-    startedAt: '2024-01-14T09:20:00Z',
-    endedAt: '2024-01-14T09:35:00Z',
-    messageCount: 6,
-    source: 'scan',
-    status: 'completed',
-    preview: 'Na de AI-scan wil ik graag vervolgvragen stellen...',
-    messages: [
-      {
-        role: 'user',
-        content: 'Na de AI-scan wil ik graag vervolgvragen stellen over de aanbevelingen',
-        timestamp: '2024-01-14T09:20:00Z',
-      },
-      {
-        role: 'assistant',
-        content: 'Natuurlijk! Ik heb je scan resultaten bekeken. Welke aanbeveling wil je verder bespreken?',
-        timestamp: '2024-01-14T09:20:25Z',
-      },
-    ],
-    metadata: {
-      page: '/ai-scanner',
-      device: 'desktop',
-    },
-  },
-];
+interface ChatStats {
+  total: number;
+  active: number;
+  today: number;
+  avgMessages: number;
+}
 
 const sourceColors: Record<string, string> = {
   widget: 'bg-blue-100 text-blue-700',
   booking: 'bg-green-100 text-green-700',
   scan: 'bg-orange-100 text-orange-700',
+  kennisbank: 'bg-purple-100 text-purple-700',
 };
 
 const sourceLabels: Record<string, string> = {
   widget: 'Chat Widget',
   booking: 'Boekingschat',
   scan: 'AI Scanner',
+  kennisbank: 'Kennisbank',
 };
+
+const ITEMS_PER_PAGE = 20;
 
 export default function AdminChatsPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [sourceFilter, setSourceFilter] = useState<string>('all');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [selectedChat, setSelectedChat] = useState<ChatSession | null>(null);
-  const [chats] = useState(mockChats);
+  const [chats, setChats] = useState<ChatSession[]>([]);
+  const [stats, setStats] = useState<ChatStats>({ total: 0, active: 0, today: 0, avgMessages: 0 });
+  const [loading, setLoading] = useState(true);
+  const [loadingChat, setLoadingChat] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [total, setTotal] = useState(0);
+  const [page, setPage] = useState(0);
+  const [deleteConfirm, setDeleteConfirm] = useState<ChatSession | null>(null);
+  const [deleting, setDeleting] = useState(false);
+
+  const fetchChats = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const params = new URLSearchParams({
+        limit: ITEMS_PER_PAGE.toString(),
+        offset: (page * ITEMS_PER_PAGE).toString(),
+      });
+      if (sourceFilter !== 'all') params.set('source', sourceFilter);
+      if (statusFilter !== 'all') params.set('status', statusFilter);
+
+      const res = await fetch(`/api/admin/chats?${params}`);
+      if (!res.ok) throw new Error('Failed to fetch');
+      const data = await res.json();
+      setChats(data.sessions || []);
+      setTotal(data.total || 0);
+      setStats(data.stats || { total: 0, active: 0, today: 0, avgMessages: 0 });
+    } catch (err) {
+      setError('Kon chats niet laden');
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  }, [page, sourceFilter, statusFilter]);
+
+  useEffect(() => {
+    fetchChats();
+  }, [fetchChats]);
+
+  const fetchChatDetails = async (chatId: string) => {
+    setLoadingChat(true);
+    try {
+      const res = await fetch(`/api/admin/chats?id=${chatId}`);
+      if (!res.ok) throw new Error('Failed to fetch');
+      const data = await res.json();
+      setSelectedChat(data.session);
+    } catch (err) {
+      console.error('Failed to fetch chat details:', err);
+    } finally {
+      setLoadingChat(false);
+    }
+  };
+
+  const deleteChat = async (chat: ChatSession) => {
+    setDeleting(true);
+    try {
+      const res = await fetch(`/api/admin/chats?id=${chat.id}`, {
+        method: 'DELETE',
+      });
+      if (res.ok) {
+        setChats(chats.filter((c) => c.id !== chat.id));
+        setSelectedChat(null);
+        setDeleteConfirm(null);
+        setTotal((t) => t - 1);
+      }
+    } catch (err) {
+      console.error('Failed to delete chat:', err);
+    } finally {
+      setDeleting(false);
+    }
+  };
 
   const filteredChats = chats.filter((chat) => {
     const matchesSearch =
-      chat.preview.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      chat.visitorId.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesSource = sourceFilter === 'all' || chat.source === sourceFilter;
-    const matchesStatus = statusFilter === 'all' || chat.status === statusFilter;
-    return matchesSearch && matchesSource && matchesStatus;
+      chat.preview?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      chat.visitorId?.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchesSearch;
   });
-
-  const stats = {
-    total: chats.length,
-    active: chats.filter((c) => c.status === 'active').length,
-    today: chats.filter((c) => {
-      const today = new Date().toDateString();
-      return new Date(c.startedAt).toDateString() === today;
-    }).length,
-    avgMessages: Math.round(
-      chats.reduce((acc, c) => acc + c.messageCount, 0) / chats.length
-    ),
-  };
 
   const formatTime = (dateString: string) => {
     const date = new Date(dateString);
@@ -264,6 +222,19 @@ export default function AdminChatsPage() {
     URL.revokeObjectURL(url);
   };
 
+  const totalPages = Math.ceil(total / ITEMS_PER_PAGE);
+
+  if (loading && chats.length === 0) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center">
+          <Loader2 size={40} className="animate-spin mx-auto text-orange-600 mb-4" />
+          <p className="text-slate-500">Chat logs laden...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-8">
       <div className="flex justify-between items-center">
@@ -273,10 +244,16 @@ export default function AdminChatsPage() {
             Bekijk en analyseer alle chatgesprekken
           </p>
         </div>
-        <Button onClick={exportChats} variant="outline">
-          <Download size={18} className="mr-2" />
-          Exporteer
-        </Button>
+        <div className="flex gap-2">
+          <Button onClick={fetchChats} variant="outline" size="sm" disabled={loading}>
+            <RefreshCw size={16} className={`mr-2 ${loading ? 'animate-spin' : ''}`} />
+            Vernieuwen
+          </Button>
+          <Button onClick={exportChats} variant="outline" disabled={chats.length === 0}>
+            <Download size={18} className="mr-2" />
+            Exporteer
+          </Button>
+        </div>
       </div>
 
       {/* Stats */}
@@ -323,6 +300,15 @@ export default function AdminChatsPage() {
         </Card>
       </div>
 
+      {error && (
+        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+          {error}
+          <Button onClick={fetchChats} variant="link" className="ml-2 text-red-700">
+            Opnieuw proberen
+          </Button>
+        </div>
+      )}
+
       {/* Filters & Table */}
       <Card>
         <CardHeader>
@@ -340,7 +326,7 @@ export default function AdminChatsPage() {
               />
             </div>
             <div className="flex gap-2">
-              <Select value={sourceFilter} onValueChange={setSourceFilter}>
+              <Select value={sourceFilter} onValueChange={(v) => { setSourceFilter(v); setPage(0); }}>
                 <SelectTrigger className="w-[160px]">
                   <Filter size={16} className="mr-2" />
                   <SelectValue placeholder="Bron" />
@@ -350,9 +336,10 @@ export default function AdminChatsPage() {
                   <SelectItem value="widget">Chat Widget</SelectItem>
                   <SelectItem value="booking">Boekingschat</SelectItem>
                   <SelectItem value="scan">AI Scanner</SelectItem>
+                  <SelectItem value="kennisbank">Kennisbank</SelectItem>
                 </SelectContent>
               </Select>
-              <Select value={statusFilter} onValueChange={setStatusFilter}>
+              <Select value={statusFilter} onValueChange={(v) => { setStatusFilter(v); setPage(0); }}>
                 <SelectTrigger className="w-[140px]">
                   <SelectValue placeholder="Status" />
                 </SelectTrigger>
@@ -383,7 +370,7 @@ export default function AdminChatsPage() {
                 <TableRow
                   key={chat.id}
                   className="cursor-pointer hover:bg-slate-50"
-                  onClick={() => setSelectedChat(chat)}
+                  onClick={() => fetchChatDetails(chat.id)}
                 >
                   <TableCell>
                     <div className="flex items-start gap-3">
@@ -392,17 +379,17 @@ export default function AdminChatsPage() {
                       </div>
                       <div>
                         <p className="font-medium text-slate-900 line-clamp-1">
-                          {chat.preview}
+                          {chat.preview || 'Geen preview'}
                         </p>
                         <p className="text-sm text-slate-500">
-                          {chat.visitorId.slice(0, 12)}...
+                          {chat.visitorId?.slice(0, 12)}...
                         </p>
                       </div>
                     </div>
                   </TableCell>
                   <TableCell>
-                    <Badge className={sourceColors[chat.source]}>
-                      {sourceLabels[chat.source]}
+                    <Badge className={sourceColors[chat.source] || 'bg-gray-100 text-gray-700'}>
+                      {sourceLabels[chat.source] || chat.source}
                     </Badge>
                   </TableCell>
                   <TableCell>
@@ -443,10 +430,39 @@ export default function AdminChatsPage() {
             </TableBody>
           </Table>
 
-          {filteredChats.length === 0 && (
+          {filteredChats.length === 0 && !loading && (
             <div className="text-center py-12 text-slate-500">
               <MessageSquare size={48} className="mx-auto mb-4 opacity-50" />
               <p>Geen gesprekken gevonden</p>
+            </div>
+          )}
+
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="flex items-center justify-between mt-4 pt-4 border-t">
+              <p className="text-sm text-slate-500">
+                Pagina {page + 1} van {totalPages} ({total} gesprekken)
+              </p>
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setPage((p) => Math.max(0, p - 1))}
+                  disabled={page === 0 || loading}
+                >
+                  <ChevronLeft size={16} className="mr-1" />
+                  Vorige
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
+                  disabled={page >= totalPages - 1 || loading}
+                >
+                  Volgende
+                  <ChevronRight size={16} className="ml-1" />
+                </Button>
+              </div>
             </div>
           )}
         </CardContent>
@@ -463,15 +479,15 @@ export default function AdminChatsPage() {
             <DialogDescription>
               {selectedChat && (
                 <div className="flex flex-wrap gap-2 mt-2">
-                  <Badge className={sourceColors[selectedChat.source]}>
-                    {sourceLabels[selectedChat.source]}
+                  <Badge className={sourceColors[selectedChat.source] || 'bg-gray-100 text-gray-700'}>
+                    {sourceLabels[selectedChat.source] || selectedChat.source}
                   </Badge>
                   <Badge variant="outline">
                     {formatDate(selectedChat.startedAt)} - {formatTime(selectedChat.startedAt)}
                   </Badge>
-                  {selectedChat.metadata?.page && (
+                  {selectedChat.pageUrl && (
                     <Badge variant="outline">
-                      Pagina: {selectedChat.metadata.page}
+                      Pagina: {selectedChat.pageUrl}
                     </Badge>
                   )}
                 </div>
@@ -479,56 +495,66 @@ export default function AdminChatsPage() {
             </DialogDescription>
           </DialogHeader>
 
-          <ScrollArea className="h-[400px] pr-4">
-            <div className="space-y-4">
-              {selectedChat?.messages.map((message, idx) => (
-                <div
-                  key={idx}
-                  className={`flex gap-3 ${
-                    message.role === 'assistant' ? '' : 'flex-row-reverse'
-                  }`}
-                >
+          {loadingChat ? (
+            <div className="flex items-center justify-center py-12">
+              <Loader2 size={32} className="animate-spin text-orange-600" />
+            </div>
+          ) : (
+            <ScrollArea className="h-[400px] pr-4">
+              <div className="space-y-4">
+                {selectedChat?.messages?.map((message) => (
                   <div
-                    className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${
-                      message.role === 'assistant'
-                        ? 'bg-orange-100'
-                        : 'bg-slate-100'
-                    }`}
-                  >
-                    {message.role === 'assistant' ? (
-                      <Bot size={16} className="text-orange-600" />
-                    ) : (
-                      <User size={16} className="text-slate-600" />
-                    )}
-                  </div>
-                  <div
-                    className={`flex-1 max-w-[80%] ${
-                      message.role === 'assistant' ? '' : 'text-right'
+                    key={message.id}
+                    className={`flex gap-3 ${
+                      message.role === 'assistant' ? '' : 'flex-row-reverse'
                     }`}
                   >
                     <div
-                      className={`inline-block p-3 rounded-lg ${
+                      className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${
                         message.role === 'assistant'
-                          ? 'bg-slate-100 text-slate-900'
-                          : 'bg-orange-600 text-white'
+                          ? 'bg-orange-100'
+                          : 'bg-slate-100'
                       }`}
                     >
-                      <p className="text-sm">{message.content}</p>
+                      {message.role === 'assistant' ? (
+                        <Bot size={16} className="text-orange-600" />
+                      ) : (
+                        <User size={16} className="text-slate-600" />
+                      )}
                     </div>
-                    <p className="text-xs text-slate-400 mt-1">
-                      {formatTime(message.timestamp)}
-                    </p>
+                    <div
+                      className={`flex-1 max-w-[80%] ${
+                        message.role === 'assistant' ? '' : 'text-right'
+                      }`}
+                    >
+                      <div
+                        className={`inline-block p-3 rounded-lg ${
+                          message.role === 'assistant'
+                            ? 'bg-slate-100 text-slate-900'
+                            : 'bg-orange-600 text-white'
+                        }`}
+                      >
+                        <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+                      </div>
+                      <p className="text-xs text-slate-400 mt-1">
+                        {formatTime(message.createdAt)}
+                      </p>
+                    </div>
                   </div>
-                </div>
-              ))}
-            </div>
-          </ScrollArea>
+                ))}
+                {(!selectedChat?.messages || selectedChat.messages.length === 0) && (
+                  <p className="text-center text-slate-500 py-8">Geen berichten gevonden</p>
+                )}
+              </div>
+            </ScrollArea>
+          )}
 
           <div className="flex justify-between items-center pt-4 border-t">
             <Button
               variant="outline"
               size="sm"
               className="text-red-600 hover:text-red-700"
+              onClick={() => selectedChat && setDeleteConfirm(selectedChat)}
             >
               <Trash2 size={14} className="mr-2" />
               Verwijderen
@@ -555,6 +581,34 @@ export default function AdminChatsPage() {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Delete Confirmation */}
+      <AlertDialog open={!!deleteConfirm} onOpenChange={() => setDeleteConfirm(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Chat verwijderen?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Weet je zeker dat je dit gesprek wilt verwijderen?
+              Alle berichten worden ook verwijderd. Deze actie kan niet ongedaan worden gemaakt.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Annuleren</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => deleteConfirm && deleteChat(deleteConfirm)}
+              className="bg-red-600 hover:bg-red-700"
+              disabled={deleting}
+            >
+              {deleting ? (
+                <Loader2 size={14} className="mr-2 animate-spin" />
+              ) : (
+                <Trash2 size={14} className="mr-2" />
+              )}
+              Verwijderen
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

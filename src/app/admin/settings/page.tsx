@@ -1,12 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
-  Settings,
   User,
   Bell,
   Shield,
-  Palette,
   Globe,
   Mail,
   Key,
@@ -18,6 +16,8 @@ import {
   ExternalLink,
   Copy,
   Check,
+  Loader2,
+  RefreshCw,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -41,18 +41,39 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Separator } from '@/components/ui/separator';
 import { Textarea } from '@/components/ui/textarea';
 
+interface Settings {
+  profile: {
+    name: string;
+    email: string;
+  };
+  notifications: {
+    emailNewLead: boolean;
+    emailNewChat: boolean;
+    emailWeeklyReport: boolean;
+    browserNotifications: boolean;
+  };
+  ai: {
+    chatEnabled: boolean;
+    scannerEnabled: boolean;
+    bookingEnabled: boolean;
+    maxTokens: string;
+    temperature: string;
+  };
+}
+
 export default function AdminSettingsPage() {
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState<string | null>(null);
 
-  // Profile settings
   const [profile, setProfile] = useState({
     name: 'Vincent van Munster',
     email: 'v.munster@weareimpact.nl',
     role: 'Administrator',
   });
 
-  // Notification settings
   const [notifications, setNotifications] = useState({
     emailNewLead: true,
     emailNewChat: false,
@@ -60,7 +81,6 @@ export default function AdminSettingsPage() {
     browserNotifications: true,
   });
 
-  // AI settings
   const [aiSettings, setAiSettings] = useState({
     chatEnabled: true,
     scannerEnabled: true,
@@ -71,16 +91,78 @@ export default function AdminSettingsPage() {
       'Je bent Vincent van Munster\'s digitale tweeling - een AI-assistent die antwoordt vanuit Vincent\'s perspectief en expertise...',
   });
 
-  // Integration settings
-  const [integrations, setIntegrations] = useState({
+  const [integrations] = useState({
     googleCalendarConnected: true,
     supabaseConnected: true,
     openrouterConnected: true,
   });
 
-  const handleSave = () => {
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
+  useEffect(() => {
+    loadSettings();
+  }, []);
+
+  const loadSettings = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await fetch('/api/admin/settings');
+      if (res.ok) {
+        const data: Settings = await res.json();
+        if (data.profile) {
+          setProfile((prev) => ({ ...prev, ...data.profile }));
+        }
+        if (data.notifications) {
+          setNotifications((prev) => ({ ...prev, ...data.notifications }));
+        }
+        if (data.ai) {
+          setAiSettings((prev) => ({ ...prev, ...data.ai }));
+        }
+      }
+    } catch (err) {
+      console.error('Failed to load settings:', err);
+      setError('Kon instellingen niet laden');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSave = async () => {
+    setSaving(true);
+    setSaved(false);
+    setError(null);
+
+    try {
+      const res = await fetch('/api/admin/settings', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          profile: {
+            name: profile.name,
+            email: profile.email,
+          },
+          notifications,
+          ai: {
+            chatEnabled: aiSettings.chatEnabled,
+            scannerEnabled: aiSettings.scannerEnabled,
+            bookingEnabled: aiSettings.bookingEnabled,
+            maxTokens: aiSettings.maxTokens,
+            temperature: aiSettings.temperature,
+          },
+        }),
+      });
+
+      if (res.ok) {
+        setSaved(true);
+        setTimeout(() => setSaved(false), 2000);
+      } else {
+        throw new Error('Failed to save');
+      }
+    } catch (err) {
+      console.error('Failed to save settings:', err);
+      setError('Kon instellingen niet opslaan');
+    } finally {
+      setSaving(false);
+    }
   };
 
   const copyToClipboard = (text: string, key: string) => {
@@ -88,6 +170,17 @@ export default function AdminSettingsPage() {
     setCopied(key);
     setTimeout(() => setCopied(null), 2000);
   };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center">
+          <Loader2 size={40} className="animate-spin mx-auto text-orange-600 mb-4" />
+          <p className="text-slate-500">Instellingen laden...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8">
@@ -98,23 +191,33 @@ export default function AdminSettingsPage() {
             Beheer je account en website instellingen
           </p>
         </div>
-        <Button
-          onClick={handleSave}
-          className="bg-orange-600 hover:bg-orange-700"
-        >
-          {saved ? (
-            <>
+        <div className="flex gap-2">
+          <Button onClick={loadSettings} variant="outline" disabled={loading}>
+            <RefreshCw size={16} className={loading ? 'animate-spin mr-2' : 'mr-2'} />
+            Vernieuwen
+          </Button>
+          <Button
+            onClick={handleSave}
+            className="bg-orange-600 hover:bg-orange-700"
+            disabled={saving}
+          >
+            {saving ? (
+              <Loader2 size={18} className="mr-2 animate-spin" />
+            ) : saved ? (
               <Check size={18} className="mr-2" />
-              Opgeslagen!
-            </>
-          ) : (
-            <>
+            ) : (
               <Save size={18} className="mr-2" />
-              Opslaan
-            </>
-          )}
-        </Button>
+            )}
+            {saved ? 'Opgeslagen!' : 'Opslaan'}
+          </Button>
+        </div>
       </div>
+
+      {error && (
+        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+          {error}
+        </div>
+      )}
 
       <Tabs defaultValue="profile" className="space-y-6">
         <TabsList className="grid w-full grid-cols-4 lg:w-[600px]">
@@ -187,11 +290,11 @@ export default function AdminSettingsPage() {
                       <div>
                         <p className="font-medium">Wachtwoord wijzigen</p>
                         <p className="text-sm text-slate-500">
-                          Laatst gewijzigd: 30 dagen geleden
+                          Beheer via environment variables
                         </p>
                       </div>
                     </div>
-                    <Button variant="outline" size="sm">
+                    <Button variant="outline" size="sm" disabled>
                       Wijzigen
                     </Button>
                   </div>
@@ -201,11 +304,11 @@ export default function AdminSettingsPage() {
                       <div>
                         <p className="font-medium">Twee-factor authenticatie</p>
                         <p className="text-sm text-slate-500">
-                          Extra beveiliging voor je account
+                          Extra beveiliging (binnenkort)
                         </p>
                       </div>
                     </div>
-                    <Button variant="outline" size="sm">
+                    <Button variant="outline" size="sm" disabled>
                       Inschakelen
                     </Button>
                   </div>
@@ -457,8 +560,9 @@ export default function AdminSettingsPage() {
                   readOnly
                   className="min-h-[100px] bg-slate-50"
                 />
-                <p className="text-xs text-slate-500 mt-2">
-                  Dit is een preview van de system prompt. Wijzig in{' '}
+                <p className="text-xs text-slate-500 mt-2 flex items-center gap-1">
+                  <ExternalLink size={12} />
+                  System prompt wijzigen in{' '}
                   <code className="bg-slate-100 px-1 rounded">
                     /api/chat/route.ts
                   </code>

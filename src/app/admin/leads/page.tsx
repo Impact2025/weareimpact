@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import {
   Search,
   Brain,
@@ -9,6 +9,7 @@ import {
   Building2,
   Calendar,
   ChevronRight,
+  ChevronLeft,
   Download,
   Filter,
   Star,
@@ -19,6 +20,8 @@ import {
   Users,
   Target,
   BarChart3,
+  Loader2,
+  RefreshCw,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -26,7 +29,6 @@ import { Badge } from '@/components/ui/badge';
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
@@ -54,117 +56,34 @@ import {
 } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 
-// Types
 interface ScanLead {
   id: string;
   email: string;
   name?: string;
   organization?: string;
   phone?: string;
-  createdAt: string;
-  starred: boolean;
-  status: 'new' | 'contacted' | 'qualified' | 'converted';
-  scanData: {
-    sector: string;
-    challenge: string;
-    aiUsage: string;
-  };
+  sector: string;
+  challenge: string;
+  aiUsage: string;
   aiAdvice: string;
   source: string;
+  status: 'new' | 'contacted' | 'qualified' | 'converted';
+  starred: boolean;
   notes?: string;
+  createdAt: string;
+  updatedAt?: string;
 }
-
-// Mock data
-const mockLeads: ScanLead[] = [
-  {
-    id: 'lead-001',
-    email: 'jan.devries@zorginstelling.nl',
-    name: 'Jan de Vries',
-    organization: 'Zorginstelling De Zonnewijzer',
-    phone: '06-12345678',
-    createdAt: '2024-01-15T14:30:00Z',
-    starred: true,
-    status: 'qualified',
-    scanData: {
-      sector: 'zorg',
-      challenge: 'tijd',
-      aiUsage: 'beetje',
-    },
-    aiAdvice:
-      'Op basis van je antwoorden zie ik kansen voor AI-gedreven automatisering van administratieve taken. Met beperkte AI-ervaring adviseer ik te starten met een pilot voor geautomatiseerde rapportages. Dit kan direct 20% tijdwinst opleveren voor je medewerkers.',
-    source: '/ai-scanner',
-  },
-  {
-    id: 'lead-002',
-    email: 'lisa.bakker@gemeente.nl',
-    name: 'Lisa Bakker',
-    organization: 'Gemeente Westerveld',
-    createdAt: '2024-01-15T10:15:00Z',
-    starred: false,
-    status: 'new',
-    scanData: {
-      sector: 'overheid',
-      challenge: 'tech',
-      aiUsage: 'nee',
-    },
-    aiAdvice:
-      'Als overheidsorganisatie met verouderde systemen en nog geen AI-ervaring, adviseer ik te beginnen met een inventarisatie van processen die veel handmatige data-invoer vereisen. Een LEGO® Serious Play sessie kan helpen om met je team de digitale transformatie te visualiseren.',
-    source: '/ai-scanner',
-  },
-  {
-    id: 'lead-003',
-    email: 'peter.jansen@mkbbedrijf.nl',
-    name: 'Peter Jansen',
-    organization: 'TechStart BV',
-    phone: '06-87654321',
-    createdAt: '2024-01-14T16:45:00Z',
-    starred: true,
-    status: 'contacted',
-    scanData: {
-      sector: 'mkb',
-      challenge: 'team',
-      aiUsage: 'ja',
-    },
-    aiAdvice:
-      'Als MKB-bedrijf dat al actief AI gebruikt, ligt de uitdaging vooral in teamontwikkeling. Ik adviseer een workshop waarin je team leert AI-tools effectief in te zetten. Dit vergroot adoptie en voorkomt eilandjes van kennis.',
-    source: '/ai-scanner',
-  },
-  {
-    id: 'lead-004',
-    email: 'anna.smit@stichting.nl',
-    name: 'Anna Smit',
-    organization: 'Stichting Wijkwerk',
-    createdAt: '2024-01-14T09:20:00Z',
-    starred: false,
-    status: 'converted',
-    scanData: {
-      sector: 'nonprofit',
-      challenge: 'geld',
-      aiUsage: 'beetje',
-    },
-    aiAdvice:
-      'Voor non-profits met beperkt budget zijn er slimme manieren om AI in te zetten. Denk aan gratis tools voor vrijwilligerscoördinatie. DAAR - een van Vincent\'s ventures - kan hier perfect bij helpen met het meetbaar maken van impact.',
-    source: '/ai-scanner',
-  },
-  {
-    id: 'lead-005',
-    email: 'mark.visser@zorginnovatie.nl',
-    name: 'Mark Visser',
-    organization: 'ZorgInnovatie Lab',
-    createdAt: '2024-01-13T11:00:00Z',
-    starred: false,
-    status: 'new',
-    scanData: {
-      sector: 'zorg',
-      challenge: 'tech',
-      aiUsage: 'ja',
-    },
-    aiAdvice:
-      'Als innovatielab in de zorg met al actieve AI-integratie, adviseer ik te focussen op privacy-first oplossingen. Vincent\'s ervaring met Bewaardvoorjou kan waardevol zijn voor het ethisch implementeren van AI in cliëntcontact.',
-    source: '/ai-scanner',
-  },
-];
 
 const sectorLabels: Record<string, string> = {
   zorg: 'Zorg & Welzijn',
@@ -200,45 +119,127 @@ const statusLabels: Record<string, string> = {
   converted: 'Klant',
 };
 
+const ITEMS_PER_PAGE = 20;
+
 export default function AdminLeadsPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [sectorFilter, setSectorFilter] = useState<string>('all');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [selectedLead, setSelectedLead] = useState<ScanLead | null>(null);
-  const [leads, setLeads] = useState(mockLeads);
+  const [leads, setLeads] = useState<ScanLead[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [total, setTotal] = useState(0);
+  const [page, setPage] = useState(0);
+  const [deleteConfirm, setDeleteConfirm] = useState<ScanLead | null>(null);
+  const [updating, setUpdating] = useState<string | null>(null);
 
-  const filteredLeads = leads.filter((lead) => {
-    const matchesSearch =
-      lead.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      lead.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      lead.organization?.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesSector =
-      sectorFilter === 'all' || lead.scanData.sector === sectorFilter;
-    const matchesStatus = statusFilter === 'all' || lead.status === statusFilter;
-    return matchesSearch && matchesSector && matchesStatus;
-  });
+  const fetchLeads = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const params = new URLSearchParams({
+        limit: ITEMS_PER_PAGE.toString(),
+        offset: (page * ITEMS_PER_PAGE).toString(),
+      });
+      if (searchQuery) params.set('search', searchQuery);
+      if (sectorFilter !== 'all') params.set('sector', sectorFilter);
+      if (statusFilter !== 'all') params.set('status', statusFilter);
+
+      const res = await fetch(`/api/admin/leads?${params}`);
+      if (!res.ok) throw new Error('Failed to fetch');
+      const data = await res.json();
+      setLeads(data.leads || []);
+      setTotal(data.total || 0);
+    } catch (err) {
+      setError('Kon leads niet laden');
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  }, [page, searchQuery, sectorFilter, statusFilter]);
+
+  useEffect(() => {
+    fetchLeads();
+  }, [fetchLeads]);
+
+  // Debounce search
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setPage(0);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
 
   const stats = {
-    total: leads.length,
+    total: total,
     new: leads.filter((l) => l.status === 'new').length,
     qualified: leads.filter((l) => l.status === 'qualified').length,
     converted: leads.filter((l) => l.status === 'converted').length,
   };
 
-  const toggleStar = (id: string) => {
-    setLeads(
-      leads.map((lead) =>
-        lead.id === id ? { ...lead, starred: !lead.starred } : lead
-      )
-    );
+  const toggleStar = async (lead: ScanLead) => {
+    setUpdating(lead.id);
+    try {
+      const res = await fetch('/api/admin/leads', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: lead.id, starred: !lead.starred }),
+      });
+      if (res.ok) {
+        setLeads(leads.map((l) =>
+          l.id === lead.id ? { ...l, starred: !l.starred } : l
+        ));
+        if (selectedLead?.id === lead.id) {
+          setSelectedLead({ ...selectedLead, starred: !selectedLead.starred });
+        }
+      }
+    } catch (err) {
+      console.error('Failed to toggle star:', err);
+    } finally {
+      setUpdating(null);
+    }
   };
 
-  const updateStatus = (id: string, status: ScanLead['status']) => {
-    setLeads(
-      leads.map((lead) => (lead.id === id ? { ...lead, status } : lead))
-    );
-    if (selectedLead?.id === id) {
-      setSelectedLead({ ...selectedLead, status });
+  const updateStatus = async (id: string, status: ScanLead['status']) => {
+    setUpdating(id);
+    try {
+      const res = await fetch('/api/admin/leads', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, status }),
+      });
+      if (res.ok) {
+        setLeads(leads.map((l) =>
+          l.id === id ? { ...l, status } : l
+        ));
+        if (selectedLead?.id === id) {
+          setSelectedLead({ ...selectedLead, status });
+        }
+      }
+    } catch (err) {
+      console.error('Failed to update status:', err);
+    } finally {
+      setUpdating(null);
+    }
+  };
+
+  const deleteLead = async (lead: ScanLead) => {
+    setUpdating(lead.id);
+    try {
+      const res = await fetch(`/api/admin/leads?id=${lead.id}`, {
+        method: 'DELETE',
+      });
+      if (res.ok) {
+        setLeads(leads.filter((l) => l.id !== lead.id));
+        setSelectedLead(null);
+        setDeleteConfirm(null);
+        setTotal((t) => t - 1);
+      }
+    } catch (err) {
+      console.error('Failed to delete lead:', err);
+    } finally {
+      setUpdating(null);
     }
   };
 
@@ -252,21 +253,21 @@ export default function AdminLeadsPage() {
   };
 
   const exportLeads = () => {
-    const data = filteredLeads.map((lead) => ({
+    const data = leads.map((lead) => ({
       naam: lead.name || '-',
-      email: lead.email,
+      email: lead.email || '-',
       organisatie: lead.organization || '-',
       telefoon: lead.phone || '-',
-      sector: sectorLabels[lead.scanData.sector],
-      uitdaging: challengeLabels[lead.scanData.challenge],
-      ai_niveau: aiUsageLabels[lead.scanData.aiUsage],
-      status: statusLabels[lead.status],
+      sector: sectorLabels[lead.sector] || lead.sector,
+      uitdaging: challengeLabels[lead.challenge] || lead.challenge,
+      ai_niveau: aiUsageLabels[lead.aiUsage] || lead.aiUsage,
+      status: statusLabels[lead.status] || lead.status,
       datum: formatDate(lead.createdAt),
     }));
 
     const csv = [
-      Object.keys(data[0]).join(','),
-      ...data.map((row) => Object.values(row).join(',')),
+      Object.keys(data[0] || {}).join(','),
+      ...data.map((row) => Object.values(row).map(v => `"${v}"`).join(',')),
     ].join('\n');
 
     const blob = new Blob([csv], { type: 'text/csv' });
@@ -278,6 +279,19 @@ export default function AdminLeadsPage() {
     URL.revokeObjectURL(url);
   };
 
+  const totalPages = Math.ceil(total / ITEMS_PER_PAGE);
+
+  if (loading && leads.length === 0) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center">
+          <Loader2 size={40} className="animate-spin mx-auto text-orange-600 mb-4" />
+          <p className="text-slate-500">Leads laden...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-8">
       <div className="flex justify-between items-center">
@@ -287,10 +301,16 @@ export default function AdminLeadsPage() {
             Beheer leads uit de AI-readiness scanner
           </p>
         </div>
-        <Button onClick={exportLeads} variant="outline">
-          <Download size={18} className="mr-2" />
-          Exporteer CSV
-        </Button>
+        <div className="flex gap-2">
+          <Button onClick={fetchLeads} variant="outline" size="sm" disabled={loading}>
+            <RefreshCw size={16} className={`mr-2 ${loading ? 'animate-spin' : ''}`} />
+            Vernieuwen
+          </Button>
+          <Button onClick={exportLeads} variant="outline" disabled={leads.length === 0}>
+            <Download size={18} className="mr-2" />
+            Exporteer CSV
+          </Button>
+        </div>
       </div>
 
       {/* Stats */}
@@ -303,7 +323,7 @@ export default function AdminLeadsPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.total}</div>
+            <div className="text-2xl font-bold">{total}</div>
           </CardContent>
         </Card>
         <Card>
@@ -345,6 +365,15 @@ export default function AdminLeadsPage() {
         </Card>
       </div>
 
+      {error && (
+        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+          {error}
+          <Button onClick={fetchLeads} variant="link" className="ml-2 text-red-700">
+            Opnieuw proberen
+          </Button>
+        </div>
+      )}
+
       {/* Filters & Table */}
       <Card>
         <CardHeader>
@@ -362,7 +391,7 @@ export default function AdminLeadsPage() {
               />
             </div>
             <div className="flex gap-2">
-              <Select value={sectorFilter} onValueChange={setSectorFilter}>
+              <Select value={sectorFilter} onValueChange={(v) => { setSectorFilter(v); setPage(0); }}>
                 <SelectTrigger className="w-[180px]">
                   <Filter size={16} className="mr-2" />
                   <SelectValue placeholder="Sector" />
@@ -375,7 +404,7 @@ export default function AdminLeadsPage() {
                   <SelectItem value="nonprofit">Non-profit</SelectItem>
                 </SelectContent>
               </Select>
-              <Select value={statusFilter} onValueChange={setStatusFilter}>
+              <Select value={statusFilter} onValueChange={(v) => { setStatusFilter(v); setPage(0); }}>
                 <SelectTrigger className="w-[160px]">
                   <SelectValue placeholder="Status" />
                 </SelectTrigger>
@@ -404,7 +433,7 @@ export default function AdminLeadsPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredLeads.map((lead) => (
+              {leads.map((lead) => (
                 <TableRow
                   key={lead.id}
                   className="cursor-pointer hover:bg-slate-50"
@@ -414,9 +443,10 @@ export default function AdminLeadsPage() {
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
-                        toggleStar(lead.id);
+                        toggleStar(lead);
                       }}
-                      className="p-1 hover:bg-slate-100 rounded"
+                      disabled={updating === lead.id}
+                      className="p-1 hover:bg-slate-100 rounded disabled:opacity-50"
                     >
                       {lead.starred ? (
                         <Star
@@ -431,7 +461,7 @@ export default function AdminLeadsPage() {
                   <TableCell>
                     <div>
                       <p className="font-medium text-slate-900">
-                        {lead.name || lead.email}
+                        {lead.name || lead.email || 'Onbekend'}
                       </p>
                       {lead.organization && (
                         <p className="text-sm text-slate-500 flex items-center gap-1">
@@ -443,12 +473,12 @@ export default function AdminLeadsPage() {
                   </TableCell>
                   <TableCell>
                     <Badge variant="outline">
-                      {sectorLabels[lead.scanData.sector]}
+                      {sectorLabels[lead.sector] || lead.sector}
                     </Badge>
                   </TableCell>
                   <TableCell>
                     <span className="text-sm text-slate-600">
-                      {challengeLabels[lead.scanData.challenge]}
+                      {challengeLabels[lead.challenge] || lead.challenge}
                     </span>
                   </TableCell>
                   <TableCell>
@@ -470,10 +500,39 @@ export default function AdminLeadsPage() {
             </TableBody>
           </Table>
 
-          {filteredLeads.length === 0 && (
+          {leads.length === 0 && !loading && (
             <div className="text-center py-12 text-slate-500">
               <Brain size={48} className="mx-auto mb-4 opacity-50" />
               <p>Geen leads gevonden</p>
+            </div>
+          )}
+
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="flex items-center justify-between mt-4 pt-4 border-t">
+              <p className="text-sm text-slate-500">
+                Pagina {page + 1} van {totalPages} ({total} leads)
+              </p>
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setPage((p) => Math.max(0, p - 1))}
+                  disabled={page === 0 || loading}
+                >
+                  <ChevronLeft size={16} className="mr-1" />
+                  Vorige
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
+                  disabled={page >= totalPages - 1 || loading}
+                >
+                  Volgende
+                  <ChevronRight size={16} className="ml-1" />
+                </Button>
+              </div>
             </div>
           )}
         </CardContent>
@@ -501,19 +560,21 @@ export default function AdminLeadsPage() {
                     Contactgegevens
                   </h3>
                   <div className="grid gap-3">
-                    <div className="flex items-center gap-3 p-3 bg-slate-50 rounded-lg">
-                      <Mail size={18} className="text-slate-400" />
-                      <div>
-                        <p className="text-sm text-slate-500">Email</p>
-                        <a
-                          href={`mailto:${selectedLead.email}`}
-                          className="text-blue-600 hover:underline flex items-center gap-1"
-                        >
-                          {selectedLead.email}
-                          <ExternalLink size={12} />
-                        </a>
+                    {selectedLead.email && (
+                      <div className="flex items-center gap-3 p-3 bg-slate-50 rounded-lg">
+                        <Mail size={18} className="text-slate-400" />
+                        <div>
+                          <p className="text-sm text-slate-500">Email</p>
+                          <a
+                            href={`mailto:${selectedLead.email}`}
+                            className="text-blue-600 hover:underline flex items-center gap-1"
+                          >
+                            {selectedLead.email}
+                            <ExternalLink size={12} />
+                          </a>
+                        </div>
                       </div>
-                    </div>
+                    )}
                     {selectedLead.name && (
                       <div className="flex items-center gap-3 p-3 bg-slate-50 rounded-lg">
                         <Users size={18} className="text-slate-400" />
@@ -560,19 +621,19 @@ export default function AdminLeadsPage() {
                     <div className="p-3 bg-slate-50 rounded-lg">
                       <p className="text-sm text-slate-500">Sector</p>
                       <p className="font-medium">
-                        {sectorLabels[selectedLead.scanData.sector]}
+                        {sectorLabels[selectedLead.sector] || selectedLead.sector}
                       </p>
                     </div>
                     <div className="p-3 bg-slate-50 rounded-lg">
                       <p className="text-sm text-slate-500">Uitdaging</p>
                       <p className="font-medium">
-                        {challengeLabels[selectedLead.scanData.challenge]}
+                        {challengeLabels[selectedLead.challenge] || selectedLead.challenge}
                       </p>
                     </div>
                     <div className="p-3 bg-slate-50 rounded-lg">
                       <p className="text-sm text-slate-500">AI Niveau</p>
                       <p className="font-medium">
-                        {aiUsageLabels[selectedLead.scanData.aiUsage]}
+                        {aiUsageLabels[selectedLead.aiUsage] || selectedLead.aiUsage}
                       </p>
                     </div>
                   </div>
@@ -581,18 +642,21 @@ export default function AdminLeadsPage() {
                 <Separator />
 
                 {/* AI Advice */}
-                <div>
-                  <h3 className="font-semibold text-slate-900 mb-3">
-                    AI Advies
-                  </h3>
-                  <div className="p-4 bg-orange-50 border border-orange-100 rounded-lg">
-                    <p className="text-slate-700 leading-relaxed">
-                      {selectedLead.aiAdvice}
-                    </p>
-                  </div>
-                </div>
-
-                <Separator />
+                {selectedLead.aiAdvice && (
+                  <>
+                    <div>
+                      <h3 className="font-semibold text-slate-900 mb-3">
+                        AI Advies
+                      </h3>
+                      <div className="p-4 bg-orange-50 border border-orange-100 rounded-lg">
+                        <p className="text-slate-700 leading-relaxed">
+                          {selectedLead.aiAdvice}
+                        </p>
+                      </div>
+                    </div>
+                    <Separator />
+                  </>
+                )}
 
                 {/* Status Update */}
                 <div>
@@ -609,12 +673,16 @@ export default function AdminLeadsPage() {
                           }
                           size="sm"
                           onClick={() => updateStatus(selectedLead.id, status)}
+                          disabled={updating === selectedLead.id}
                           className={
                             selectedLead.status === status
                               ? 'bg-orange-600 hover:bg-orange-700'
                               : ''
                           }
                         >
+                          {updating === selectedLead.id && selectedLead.status !== status ? (
+                            <Loader2 size={14} className="mr-1 animate-spin" />
+                          ) : null}
                           {statusLabels[status]}
                         </Button>
                       )
@@ -630,6 +698,7 @@ export default function AdminLeadsPage() {
               variant="outline"
               size="sm"
               className="text-red-600 hover:text-red-700"
+              onClick={() => selectedLead && setDeleteConfirm(selectedLead)}
             >
               <Trash2 size={14} className="mr-2" />
               Verwijderen
@@ -639,10 +708,11 @@ export default function AdminLeadsPage() {
                 variant="outline"
                 size="sm"
                 onClick={() => {
-                  if (selectedLead) {
+                  if (selectedLead?.email) {
                     window.open(`mailto:${selectedLead.email}`, '_blank');
                   }
                 }}
+                disabled={!selectedLead?.email}
               >
                 <Mail size={14} className="mr-2" />
                 Email
@@ -665,6 +735,33 @@ export default function AdminLeadsPage() {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Delete Confirmation */}
+      <AlertDialog open={!!deleteConfirm} onOpenChange={() => setDeleteConfirm(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Lead verwijderen?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Weet je zeker dat je de lead van {deleteConfirm?.name || deleteConfirm?.email || 'onbekend'} wilt verwijderen?
+              Deze actie kan niet ongedaan worden gemaakt.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Annuleren</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => deleteConfirm && deleteLead(deleteConfirm)}
+              className="bg-red-600 hover:bg-red-700"
+            >
+              {updating === deleteConfirm?.id ? (
+                <Loader2 size={14} className="mr-2 animate-spin" />
+              ) : (
+                <Trash2 size={14} className="mr-2" />
+              )}
+              Verwijderen
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
