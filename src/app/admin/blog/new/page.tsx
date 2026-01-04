@@ -55,6 +55,7 @@ export default function NewBlogPostPage() {
     category: '',
     tags: '',
     coverImage: '',
+    coverImageAlt: '',
     published: false,
     seoTitle: '',
     seoDescription: '',
@@ -74,6 +75,11 @@ export default function NewBlogPostPage() {
     length: 'medium' as 'short' | 'medium' | 'long',
   });
 
+  const [rawContent, setRawContent] = useState({
+    title: '',
+    content: '',
+  });
+
   const generateSlug = (title: string) => {
     return title
       .toLowerCase()
@@ -89,6 +95,64 @@ export default function NewBlogPostPage() {
       slug: generateSlug(title),
       seoTitle: title,
     });
+  };
+
+  const handleAIOptimize = async () => {
+    if (!rawContent.content || rawContent.content.trim().length < 100) {
+      alert('Plak minimaal 100 karakters tekst om te optimaliseren');
+      return;
+    }
+
+    setIsGenerating(true);
+    try {
+      const response = await fetch('/api/admin/blog/optimize', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          rawContent: rawContent.content,
+          title: rawContent.title,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        console.error('API Error:', result);
+        alert(result.error || 'AI optimalisatie mislukt');
+        return;
+      }
+
+      const { data } = result;
+
+      // Update form with AI optimized content
+      setFormData({
+        ...formData,
+        title: data.title,
+        slug: generateSlug(data.title),
+        content: data.content,
+        excerpt: data.excerpt,
+        category: data.category,
+        tags: data.tags.join(', '),
+        seoTitle: data.seo.title,
+        seoDescription: data.seo.description,
+        seoKeywords: data.seo.keywords.join(', '),
+        socialInstagram: data.socialMedia.instagram,
+        socialFacebook: data.socialMedia.facebook,
+        socialLinkedIn: data.socialMedia.linkedin,
+        socialTwitter: data.socialMedia.twitter,
+        imagePrompt: data.coverImage.prompt,
+        coverImageAlt: data.coverImage.alt,
+      });
+
+      setShowAIPanel(false);
+      setActiveTab('editor');
+      alert('✨ Content succesvol geoptimaliseerd! Alle SEO, social media en metadata zijn ingevuld.');
+    } catch (error) {
+      console.error('Error optimizing content:', error);
+      alert('Er ging iets fout bij het optimaliseren. Controleer de console voor details.');
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
   const handleAIGenerate = async () => {
@@ -183,13 +247,13 @@ export default function NewBlogPostPage() {
           </Link>
           <div>
             <h1 className="text-3xl font-bold text-slate-900">Nieuwe Blog Post</h1>
-            <p className="text-slate-500 mt-1">Schrijf professionele content of laat AI het voor je doen</p>
+            <p className="text-slate-500 mt-1">Plak je tekst en maak het SEO wereldklasse met AI</p>
           </div>
         </div>
         <div className="flex gap-3">
           <Button type="button" variant="outline" onClick={() => setShowAIPanel(!showAIPanel)}>
             <Sparkles size={18} className="mr-2" />
-            AI Generator
+            SEO Optimizer
           </Button>
           <Button
             type="button"
@@ -534,6 +598,27 @@ export default function NewBlogPostPage() {
                       )}
                     </div>
 
+                    <div className="space-y-2">
+                      <Label htmlFor="coverImageAlt">Cover Image Alt Text (SEO)</Label>
+                      <Input
+                        id="coverImageAlt"
+                        value={formData.coverImageAlt}
+                        onChange={(e) =>
+                          setFormData({ ...formData, coverImageAlt: e.target.value })
+                        }
+                        placeholder="Beschrijvende alt tekst voor SEO..."
+                        maxLength={125}
+                      />
+                      <div className="flex justify-between text-xs">
+                        <span className="text-slate-500">
+                          Alt tekst voor SEO en accessibility (max 125 karakters)
+                        </span>
+                        <span className={formData.coverImageAlt.length > 125 ? 'text-red-500' : 'text-slate-500'}>
+                          {formData.coverImageAlt.length}/125
+                        </span>
+                      </div>
+                    </div>
+
                     <div className="border-t pt-4">
                       <div className="flex items-center justify-between">
                         <div>
@@ -581,7 +666,7 @@ export default function NewBlogPostPage() {
           </form>
         </div>
 
-        {/* AI Generator Sidebar */}
+        {/* AI Optimizer Sidebar */}
         {showAIPanel && (
           <div className="lg:col-span-1">
             <Card className="sticky top-6">
@@ -589,7 +674,7 @@ export default function NewBlogPostPage() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <Sparkles className="text-orange-600" size={20} />
-                    <CardTitle>AI Blog Generator</CardTitle>
+                    <CardTitle>✨ SEO Wereldklasse</CardTitle>
                   </div>
                   <Button
                     variant="ghost"
@@ -600,117 +685,74 @@ export default function NewBlogPostPage() {
                   </Button>
                 </div>
                 <CardDescription>
-                  Laat AI een complete blog post genereren
+                  Plak je tekst en AI maakt het SEO wereldklasse
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="aiKeyword">Primair Keyword *</Label>
+                  <Label htmlFor="rawTitle">Titel (optioneel)</Label>
                   <Input
-                    id="aiKeyword"
-                    value={aiFormData.keyword}
+                    id="rawTitle"
+                    value={rawContent.title}
                     onChange={(e) =>
-                      setAIFormData({ ...aiFormData, keyword: e.target.value })
+                      setRawContent({ ...rawContent, title: e.target.value })
                     }
-                    placeholder="AI in de zorg"
+                    placeholder="Titel van je artikel..."
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="aiCategory">Categorie</Label>
-                  <Select
-                    value={aiFormData.category}
-                    onValueChange={(value) =>
-                      setAIFormData({ ...aiFormData, category: value })
-                    }
-                  >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="ai">AI</SelectItem>
-                      <SelectItem value="impact">Impact</SelectItem>
-                      <SelectItem value="strategie">Strategie</SelectItem>
-                      <SelectItem value="nieuws">Nieuws</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="aiAudience">Doelgroep</Label>
-                  <Input
-                    id="aiAudience"
-                    value={aiFormData.audience}
+                  <Label htmlFor="rawContent">Plak je tekst hier *</Label>
+                  <Textarea
+                    id="rawContent"
+                    value={rawContent.content}
                     onChange={(e) =>
-                      setAIFormData({ ...aiFormData, audience: e.target.value })
+                      setRawContent({ ...rawContent, content: e.target.value })
                     }
-                    placeholder="professionals in de zorg"
+                    placeholder="Plak hier je ruwe blog tekst (minimaal 100 karakters)..."
+                    rows={12}
+                    className="font-mono text-sm"
                   />
+                  <p className="text-xs text-slate-500">
+                    {rawContent.content.length} karakters
+                    {rawContent.content.length < 100 && ` (minimaal 100 nodig)`}
+                  </p>
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="aiTone">Tone of Voice</Label>
-                  <Select
-                    value={aiFormData.tone}
-                    onValueChange={(value) =>
-                      setAIFormData({ ...aiFormData, tone: value })
-                    }
-                  >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="professioneel maar toegankelijk">
-                        Professioneel maar toegankelijk
-                      </SelectItem>
-                      <SelectItem value="formeel">Formeel</SelectItem>
-                      <SelectItem value="casual">Casual</SelectItem>
-                      <SelectItem value="inspirerend">Inspirerend</SelectItem>
-                      <SelectItem value="educatief">Educatief</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="aiLength">Artikel Lengte</Label>
-                  <Select
-                    value={aiFormData.length}
-                    onValueChange={(value: 'short' | 'medium' | 'long') =>
-                      setAIFormData({ ...aiFormData, length: value })
-                    }
-                  >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="short">Kort (500-800 woorden)</SelectItem>
-                      <SelectItem value="medium">Gemiddeld (1000-1500 woorden)</SelectItem>
-                      <SelectItem value="long">Lang (2000-3000 woorden)</SelectItem>
-                    </SelectContent>
-                  </Select>
+                <div className="border-t pt-4">
+                  <h4 className="font-semibold text-sm mb-2">AI doet automatisch:</h4>
+                  <ul className="text-xs text-slate-600 space-y-1">
+                    <li>✓ H1, H2, H3 structuur</li>
+                    <li>✓ Interne links toevoegen</li>
+                    <li>✓ SEO optimalisatie</li>
+                    <li>✓ Keywords identificeren</li>
+                    <li>✓ Social media posts</li>
+                    <li>✓ Categorie bepalen</li>
+                    <li>✓ Metadata genereren</li>
+                  </ul>
                 </div>
 
                 <Button
                   type="button"
                   className="w-full bg-orange-600 hover:bg-orange-700"
-                  onClick={handleAIGenerate}
-                  disabled={isGenerating || !aiFormData.keyword}
+                  onClick={handleAIOptimize}
+                  disabled={isGenerating || rawContent.content.length < 100}
                 >
                   {isGenerating ? (
                     <>
                       <Loader2 size={18} className="mr-2 animate-spin" />
-                      Genereren...
+                      Optimaliseren...
                     </>
                   ) : (
                     <>
                       <Sparkles size={18} className="mr-2" />
-                      Genereer Artikel
+                      AI Optimaliseren
                     </>
                   )}
                 </Button>
 
                 <p className="text-xs text-slate-500 text-center">
-                  AI genereert content, SEO metadata en social media posts
+                  AI transformeert je tekst naar SEO wereldklasse en vult alle velden in
                 </p>
               </CardContent>
             </Card>

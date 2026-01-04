@@ -90,6 +90,7 @@ export async function POST(request: NextRequest) {
       category,
       tags,
       coverImage,
+      coverImageAlt,
       published,
       seoTitle,
       seoDescription,
@@ -117,10 +118,10 @@ export async function POST(request: NextRequest) {
 
     const result = await sql`
       INSERT INTO posts (
-        title, slug, excerpt, content, cover_image, category, tags,
+        title, slug, excerpt, content, cover_image, cover_image_alt, category, tags,
         status, reading_time, seo_title, seo_description, published_at
       ) VALUES (
-        ${title}, ${slug}, ${excerpt || ''}, ${content}, ${coverImage || null},
+        ${title}, ${slug}, ${excerpt || ''}, ${content}, ${coverImage || null}, ${coverImageAlt || null},
         ${category}, ${tagArray}, ${status}, ${readingTime},
         ${seoTitle || title}, ${seoDescription || excerpt || ''}, ${publishedAt}
       )

@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import { sql } from '@/lib/db/neon';
 import ReactMarkdown from 'react-markdown';
@@ -17,6 +18,8 @@ interface Post {
   slug: string;
   excerpt: string;
   content: string;
+  cover_image: string | null;
+  cover_image_alt: string | null;
   category: string;
   tags: string[];
   author_name: string;
@@ -34,8 +37,8 @@ const categoryColors: Record<string, string> = {
 async function getPost(slug: string): Promise<Post | null> {
   try {
     const posts = await sql`
-      SELECT id, title, slug, excerpt, content, category, tags,
-             author_name, reading_time, published_at
+      SELECT id, title, slug, excerpt, content, cover_image, cover_image_alt,
+             category, tags, author_name, reading_time, published_at
       FROM posts
       WHERE slug = ${slug} AND status = 'published'
       LIMIT 1
@@ -67,6 +70,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     };
   }
 
+  const ogImage = post.cover_image || '/og-image.jpg';
+  const ogImageAlt = post.cover_image_alt || post.title;
+
   return {
     title: post.title,
     description: post.excerpt,
@@ -82,10 +88,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       authors: [post.author_name || 'Vincent van Munster'],
       images: [
         {
-          url: '/og-image.jpg',
+          url: ogImage,
           width: 1200,
           height: 630,
-          alt: post.title,
+          alt: ogImageAlt,
         },
       ],
     },
@@ -93,7 +99,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       card: 'summary_large_image',
       title: post.title,
       description: post.excerpt,
-      images: ['/og-image.jpg'],
+      images: [ogImage],
     },
   };
 }
@@ -189,6 +195,22 @@ export default async function BlogPostPage({ params }: Props) {
             </div>
           </div>
         </header>
+
+        {/* Cover Image - SEO Optimized */}
+        {post.cover_image && (
+          <div className="mb-12 -mx-6 md:mx-0">
+            <div className="relative w-full aspect-[2/1] md:rounded-2xl overflow-hidden">
+              <Image
+                src={post.cover_image}
+                alt={post.cover_image_alt || `Cover afbeelding voor ${post.title}`}
+                fill
+                priority
+                className="object-cover"
+                sizes="(max-width: 768px) 100vw, 800px"
+              />
+            </div>
+          </div>
+        )}
 
         {/* Content */}
         <div className="prose prose-lg prose-slate max-w-none mb-12 prose-headings:text-slate-900 prose-a:text-orange-600 prose-a:no-underline hover:prose-a:underline prose-img:rounded-xl prose-pre:bg-slate-900">
