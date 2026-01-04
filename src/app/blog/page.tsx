@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { sql } from '@/lib/db/neon';
 import { Calendar, Clock, ArrowRight, BookOpen, ChevronRight } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
@@ -116,13 +117,23 @@ export default async function BlogPage() {
                 href={`/blog/${post.slug}`}
                 className="group bg-white rounded-2xl border border-slate-100 overflow-hidden hover:shadow-xl hover:border-orange-200 transition-all"
               >
-                {/* Cover Image Placeholder */}
-                <div className="aspect-video bg-gradient-to-br from-slate-100 to-slate-200 relative">
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <span className="text-4xl font-bold text-slate-300">
-                      {post.title[0]}
-                    </span>
-                  </div>
+                {/* Cover Image */}
+                <div className="aspect-video bg-gradient-to-br from-slate-100 to-slate-200 relative overflow-hidden">
+                  {post.cover_image ? (
+                    <Image
+                      src={post.cover_image}
+                      alt={post.title}
+                      fill
+                      className="object-cover group-hover:scale-105 transition-transform duration-300"
+                      sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                    />
+                  ) : (
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <span className="text-4xl font-bold text-slate-300">
+                        {post.title[0]}
+                      </span>
+                    </div>
+                  )}
                 </div>
 
                 <div className="p-6">
