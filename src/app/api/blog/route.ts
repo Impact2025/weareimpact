@@ -6,6 +6,7 @@ export const dynamic = 'force-dynamic';
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
+    const id = searchParams.get('id');
     const category = searchParams.get('category');
     const status = searchParams.get('status') || 'published';
     const slug = searchParams.get('slug');
@@ -13,7 +14,17 @@ export async function GET(request: NextRequest) {
 
     let posts;
 
-    if (slug) {
+    if (id) {
+      // Fetch single post by ID (for editing)
+      posts = await sql`
+        SELECT id, title, slug, excerpt, content, cover_image, cover_image_alt, category, tags,
+               status, author_name, reading_time, views, seo_title, seo_description,
+               published_at, created_at, updated_at
+        FROM posts
+        WHERE id = ${id}
+        LIMIT 1
+      `;
+    } else if (slug) {
       // Fetch single post by slug
       posts = await sql`
         SELECT id, title, slug, excerpt, content, cover_image, category, tags,
@@ -223,8 +234,8 @@ export async function PUT(request: NextRequest) {
 
 export async function DELETE(request: NextRequest) {
   try {
-    const { searchParams } = new URL(request.url);
-    const id = searchParams.get('id');
+    const body = await request.json();
+    const { id } = body;
 
     if (!id) {
       return NextResponse.json(
