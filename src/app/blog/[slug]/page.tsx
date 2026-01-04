@@ -2,8 +2,6 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import { sql } from '@/lib/db/neon';
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
 import { ArrowLeft, Calendar, Clock, Linkedin, Twitter, ChevronRight } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -36,6 +34,8 @@ const categoryColors: Record<string, string> = {
 
 async function getPost(slug: string): Promise<Post | null> {
   try {
+    console.log('[Blog] Fetching post with slug:', slug);
+
     const posts = await sql`
       SELECT id, title, slug, excerpt, content, cover_image, cover_image_alt,
              category, tags, author_name, reading_time, published_at
@@ -44,7 +44,14 @@ async function getPost(slug: string): Promise<Post | null> {
       LIMIT 1
     `;
 
-    if (posts.length === 0) return null;
+    console.log('[Blog] Query result:', posts.length > 0 ? `Found: ${posts[0].title}` : 'Not found');
+
+    if (posts.length === 0) {
+      // Debug: show all published slugs
+      const allSlugs = await sql`SELECT slug FROM posts WHERE status = 'published'`;
+      console.log('[Blog] Available published slugs:', allSlugs.map(p => p.slug));
+      return null;
+    }
 
     // Increment view count
     await sql`UPDATE posts SET views = views + 1 WHERE slug = ${slug}`;
@@ -213,11 +220,10 @@ export default async function BlogPostPage({ params }: Props) {
         )}
 
         {/* Content */}
-        <div className="prose prose-lg prose-slate max-w-none mb-12 prose-headings:text-slate-900 prose-a:text-orange-600 prose-a:no-underline hover:prose-a:underline prose-img:rounded-xl prose-pre:bg-slate-900">
-          <ReactMarkdown remarkPlugins={[remarkGfm]}>
-            {post.content}
-          </ReactMarkdown>
-        </div>
+        <div
+          className="prose prose-lg prose-slate max-w-none mb-12 prose-headings:text-slate-900 prose-a:text-orange-600 prose-a:no-underline hover:prose-a:underline prose-img:rounded-xl prose-pre:bg-slate-900"
+          dangerouslySetInnerHTML={{ __html: post.content }}
+        />
 
         {/* Tags */}
         {post.tags && post.tags.length > 0 && (
