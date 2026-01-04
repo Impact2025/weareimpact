@@ -48,6 +48,7 @@ export default function EditBlogPostPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingData, setIsLoadingData] = useState(true);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [isOptimizing, setIsOptimizing] = useState(false);
   const [activeTab, setActiveTab] = useState<TabType>('editor');
   const [showAIPanel, setShowAIPanel] = useState(false);
 
@@ -135,6 +136,57 @@ export default function EditBlogPostPage() {
       slug: generateSlug(title),
       seoTitle: title,
     });
+  };
+
+  const handleSEOOptimize = async () => {
+    if (!formData.content || formData.content.trim().length < 100) {
+      alert('Voeg eerst inhoud toe (minimaal 100 karakters)');
+      return;
+    }
+
+    setIsOptimizing(true);
+    try {
+      const response = await fetch('/api/admin/blog/optimize', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          rawContent: formData.content,
+          title: formData.title,
+        }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Optimalisatie mislukt');
+      }
+
+      const result = await response.json();
+      const { data } = result;
+
+      // Update form with optimized content
+      setFormData({
+        ...formData,
+        content: data.content,
+        excerpt: data.excerpt || formData.excerpt,
+        category: data.category || formData.category,
+        tags: data.tags?.join(', ') || formData.tags,
+        seoTitle: data.seo?.title || formData.seoTitle,
+        seoDescription: data.seo?.description || formData.seoDescription,
+        seoKeywords: data.seo?.keywords?.join(', ') || formData.seoKeywords,
+        socialInstagram: data.socialMedia?.instagram || formData.socialInstagram,
+        socialFacebook: data.socialMedia?.facebook || formData.socialFacebook,
+        socialLinkedIn: data.socialMedia?.linkedin || formData.socialLinkedIn,
+        socialTwitter: data.socialMedia?.twitter || formData.socialTwitter,
+        imagePrompt: data.coverImage?.prompt || formData.imagePrompt,
+      });
+
+      alert('✨ Content succesvol geoptimaliseerd met HTML structuur!');
+    } catch (error) {
+      console.error('Error optimizing content:', error);
+      alert('Er ging iets fout bij het optimaliseren: ' + (error instanceof Error ? error.message : ''));
+    } finally {
+      setIsOptimizing(false);
+    }
   };
 
   const handleAIGenerate = async () => {
@@ -239,6 +291,20 @@ export default function EditBlogPostPage() {
           </div>
         </div>
         <div className="flex gap-3">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={handleSEOOptimize}
+            disabled={isOptimizing || !formData.content}
+            className="border-orange-200 text-orange-700 hover:bg-orange-50"
+          >
+            {isOptimizing ? (
+              <Loader2 size={18} className="mr-2 animate-spin" />
+            ) : (
+              <Sparkles size={18} className="mr-2" />
+            )}
+            {isOptimizing ? 'Optimaliseren...' : 'SEO Optimaliseren'}
+          </Button>
           <Button type="button" variant="outline" onClick={() => setShowAIPanel(!showAIPanel)}>
             <Sparkles size={18} className="mr-2" />
             AI Generator
