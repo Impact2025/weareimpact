@@ -8,6 +8,26 @@ import { Button } from '@/components/ui/button';
 import { ArticleJsonLd, BreadcrumbJsonLd } from '@/components/seo/JsonLd';
 import type { Metadata } from 'next';
 import parse from 'html-react-parser';
+import { marked } from 'marked';
+
+// Check if content is HTML or markdown
+function isHtml(content: string): boolean {
+  // Check for common HTML tags
+  return /<(p|div|h[1-6]|ul|ol|li|strong|em|a|img|blockquote|pre|code)[^>]*>/i.test(content);
+}
+
+// Convert content to HTML (handles both markdown and HTML)
+function contentToHtml(content: string): string {
+  if (!content) return '';
+
+  // If already HTML, return as is
+  if (isHtml(content)) {
+    return content;
+  }
+
+  // Convert markdown to HTML
+  return marked.parse(content, { async: false }) as string;
+}
 
 export const dynamic = 'force-dynamic';
 
@@ -236,7 +256,7 @@ export default async function BlogPostPage({ params }: Props) {
                      prose-img:rounded-xl prose-pre:bg-slate-900
                      [&>*:first-child]:mt-0"
         >
-          {parse(post.content)}
+          {parse(contentToHtml(post.content))}
         </div>
 
         {/* Tags */}
