@@ -70,11 +70,28 @@ export default function AdminBlogPage() {
 
   const loadPosts = async () => {
     try {
-      const response = await fetch('/api/blog');
-      if (response.ok) {
-        const data = await response.json();
-        setPosts(data.posts || []);
+      // Fetch both published and draft posts for admin dashboard
+      const [publishedRes, draftRes] = await Promise.all([
+        fetch('/api/blog?status=published'),
+        fetch('/api/blog?status=draft')
+      ]);
+
+      let allPosts: BlogPost[] = [];
+
+      if (publishedRes.ok) {
+        const data = await publishedRes.json();
+        allPosts = [...allPosts, ...(data.posts || [])];
       }
+
+      if (draftRes.ok) {
+        const data = await draftRes.json();
+        allPosts = [...allPosts, ...(data.posts || [])];
+      }
+
+      // Sort by created_at, newest first
+      allPosts.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+
+      setPosts(allPosts);
     } catch (error) {
       console.error('Error loading posts:', error);
     } finally {
@@ -117,10 +134,7 @@ export default function AdminBlogPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           id: post.id,
-          title: post.title,
-          slug: post.slug,
-          category: post.category,
-          published: newStatus === 'published',
+          status: newStatus,
         }),
       });
 
