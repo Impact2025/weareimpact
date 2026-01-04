@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createBooking, BOOKING_TYPES, BookingTypeSlug } from '@/lib/google-calendar';
 import { sql } from '@/lib/db/neon';
+import { sendEmail } from '@/lib/email/send';
+import { generateBookingConfirmationEmail } from '@/lib/email/templates/booking-confirmation';
 
 interface CreateBookingRequest {
   bookingType: string;
@@ -118,21 +120,54 @@ export async function POST(request: NextRequest) {
       }
 
       const type = BOOKING_TYPES[bookingType as BookingTypeSlug];
+      const booking = {
+        id: `lead-${Date.now()}`,
+        typeName: type.name,
+        startTime,
+        endTime: new Date(start.getTime() + type.duration * 60000).toISOString(),
+        duration: type.duration,
+      };
+
+      // Send confirmation email even when Google Calendar is not configured
+      const emailTemplate = generateBookingConfirmationEmail({
+        customerName: customer.name,
+        bookingType: type.name,
+        startTime: booking.startTime,
+        endTime: booking.endTime,
+        duration: booking.duration,
+      });
+
+      const emailResult = await sendEmail({
+        to: customer.email,
+        subject: emailTemplate.subject,
+        html: emailTemplate.html,
+        text: emailTemplate.text,
+      });
+
+      if (!emailResult.success) {
+        console.error('Failed to send confirmation email:', emailResult.error);
+      }
+
       return NextResponse.json({
         success: true,
-        booking: {
-          id: `lead-${Date.now()}`,
-          typeName: type.name,
-          startTime,
-          endTime: new Date(start.getTime() + type.duration * 60000).toISOString(),
-          duration: type.duration,
-        },
-        message: 'Je aanvraag is ontvangen! Vincent neemt binnen 24 uur contact met je op om de afspraak te bevestigen.',
+        booking,
+        message: 'Je aanvraag is ontvangen! Je ontvangt een bevestiging per e-mail.',
       });
     }
 
     // Try to create the booking in Google Calendar
-    let result: { success: boolean; booking?: unknown; error?: string } = { success: false };
+    let result: {
+      success: boolean;
+      booking?: {
+        id: string;
+        typeName: string;
+        startTime: string;
+        endTime: string;
+        duration: number;
+        meetLink?: string;
+      };
+      error?: string;
+    } = { success: false };
 
     try {
       result = await createBooking({
@@ -152,6 +187,28 @@ export async function POST(request: NextRequest) {
 
     if (result.success) {
       // Google Calendar booking succeeded
+      // Send confirmation email to customer
+      const emailTemplate = generateBookingConfirmationEmail({
+        customerName: customer.name,
+        bookingType: BOOKING_TYPES[bookingType as BookingTypeSlug].name,
+        startTime: result.booking!.startTime,
+        endTime: result.booking!.endTime,
+        duration: result.booking!.duration,
+        meetLink: result.booking!.meetLink,
+      });
+
+      const emailResult = await sendEmail({
+        to: customer.email,
+        subject: emailTemplate.subject,
+        html: emailTemplate.html,
+        text: emailTemplate.text,
+      });
+
+      if (!emailResult.success) {
+        console.error('Failed to send confirmation email:', emailResult.error);
+        // Continue anyway - booking is created, email failure shouldn't break the flow
+      }
+
       return NextResponse.json({
         success: true,
         booking: result.booking,
@@ -166,16 +223,38 @@ export async function POST(request: NextRequest) {
     await storeBookingAsLead(bookingType, startTime, customer);
 
     const type = BOOKING_TYPES[bookingType as BookingTypeSlug];
+    const booking = {
+      id: `lead-${Date.now()}`,
+      typeName: type.name,
+      startTime,
+      endTime: new Date(start.getTime() + type.duration * 60000).toISOString(),
+      duration: type.duration,
+    };
+
+    // Send confirmation email even when Google Calendar fails
+    const emailTemplate = generateBookingConfirmationEmail({
+      customerName: customer.name,
+      bookingType: type.name,
+      startTime: booking.startTime,
+      endTime: booking.endTime,
+      duration: booking.duration,
+    });
+
+    const emailResult = await sendEmail({
+      to: customer.email,
+      subject: emailTemplate.subject,
+      html: emailTemplate.html,
+      text: emailTemplate.text,
+    });
+
+    if (!emailResult.success) {
+      console.error('Failed to send confirmation email:', emailResult.error);
+    }
+
     return NextResponse.json({
       success: true,
-      booking: {
-        id: `lead-${Date.now()}`,
-        typeName: type.name,
-        startTime,
-        endTime: new Date(start.getTime() + type.duration * 60000).toISOString(),
-        duration: type.duration,
-      },
-      message: 'Je aanvraag is ontvangen! Vincent neemt binnen 24 uur contact met je op om de afspraak te bevestigen.',
+      booking,
+      message: 'Je aanvraag is ontvangen! Je ontvangt een bevestiging per e-mail.',
     });
   } catch (error) {
     console.error('Error creating booking:', error);
