@@ -64,6 +64,7 @@ export async function GET(request: NextRequest) {
       excerpt: post.excerpt,
       content: post.content,
       coverImage: post.cover_image,
+      coverImageAlt: post.cover_image_alt,
       category: post.category,
       tags: post.tags,
       status: post.status,
@@ -103,6 +104,7 @@ export async function POST(request: NextRequest) {
       coverImage,
       coverImageAlt,
       published,
+      publishedAt: customPublishedAt,
       seoTitle,
       seoDescription,
     } = body;
@@ -125,7 +127,10 @@ export async function POST(request: NextRequest) {
       : [];
 
     const status = published ? 'published' : 'draft';
-    const publishedAt = published ? new Date().toISOString() : null;
+    // Use custom date if provided, otherwise use current date when publishing
+    const publishedAt = published
+      ? (customPublishedAt ? new Date(customPublishedAt).toISOString() : new Date().toISOString())
+      : null;
 
     const result = await sql`
       INSERT INTO posts (
@@ -193,6 +198,11 @@ export async function PUT(request: NextRequest) {
       ? (typeof updates.tags === 'string' ? updates.tags.split(',').map((t: string) => t.trim()) : updates.tags)
       : undefined;
 
+    // Handle published_at: use custom date if provided, otherwise set to NOW when publishing
+    const publishedAtValue = updates.publishedAt
+      ? new Date(updates.publishedAt).toISOString()
+      : null;
+
     const result = await sql`
       UPDATE posts SET
         title = COALESCE(${updates.title}, title),
@@ -200,6 +210,7 @@ export async function PUT(request: NextRequest) {
         excerpt = COALESCE(${updates.excerpt}, excerpt),
         content = COALESCE(${updates.content}, content),
         cover_image = COALESCE(${updates.coverImage}, cover_image),
+        cover_image_alt = COALESCE(${updates.coverImageAlt}, cover_image_alt),
         category = COALESCE(${updates.category}, category),
         tags = COALESCE(${tagArray}, tags),
         status = COALESCE(${updates.status}, status),
@@ -207,6 +218,7 @@ export async function PUT(request: NextRequest) {
         seo_title = COALESCE(${updates.seoTitle}, seo_title),
         seo_description = COALESCE(${updates.seoDescription}, seo_description),
         published_at = CASE
+          WHEN ${publishedAtValue} IS NOT NULL THEN ${publishedAtValue}::timestamptz
           WHEN ${updates.status} = 'published' AND published_at IS NULL THEN NOW()
           ELSE published_at
         END,

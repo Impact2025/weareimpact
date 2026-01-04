@@ -13,7 +13,10 @@ import {
   Share2,
   Settings,
   ChevronDown,
-  ChevronUp
+  ChevronUp,
+  Upload,
+  X,
+  Calendar
 } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
@@ -60,7 +63,9 @@ export default function EditBlogPostPage() {
     category: '',
     tags: '',
     coverImage: '',
+    coverImageAlt: '',
     published: false,
+    publishedAt: '',
     seoTitle: '',
     seoDescription: '',
     seoKeywords: '',
@@ -70,6 +75,8 @@ export default function EditBlogPostPage() {
     socialTwitter: '',
     imagePrompt: '',
   });
+
+  const [isUploading, setIsUploading] = useState(false);
 
   const [aiFormData, setAIFormData] = useState({
     keyword: '',
@@ -94,6 +101,13 @@ export default function EditBlogPostPage() {
       const post = data.posts?.[0];
 
       if (post) {
+        // Format publishedAt for datetime-local input
+        let formattedDate = '';
+        if (post.publishedAt) {
+          const date = new Date(post.publishedAt);
+          formattedDate = date.toISOString().slice(0, 16);
+        }
+
         setFormData({
           title: post.title || '',
           slug: post.slug || '',
@@ -101,10 +115,12 @@ export default function EditBlogPostPage() {
           content: post.content || '',
           category: post.category || '',
           tags: Array.isArray(post.tags) ? post.tags.join(', ') : '',
-          coverImage: post.cover_image || '',
+          coverImage: post.coverImage || '',
+          coverImageAlt: post.coverImageAlt || '',
           published: post.status === 'published',
-          seoTitle: post.seo_title || post.title || '',
-          seoDescription: post.seo_description || post.excerpt || '',
+          publishedAt: formattedDate,
+          seoTitle: post.seoTitle || post.title || '',
+          seoDescription: post.seoDescription || post.excerpt || '',
           seoKeywords: '',
           socialInstagram: '',
           socialFacebook: '',
@@ -238,6 +254,36 @@ export default function EditBlogPostPage() {
     }
   };
 
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsUploading(true);
+    try {
+      const formDataUpload = new FormData();
+      formDataUpload.append('file', file);
+
+      const response = await fetch('/api/upload', {
+        method: 'POST',
+        body: formDataUpload,
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        alert(result.error || 'Upload mislukt');
+        return;
+      }
+
+      setFormData({ ...formData, coverImage: result.url });
+    } catch (error) {
+      console.error('Upload error:', error);
+      alert('Er ging iets fout bij het uploaden');
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -254,7 +300,9 @@ export default function EditBlogPostPage() {
           content: formData.content,
           category: formData.category,
           coverImage: formData.coverImage,
+          coverImageAlt: formData.coverImageAlt,
           status: formData.published ? 'published' : 'draft',
+          publishedAt: formData.publishedAt || undefined,
           seoTitle: formData.seoTitle,
           seoDescription: formData.seoDescription,
           tags: formData.tags.split(',').map(t => t.trim()).filter(Boolean),
@@ -637,7 +685,60 @@ export default function EditBlogPostPage() {
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="coverImage">Cover Image URL</Label>
+                      <Label>Cover Image</Label>
+
+                      {/* Image Upload */}
+                      <div className="border-2 border-dashed border-slate-300 rounded-lg p-4 hover:border-orange-400 transition-colors">
+                        {formData.coverImage ? (
+                          <div className="relative">
+                            <img
+                              src={formData.coverImage}
+                              alt="Cover preview"
+                              className="w-full h-48 object-cover rounded-lg"
+                              onError={(e) => {
+                                e.currentTarget.src = 'https://via.placeholder.com/800x400?text=Invalid+Image';
+                              }}
+                            />
+                            <Button
+                              type="button"
+                              variant="destructive"
+                              size="sm"
+                              className="absolute top-2 right-2"
+                              onClick={() => setFormData({ ...formData, coverImage: '' })}
+                            >
+                              <X size={16} />
+                            </Button>
+                          </div>
+                        ) : (
+                          <label className="flex flex-col items-center justify-center h-32 cursor-pointer">
+                            {isUploading ? (
+                              <Loader2 className="w-8 h-8 text-slate-400 animate-spin" />
+                            ) : (
+                              <>
+                                <Upload className="w-8 h-8 text-slate-400 mb-2" />
+                                <span className="text-sm text-slate-500">
+                                  Klik om afbeelding te uploaden
+                                </span>
+                                <span className="text-xs text-slate-400 mt-1">
+                                  JPG, PNG, WebP (max 5MB)
+                                </span>
+                              </>
+                            )}
+                            <input
+                              type="file"
+                              accept="image/jpeg,image/png,image/webp,image/gif"
+                              onChange={handleImageUpload}
+                              className="hidden"
+                              disabled={isUploading}
+                            />
+                          </label>
+                        )}
+                      </div>
+
+                      {/* Or paste URL */}
+                      <div className="flex items-center gap-2 text-xs text-slate-500">
+                        <span>of plak een URL:</span>
+                      </div>
                       <Input
                         id="coverImage"
                         value={formData.coverImage}
@@ -646,24 +747,33 @@ export default function EditBlogPostPage() {
                         }
                         placeholder="https://..."
                       />
-                      {formData.coverImage && (
-                        <div className="mt-2 border rounded-lg overflow-hidden">
-                          <img
-                            src={formData.coverImage}
-                            alt="Cover preview"
-                            className="w-full h-48 object-cover"
-                            onError={(e) => {
-                              e.currentTarget.src = 'https://via.placeholder.com/800x400?text=Invalid+Image+URL';
-                            }}
-                          />
-                        </div>
-                      )}
                     </div>
 
-                    <div className="border-t pt-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="coverImageAlt">Cover Image Alt Text (SEO)</Label>
+                      <Input
+                        id="coverImageAlt"
+                        value={formData.coverImageAlt}
+                        onChange={(e) =>
+                          setFormData({ ...formData, coverImageAlt: e.target.value })
+                        }
+                        placeholder="Beschrijvende alt tekst voor SEO..."
+                        maxLength={125}
+                      />
+                      <div className="flex justify-between text-xs">
+                        <span className="text-slate-500">
+                          Alt tekst voor SEO en accessibility (max 125 karakters)
+                        </span>
+                        <span className={formData.coverImageAlt.length > 125 ? 'text-red-500' : 'text-slate-500'}>
+                          {formData.coverImageAlt.length}/125
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="border-t pt-4 space-y-4">
                       <div className="flex items-center justify-between">
                         <div>
-                          <Label htmlFor="published">Direct Publiceren</Label>
+                          <Label htmlFor="published">Gepubliceerd</Label>
                           <p className="text-sm text-slate-500">
                             Anders wordt het opgeslagen als concept
                           </p>
@@ -675,6 +785,25 @@ export default function EditBlogPostPage() {
                             setFormData({ ...formData, published: checked })
                           }
                         />
+                      </div>
+
+                      {/* Publicatiedatum */}
+                      <div className="space-y-2">
+                        <Label htmlFor="publishedAt" className="flex items-center gap-2">
+                          <Calendar size={16} />
+                          Publicatiedatum
+                        </Label>
+                        <Input
+                          id="publishedAt"
+                          type="datetime-local"
+                          value={formData.publishedAt}
+                          onChange={(e) =>
+                            setFormData({ ...formData, publishedAt: e.target.value })
+                          }
+                        />
+                        <p className="text-xs text-slate-500">
+                          Pas de publicatiedatum aan (wordt getoond op de blog)
+                        </p>
                       </div>
                     </div>
                   </CardContent>
