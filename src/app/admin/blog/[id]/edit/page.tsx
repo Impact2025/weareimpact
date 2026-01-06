@@ -16,7 +16,9 @@ import {
   ChevronUp,
   Upload,
   X,
-  Calendar
+  Calendar,
+  FileCode,
+  Wand2
 } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
@@ -52,6 +54,8 @@ export default function EditBlogPostPage() {
   const [isLoadingData, setIsLoadingData] = useState(true);
   const [isGenerating, setIsGenerating] = useState(false);
   const [isOptimizing, setIsOptimizing] = useState(false);
+  const [isEnhancing, setIsEnhancing] = useState(false);
+  const [isFormatting, setIsFormatting] = useState(false);
   const [activeTab, setActiveTab] = useState<TabType>('editor');
   const [showAIPanel, setShowAIPanel] = useState(false);
 
@@ -205,6 +209,113 @@ export default function EditBlogPostPage() {
     }
   };
 
+  // Enhance Only - keeps original text, only fills metadata
+  const handleEnhanceOnly = async () => {
+    if (!formData.content || formData.content.trim().length < 100) {
+      alert('Je hebt minimaal 100 karakters content nodig');
+      return;
+    }
+
+    setIsEnhancing(true);
+    try {
+      const response = await fetch('/api/admin/blog/enhance', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          content: formData.content,
+          title: formData.title,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || 'Enhancement mislukt');
+      }
+
+      const { data } = result;
+
+      // Update ONLY metadata fields, keep content unchanged
+      setFormData({
+        ...formData,
+        excerpt: data.excerpt || formData.excerpt,
+        category: data.category || formData.category,
+        tags: data.tags?.join(', ') || formData.tags,
+        seoTitle: data.seo?.title || formData.seoTitle,
+        seoDescription: data.seo?.description || formData.seoDescription,
+        seoKeywords: data.seo?.keywords?.join(', ') || formData.seoKeywords,
+        socialInstagram: data.socialMedia?.instagram || formData.socialInstagram,
+        socialFacebook: data.socialMedia?.facebook || formData.socialFacebook,
+        socialLinkedIn: data.socialMedia?.linkedin || formData.socialLinkedIn,
+        socialTwitter: data.socialMedia?.twitter || formData.socialTwitter,
+        imagePrompt: data.coverImage?.prompt || formData.imagePrompt,
+        coverImageAlt: data.coverImage?.alt || formData.coverImageAlt,
+      });
+
+      setActiveTab('seo');
+      alert('✨ Metadata ingevuld! Je tekst is ongewijzigd.');
+    } catch (error) {
+      console.error('Error enhancing content:', error);
+      alert('Er ging iets fout: ' + (error instanceof Error ? error.message : ''));
+    } finally {
+      setIsEnhancing(false);
+    }
+  };
+
+  // Format & SEO - adds HTML structure AND fills metadata
+  const handleFormatAndSEO = async () => {
+    if (!formData.content || formData.content.trim().length < 100) {
+      alert('Je hebt minimaal 100 karakters content nodig');
+      return;
+    }
+
+    setIsFormatting(true);
+    try {
+      const response = await fetch('/api/admin/blog/format', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          content: formData.content,
+          title: formData.title,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || 'Formattering mislukt');
+      }
+
+      const { data } = result;
+
+      // Update content WITH formatting AND all metadata
+      setFormData({
+        ...formData,
+        content: data.formattedContent || formData.content,
+        excerpt: data.excerpt || formData.excerpt,
+        category: data.category || formData.category,
+        tags: data.tags?.join(', ') || formData.tags,
+        seoTitle: data.seo?.title || formData.seoTitle,
+        seoDescription: data.seo?.description || formData.seoDescription,
+        seoKeywords: data.seo?.keywords?.join(', ') || formData.seoKeywords,
+        socialInstagram: data.socialMedia?.instagram || formData.socialInstagram,
+        socialFacebook: data.socialMedia?.facebook || formData.socialFacebook,
+        socialLinkedIn: data.socialMedia?.linkedin || formData.socialLinkedIn,
+        socialTwitter: data.socialMedia?.twitter || formData.socialTwitter,
+        imagePrompt: data.coverImage?.prompt || formData.imagePrompt,
+        coverImageAlt: data.coverImage?.alt || formData.coverImageAlt,
+      });
+
+      setActiveTab('editor');
+      alert('✨ Tekst geformatteerd met headers en alinea\'s!');
+    } catch (error) {
+      console.error('Error formatting content:', error);
+      alert('Er ging iets fout: ' + (error instanceof Error ? error.message : ''));
+    } finally {
+      setIsFormatting(false);
+    }
+  };
+
   const handleAIGenerate = async () => {
     if (!aiFormData.keyword) {
       alert('Vul een primair keyword in');
@@ -346,20 +457,34 @@ export default function EditBlogPostPage() {
             <p className="text-slate-500 mt-1">Update je artikel of laat AI nieuwe content genereren</p>
           </div>
         </div>
-        <div className="flex gap-3">
+        <div className="flex gap-2 flex-wrap">
           <Button
             type="button"
             variant="outline"
-            onClick={handleSEOOptimize}
-            disabled={isOptimizing || !formData.content}
-            className="border-orange-200 text-orange-700 hover:bg-orange-50"
+            onClick={handleFormatAndSEO}
+            disabled={isFormatting || !formData.content || formData.content.length < 100}
+            className="border-green-400 text-green-700 hover:bg-green-50"
           >
-            {isOptimizing ? (
+            {isFormatting ? (
               <Loader2 size={18} className="mr-2 animate-spin" />
             ) : (
-              <Sparkles size={18} className="mr-2" />
+              <FileCode size={18} className="mr-2" />
             )}
-            {isOptimizing ? 'Optimaliseren...' : 'SEO Optimaliseren'}
+            Format & SEO
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={handleEnhanceOnly}
+            disabled={isEnhancing || !formData.content || formData.content.length < 100}
+            className="border-purple-300 text-purple-700 hover:bg-purple-50"
+          >
+            {isEnhancing ? (
+              <Loader2 size={18} className="mr-2 animate-spin" />
+            ) : (
+              <Wand2 size={18} className="mr-2" />
+            )}
+            Metadata Only
           </Button>
           <Button type="button" variant="outline" onClick={() => setShowAIPanel(!showAIPanel)}>
             <Sparkles size={18} className="mr-2" />
