@@ -19,7 +19,8 @@ import {
   Calendar,
   Wand2,
   Link2,
-  ExternalLink
+  ExternalLink,
+  FileCode
 } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
@@ -90,6 +91,7 @@ export default function NewBlogPostPage() {
   });
 
   const [isEnhancing, setIsEnhancing] = useState(false);
+  const [isFormatting, setIsFormatting] = useState(false);
   const [suggestedLinks, setSuggestedLinks] = useState<Array<{
     anchorText: string;
     url: string;
@@ -238,6 +240,67 @@ export default function NewBlogPostPage() {
     }
   };
 
+  // Format & SEO - adds HTML structure AND fills metadata
+  const handleFormatAndSEO = async () => {
+    if (!formData.content || formData.content.trim().length < 100) {
+      alert('Je hebt minimaal 100 karakters content nodig om te formatteren');
+      return;
+    }
+
+    if (!formData.title || formData.title.trim().length < 5) {
+      alert('Vul eerst een titel in');
+      return;
+    }
+
+    setIsFormatting(true);
+    try {
+      const response = await fetch('/api/admin/blog/format', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          content: formData.content,
+          title: formData.title,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        console.error('API Error:', result);
+        alert(result.error || 'Formattering mislukt');
+        return;
+      }
+
+      const { data } = result;
+
+      // Update content WITH formatting AND all metadata
+      setFormData({
+        ...formData,
+        content: data.formattedContent || formData.content,
+        excerpt: data.excerpt || formData.excerpt,
+        category: data.category || formData.category,
+        tags: data.tags?.join(', ') || formData.tags,
+        seoTitle: data.seo?.title || formData.seoTitle,
+        seoDescription: data.seo?.description || formData.seoDescription,
+        seoKeywords: data.seo?.keywords?.join(', ') || formData.seoKeywords,
+        socialInstagram: data.socialMedia?.instagram || formData.socialInstagram,
+        socialFacebook: data.socialMedia?.facebook || formData.socialFacebook,
+        socialLinkedIn: data.socialMedia?.linkedin || formData.socialLinkedIn,
+        socialTwitter: data.socialMedia?.twitter || formData.socialTwitter,
+        imagePrompt: data.coverImage?.prompt || formData.imagePrompt,
+        coverImageAlt: data.coverImage?.alt || formData.coverImageAlt,
+      });
+
+      setActiveTab('editor');
+      alert('✨ Tekst geformatteerd met headers, alinea\'s en interne links! Alle SEO velden zijn ook ingevuld.');
+    } catch (error) {
+      console.error('Error formatting content:', error);
+      alert('Er ging iets fout bij het formatteren. Controleer de console voor details.');
+    } finally {
+      setIsFormatting(false);
+    }
+  };
+
   const handleAIGenerate = async () => {
     if (!aiFormData.keyword) {
       alert('Vul een primair keyword in');
@@ -370,6 +433,20 @@ export default function NewBlogPostPage() {
           <Button
             type="button"
             variant="outline"
+            onClick={handleFormatAndSEO}
+            disabled={isFormatting || !formData.content || formData.content.length < 100}
+            className="border-green-400 text-green-700 hover:bg-green-50"
+          >
+            {isFormatting ? (
+              <Loader2 size={18} className="mr-2 animate-spin" />
+            ) : (
+              <FileCode size={18} className="mr-2" />
+            )}
+            Format & SEO
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
             onClick={handleEnhanceOnly}
             disabled={isEnhancing || !formData.content || formData.content.length < 100}
             className="border-purple-300 text-purple-700 hover:bg-purple-50"
@@ -379,7 +456,7 @@ export default function NewBlogPostPage() {
             ) : (
               <Wand2 size={18} className="mr-2" />
             )}
-            Enhance Only
+            Metadata Only
           </Button>
           <Button type="button" variant="outline" onClick={() => setShowAIPanel(!showAIPanel)}>
             <Sparkles size={18} className="mr-2" />
