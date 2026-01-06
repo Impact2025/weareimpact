@@ -127,10 +127,9 @@ export default function AdminKennisbankPage() {
     try {
       const newStatus = article.status === 'published' ? 'draft' : 'published';
       const response = await fetch(`/api/kennisbank/${article.slug}`, {
-        method: 'PUT',
+        method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          ...article,
           status: newStatus,
         }),
       });

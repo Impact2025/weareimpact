@@ -131,6 +131,51 @@ export async function PUT(
   }
 }
 
+// PATCH - Update article status only
+export async function PATCH(
+  request: NextRequest,
+  { params }: { params: Promise<{ slug: string }> }
+) {
+  try {
+    const { slug } = await params;
+    const body = await request.json();
+    const { status } = body;
+
+    if (!status || !['published', 'draft'].includes(status)) {
+      return NextResponse.json(
+        { error: 'Invalid status' },
+        { status: 400 }
+      );
+    }
+
+    const result = await sql`
+      UPDATE kb_articles SET
+        status = ${status},
+        published_at = CASE
+          WHEN ${status} = 'published' AND published_at IS NULL THEN NOW()
+          ELSE published_at
+        END
+      WHERE slug = ${slug}
+      RETURNING id, slug, status
+    `;
+
+    if (result.length === 0) {
+      return NextResponse.json(
+        { error: 'Article not found' },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json({ success: true, data: result[0] });
+  } catch (error) {
+    console.error('Error updating article status:', error);
+    return NextResponse.json(
+      { error: 'Failed to update status' },
+      { status: 500 }
+    );
+  }
+}
+
 // DELETE - Delete article
 export async function DELETE(
   request: NextRequest,
