@@ -13,7 +13,13 @@ import {
   Share2,
   Settings,
   ChevronDown,
-  ChevronUp
+  ChevronUp,
+  Upload,
+  X,
+  Calendar,
+  Wand2,
+  Link2,
+  ExternalLink
 } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
@@ -57,6 +63,7 @@ export default function NewBlogPostPage() {
     coverImage: '',
     coverImageAlt: '',
     published: false,
+    publishedAt: '',
     seoTitle: '',
     seoDescription: '',
     seoKeywords: '',
@@ -66,6 +73,8 @@ export default function NewBlogPostPage() {
     socialTwitter: '',
     imagePrompt: '',
   });
+
+  const [isUploading, setIsUploading] = useState(false);
 
   const [aiFormData, setAIFormData] = useState({
     keyword: '',
@@ -79,6 +88,13 @@ export default function NewBlogPostPage() {
     title: '',
     content: '',
   });
+
+  const [isEnhancing, setIsEnhancing] = useState(false);
+  const [suggestedLinks, setSuggestedLinks] = useState<Array<{
+    anchorText: string;
+    url: string;
+    reason: string;
+  }>>([]);
 
   const generateSlug = (title: string) => {
     return title
@@ -155,6 +171,73 @@ export default function NewBlogPostPage() {
     }
   };
 
+  // Enhance Only - keeps original text, only fills metadata
+  const handleEnhanceOnly = async () => {
+    if (!formData.content || formData.content.trim().length < 100) {
+      alert('Je hebt minimaal 100 karakters content nodig om te enhancen');
+      return;
+    }
+
+    if (!formData.title || formData.title.trim().length < 5) {
+      alert('Vul eerst een titel in');
+      return;
+    }
+
+    setIsEnhancing(true);
+    try {
+      const response = await fetch('/api/admin/blog/enhance', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          content: formData.content,
+          title: formData.title,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        console.error('API Error:', result);
+        alert(result.error || 'Enhancement mislukt');
+        return;
+      }
+
+      const { data } = result;
+
+      // Update ONLY metadata fields, keep content unchanged
+      setFormData({
+        ...formData,
+        // Keep these unchanged:
+        // title, slug, content - user's original text
+        excerpt: data.excerpt || formData.excerpt,
+        category: data.category || formData.category,
+        tags: data.tags?.join(', ') || formData.tags,
+        seoTitle: data.seo?.title || formData.seoTitle,
+        seoDescription: data.seo?.description || formData.seoDescription,
+        seoKeywords: data.seo?.keywords?.join(', ') || formData.seoKeywords,
+        socialInstagram: data.socialMedia?.instagram || formData.socialInstagram,
+        socialFacebook: data.socialMedia?.facebook || formData.socialFacebook,
+        socialLinkedIn: data.socialMedia?.linkedin || formData.socialLinkedIn,
+        socialTwitter: data.socialMedia?.twitter || formData.socialTwitter,
+        imagePrompt: data.coverImage?.prompt || formData.imagePrompt,
+        coverImageAlt: data.coverImage?.alt || formData.coverImageAlt,
+      });
+
+      // Store suggested internal links
+      if (data.internalLinks && data.internalLinks.length > 0) {
+        setSuggestedLinks(data.internalLinks);
+      }
+
+      setActiveTab('seo');
+      alert('✨ Metadata succesvol gegenereerd! Je tekst is ongewijzigd. Check de SEO en Social Media tabs.');
+    } catch (error) {
+      console.error('Error enhancing content:', error);
+      alert('Er ging iets fout bij het enhancen. Controleer de console voor details.');
+    } finally {
+      setIsEnhancing(false);
+    }
+  };
+
   const handleAIGenerate = async () => {
     if (!aiFormData.keyword) {
       alert('Vul een primair keyword in');
@@ -207,6 +290,36 @@ export default function NewBlogPostPage() {
     }
   };
 
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsUploading(true);
+    try {
+      const formDataUpload = new FormData();
+      formDataUpload.append('file', file);
+
+      const response = await fetch('/api/upload', {
+        method: 'POST',
+        body: formDataUpload,
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        alert(result.error || 'Upload mislukt');
+        return;
+      }
+
+      setFormData({ ...formData, coverImage: result.url });
+    } catch (error) {
+      console.error('Upload error:', error);
+      alert('Er ging iets fout bij het uploaden');
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -218,13 +331,16 @@ export default function NewBlogPostPage() {
         body: JSON.stringify({
           ...formData,
           tags: formData.tags.split(',').map(t => t.trim()).filter(Boolean),
+          publishedAt: formData.publishedAt || undefined,
         }),
       });
 
       if (response.ok) {
         router.push('/admin/blog');
       } else {
-        alert('Er ging iets fout bij het opslaan');
+        const errorData = await response.json();
+        console.error('API Error:', errorData);
+        alert(`Fout bij opslaan: ${errorData.error || 'Onbekende fout'}`);
       }
     } catch (error) {
       console.error('Error saving post:', error);
@@ -251,6 +367,20 @@ export default function NewBlogPostPage() {
           </div>
         </div>
         <div className="flex gap-3">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={handleEnhanceOnly}
+            disabled={isEnhancing || !formData.content || formData.content.length < 100}
+            className="border-purple-300 text-purple-700 hover:bg-purple-50"
+          >
+            {isEnhancing ? (
+              <Loader2 size={18} className="mr-2 animate-spin" />
+            ) : (
+              <Wand2 size={18} className="mr-2" />
+            )}
+            Enhance Only
+          </Button>
           <Button type="button" variant="outline" onClick={() => setShowAIPanel(!showAIPanel)}>
             <Sparkles size={18} className="mr-2" />
             SEO Optimizer
@@ -432,6 +562,55 @@ export default function NewBlogPostPage() {
                         </div>
                       </div>
                     </div>
+
+                    {/* Suggested Internal Links */}
+                    {suggestedLinks.length > 0 && (
+                      <div className="border rounded-lg p-4 bg-purple-50 border-purple-200">
+                        <div className="flex items-center gap-2 mb-3">
+                          <Link2 className="text-purple-600" size={18} />
+                          <p className="font-semibold text-purple-900">Gesuggereerde Interne Links</p>
+                        </div>
+                        <p className="text-xs text-purple-700 mb-3">
+                          Kopieer deze links handmatig naar je tekst voor betere SEO:
+                        </p>
+                        <div className="space-y-3">
+                          {suggestedLinks.map((link, index) => (
+                            <div key={index} className="bg-white rounded-lg p-3 border border-purple-100">
+                              <div className="flex items-start justify-between gap-2">
+                                <div className="flex-1">
+                                  <p className="text-sm font-medium text-slate-900">
+                                    &ldquo;{link.anchorText}&rdquo;
+                                  </p>
+                                  <a
+                                    href={`https://weareimpact.nl${link.url}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-xs text-purple-600 hover:underline flex items-center gap-1 mt-1"
+                                  >
+                                    {link.url}
+                                    <ExternalLink size={10} />
+                                  </a>
+                                  <p className="text-xs text-slate-500 mt-1">{link.reason}</p>
+                                </div>
+                                <Button
+                                  type="button"
+                                  variant="outline"
+                                  size="sm"
+                                  className="shrink-0"
+                                  onClick={() => {
+                                    const linkHtml = `<a href="https://weareimpact.nl${link.url}">${link.anchorText}</a>`;
+                                    navigator.clipboard.writeText(linkHtml);
+                                    alert('Link HTML gekopieerd!');
+                                  }}
+                                >
+                                  Kopieer
+                                </Button>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </CardContent>
                 </Card>
               </TabsContent>
@@ -575,7 +754,60 @@ export default function NewBlogPostPage() {
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="coverImage">Cover Image URL</Label>
+                      <Label>Cover Image</Label>
+
+                      {/* Image Upload */}
+                      <div className="border-2 border-dashed border-slate-300 rounded-lg p-4 hover:border-orange-400 transition-colors">
+                        {formData.coverImage ? (
+                          <div className="relative">
+                            <img
+                              src={formData.coverImage}
+                              alt="Cover preview"
+                              className="w-full h-48 object-cover rounded-lg"
+                              onError={(e) => {
+                                e.currentTarget.src = 'https://via.placeholder.com/800x400?text=Invalid+Image';
+                              }}
+                            />
+                            <Button
+                              type="button"
+                              variant="destructive"
+                              size="sm"
+                              className="absolute top-2 right-2"
+                              onClick={() => setFormData({ ...formData, coverImage: '' })}
+                            >
+                              <X size={16} />
+                            </Button>
+                          </div>
+                        ) : (
+                          <label className="flex flex-col items-center justify-center h-32 cursor-pointer">
+                            {isUploading ? (
+                              <Loader2 className="w-8 h-8 text-slate-400 animate-spin" />
+                            ) : (
+                              <>
+                                <Upload className="w-8 h-8 text-slate-400 mb-2" />
+                                <span className="text-sm text-slate-500">
+                                  Klik om afbeelding te uploaden
+                                </span>
+                                <span className="text-xs text-slate-400 mt-1">
+                                  JPG, PNG, WebP (max 5MB)
+                                </span>
+                              </>
+                            )}
+                            <input
+                              type="file"
+                              accept="image/jpeg,image/png,image/webp,image/gif"
+                              onChange={handleImageUpload}
+                              className="hidden"
+                              disabled={isUploading}
+                            />
+                          </label>
+                        )}
+                      </div>
+
+                      {/* Or paste URL */}
+                      <div className="flex items-center gap-2 text-xs text-slate-500">
+                        <span>of plak een URL:</span>
+                      </div>
                       <Input
                         id="coverImage"
                         value={formData.coverImage}
@@ -584,18 +816,6 @@ export default function NewBlogPostPage() {
                         }
                         placeholder="https://..."
                       />
-                      {formData.coverImage && (
-                        <div className="mt-2 border rounded-lg overflow-hidden">
-                          <img
-                            src={formData.coverImage}
-                            alt="Cover preview"
-                            className="w-full h-48 object-cover"
-                            onError={(e) => {
-                              e.currentTarget.src = 'https://via.placeholder.com/800x400?text=Invalid+Image+URL';
-                            }}
-                          />
-                        </div>
-                      )}
                     </div>
 
                     <div className="space-y-2">
@@ -619,7 +839,7 @@ export default function NewBlogPostPage() {
                       </div>
                     </div>
 
-                    <div className="border-t pt-4">
+                    <div className="border-t pt-4 space-y-4">
                       <div className="flex items-center justify-between">
                         <div>
                           <Label htmlFor="published">Direct Publiceren</Label>
@@ -634,6 +854,25 @@ export default function NewBlogPostPage() {
                             setFormData({ ...formData, published: checked })
                           }
                         />
+                      </div>
+
+                      {/* Publicatiedatum */}
+                      <div className="space-y-2">
+                        <Label htmlFor="publishedAt" className="flex items-center gap-2">
+                          <Calendar size={16} />
+                          Publicatiedatum
+                        </Label>
+                        <Input
+                          id="publishedAt"
+                          type="datetime-local"
+                          value={formData.publishedAt}
+                          onChange={(e) =>
+                            setFormData({ ...formData, publishedAt: e.target.value })
+                          }
+                        />
+                        <p className="text-xs text-slate-500">
+                          Laat leeg om de huidige datum te gebruiken bij publicatie
+                        </p>
                       </div>
                     </div>
                   </CardContent>
