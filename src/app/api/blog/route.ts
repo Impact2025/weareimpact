@@ -19,6 +19,7 @@ export async function GET(request: NextRequest) {
       posts = await sql`
         SELECT id, title, slug, excerpt, content, cover_image, cover_image_alt, category, tags,
                status, author_name, reading_time, views, seo_title, seo_description,
+               header_type, header_color, header_title,
                published_at, created_at, updated_at
         FROM posts
         WHERE id = ${id}
@@ -29,6 +30,7 @@ export async function GET(request: NextRequest) {
       posts = await sql`
         SELECT id, title, slug, excerpt, content, cover_image, category, tags,
                status, author_name, reading_time, views, seo_title, seo_description,
+               header_type, header_color, header_title,
                published_at, created_at, updated_at
         FROM posts
         WHERE slug = ${slug} AND status = ${status}
@@ -73,6 +75,9 @@ export async function GET(request: NextRequest) {
       views: post.views,
       seoTitle: post.seo_title,
       seoDescription: post.seo_description,
+      headerType: post.header_type,
+      headerColor: post.header_color,
+      headerTitle: post.header_title,
       publishedAt: post.published_at,
       createdAt: post.created_at,
       updatedAt: post.updated_at,
@@ -103,6 +108,9 @@ export async function POST(request: NextRequest) {
       tags,
       coverImage,
       coverImageAlt,
+      headerType,
+      headerColor,
+      headerTitle,
       published,
       publishedAt: customPublishedAt,
       seoTitle,
@@ -135,11 +143,13 @@ export async function POST(request: NextRequest) {
     const result = await sql`
       INSERT INTO posts (
         title, slug, excerpt, content, cover_image, cover_image_alt, category, tags,
-        status, reading_time, seo_title, seo_description, published_at
+        status, reading_time, seo_title, seo_description, published_at,
+        header_type, header_color, header_title
       ) VALUES (
         ${title}, ${slug}, ${excerpt || ''}, ${content}, ${coverImage || null}, ${coverImageAlt || null},
         ${category}, ${tagArray}, ${status}, ${readingTime},
-        ${seoTitle || title}, ${seoDescription || excerpt || ''}, ${publishedAt}
+        ${seoTitle || title}, ${seoDescription || excerpt || ''}, ${publishedAt},
+        ${headerType || 'image'}, ${headerColor || 'orange'}, ${headerTitle || null}
       )
       RETURNING id, title, slug, category, status, reading_time
     `;
@@ -212,6 +222,9 @@ export async function PUT(request: NextRequest) {
         reading_time = COALESCE(${readingTime}, reading_time),
         seo_title = COALESCE(${updates.seoTitle}, seo_title),
         seo_description = COALESCE(${updates.seoDescription}, seo_description),
+        header_type = COALESCE(${updates.headerType}, header_type),
+        header_color = COALESCE(${updates.headerColor}, header_color),
+        header_title = COALESCE(${updates.headerTitle}, header_title),
         published_at = CASE
           WHEN ${updates.status} = 'published' AND published_at IS NULL THEN NOW()
           ELSE published_at

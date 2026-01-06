@@ -20,7 +20,8 @@ import {
   Wand2,
   Link2,
   ExternalLink,
-  FileCode
+  FileCode,
+  Type
 } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
@@ -63,6 +64,9 @@ export default function NewBlogPostPage() {
     tags: '',
     coverImage: '',
     coverImageAlt: '',
+    headerType: 'image' as 'image' | 'color',
+    headerColor: 'orange' as 'orange' | 'slate',
+    headerTitle: '',
     published: false,
     publishedAt: '',
     seoTitle: '',
@@ -395,6 +399,9 @@ export default function NewBlogPostPage() {
           ...formData,
           tags: formData.tags.split(',').map(t => t.trim()).filter(Boolean),
           publishedAt: formData.publishedAt || undefined,
+          headerType: formData.headerType,
+          headerColor: formData.headerColor,
+          headerTitle: formData.headerTitle,
         }),
       });
 
@@ -830,90 +837,171 @@ export default function NewBlogPostPage() {
                       </div>
                     </div>
 
-                    <div className="space-y-2">
-                      <Label>Cover Image</Label>
+                    {/* Header Type Selection */}
+                    <div className="space-y-4 border-t pt-4">
+                      <Label>Header Afbeelding</Label>
+                      <div className="flex gap-2">
+                        <Button
+                          type="button"
+                          variant={formData.headerType === 'image' ? 'default' : 'outline'}
+                          size="sm"
+                          onClick={() => setFormData({ ...formData, headerType: 'image' })}
+                          className={formData.headerType === 'image' ? 'bg-orange-600 hover:bg-orange-700' : ''}
+                        >
+                          <Upload size={16} className="mr-2" />
+                          Afbeelding
+                        </Button>
+                        <Button
+                          type="button"
+                          variant={formData.headerType === 'color' ? 'default' : 'outline'}
+                          size="sm"
+                          onClick={() => setFormData({ ...formData, headerType: 'color' })}
+                          className={formData.headerType === 'color' ? 'bg-orange-600 hover:bg-orange-700' : ''}
+                        >
+                          <Type size={16} className="mr-2" />
+                          Kleur + Titel
+                        </Button>
+                      </div>
 
-                      {/* Image Upload */}
-                      <div className="border-2 border-dashed border-slate-300 rounded-lg p-4 hover:border-orange-400 transition-colors">
-                        {formData.coverImage ? (
-                          <div className="relative">
-                            <img
-                              src={formData.coverImage}
-                              alt="Cover preview"
-                              className="w-full h-48 object-cover rounded-lg"
-                              onError={(e) => {
-                                e.currentTarget.src = 'https://via.placeholder.com/800x400?text=Invalid+Image';
-                              }}
-                            />
-                            <Button
-                              type="button"
-                              variant="destructive"
-                              size="sm"
-                              className="absolute top-2 right-2"
-                              onClick={() => setFormData({ ...formData, coverImage: '' })}
-                            >
-                              <X size={16} />
-                            </Button>
-                          </div>
-                        ) : (
-                          <label className="flex flex-col items-center justify-center h-32 cursor-pointer">
-                            {isUploading ? (
-                              <Loader2 className="w-8 h-8 text-slate-400 animate-spin" />
+                      {/* Image Upload Option */}
+                      {formData.headerType === 'image' && (
+                        <div className="space-y-3">
+                          <div className="border-2 border-dashed border-slate-300 rounded-lg p-4 hover:border-orange-400 transition-colors">
+                            {formData.coverImage ? (
+                              <div className="relative">
+                                <img
+                                  src={formData.coverImage}
+                                  alt="Cover preview"
+                                  className="w-full h-48 object-cover rounded-lg"
+                                  onError={(e) => {
+                                    e.currentTarget.src = 'https://via.placeholder.com/800x400?text=Invalid+Image';
+                                  }}
+                                />
+                                <Button
+                                  type="button"
+                                  variant="destructive"
+                                  size="sm"
+                                  className="absolute top-2 right-2"
+                                  onClick={() => setFormData({ ...formData, coverImage: '' })}
+                                >
+                                  <X size={16} />
+                                </Button>
+                              </div>
                             ) : (
-                              <>
-                                <Upload className="w-8 h-8 text-slate-400 mb-2" />
-                                <span className="text-sm text-slate-500">
-                                  Klik om afbeelding te uploaden
-                                </span>
-                                <span className="text-xs text-slate-400 mt-1">
-                                  JPG, PNG, WebP (max 5MB)
-                                </span>
-                              </>
+                              <label className="flex flex-col items-center justify-center h-32 cursor-pointer">
+                                {isUploading ? (
+                                  <Loader2 className="w-8 h-8 text-slate-400 animate-spin" />
+                                ) : (
+                                  <>
+                                    <Upload className="w-8 h-8 text-slate-400 mb-2" />
+                                    <span className="text-sm text-slate-500">
+                                      Klik om afbeelding te uploaden
+                                    </span>
+                                    <span className="text-xs text-slate-400 mt-1">
+                                      JPG, PNG, WebP (max 5MB)
+                                    </span>
+                                  </>
+                                )}
+                                <input
+                                  type="file"
+                                  accept="image/jpeg,image/png,image/webp,image/gif"
+                                  onChange={handleImageUpload}
+                                  className="hidden"
+                                  disabled={isUploading}
+                                />
+                              </label>
                             )}
-                            <input
-                              type="file"
-                              accept="image/jpeg,image/png,image/webp,image/gif"
-                              onChange={handleImageUpload}
-                              className="hidden"
-                              disabled={isUploading}
+                          </div>
+
+                          <div className="flex items-center gap-2 text-xs text-slate-500">
+                            <span>of plak een URL:</span>
+                          </div>
+                          <Input
+                            id="coverImage"
+                            value={formData.coverImage}
+                            onChange={(e) =>
+                              setFormData({ ...formData, coverImage: e.target.value })
+                            }
+                            placeholder="https://..."
+                          />
+                          <div className="space-y-2">
+                            <Label htmlFor="coverImageAlt">Alt tekst (SEO)</Label>
+                            <Input
+                              id="coverImageAlt"
+                              value={formData.coverImageAlt}
+                              onChange={(e) =>
+                                setFormData({ ...formData, coverImageAlt: e.target.value })
+                              }
+                              placeholder="Beschrijvende alt tekst..."
                             />
-                          </label>
-                        )}
-                      </div>
+                          </div>
+                        </div>
+                      )}
 
-                      {/* Or paste URL */}
-                      <div className="flex items-center gap-2 text-xs text-slate-500">
-                        <span>of plak een URL:</span>
-                      </div>
-                      <Input
-                        id="coverImage"
-                        value={formData.coverImage}
-                        onChange={(e) =>
-                          setFormData({ ...formData, coverImage: e.target.value })
-                        }
-                        placeholder="https://..."
-                      />
-                    </div>
+                      {/* Color Background Option */}
+                      {formData.headerType === 'color' && (
+                        <div className="space-y-4">
+                          <div className="space-y-2">
+                            <Label>Achtergrondkleur</Label>
+                            <div className="flex gap-3">
+                              <button
+                                type="button"
+                                onClick={() => setFormData({ ...formData, headerColor: 'orange' })}
+                                className={`flex-1 h-16 rounded-lg border-2 transition-all ${
+                                  formData.headerColor === 'orange'
+                                    ? 'border-orange-600 ring-2 ring-orange-600 ring-offset-2'
+                                    : 'border-slate-200 hover:border-orange-300'
+                                }`}
+                                style={{ backgroundColor: '#fb923c' }}
+                              >
+                                <span className="text-white font-semibold text-sm">Oranje</span>
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => setFormData({ ...formData, headerColor: 'slate' })}
+                                className={`flex-1 h-16 rounded-lg border-2 transition-all ${
+                                  formData.headerColor === 'slate'
+                                    ? 'border-slate-600 ring-2 ring-slate-600 ring-offset-2'
+                                    : 'border-slate-200 hover:border-slate-300'
+                                }`}
+                                style={{ backgroundColor: '#0f172a' }}
+                              >
+                                <span className="text-white font-semibold text-sm">Donkerblauw</span>
+                              </button>
+                            </div>
+                          </div>
 
-                    <div className="space-y-2">
-                      <Label htmlFor="coverImageAlt">Cover Image Alt Text (SEO)</Label>
-                      <Input
-                        id="coverImageAlt"
-                        value={formData.coverImageAlt}
-                        onChange={(e) =>
-                          setFormData({ ...formData, coverImageAlt: e.target.value })
-                        }
-                        placeholder="Beschrijvende alt tekst voor SEO..."
-                        maxLength={125}
-                      />
-                      <div className="flex justify-between text-xs">
-                        <span className="text-slate-500">
-                          Alt tekst voor SEO en accessibility (max 125 karakters)
-                        </span>
-                        <span className={formData.coverImageAlt.length > 125 ? 'text-red-500' : 'text-slate-500'}>
-                          {formData.coverImageAlt.length}/125
-                        </span>
-                      </div>
+                          <div className="space-y-2">
+                            <Label htmlFor="headerTitle">Header Titel</Label>
+                            <Input
+                              id="headerTitle"
+                              value={formData.headerTitle}
+                              onChange={(e) =>
+                                setFormData({ ...formData, headerTitle: e.target.value })
+                              }
+                              placeholder="Eigen titel voor de header..."
+                            />
+                            <p className="text-xs text-slate-500">
+                              Laat leeg om de artikel titel te gebruiken
+                            </p>
+                          </div>
+
+                          {/* Preview */}
+                          <div className="space-y-2">
+                            <Label>Preview</Label>
+                            <div
+                              className="w-full h-32 rounded-lg flex items-center justify-center px-4"
+                              style={{
+                                backgroundColor: formData.headerColor === 'orange' ? '#fb923c' : '#0f172a',
+                              }}
+                            >
+                              <span className="text-white font-bold text-xl text-center">
+                                {formData.headerTitle || formData.title || 'Artikel Titel'}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      )}
                     </div>
 
                     <div className="border-t pt-4 space-y-4">

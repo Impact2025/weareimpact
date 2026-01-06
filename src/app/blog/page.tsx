@@ -32,6 +32,9 @@ interface Post {
   published_at: string;
   reading_time: number;
   cover_image: string | null;
+  header_type: 'image' | 'color' | null;
+  header_color: 'orange' | 'slate' | null;
+  header_title: string | null;
 }
 
 const categories = [
@@ -45,7 +48,8 @@ const categories = [
 async function getPosts(): Promise<Post[]> {
   try {
     const posts = await sql`
-      SELECT id, title, slug, excerpt, category, published_at, reading_time, cover_image
+      SELECT id, title, slug, excerpt, category, published_at, reading_time, cover_image,
+             header_type, header_color, header_title
       FROM posts
       WHERE status = 'published'
       ORDER BY published_at DESC NULLS LAST
@@ -117,9 +121,20 @@ export default async function BlogPage() {
                 href={`/blog/${post.slug}`}
                 className="group bg-white rounded-2xl border border-slate-100 overflow-hidden hover:shadow-xl hover:border-orange-200 transition-all"
               >
-                {/* Cover Image */}
+                {/* Cover Image or Color Header */}
                 <div className="aspect-video bg-gradient-to-br from-slate-100 to-slate-200 relative overflow-hidden">
-                  {post.cover_image ? (
+                  {post.header_type === 'color' ? (
+                    <div
+                      className="absolute inset-0 flex items-center justify-center px-4"
+                      style={{
+                        backgroundColor: post.header_color === 'orange' ? '#fb923c' : '#0f172a',
+                      }}
+                    >
+                      <span className="text-white font-bold text-lg text-center leading-tight">
+                        {post.header_title || post.title}
+                      </span>
+                    </div>
+                  ) : post.cover_image ? (
                     <Image
                       src={post.cover_image}
                       alt={post.title}

@@ -39,6 +39,9 @@ interface Post {
   content: string;
   cover_image: string | null;
   cover_image_alt: string | null;
+  header_type: 'image' | 'color' | null;
+  header_color: 'orange' | 'slate' | null;
+  header_title: string | null;
   category: string;
   tags: string[];
   author_name: string;
@@ -59,6 +62,7 @@ async function getPost(slug: string): Promise<Post | null> {
 
     const posts = await sql`
       SELECT id, title, slug, excerpt, content, cover_image, cover_image_alt,
+             header_type, header_color, header_title,
              category, tags, author_name, reading_time, published_at
       FROM posts
       WHERE slug = ${slug} AND status = 'published'
@@ -224,8 +228,21 @@ export default async function BlogPostPage({ params }: Props) {
           </div>
         </header>
 
-        {/* Cover Image - SEO Optimized */}
-        {post.cover_image && (
+        {/* Cover Image or Color Header - SEO Optimized */}
+        {post.header_type === 'color' ? (
+          <div className="mb-12 -mx-6 md:mx-0">
+            <div
+              className="w-full aspect-[3/1] md:rounded-2xl flex items-center justify-center px-8"
+              style={{
+                backgroundColor: post.header_color === 'orange' ? '#fb923c' : '#0f172a',
+              }}
+            >
+              <h2 className="text-white font-bold text-2xl md:text-4xl text-center leading-tight">
+                {post.header_title || post.title}
+              </h2>
+            </div>
+          </div>
+        ) : post.cover_image && (
           <div className="mb-12 -mx-6 md:mx-0">
             <div className="relative w-full aspect-[2/1] md:rounded-2xl overflow-hidden">
               <Image
