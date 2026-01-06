@@ -208,6 +208,11 @@ export async function PUT(request: NextRequest) {
       ? (typeof updates.tags === 'string' ? updates.tags.split(',').map((t: string) => t.trim()) : updates.tags)
       : undefined;
 
+    // Handle publishedAt: use provided date, or set to NOW() when first publishing
+    const publishedAtValue = updates.publishedAt
+      ? new Date(updates.publishedAt).toISOString()
+      : null;
+
     const result = await sql`
       UPDATE posts SET
         title = COALESCE(${updates.title}, title),
@@ -226,6 +231,7 @@ export async function PUT(request: NextRequest) {
         header_color = COALESCE(${updates.headerColor}, header_color),
         header_title = COALESCE(${updates.headerTitle}, header_title),
         published_at = CASE
+          WHEN ${publishedAtValue}::timestamp IS NOT NULL THEN ${publishedAtValue}::timestamp
           WHEN ${updates.status} = 'published' AND published_at IS NULL THEN NOW()
           ELSE published_at
         END,
