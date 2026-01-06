@@ -9,7 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { sql } from '@/lib/db/neon';
 import type { Metadata } from 'next';
 
-export const revalidate = 3600; // ISR: revalidate every hour
+export const dynamic = 'force-dynamic'; // Always render fresh content
 export const dynamicParams = true; // Allow params not in generateStaticParams
 
 const categories: Record<string, {

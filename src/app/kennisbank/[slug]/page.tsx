@@ -14,7 +14,7 @@ import { ArticleJsonLd, BreadcrumbJsonLd } from '@/components/seo/JsonLd';
 import { sql } from '@/lib/db/neon';
 import type { Metadata } from 'next';
 
-export const revalidate = 3600; // ISR: revalidate every hour
+export const dynamic = 'force-dynamic'; // Always render fresh content
 
 interface Article {
   id: string;
@@ -357,6 +357,7 @@ export default async function KennisbankArticlePage({ params }: Props) {
                   fill
                   className="object-cover"
                   priority
+                  unoptimized={article.featured_image.includes('blob.vercel-storage.com')}
                 />
               </div>
             ) : null}
