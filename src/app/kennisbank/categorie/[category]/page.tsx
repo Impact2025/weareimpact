@@ -6,6 +6,7 @@ import path from 'path';
 import matter from 'gray-matter';
 import { Calendar, Clock, ArrowRight, ArrowLeft, Brain, Target, Users, Blocks, DollarSign, Building2 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { sql } from '@/lib/db/neon';
 import type { Metadata } from 'next';
 
 export const revalidate = 3600; // ISR: revalidate every hour
@@ -97,17 +98,18 @@ interface Props {
 
 async function getArticlesFromDatabase(category: string): Promise<Article[]> {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
-    const response = await fetch(`${baseUrl}/api/kennisbank?category=${category}&limit=100`, {
-      next: { revalidate: 3600 }
-    });
+    const articles = await sql`
+      SELECT
+        id, slug, title, excerpt, category_slug, tags,
+        featured_image, header_type, header_color, header_title,
+        reading_time, difficulty, published_at
+      FROM kb_articles
+      WHERE status = 'published' AND category_slug = ${category}
+      ORDER BY published_at DESC NULLS LAST
+      LIMIT 100
+    `;
 
-    if (!response.ok) return [];
-
-    const data = await response.json();
-    if (!Array.isArray(data)) return [];
-
-    return data.map((item: Record<string, unknown>) => ({
+    return articles.map((item) => ({
       id: item.id as string,
       title: (item.title as string) || '',
       slug: (item.slug as string) || '',

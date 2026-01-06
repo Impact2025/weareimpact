@@ -11,6 +11,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { KennisbankChat } from '@/components/features/KennisbankChat';
 import { ArticleJsonLd, BreadcrumbJsonLd } from '@/components/seo/JsonLd';
+import { sql } from '@/lib/db/neon';
 import type { Metadata } from 'next';
 
 export const revalidate = 3600; // ISR: revalidate every hour
@@ -69,42 +70,39 @@ const difficultyLabels: Record<string, string> = {
 
 async function getArticleFromDatabase(slug: string): Promise<Article | null> {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
-    const response = await fetch(`${baseUrl}/api/kennisbank/${slug}`, {
-      next: { revalidate: 3600 }
-    });
+    const articles = await sql`
+      SELECT * FROM kb_articles WHERE slug = ${slug} AND status = 'published'
+    `;
 
-    if (!response.ok) return null;
+    if (articles.length === 0) return null;
 
-    const data = await response.json();
-    if (data.error) return null;
-
+    const data = articles[0];
     return {
-      id: data.id,
-      title: data.title || '',
-      subtitle: data.subtitle || null,
-      slug: data.slug,
-      excerpt: data.excerpt || '',
-      content: data.content || '',
-      category_slug: data.category_slug || 'algemeen',
-      tags: data.tags || [],
-      author_name: data.author_name || 'Vincent van Munster',
-      author_title: data.author_title || 'Sociaal Ondernemer & AI Expert',
-      reading_time: data.reading_time || 5,
-      difficulty: data.difficulty || 'beginner',
-      published_at: data.published_at || new Date().toISOString(),
-      views: data.views || 0,
-      featured_image: data.featured_image || null,
-      featured_image_alt: data.featured_image_alt || null,
-      header_type: data.header_type || 'image',
-      header_color: data.header_color || 'orange',
-      header_title: data.header_title || null,
-      faq_items: data.faq_items || [],
-      lead_magnet_title: data.lead_magnet_title || null,
-      lead_magnet_description: data.lead_magnet_description || null,
-      lead_magnet_type: data.lead_magnet_type || null,
-      seo_title: data.seo_title || null,
-      seo_description: data.seo_description || null,
+      id: data.id as string,
+      title: (data.title as string) || '',
+      subtitle: (data.subtitle as string) || null,
+      slug: data.slug as string,
+      excerpt: (data.excerpt as string) || '',
+      content: (data.content as string) || '',
+      category_slug: (data.category_slug as string) || 'algemeen',
+      tags: (data.tags as string[]) || [],
+      author_name: (data.author_name as string) || 'Vincent van Munster',
+      author_title: (data.author_title as string) || 'Sociaal Ondernemer & AI Expert',
+      reading_time: (data.reading_time as number) || 5,
+      difficulty: (data.difficulty as string) || 'beginner',
+      published_at: (data.published_at as string) || new Date().toISOString(),
+      views: (data.views as number) || 0,
+      featured_image: (data.featured_image as string) || null,
+      featured_image_alt: (data.featured_image_alt as string) || null,
+      header_type: ((data.header_type as string) || 'image') as 'image' | 'color',
+      header_color: ((data.header_color as string) || 'orange') as 'orange' | 'slate',
+      header_title: (data.header_title as string) || null,
+      faq_items: (data.faq_items as Array<{ question: string; answer: string }>) || [],
+      lead_magnet_title: (data.lead_magnet_title as string) || null,
+      lead_magnet_description: (data.lead_magnet_description as string) || null,
+      lead_magnet_type: (data.lead_magnet_type as string) || null,
+      seo_title: (data.seo_title as string) || null,
+      seo_description: (data.seo_description as string) || null,
     };
   } catch (error) {
     console.error('Error fetching from database:', error);
