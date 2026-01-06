@@ -20,8 +20,6 @@ seo_keywords:
   - technologie menselijk contact
 reading_time: 11
 difficulty: beginner
-featured_image: /images/kennisbank/ai-warme-handen.jpg
-featured_image_alt: "Hulpverlener in gesprek met cliënt, laptop op achtergrond"
 lead_magnet_title: "AI Readiness Scan voor Welzijnsorganisaties"
 lead_magnet_description: "Ontdek in 10 vragen of jouw organisatie klaar is voor AI-implementatie en waar de grootste kansen liggen."
 lead_magnet_type: checklist

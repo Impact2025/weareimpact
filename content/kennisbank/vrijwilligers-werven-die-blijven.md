@@ -20,8 +20,6 @@ seo_keywords:
   - retentie vrijwilligers
 reading_time: 10
 difficulty: intermediate
-featured_image: /images/kennisbank/vrijwilligers-werven.jpg
-featured_image_alt: "Vrijwilligers in gesprek tijdens teambijeenkomst"
 lead_magnet_title: "Vrijwilliger Retentie Checklist"
 lead_magnet_description: "20 punten om te checken of je vrijwilligers zich gewaardeerd voelen."
 lead_magnet_type: checklist

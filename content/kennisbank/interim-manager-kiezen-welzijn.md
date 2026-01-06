@@ -20,8 +20,6 @@ seo_keywords:
   - welzijn leiderschap
 reading_time: 10
 difficulty: intermediate
-featured_image: /images/kennisbank/interim-manager.jpg
-featured_image_alt: "Interim-manager in gesprek met bestuur"
 lead_magnet_title: "Interim-Manager Selectiechecklist"
 lead_magnet_description: "20 vragen om de juiste interim-manager te selecteren."
 lead_magnet_type: checklist

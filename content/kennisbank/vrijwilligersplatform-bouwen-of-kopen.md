@@ -20,8 +20,6 @@ seo_keywords:
   - DAAR platform
 reading_time: 12
 difficulty: advanced
-featured_image: /images/kennisbank/platform-beslisboom.jpg
-featured_image_alt: "Beslisboom voor platformkeuze"
 lead_magnet_title: "Platform Vergelijkingstool"
 lead_magnet_description: "Excel-template om platforms te vergelijken op jouw criteria."
 lead_magnet_type: tool

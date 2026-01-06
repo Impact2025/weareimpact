@@ -20,8 +20,6 @@ seo_keywords:
   - subsidie 2025
 reading_time: 12
 difficulty: intermediate
-featured_image: /images/kennisbank/subsidie-aanvragen.jpg
-featured_image_alt: "Persoon werkt aan subsidieaanvraag op laptop"
 lead_magnet_title: "Subsidie Projectplan Template (1 pagina)"
 lead_magnet_description: "Een beknopt maar compleet projectplan format dat fondsen waarderen. Plus checklist met 50+ fondsen en deadlines."
 lead_magnet_type: template

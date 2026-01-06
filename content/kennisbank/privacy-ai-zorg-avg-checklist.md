@@ -21,8 +21,6 @@ seo_keywords:
   - avg ai checklist
 reading_time: 11
 difficulty: intermediate
-featured_image: /images/kennisbank/privacy-ai.jpg
-featured_image_alt: "Slot en digitale data visualisatie"
 lead_magnet_title: "AI Privacy Checklist (PDF)"
 lead_magnet_description: "Printbare checklist voor AVG-compliant AI-gebruik in je organisatie."
 lead_magnet_type: checklist

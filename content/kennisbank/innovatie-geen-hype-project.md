@@ -20,8 +20,6 @@ seo_keywords:
   - innovatie implementeren
 reading_time: 9
 difficulty: intermediate
-featured_image: /images/kennisbank/innovatie-duurzaam.jpg
-featured_image_alt: "Team werkt aan duurzame innovatie"
 lead_magnet_title: "Innovatie Reality Check"
 lead_magnet_description: "15 vragen om te testen of je innovatie-initiatief kans van slagen heeft."
 lead_magnet_type: assessment

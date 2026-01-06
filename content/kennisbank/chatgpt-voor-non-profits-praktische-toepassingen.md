@@ -20,8 +20,6 @@ seo_keywords:
   - chatgpt prompts nederlands
 reading_time: 14
 difficulty: beginner
-featured_image: /images/kennisbank/chatgpt-non-profit.jpg
-featured_image_alt: "Non-profit medewerker gebruikt ChatGPT op laptop"
 lead_magnet_title: "50 Copy-Paste Prompts voor Non-Profits"
 lead_magnet_description: "Een verzameling van 50 direct bruikbare ChatGPT prompts voor communicatie, fondsenwerving, vrijwilligers en meer."
 lead_magnet_type: pdf

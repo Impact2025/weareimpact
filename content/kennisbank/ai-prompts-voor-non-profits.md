@@ -20,8 +20,6 @@ seo_keywords:
   - ai administratie
 reading_time: 12
 difficulty: beginner
-featured_image: /images/kennisbank/ai-prompts.jpg
-featured_image_alt: "Laptop met ChatGPT interface"
 lead_magnet_title: "Prompt Bibliotheek (PDF)"
 lead_magnet_description: "Alle 25 prompts als PDF met extra variaties en tips."
 lead_magnet_type: pdf

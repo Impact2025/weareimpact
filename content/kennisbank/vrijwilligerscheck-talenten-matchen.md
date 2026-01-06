@@ -20,8 +20,6 @@ seo_keywords:
   - betekenisvol vrijwilligerswerk
 reading_time: 10
 difficulty: intermediate
-featured_image: /images/kennisbank/vrijwilligerscheck.jpg
-featured_image_alt: "Vrijwilliger in gesprek over talenten en voorkeuren"
 lead_magnet_title: "VrijwilligersCheck Template"
 lead_magnet_description: "De complete VrijwilligersCheck vragenlijst met scoringsmodel."
 lead_magnet_type: template

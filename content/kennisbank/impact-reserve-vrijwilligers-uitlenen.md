@@ -20,8 +20,6 @@ seo_keywords:
   - vrijwilligers uitlenen
 reading_time: 10
 difficulty: intermediate
-featured_image: /images/kennisbank/impact-reserve.jpg
-featured_image_alt: "Vrijwilligers wisselen ervaringen uit"
 lead_magnet_title: "Impact Reserve Opzet-gids"
 lead_magnet_description: "Stap-voor-stap gids om je eigen Impact Reserve te starten."
 lead_magnet_type: guide

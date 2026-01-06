@@ -20,8 +20,6 @@ seo_keywords:
   - maatschappelijk ondernemen
 reading_time: 11
 difficulty: beginner
-featured_image: /images/kennisbank/sociaal-ondernemen-starten.jpg
-featured_image_alt: "Ondernemer werkt aan businessplan voor sociale onderneming"
 lead_magnet_title: "Sociaal Ondernemen Startkit"
 lead_magnet_description: "Checklist + templates om je sociale onderneming te starten."
 lead_magnet_type: toolkit

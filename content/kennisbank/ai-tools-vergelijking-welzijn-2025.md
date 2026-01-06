@@ -20,8 +20,6 @@ seo_keywords:
   - ai tools 2025
 reading_time: 12
 difficulty: beginner
-featured_image: /images/kennisbank/ai-tools-vergelijking.jpg
-featured_image_alt: "Verschillende AI tool logos op scherm"
 lead_magnet_title: "AI Tool Keuzehulp"
 lead_magnet_description: "Interactieve beslisboom om de juiste AI-tool voor jouw organisatie te kiezen."
 lead_magnet_type: tool

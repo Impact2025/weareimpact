@@ -20,8 +20,6 @@ seo_keywords:
   - resultaatketen
 reading_time: 8
 difficulty: intermediate
-featured_image: /images/kennisbank/theory-of-change.jpg
-featured_image_alt: "Team werkt aan Theory of Change op whiteboard"
 lead_magnet_title: "Theory of Change Canvas"
 lead_magnet_description: "Download ons canvas om je eigen Theory of Change uit te werken met je team."
 lead_magnet_type: canvas

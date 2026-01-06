@@ -20,8 +20,6 @@ seo_keywords:
   - impactmeting welzijn
 reading_time: 9
 difficulty: beginner
-featured_image: /images/kennisbank/impact-meten.jpg
-featured_image_alt: "Team bespreekt impactrapportage op whiteboard"
 lead_magnet_title: "Impact Meetplan Template"
 lead_magnet_description: "Download ons template om je eigen impactmeting op te zetten in 4 weken."
 lead_magnet_type: template

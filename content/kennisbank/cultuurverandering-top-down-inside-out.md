@@ -20,8 +20,6 @@ seo_keywords:
   - verandermanagement
 reading_time: 11
 difficulty: advanced
-featured_image: /images/kennisbank/cultuurverandering.jpg
-featured_image_alt: "Team in gesprek over organisatiecultuur"
 lead_magnet_title: "Cultuurverandering Quickscan"
 lead_magnet_description: "Test in 10 minuten hoe veranderingsklaar jouw organisatie is."
 lead_magnet_type: assessment

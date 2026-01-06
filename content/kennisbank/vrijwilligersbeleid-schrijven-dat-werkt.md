@@ -20,8 +20,6 @@ seo_keywords:
   - vrijwilligerswerk beleid
 reading_time: 8
 difficulty: intermediate
-featured_image: /images/kennisbank/vrijwilligersbeleid.jpg
-featured_image_alt: "Document vrijwilligersbeleid op bureau met koffie"
 lead_magnet_title: "Vrijwilligersbeleid Template"
 lead_magnet_description: "Download ons template voor praktisch vrijwilligersbeleid in 10 pagina's."
 lead_magnet_type: template

@@ -20,8 +20,6 @@ seo_keywords:
   - medewerkers ai trainen
 reading_time: 10
 difficulty: intermediate
-featured_image: /images/kennisbank/team-ai-ready.jpg
-featured_image_alt: "Divers team leert werken met AI op laptops"
 lead_magnet_title: "AI Readiness Assessment"
 lead_magnet_description: "Meet de AI-gereedheid van je team met deze 20-vragen assessment."
 lead_magnet_type: assessment

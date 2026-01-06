@@ -20,8 +20,6 @@ seo_keywords:
   - sociaal ondernemen keurmerk
 reading_time: 11
 difficulty: intermediate
-featured_image: /images/kennisbank/code-sociale-ondernemingen.jpg
-featured_image_alt: "Logo Code Sociale Ondernemingen"
 lead_magnet_title: "Zelfevaluatie: Ben Je Klaar voor de Code?"
 lead_magnet_description: "20 vragen om te bepalen of jouw organisatie klaar is voor de Code Sociale Ondernemingen. Met tips om je voor te bereiden."
 lead_magnet_type: checklist

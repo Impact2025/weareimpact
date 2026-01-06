@@ -20,8 +20,6 @@ seo_keywords:
   - non-profit funding
 reading_time: 11
 difficulty: intermediate
-featured_image: /images/kennisbank/funding-ready.jpg
-featured_image_alt: "Team werkt aan funding strategie"
 lead_magnet_title: "Funding-Readiness Scan"
 lead_magnet_description: "Test in 15 minuten hoe funding-ready jouw organisatie is."
 lead_magnet_type: assessment

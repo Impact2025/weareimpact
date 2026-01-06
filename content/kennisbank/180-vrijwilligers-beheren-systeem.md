@@ -20,8 +20,6 @@ seo_keywords:
   - schaalbaar vrijwilligerswerk
 reading_time: 12
 difficulty: advanced
-featured_image: /images/kennisbank/vrijwilligersbeheer.jpg
-featured_image_alt: "Overzicht vrijwilligersplanning op whiteboard"
 lead_magnet_title: "Vrijwilligersbeheer Systeem Toolkit"
 lead_magnet_description: "Complete toolkit met templates, checklists en workflows voor vrijwilligersbeheer."
 lead_magnet_type: toolkit

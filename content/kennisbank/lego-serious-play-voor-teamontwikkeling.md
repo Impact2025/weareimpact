@@ -20,8 +20,6 @@ seo_keywords:
   - samenwerking workshop
 reading_time: 8
 difficulty: intermediate
-featured_image: /images/kennisbank/lsp-teamontwikkeling.jpg
-featured_image_alt: "Team bouwt samen een LEGO model tijdens workshop"
 lead_magnet_title: "Teamworkshop Checklist"
 lead_magnet_description: "20 vragen om te bepalen of je team klaar is voor een LEGO Serious Play sessie."
 lead_magnet_type: checklist

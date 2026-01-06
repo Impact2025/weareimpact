@@ -20,8 +20,6 @@ seo_keywords:
   - lego serious play nederland
 reading_time: 10
 difficulty: beginner
-featured_image: /images/kennisbank/lego-serious-play.jpg
-featured_image_alt: "LEGO Serious Play workshop met deelnemers die modellen bouwen"
 lead_magnet_title: "LSP Quickscan: Past het bij jouw vraagstuk?"
 lead_magnet_description: "Beantwoord 5 vragen en ontdek of LEGO Serious Play past bij jouw uitdaging."
 lead_magnet_type: quiz

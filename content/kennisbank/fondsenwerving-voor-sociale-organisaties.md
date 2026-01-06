@@ -20,8 +20,6 @@ seo_keywords:
   - filantropie
 reading_time: 10
 difficulty: intermediate
-featured_image: /images/kennisbank/fondsenwerving.jpg
-featured_image_alt: "Vergadering over fondsenwerving met documenten"
 lead_magnet_title: "Fondsenwerving Planner"
 lead_magnet_description: "Jaarplanner voor je fondsenwervingsstrategie met deadlines en acties."
 lead_magnet_type: planner

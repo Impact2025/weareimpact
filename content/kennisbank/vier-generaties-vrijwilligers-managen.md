@@ -20,8 +20,6 @@ seo_keywords:
   - motivatie generaties
 reading_time: 9
 difficulty: intermediate
-featured_image: /images/kennisbank/generaties-vrijwilligers.jpg
-featured_image_alt: "Diverse groep vrijwilligers van verschillende leeftijden"
 lead_magnet_title: "Generatie-communicatiegids"
 lead_magnet_description: "Hoe communiceer je effectief met elke generatie? Praktische tips per generatie."
 lead_magnet_type: guide

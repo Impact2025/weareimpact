@@ -20,8 +20,6 @@ seo_keywords:
   - business model impact
 reading_time: 9
 difficulty: intermediate
-featured_image: /images/kennisbank/business-model-canvas.jpg
-featured_image_alt: "Team werkt aan Business Model Canvas op whiteboard"
 lead_magnet_title: "Impact Canvas Template"
 lead_magnet_description: "Download het Impact Business Model Canvas als A3 werkblad."
 lead_magnet_type: template

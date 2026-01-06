@@ -20,8 +20,6 @@ seo_keywords:
   - automatisering welzijn
 reading_time: 11
 difficulty: beginner
-featured_image: /images/kennisbank/administratie-ai.jpg
-featured_image_alt: "Stapel papierwerk wordt digitaal met AI"
 lead_magnet_title: "7 AI Automatiseringen Template Pack"
 lead_magnet_description: "Kant-en-klare templates en prompts voor alle 7 automatiseringen uit dit artikel."
 lead_magnet_type: templates

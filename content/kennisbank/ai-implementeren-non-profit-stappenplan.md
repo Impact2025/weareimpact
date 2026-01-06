@@ -20,8 +20,6 @@ seo_keywords:
   - ai adoptie organisatie
 reading_time: 14
 difficulty: intermediate
-featured_image: /images/kennisbank/ai-implementatie.jpg
-featured_image_alt: "Team werkt samen aan AI implementatie op laptop"
 lead_magnet_title: "AI Implementatie Toolkit"
 lead_magnet_description: "Complete toolkit met templates, checklists en communicatiematerialen voor je AI-implementatie."
 lead_magnet_type: toolkit

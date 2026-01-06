@@ -20,8 +20,6 @@ seo_keywords:
   - vog beleid vrijwilligersorganisatie
 reading_time: 9
 difficulty: beginner
-featured_image: /images/kennisbank/vog-vrijwilligers.jpg
-featured_image_alt: "Vrijwilliger ontvangt VOG certificaat"
 lead_magnet_title: "VOG Beleid Template + Communicatiebrief"
 lead_magnet_description: "Kant-en-klaar VOG beleidsdocument voor je organisatie, inclusief voorbeeldbrief voor vrijwilligers."
 lead_magnet_type: template

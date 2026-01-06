@@ -20,8 +20,6 @@ seo_keywords:
   - impact methodiek
 reading_time: 13
 difficulty: advanced
-featured_image: /images/kennisbank/impact-box.jpg
-featured_image_alt: "Visualisatie van impact meting"
 lead_magnet_title: "Impact Box Starterskit"
 lead_magnet_description: "Templates en instructies om je eigen Impact Box te bouwen."
 lead_magnet_type: toolkit
