@@ -9,6 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import type { Metadata } from 'next';
 
 export const revalidate = 3600; // ISR: revalidate every hour
+export const dynamicParams = true; // Allow params not in generateStaticParams
 
 const categories: Record<string, {
   label: string;
