@@ -1,7 +1,4 @@
 import { MetadataRoute } from 'next';
-import fs from 'fs';
-import path from 'path';
-import matter from 'gray-matter';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = 'https://weareimpact.nl';
@@ -28,26 +25,22 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
   ];
 
-  // Dynamic kennisbank articles from markdown files
+  // Dynamic kennisbank articles from database
   let kennisbankPages: MetadataRoute.Sitemap = [];
   try {
-    const kennisbankDir = path.join(process.cwd(), 'content', 'kennisbank');
-    if (fs.existsSync(kennisbankDir)) {
-      const files = fs.readdirSync(kennisbankDir).filter(file => file.endsWith('.md'));
-      kennisbankPages = files.map(file => {
-        const filePath = path.join(kennisbankDir, file);
-        const fileContents = fs.readFileSync(filePath, 'utf8');
-        const { data } = matter(fileContents);
-        const stats = fs.statSync(filePath);
-
-        return {
-          url: `${baseUrl}/kennisbank/${data.slug || file.replace('.md', '')}`,
-          lastModified: data.published_at ? new Date(data.published_at) : stats.mtime,
-          changeFrequency: 'monthly' as const,
-          priority: 0.7,
-        };
-      });
-    }
+    const { sql } = await import('@/lib/db/neon');
+    const articles = await sql`
+      SELECT slug, updated_at, published_at
+      FROM kb_articles
+      WHERE status = 'published'
+      ORDER BY published_at DESC
+    `;
+    kennisbankPages = articles.map((article) => ({
+      url: `${baseUrl}/kennisbank/${article.slug}`,
+      lastModified: new Date(article.updated_at || article.published_at),
+      changeFrequency: 'monthly' as const,
+      priority: 0.7,
+    }));
   } catch (error) {
     console.error('Error generating kennisbank sitemap:', error);
   }
