@@ -19,10 +19,18 @@ seo_keywords:
   - projectplan subsidie
   - subsidie 2025
 reading_time: 12
+published_at: "2025-01-15"
 difficulty: intermediate
 lead_magnet_title: "Subsidie Projectplan Template (1 pagina)"
 lead_magnet_description: "Een beknopt maar compleet projectplan format dat fondsen waarderen. Plus checklist met 50+ fondsen en deadlines."
 lead_magnet_type: template
+faq_items:
+  - question: "Hoeveel subsidieaanvragen worden gehonoreerd?"
+    answer: "Gemiddeld 15-30% bij grote fondsen. Focus op kwaliteit boven kwantiteit - een goede aanvraag bij het juiste fonds heeft meer kans."
+  - question: "Hoe vind ik passende subsidies?"
+    answer: "Via subsidiedatabases, netwerken met collega-organisaties, en door actief te zoeken op thema en regio."
+  - question: "Wat zijn de meest gemaakte fouten?"
+    answer: "Niet aansluiten bij criteria, te vage impact beschrijving, onrealistische begroting, en te laat beginnen."
 author_name: Vincent van Munster
 author_title: "Sociaal Ondernemer | Rabobank Foundation alumnus"
 ---
@@ -507,6 +515,14 @@ Het kan zinvol zijn bij complexe aanvragen of als je geen tijd hebt. Maar voor e
 5. **Dien in** en volg op
 
 Hulp nodig bij je subsidieaanvraag? Ik denk graag mee.
+
+
+---
+
+## Gerelateerde artikelen
+
+- [Fondsenwerving voor sociale organisaties: wat echt werkt](/kennisbank/fondsenwerving-voor-sociale-organisaties)
+- [Je organisatie 'funding-ready' maken in 90 dagen](/kennisbank/organisatie-funding-ready-90-dagen)
 
 ---
 

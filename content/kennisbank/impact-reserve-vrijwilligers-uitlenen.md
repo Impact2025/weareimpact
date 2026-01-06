@@ -19,10 +19,18 @@ seo_keywords:
   - retentie vrijwilligers
   - vrijwilligers uitlenen
 reading_time: 10
+published_at: "2024-12-01"
 difficulty: intermediate
 lead_magnet_title: "Impact Reserve Opzet-gids"
 lead_magnet_description: "Stap-voor-stap gids om je eigen Impact Reserve te starten."
 lead_magnet_type: guide
+faq_items:
+  - question: "Wat is een vrijwilligersreserve?"
+    answer: "Een pool van flexibel inzetbare vrijwilligers die je kunt uitlenen aan andere organisaties of inzetten bij piekdrukte."
+  - question: "Hoe voorkom je dat vrijwilligers overbelast raken?"
+    answer: "Duidelijke grenzen stellen, maximaal aantal uren per maand, en altijd eerst vragen of het uitkomt."
+  - question: "Mag je vrijwilligers uitlenen?"
+    answer: "Ja, mits de vrijwilliger ermee instemt en je goede afspraken maakt over verzekering en aansturing."
 author_name: Vincent van Munster
 author_title: "Vrijwilligersmanagement Innovator"
 ---
@@ -436,6 +444,15 @@ Het kost weinig, levert veel op, en versterkt de hele sector.
 Ik help organisaties met het opzetten van hun Impact Reserve. Van partnerwerving tot implementatie.
 
 Neem contact op via [WeAreImpact.nl](https://weareimpact.nl) voor een gesprek.
+
+
+---
+
+## Gerelateerde artikelen
+
+- [180 vrijwilligers beheren zonder chaos: mijn systeem](/kennisbank/180-vrijwilligers-beheren-systeem)
+- [4 generaties vrijwilligers managen: zo houd je iedereen betrokken](/kennisbank/vier-generaties-vrijwilligers-managen)
+- [VOG Aanvragen voor Vrijwilligers: Gratis Stappenplan 2025](/kennisbank/vog-aanvragen-vrijwilligers-stappenplan-2025)
 
 ---
 

@@ -19,10 +19,18 @@ seo_keywords:
   - verandering welzijn
   - innovatie implementeren
 reading_time: 9
+published_at: "2024-12-07"
 difficulty: intermediate
 lead_magnet_title: "Innovatie Reality Check"
 lead_magnet_description: "15 vragen om te testen of je innovatie-initiatief kans van slagen heeft."
 lead_magnet_type: assessment
+faq_items:
+  - question: "Waarom mislukken innovatieprojecten?"
+    answer: "Door te focussen op technologie in plaats van het probleem, geen echte commitment van leiderschap, of te snel willen opschalen."
+  - question: "Hoe maak ik innovatie duurzaam?"
+    answer: "Begin met een echt probleem, betrek eindgebruikers vanaf dag één, en bouw in kleine stappen met regelmatige evaluaties."
+  - question: "Hoeveel budget heb ik nodig voor innovatie?"
+    answer: "Start met €0 - veel innovatie gaat over anders werken, niet over dure technologie. Investeer pas als je weet wat werkt."
 author_name: Vincent van Munster
 author_title: "Innovatiemanager & Sociaal Ondernemer"
 ---
@@ -260,6 +268,15 @@ De organisaties die echt vernieuwen:
 Als interim-innovatiemanager help ik organisaties om van hype naar blijvende vernieuwing te gaan.
 
 Neem contact op via [WeAreImpact.nl](https://weareimpact.nl) voor een gesprek.
+
+
+---
+
+## Gerelateerde artikelen
+
+- [Code Sociale Ondernemingen: De Complete Gids](/kennisbank/code-sociale-ondernemingen-complete-gids)
+- [Sociaal ondernemen starten: de realistische checklist](/kennisbank/sociaal-ondernemen-starten-checklist)
+- [Business Model Canvas voor sociale ondernemingen](/kennisbank/social-enterprise-businessmodel-canvas)
 
 ---
 

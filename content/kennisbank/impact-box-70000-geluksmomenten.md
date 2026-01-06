@@ -19,10 +19,18 @@ seo_keywords:
   - resultaatmeting welzijn
   - impact methodiek
 reading_time: 13
+published_at: "2024-11-18"
 difficulty: advanced
 lead_magnet_title: "Impact Box Starterskit"
 lead_magnet_description: "Templates en instructies om je eigen Impact Box te bouwen."
 lead_magnet_type: toolkit
+faq_items:
+  - question: "Wat is de Impact Box methode?"
+    answer: "Een praktische aanpak om impact te meten via geluksmomenten - concrete, tellbare momenten waarop je doelgroep daadwerkelijk geholpen wordt."
+  - question: "Hoe tel je geluksmomenten?"
+    answer: "Definieer wat een geluksmoment is voor jouw organisatie en registreer deze consequent. Bijvoorbeeld een gesprek, maaltijd, of activiteit."
+  - question: "Waarom geluksmomenten in plaats van KPIs?"
+    answer: "Geluksmomenten zijn begrijpelijk voor iedereen en houden de focus op wat ertoe doet: mensen helpen."
 author_name: Vincent van Munster
 author_title: "Oprichter Impact Box Methodiek"
 ---
@@ -513,6 +521,14 @@ De Impact Box geeft je de cijfers om te bewijzen, de verhalen om te overtuigen, 
 Ik help organisaties hun Impact Box op te zetten. Van ontwerp tot implementatie tot eerste rapportage.
 
 Neem contact op via [WeAreImpact.nl](https://weareimpact.nl) voor advies.
+
+
+---
+
+## Gerelateerde artikelen
+
+- [Impact meten zonder Excel-drama: een praktische aanpak](/kennisbank/impact-meten-zonder-excel-drama)
+- [Theory of Change opstellen in een middag](/kennisbank/theory-of-change-in-een-middag)
 
 ---
 

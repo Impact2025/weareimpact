@@ -19,10 +19,18 @@ seo_keywords:
   - gratis ai tools stichting
   - chatgpt prompts nederlands
 reading_time: 14
+published_at: "2024-10-30"
 difficulty: beginner
 lead_magnet_title: "50 Copy-Paste Prompts voor Non-Profits"
 lead_magnet_description: "Een verzameling van 50 direct bruikbare ChatGPT prompts voor communicatie, fondsenwerving, vrijwilligers en meer."
 lead_magnet_type: pdf
+faq_items:
+  - question: "Hoeveel tijd bespaar ik met ChatGPT?"
+    answer: "Gemiddeld 5-10 uur per week bij dagelijks gebruik. Nieuwsbrieven, social media posts en e-mails kosten 50-70% minder tijd."
+  - question: "Is ChatGPT betrouwbaar voor belangrijke teksten?"
+    answer: "ChatGPT is een startpunt, geen eindproduct. Controleer altijd feiten, cijfers en namen. Laat belangrijke teksten door een mens reviewen."
+  - question: "Kan ik ChatGPT teksten zomaar publiceren?"
+    answer: "Ja, je hebt het auteursrecht op gegenereerde content. Maar pas teksten altijd aan met je eigen stem en specifieke details."
 author_name: Vincent van Munster
 author_title: "AI Welzijn Expert | 2+ jaar ChatGPT ervaring"
 ---
@@ -748,6 +756,15 @@ Elke prompt is getest en direct bruikbaar.
 
 **De gouden regel:**
 ChatGPT schrijft het eerste concept. Jij maakt het af met jouw kennis, stem en details.
+
+
+---
+
+## Gerelateerde artikelen
+
+- [Administratieve druk verlagen met AI: 7 processen die je vandaag kunt automatiseren](/kennisbank/administratieve-druk-verlagen-ai)
+- [AI implementeren in je non-profit: stappenplan van 8 weken](/kennisbank/ai-implementeren-non-profit-stappenplan)
+- [25 AI-prompts die ik dagelijks gebruik voor mijn werk](/kennisbank/ai-prompts-voor-non-profits)
 
 ---
 

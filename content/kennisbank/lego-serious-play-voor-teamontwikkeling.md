@@ -19,10 +19,18 @@ seo_keywords:
   - lego methode teams
   - samenwerking workshop
 reading_time: 8
+published_at: "2024-12-24"
 difficulty: intermediate
 lead_magnet_title: "Teamworkshop Checklist"
 lead_magnet_description: "20 vragen om te bepalen of je team klaar is voor een LEGO Serious Play sessie."
 lead_magnet_type: checklist
+faq_items:
+  - question: "Hoelang duurt een LEGO Serious Play sessie?"
+    answer: "Minimaal 2-3 uur voor een zinvolle sessie. Een hele dag geeft ruimte voor diepgang en complexere vraagstukken."
+  - question: "Hoeveel deelnemers kunnen meedoen?"
+    answer: "Ideaal 6-12 personen per facilitator. Bij grotere groepen werk je met meerdere facilitators of split je in subgroepen."
+  - question: "Wat heb je nodig voor een sessie?"
+    answer: "Gecertificeerd facilitator, LEGO Serious Play sets, een ruimte met tafels, en een duidelijke vraagstelling."
 author_name: Vincent van Munster
 author_title: "Gecertificeerd LEGO Serious Play Facilitator"
 ---
@@ -247,6 +255,13 @@ Dan kan een LEGO Serious Play sessie verhelderend zijn.
 Via SteentjeBijSteentje begeleid ik teams door deze processen. Niet als trucje, maar als serieuze interventie die leidt tot concrete verbetering.
 
 Neem contact op om te verkennen wat een sessie voor jouw team kan betekenen.
+
+
+---
+
+## Gerelateerde artikelen
+
+- [LEGO Serious Play: wat het is en wanneer het werkt](/kennisbank/lego-serious-play-uitleg-voor-beslissers)
 
 ---
 

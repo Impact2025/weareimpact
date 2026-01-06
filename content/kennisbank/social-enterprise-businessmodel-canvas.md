@@ -19,10 +19,18 @@ seo_keywords:
   - sociale onderneming model
   - business model impact
 reading_time: 9
+published_at: "2025-01-12"
 difficulty: intermediate
 lead_magnet_title: "Impact Canvas Template"
 lead_magnet_description: "Download het Impact Business Model Canvas als A3 werkblad."
 lead_magnet_type: template
+faq_items:
+  - question: "Wat is een Social Business Model Canvas?"
+    answer: "Een aangepaste versie van het Business Model Canvas met extra focus op impact, beneficiaries, en maatschappelijke waardepropositie."
+  - question: "Waarin verschilt het van een normaal Canvas?"
+    answer: "Het voegt vakken toe voor impact metrics en surplus use, en onderscheidt betalende klanten van degenen die je helpt."
+  - question: "Hoe vaak moet ik mijn canvas updaten?"
+    answer: "Minimaal jaarlijks, of bij grote strategische wijzigingen. Het is een levend document."
 author_name: Vincent van Munster
 author_title: "Sociaal Ondernemer & Strateeg"
 ---
@@ -390,6 +398,15 @@ Door drie blokken toe te voegen - Impact Doel, Begunstigden en Impactmeting - ma
 Ik begeleid regelmatig strategiesessies waarin we samen je Impact Canvas invullen. Met de juiste vragen en een frisse blik kom je verder dan alleen.
 
 Neem contact op via WeAreImpact.nl om de mogelijkheden te bespreken.
+
+
+---
+
+## Gerelateerde artikelen
+
+- [Code Sociale Ondernemingen: De Complete Gids](/kennisbank/code-sociale-ondernemingen-complete-gids)
+- [Sociaal ondernemen starten: de realistische checklist](/kennisbank/sociaal-ondernemen-starten-checklist)
+- [Van top-down naar inside-out: cultuurverandering in welzijnsorganisaties](/kennisbank/cultuurverandering-top-down-inside-out)
 
 ---
 

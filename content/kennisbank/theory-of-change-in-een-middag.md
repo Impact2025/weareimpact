@@ -19,10 +19,18 @@ seo_keywords:
   - sociale interventie
   - resultaatketen
 reading_time: 8
+published_at: "2025-01-25"
 difficulty: intermediate
 lead_magnet_title: "Theory of Change Canvas"
 lead_magnet_description: "Download ons canvas om je eigen Theory of Change uit te werken met je team."
 lead_magnet_type: canvas
+faq_items:
+  - question: "Wat is een Theory of Change?"
+    answer: "Een visueel model dat laat zien hoe je activiteiten leiden tot impact. Van input via output naar outcome naar impact."
+  - question: "Waarom heb ik een Theory of Change nodig?"
+    answer: "Het helpt je focus houden, communiceert je verhaal naar stakeholders, en is vaak vereist voor subsidieaanvragen."
+  - question: "Kan ik echt in een middag een ToC maken?"
+    answer: "Een werkbare eerste versie wel. Het hoeft niet perfect te zijn - je verfijnt hem gaandeweg."
 author_name: Vincent van Munster
 author_title: "Sociaal Ondernemer & Strateeg"
 ---
@@ -324,6 +332,14 @@ Als je na een middag kunt uitleggen:
 Ik faciliteer regelmatig Theory of Change-sessies voor sociale organisaties. Een frisse blik en de juiste vragen stellen maakt het verschil.
 
 Neem contact op via WeAreImpact.nl om de mogelijkheden te bespreken.
+
+
+---
+
+## Gerelateerde artikelen
+
+- [De Impact Box: hoe je jaarlijks 70.000+ geluksmomenten creëert (en documenteert)](/kennisbank/impact-box-70000-geluksmomenten)
+- [Impact meten zonder Excel-drama: een praktische aanpak](/kennisbank/impact-meten-zonder-excel-drama)
 
 ---
 

@@ -19,10 +19,18 @@ seo_keywords:
   - vrijwilligerswerk matching
   - betekenisvol vrijwilligerswerk
 reading_time: 10
+published_at: "2025-02-17"
 difficulty: intermediate
 lead_magnet_title: "VrijwilligersCheck Template"
 lead_magnet_description: "De complete VrijwilligersCheck vragenlijst met scoringsmodel."
 lead_magnet_type: template
+faq_items:
+  - question: "Hoe ontdek ik talenten van vrijwilligers?"
+    answer: "Door te vragen, te observeren, en proefperiodes te bieden. Mensen onderschatten vaak hun eigen talenten."
+  - question: "Wat als een vrijwilliger niet past bij de functie?"
+    answer: "Praat erover en zoek samen naar een betere match. Dwingen leidt tot vertrek, herplaatsen behoudt de vrijwilliger."
+  - question: "Moet elke vrijwilliger een intakegesprek hebben?"
+    answer: "Ja, minimaal een kennismakingsgesprek. Het kost 30 minuten maar voorkomt maanden van mismatch."
 author_name: Vincent van Munster
 author_title: "Ontwikkelaar VrijwilligersCheck"
 ---
@@ -386,6 +394,15 @@ Die shift maakt het verschil tussen vrijwilligers die vertrekken en vrijwilliger
 Ik begeleid organisaties bij het implementeren van de VrijwilligersCheck. Van training tot implementatie.
 
 Neem contact op via [WeAreImpact.nl](https://weareimpact.nl) voor een vrijblijvend gesprek.
+
+
+---
+
+## Gerelateerde artikelen
+
+- [180 vrijwilligers beheren zonder chaos: mijn systeem](/kennisbank/180-vrijwilligers-beheren-systeem)
+- [4 generaties vrijwilligers managen: zo houd je iedereen betrokken](/kennisbank/vier-generaties-vrijwilligers-managen)
+- [VOG Aanvragen voor Vrijwilligers: Gratis Stappenplan 2025](/kennisbank/vog-aanvragen-vrijwilligers-stappenplan-2025)
 
 ---
 

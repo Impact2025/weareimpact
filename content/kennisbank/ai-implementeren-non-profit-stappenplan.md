@@ -19,10 +19,18 @@ seo_keywords:
   - digitale transformatie welzijn
   - ai adoptie organisatie
 reading_time: 14
+published_at: "2024-10-09"
 difficulty: intermediate
 lead_magnet_title: "AI Implementatie Toolkit"
 lead_magnet_description: "Complete toolkit met templates, checklists en communicatiematerialen voor je AI-implementatie."
 lead_magnet_type: toolkit
+faq_items:
+  - question: "Waar begin ik met AI in mijn organisatie?"
+    answer: "Start klein met één concreet proces dat veel tijd kost, zoals nieuwsbrieven schrijven of notulen maken. Meet je tijdwinst en breid daarna uit."
+  - question: "Heb ik technische kennis nodig voor AI?"
+    answer: "Nee, moderne AI-tools zoals ChatGPT zijn ontworpen voor niet-technische gebruikers. Je typt gewoon wat je wilt in normale taal."
+  - question: "Hoe overtuig ik mijn bestuur van AI?"
+    answer: "Focus op concrete tijdsbesparing en kostenreductie. Een pilot van 4 weken met meetbare resultaten overtuigt beter dan abstracte beloftes."
 author_name: Vincent van Munster
 author_title: "AI Implementatie Expert & Sociaal Ondernemer"
 ---
@@ -417,6 +425,15 @@ Start deze week met stap 1: vraag je team welke taken veel tijd kosten maar wein
 Als AI-implementatie specialist begeleid ik non-profits door dit proces. Niet met dikke rapporten, maar met hands-on begeleiding die werkt.
 
 Neem contact op via [WeAreImpact.nl](https://weareimpact.nl) voor een vrijblijvende verkenning.
+
+
+---
+
+## Gerelateerde artikelen
+
+- [Administratieve druk verlagen met AI: 7 processen die je vandaag kunt automatiseren](/kennisbank/administratieve-druk-verlagen-ai)
+- [25 AI-prompts die ik dagelijks gebruik voor mijn werk](/kennisbank/ai-prompts-voor-non-profits)
+- [Welke AI-tools zijn geschikt voor welzijnsorganisaties? Vergelijking 2025](/kennisbank/ai-tools-vergelijking-welzijn-2025)
 
 ---
 

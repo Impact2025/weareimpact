@@ -19,10 +19,18 @@ seo_keywords:
   - teamontwikkeling methode
   - lego serious play nederland
 reading_time: 10
+published_at: "2024-12-17"
 difficulty: beginner
 lead_magnet_title: "LSP Quickscan: Past het bij jouw vraagstuk?"
 lead_magnet_description: "Beantwoord 5 vragen en ontdek of LEGO Serious Play past bij jouw uitdaging."
 lead_magnet_type: quiz
+faq_items:
+  - question: "Wat is LEGO Serious Play?"
+    answer: "Een facilitatiemethode waarbij deelnemers met LEGO modellen bouwen om complexe vraagstukken te verkennen. Het activeert andere delen van het brein."
+  - question: "Is LEGO Serious Play niet kinderachtig?"
+    answer: "Nee, de methode is ontwikkeld door MIT en LEGO voor volwassenen. Het doorbreekt hiërarchie en stimuleert creatief denken."
+  - question: "Hoeveel kost een LEGO Serious Play sessie?"
+    answer: "Reken op €1.500-3.000 voor een dagdeel, inclusief gecertificeerd facilitator en materialen."
 author_name: Vincent van Munster
 author_title: "Gecertificeerd LEGO Serious Play Facilitator"
 ---
@@ -307,6 +315,13 @@ Als je team al maanden praat zonder vooruitgang, als strategische discussies in 
 > "De handen weten dingen die het hoofd nog niet heeft ontdekt."
 
 Nieuwsgierig of het bij jouw vraagstuk past? Neem contact op voor een vrijblijvende verkenning.
+
+
+---
+
+## Gerelateerde artikelen
+
+- [LEGO Serious Play voor teamontwikkeling: 5 krachtige toepassingen](/kennisbank/lego-serious-play-voor-teamontwikkeling)
 
 ---
 

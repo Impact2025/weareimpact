@@ -19,10 +19,18 @@ seo_keywords:
   - social enterprise certificering
   - sociaal ondernemen keurmerk
 reading_time: 11
+published_at: "2024-11-04"
 difficulty: intermediate
 lead_magnet_title: "Zelfevaluatie: Ben Je Klaar voor de Code?"
 lead_magnet_description: "20 vragen om te bepalen of jouw organisatie klaar is voor de Code Sociale Ondernemingen. Met tips om je voor te bereiden."
 lead_magnet_type: checklist
+faq_items:
+  - question: "Wat is de Code Sociale Ondernemingen?"
+    answer: "Een keurmerk dat aantoont dat je organisatie voldoet aan criteria voor transparantie, impact en governance. Het vergroot vertrouwen bij stakeholders."
+  - question: "Hoelang duurt het om de Code te behalen?"
+    answer: "Gemiddeld 3-6 maanden voorbereiding, afhankelijk van hoe goed je governance al op orde is. De aanvraag zelf duurt 4-8 weken."
+  - question: "Wat kost het Code-keurmerk?"
+    answer: "De jaarlijkse bijdrage is inkomensafhankelijk, vanaf circa €250 voor kleine organisaties tot €2.500 voor grotere."
 author_name: Vincent van Munster
 author_title: "Sociaal Ondernemer | Social Enterprise NL netwerk"
 ---
@@ -451,6 +459,15 @@ Voordat je aanvraagt, beantwoord deze vragen:
 4. **Start de aanvraag** als je er klaar voor bent
 
 Wil je sparren over of de Code bij jou past? Neem contact op.
+
+
+---
+
+## Gerelateerde artikelen
+
+- [Sociaal ondernemen starten: de realistische checklist](/kennisbank/sociaal-ondernemen-starten-checklist)
+- [Business Model Canvas voor sociale ondernemingen](/kennisbank/social-enterprise-businessmodel-canvas)
+- [Van top-down naar inside-out: cultuurverandering in welzijnsorganisaties](/kennisbank/cultuurverandering-top-down-inside-out)
 
 ---
 

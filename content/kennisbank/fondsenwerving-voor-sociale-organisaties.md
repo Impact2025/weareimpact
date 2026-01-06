@@ -19,10 +19,18 @@ seo_keywords:
   - goede doelen funding
   - filantropie
 reading_time: 10
+published_at: "2024-11-12"
 difficulty: intermediate
 lead_magnet_title: "Fondsenwerving Planner"
 lead_magnet_description: "Jaarplanner voor je fondsenwervingsstrategie met deadlines en acties."
 lead_magnet_type: planner
+faq_items:
+  - question: "Hoeveel kost fondsenwerving?"
+    answer: "De vuistregel is maximaal 25% van de opbrengst aan wervingskosten. Nieuwe donateurs kosten meer dan behoud van bestaande."
+  - question: "Welke fondsen geven aan sociale organisaties?"
+    answer: "Grote landelijke fondsen zoals Oranjefonds en VSBfonds, lokale fondsen, en gemeentelijke subsidies. Match je aanvraag met hun prioriteiten."
+  - question: "Hoe schrijf ik een succesvolle subsidieaanvraag?"
+    answer: "Focus op concrete impact, niet op je organisatie. Gebruik cijfers, vertel verhalen, en sluit exact aan bij de criteria van het fonds."
 author_name: Vincent van Munster
 author_title: "Sociaal Ondernemer & Fondsenwerver"
 ---
@@ -378,6 +386,14 @@ De organisaties die goed zijn in fondsenwerving:
 Als adviseur help ik organisaties hun fondsenwervingsstrategie te ontwikkelen. Niet met templates, maar met strategisch advies dat past bij jouw situatie.
 
 Neem contact op via WeAreImpact.nl voor een vrijblijvende verkenning.
+
+
+---
+
+## Gerelateerde artikelen
+
+- [Subsidie Aanvragen Zonder Bureaucratie-Allergie](/kennisbank/subsidie-aanvragen-zonder-bureaucratie-stappenplan)
+- [Je organisatie 'funding-ready' maken in 90 dagen](/kennisbank/organisatie-funding-ready-90-dagen)
 
 ---
 

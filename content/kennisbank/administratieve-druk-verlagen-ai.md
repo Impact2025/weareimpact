@@ -19,10 +19,18 @@ seo_keywords:
   - ai werkprocessen
   - automatisering welzijn
 reading_time: 11
+published_at: "2024-10-04"
 difficulty: beginner
 lead_magnet_title: "7 AI Automatiseringen Template Pack"
 lead_magnet_description: "Kant-en-klare templates en prompts voor alle 7 automatiseringen uit dit artikel."
 lead_magnet_type: templates
+faq_items:
+  - question: "Kan AI echt administratieve taken overnemen?"
+    answer: "Ja, AI kan veel repetitieve taken automatiseren zoals notulen maken, rapporten structureren, en e-mails opstellen. Je bespaart gemiddeld 40-60% tijd."
+  - question: "Is AI veilig voor gevoelige gegevens?"
+    answer: "Bij gratis AI-tools niet. Gebruik enterprise versies met verwerkersovereenkomst of anonimiseer alle persoonsgegevens voordat je ze invoert."
+  - question: "Hoeveel kost AI-automatisering?"
+    answer: "Gratis tools zoals ChatGPT Free zijn al bruikbaar. ChatGPT Plus kost €20/maand. Microsoft Copilot is vaak inbegrepen in bestaande licenties."
 author_name: Vincent van Munster
 author_title: "AI Automatisering Expert"
 ---
@@ -461,6 +469,15 @@ Start daar. Meet je tijdwinst. Breid uit.
 Als AI-automatisering expert help ik organisaties hun administratieve druk te halveren. Niet met complexe systemen, maar met praktische tools die werken.
 
 Neem contact op via [WeAreImpact.nl](https://weareimpact.nl) voor een vrijblijvende inventarisatie.
+
+
+---
+
+## Gerelateerde artikelen
+
+- [AI implementeren in je non-profit: stappenplan van 8 weken](/kennisbank/ai-implementeren-non-profit-stappenplan)
+- [25 AI-prompts die ik dagelijks gebruik voor mijn werk](/kennisbank/ai-prompts-voor-non-profits)
+- [Welke AI-tools zijn geschikt voor welzijnsorganisaties? Vergelijking 2025](/kennisbank/ai-tools-vergelijking-welzijn-2025)
 
 ---
 

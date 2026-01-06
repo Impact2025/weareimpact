@@ -19,10 +19,18 @@ seo_keywords:
   - vrijwilligerswerk
   - retentie vrijwilligers
 reading_time: 10
+published_at: "2025-02-10"
 difficulty: intermediate
 lead_magnet_title: "Vrijwilliger Retentie Checklist"
 lead_magnet_description: "20 punten om te checken of je vrijwilligers zich gewaardeerd voelen."
 lead_magnet_type: checklist
+faq_items:
+  - question: "Waarom vertrekken vrijwilligers?"
+    answer: "Meestal door gebrek aan waardering, onduidelijke verwachtingen, of geen gevoel van betekenis. Zelden door tijdgebrek."
+  - question: "Hoeveel vrijwilligers haakt af in het eerste jaar?"
+    answer: "Gemiddeld 30%. Met goede onboarding en begeleiding breng je dit terug naar 10-15%."
+  - question: "Wat werkt beter: werving of behoud?"
+    answer: "Behoud. Elke behouden vrijwilliger bespaart je de kosten van werven en inwerken van een nieuwe."
 author_name: Vincent van Munster
 author_title: "Sociaal Ondernemer & Vrijwilligersexpert"
 ---
@@ -319,6 +327,15 @@ Mijn belangrijkste lessen na jaren werken met 180+ vrijwilligers:
 Als interim-manager en adviseur help ik organisaties regelmatig hun vrijwilligersbeleid te verbeteren. Niet met dikke rapporten, maar met werkende systemen.
 
 Neem contact op via WeAreImpact.nl voor een vrijblijvende verkenning.
+
+
+---
+
+## Gerelateerde artikelen
+
+- [180 vrijwilligers beheren zonder chaos: mijn systeem](/kennisbank/180-vrijwilligers-beheren-systeem)
+- [4 generaties vrijwilligers managen: zo houd je iedereen betrokken](/kennisbank/vier-generaties-vrijwilligers-managen)
+- [VOG Aanvragen voor Vrijwilligers: Gratis Stappenplan 2025](/kennisbank/vog-aanvragen-vrijwilligers-stappenplan-2025)
 
 ---
 

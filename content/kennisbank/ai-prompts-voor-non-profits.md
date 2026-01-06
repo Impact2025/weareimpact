@@ -19,10 +19,18 @@ seo_keywords:
   - chatgpt werknemers
   - ai administratie
 reading_time: 12
+published_at: "2024-10-16"
 difficulty: beginner
 lead_magnet_title: "Prompt Bibliotheek (PDF)"
 lead_magnet_description: "Alle 25 prompts als PDF met extra variaties en tips."
 lead_magnet_type: pdf
+faq_items:
+  - question: "Wat is een goede AI-prompt?"
+    answer: "Een goede prompt bevat context (wie je bent), de taak (wat je wilt), het format (hoe het eruit moet zien), en eventuele beperkingen (toon, lengte)."
+  - question: "Werken dezelfde prompts in verschillende AI-tools?"
+    answer: "Grotendeels wel. Prompts die werken in ChatGPT werken meestal ook in Claude of Copilot, al kunnen kleine aanpassingen nodig zijn."
+  - question: "Hoe maak ik AI-output persoonlijker?"
+    answer: "Geef voorbeelden van je eigen schrijfstijl, vraag om variaties, en bewerk altijd de output met je eigen stem en details."
 author_name: Vincent van Munster
 author_title: "AI Welzijn Expert"
 ---
@@ -545,6 +553,15 @@ Deze prompts zijn startpunten, geen eindpunten. Pas ze aan naar jouw situatie, o
 Het doel is niet om AI al je werk te laten doen, maar om de saaie, repetitieve taken sneller af te handelen zodat je meer tijd hebt voor wat echt belangrijk is: het werk met mensen.
 
 > "AI is geen vervanging voor denken. Het is een versnelling van het denkwerk dat je toch al moet doen."
+
+
+---
+
+## Gerelateerde artikelen
+
+- [Administratieve druk verlagen met AI: 7 processen die je vandaag kunt automatiseren](/kennisbank/administratieve-druk-verlagen-ai)
+- [AI implementeren in je non-profit: stappenplan van 8 weken](/kennisbank/ai-implementeren-non-profit-stappenplan)
+- [Welke AI-tools zijn geschikt voor welzijnsorganisaties? Vergelijking 2025](/kennisbank/ai-tools-vergelijking-welzijn-2025)
 
 ---
 

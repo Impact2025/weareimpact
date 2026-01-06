@@ -19,10 +19,18 @@ seo_keywords:
   - interim management kosten
   - welzijn leiderschap
 reading_time: 10
+published_at: "2024-12-13"
 difficulty: intermediate
 lead_magnet_title: "Interim-Manager Selectiechecklist"
 lead_magnet_description: "20 vragen om de juiste interim-manager te selecteren."
 lead_magnet_type: checklist
+faq_items:
+  - question: "Wanneer heb ik een interim-manager nodig?"
+    answer: "Bij crisissituaties, langdurige vacatures, grote verandertrajecten, of wanneer specifieke expertise ontbreekt in het vaste team."
+  - question: "Wat kost een interim-manager?"
+    answer: "Tarieven variëren van €80-150/uur, afhankelijk van ervaring en opdracht. Sommigen werken met dagdeel- of projecttarieven."
+  - question: "Hoe vind ik de juiste interim-manager?"
+    answer: "Zoek iemand met sectorervaring, vraag referenties, en let op culturele fit. Een goed eerste gesprek is vaak al veelzeggend."
 author_name: Vincent van Munster
 author_title: "Interim-Manager & Adviseur Welzijn"
 ---
@@ -338,6 +346,15 @@ Neem de tijd voor het selectieproces. Weet wat je zoekt. En investeer in kwalite
 Als interim-manager en adviseur werk ik met welzijnsorganisaties die willen vernieuwen. Ik geloof in korte, intensieve trajecten met blijvende impact.
 
 Wil je sparren over jouw interim-vraag? Neem contact op via [WeAreImpact.nl](https://weareimpact.nl).
+
+
+---
+
+## Gerelateerde artikelen
+
+- [Code Sociale Ondernemingen: De Complete Gids](/kennisbank/code-sociale-ondernemingen-complete-gids)
+- [Sociaal ondernemen starten: de realistische checklist](/kennisbank/sociaal-ondernemen-starten-checklist)
+- [Business Model Canvas voor sociale ondernemingen](/kennisbank/social-enterprise-businessmodel-canvas)
 
 ---
 

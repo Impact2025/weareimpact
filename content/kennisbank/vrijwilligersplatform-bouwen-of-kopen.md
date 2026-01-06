@@ -19,10 +19,18 @@ seo_keywords:
   - non-profit platform
   - DAAR platform
 reading_time: 12
+published_at: "2025-02-20"
 difficulty: advanced
 lead_magnet_title: "Platform Vergelijkingstool"
 lead_magnet_description: "Excel-template om platforms te vergelijken op jouw criteria."
 lead_magnet_type: tool
+faq_items:
+  - question: "Wat kost een vrijwilligersplatform?"
+    answer: "Van gratis (Google Sheets) tot €500+/maand voor enterprise. De meeste organisaties hebben genoeg aan €50-150/maand."
+  - question: "Wanneer bouw je zelf vs. kopen?"
+    answer: "Kopen tenzij je hele specifieke eisen hebt én technische capaciteit. Bouwen kost meer tijd dan je denkt."
+  - question: "Welke platformen zijn geschikt voor non-profits?"
+    answer: "Populair zijn Volunteerbase, Salesforce Nonprofit, en Point. Kies op basis van budget en functionaliteit."
 author_name: Vincent van Munster
 author_title: "Platform-Architect & Technologie-Adviseur"
 ---
@@ -471,6 +479,15 @@ Vraag je af:
 Ik help organisaties met hun platform-strategie. Van behoefteanalyse tot implementatiebegeleiding.
 
 Neem contact op via [WeAreImpact.nl](https://weareimpact.nl) voor een adviesgesprek.
+
+
+---
+
+## Gerelateerde artikelen
+
+- [Administratieve druk verlagen met AI: 7 processen die je vandaag kunt automatiseren](/kennisbank/administratieve-druk-verlagen-ai)
+- [AI implementeren in je non-profit: stappenplan van 8 weken](/kennisbank/ai-implementeren-non-profit-stappenplan)
+- [25 AI-prompts die ik dagelijks gebruik voor mijn werk](/kennisbank/ai-prompts-voor-non-profits)
 
 ---
 

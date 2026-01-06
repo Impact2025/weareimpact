@@ -19,10 +19,18 @@ seo_keywords:
   - impact startup
   - maatschappelijk ondernemen
 reading_time: 11
+published_at: "2025-01-08"
 difficulty: beginner
 lead_magnet_title: "Sociaal Ondernemen Startkit"
 lead_magnet_description: "Checklist + templates om je sociale onderneming te starten."
 lead_magnet_type: toolkit
+faq_items:
+  - question: "Wat is sociaal ondernemen?"
+    answer: "Ondernemen met een maatschappelijk doel als primaire missie, waarbij winst een middel is om impact te maken, niet het einddoel."
+  - question: "Welke rechtsvorm kies ik als sociaal ondernemer?"
+    answer: "Stichting als je geen winst wilt uitkeren, BV als je investeerders wilt aantrekken, of coöperatie voor gezamenlijk eigenaarschap."
+  - question: "Hoe verdien ik geld als sociaal ondernemer?"
+    answer: "Via een mix van dienstverlening, subsidies, donaties, en social return contracten. Diversificatie is key."
 author_name: Vincent van Munster
 author_title: "Sociaal Ondernemer & Oprichter WeAreImpact"
 ---
@@ -383,6 +391,15 @@ Het is zwaar, onzeker en vaak eenzaam. Maar als het lukt, is er weinig dat zo be
 Als sociaal ondernemer en adviseur help ik starters en doorgroeiers in deze sector. Niet met dromerige visiesessies, maar met praktische stappen die werken.
 
 Neem contact op via WeAreImpact.nl voor een verkennend gesprek.
+
+
+---
+
+## Gerelateerde artikelen
+
+- [Code Sociale Ondernemingen: De Complete Gids](/kennisbank/code-sociale-ondernemingen-complete-gids)
+- [Business Model Canvas voor sociale ondernemingen](/kennisbank/social-enterprise-businessmodel-canvas)
+- [Van top-down naar inside-out: cultuurverandering in welzijnsorganisaties](/kennisbank/cultuurverandering-top-down-inside-out)
 
 ---
 

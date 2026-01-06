@@ -19,10 +19,18 @@ seo_keywords:
   - ai adoptie non-profit
   - medewerkers ai trainen
 reading_time: 10
+published_at: "2025-01-20"
 difficulty: intermediate
 lead_magnet_title: "AI Readiness Assessment"
 lead_magnet_description: "Meet de AI-gereedheid van je team met deze 20-vragen assessment."
 lead_magnet_type: assessment
+faq_items:
+  - question: "Hoe overwin ik weerstand tegen AI?"
+    answer: "Door te beginnen met problemen die medewerkers zelf frustreren, hen te betrekken bij de keuze, en succes zichtbaar te maken."
+  - question: "Moet iedereen AI leren gebruiken?"
+    answer: "Niet verplicht, maar stimuleer het wel. Begin met early adopters en laat hen ambassadeur worden."
+  - question: "Hoelang duurt het om een team AI-ready te maken?"
+    answer: "Basisvaardigheden in 2-4 weken, echte integratie in werkprocessen in 3-6 maanden."
 author_name: Vincent van Munster
 author_title: "AI Implementatie & Change Expert"
 ---
@@ -342,6 +350,15 @@ De technologie is het makkelijke deel. De mensen zijn het werk - maar ook de bel
 Als change management specialist help ik teams door het adoptieproces. Niet met PowerPoints, maar met hands-on begeleiding.
 
 Neem contact op via [WeAreImpact.nl](https://weareimpact.nl) voor een vrijblijvend gesprek.
+
+
+---
+
+## Gerelateerde artikelen
+
+- [Administratieve druk verlagen met AI: 7 processen die je vandaag kunt automatiseren](/kennisbank/administratieve-druk-verlagen-ai)
+- [AI implementeren in je non-profit: stappenplan van 8 weken](/kennisbank/ai-implementeren-non-profit-stappenplan)
+- [25 AI-prompts die ik dagelijks gebruik voor mijn werk](/kennisbank/ai-prompts-voor-non-profits)
 
 ---
 

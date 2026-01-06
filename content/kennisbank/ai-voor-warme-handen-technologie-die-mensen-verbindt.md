@@ -19,10 +19,18 @@ seo_keywords:
   - ai administratie verminderen
   - technologie menselijk contact
 reading_time: 11
+published_at: "2024-10-25"
 difficulty: beginner
 lead_magnet_title: "AI Readiness Scan voor Welzijnsorganisaties"
 lead_magnet_description: "Ontdek in 10 vragen of jouw organisatie klaar is voor AI-implementatie en waar de grootste kansen liggen."
 lead_magnet_type: checklist
+faq_items:
+  - question: "Vervangt AI menselijk contact in de zorg?"
+    answer: "Nee, AI vervangt administratie zodat er meer tijd overblijft voor menselijk contact. Het doel is meer warme handen, niet minder."
+  - question: "Is AI ethisch verantwoord in de welzijnssector?"
+    answer: "Mits correct ingezet wel. De sleutel is transparantie, privacy-first, en AI als hulpmiddel zien, niet als vervanging van professionals."
+  - question: "Hoe accepteren medewerkers AI?"
+    answer: "Door te beginnen met taken die ze vervelend vinden, hen te betrekken bij de keuze, en succesverhalen te delen."
 author_name: Vincent van Munster
 author_title: "AI Welzijn Expert & Sociaal Ondernemer"
 ---
@@ -421,6 +429,15 @@ Als technologie ons afleidt, verwart, of onmenselijk maakt - dan moeten we het n
 4. **Meet en leer** van de resultaten
 
 Wil je sparren over AI in jouw organisatie? Neem contact op voor een vrijblijvend gesprek.
+
+
+---
+
+## Gerelateerde artikelen
+
+- [Administratieve druk verlagen met AI: 7 processen die je vandaag kunt automatiseren](/kennisbank/administratieve-druk-verlagen-ai)
+- [AI implementeren in je non-profit: stappenplan van 8 weken](/kennisbank/ai-implementeren-non-profit-stappenplan)
+- [25 AI-prompts die ik dagelijks gebruik voor mijn werk](/kennisbank/ai-prompts-voor-non-profits)
 
 ---
 

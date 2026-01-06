@@ -19,10 +19,18 @@ seo_keywords:
   - organisatie versterken
   - non-profit funding
 reading_time: 11
+published_at: "2024-12-31"
 difficulty: intermediate
 lead_magnet_title: "Funding-Readiness Scan"
 lead_magnet_description: "Test in 15 minuten hoe funding-ready jouw organisatie is."
 lead_magnet_type: assessment
+faq_items:
+  - question: "Wat betekent funding ready?"
+    answer: "Je organisatie is klaar om financiering te ontvangen: governance op orde, impactmeting opgezet, en een overtuigend verhaal."
+  - question: "Kan ik echt in 90 dagen funding ready zijn?"
+    answer: "Ja, met focus en prioritering. Het gaat niet om perfectie maar om de basis op orde hebben."
+  - question: "Wat zijn de belangrijkste eisen van funders?"
+    answer: "Transparante financiën, duidelijke governance, meetbare impact, en een overtuigend verhaal over je missie."
 author_name: Vincent van Munster
 author_title: "Strategisch Adviseur & Fondsenwerver"
 ---
@@ -337,6 +345,14 @@ De organisaties die structureel funding binnenhalen:
 Ik begeleid organisaties door het funding-ready traject. In 90 dagen van basis naar klaar voor grote aanvragen.
 
 Neem contact op via [WeAreImpact.nl](https://weareimpact.nl).
+
+
+---
+
+## Gerelateerde artikelen
+
+- [Fondsenwerving voor sociale organisaties: wat echt werkt](/kennisbank/fondsenwerving-voor-sociale-organisaties)
+- [Subsidie Aanvragen Zonder Bureaucratie-Allergie](/kennisbank/subsidie-aanvragen-zonder-bureaucratie-stappenplan)
 
 ---
 

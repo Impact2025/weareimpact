@@ -19,10 +19,18 @@ seo_keywords:
   - sociale impact
   - impactmeting welzijn
 reading_time: 9
+published_at: "2024-11-25"
 difficulty: beginner
 lead_magnet_title: "Impact Meetplan Template"
 lead_magnet_description: "Download ons template om je eigen impactmeting op te zetten in 4 weken."
 lead_magnet_type: template
+faq_items:
+  - question: "Moet ik impact meten?"
+    answer: "Ja, maar houd het simpel. Financiers, besturen en de samenleving verwachten dat je kunt aantonen wat je bereikt met hun geld."
+  - question: "Welke tool gebruik ik voor impact meten?"
+    answer: "Start met een simpele Excel of Google Sheet. Pas later, als je meer dan 100 metingen per maand doet, kijk naar dedicated software."
+  - question: "Wat moet ik minimaal meten?"
+    answer: "Output (wat je doet), outcome (wat verandert), en één impactverhaal per kwartaal. Begin klein en bouw uit."
 author_name: Vincent van Munster
 author_title: "Sociaal Ondernemer & Impact Expert"
 ---
@@ -298,6 +306,15 @@ Na drie maanden heb je genoeg data om te analyseren en bij te sturen.
 Als interim-innovatiemanager help ik organisaties regelmatig om hun impactmeting op te zetten. Niet met dikke rapporten, maar met werkende systemen.
 
 Benieuwd wat ik voor jouw organisatie kan betekenen? Neem contact op voor een vrijblijvende verkenning.
+
+
+---
+
+## Gerelateerde artikelen
+
+- [De Impact Box: hoe je jaarlijks 70.000+ geluksmomenten creëert (en documenteert)](/kennisbank/impact-box-70000-geluksmomenten)
+- [Theory of Change opstellen in een middag](/kennisbank/theory-of-change-in-een-middag)
+- [Je organisatie 'funding-ready' maken in 90 dagen](/kennisbank/organisatie-funding-ready-90-dagen)
 
 ---
 

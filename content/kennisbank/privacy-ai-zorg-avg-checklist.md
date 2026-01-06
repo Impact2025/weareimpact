@@ -20,10 +20,18 @@ seo_keywords:
   - ai compliance zorg
   - avg ai checklist
 reading_time: 11
+published_at: "2025-01-04"
 difficulty: intermediate
 lead_magnet_title: "AI Privacy Checklist (PDF)"
 lead_magnet_description: "Printbare checklist voor AVG-compliant AI-gebruik in je organisatie."
 lead_magnet_type: checklist
+faq_items:
+  - question: "Mag ik AI gebruiken met cliëntgegevens?"
+    answer: "Alleen met enterprise AI-tools die een verwerkersovereenkomst bieden. Gratis tools zijn niet AVG-compliant voor persoonsgegevens."
+  - question: "Wat mag wel in AI-tools?"
+    answer: "Geanonimiseerde data, algemene vragen, conceptteksten zonder persoonsgegevens, en publieke informatie herschrijven."
+  - question: "Hoe anonimiseer ik gegevens voor AI?"
+    answer: "Vervang namen door initialen, verwijder adressen en BSN, en vermijd combinaties waarmee iemand te identificeren is."
 author_name: Vincent van Munster
 author_title: "AI & Privacy Expert voor Zorg/Welzijn"
 ---
@@ -388,6 +396,15 @@ De kernregel is simpel:
 Als privacy-bewust AI-expert help ik organisaties veilig te werken met AI. Niet door alles te verbieden, maar door werkbare richtlijnen te ontwikkelen.
 
 Neem contact op via [WeAreImpact.nl](https://weareimpact.nl) voor advies.
+
+
+---
+
+## Gerelateerde artikelen
+
+- [Administratieve druk verlagen met AI: 7 processen die je vandaag kunt automatiseren](/kennisbank/administratieve-druk-verlagen-ai)
+- [AI implementeren in je non-profit: stappenplan van 8 weken](/kennisbank/ai-implementeren-non-profit-stappenplan)
+- [25 AI-prompts die ik dagelijks gebruik voor mijn werk](/kennisbank/ai-prompts-voor-non-profits)
 
 ---
 

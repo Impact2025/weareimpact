@@ -19,10 +19,18 @@ seo_keywords:
   - verklaring omtrent gedrag vrijwilligerswerk
   - vog beleid vrijwilligersorganisatie
 reading_time: 9
+published_at: "2025-02-05"
 difficulty: beginner
 lead_magnet_title: "VOG Beleid Template + Communicatiebrief"
 lead_magnet_description: "Kant-en-klaar VOG beleidsdocument voor je organisatie, inclusief voorbeeldbrief voor vrijwilligers."
 lead_magnet_type: template
+faq_items:
+  - question: "Is een VOG verplicht voor vrijwilligers?"
+    answer: "Niet wettelijk verplicht, maar wel sterk aanbevolen bij werken met kwetsbare groepen. Veel subsidiegevers eisen het."
+  - question: "Wie betaalt de VOG voor vrijwilligers?"
+    answer: "Voor vrijwilligers is de VOG gratis via Justis, mits aangevraagd via een erkende organisatie."
+  - question: "Hoe lang is een VOG geldig?"
+    answer: "Er is geen officiële geldigheidsduur, maar de meeste organisaties vragen om de 3-5 jaar een nieuwe aan."
 author_name: Vincent van Munster
 author_title: "15+ jaar ervaring met 180 vrijwilligers"
 ---
@@ -302,6 +310,15 @@ Dan kun je deze persoon niet inzetten voor functies waarvoor je een VOG vereist.
 4. **Communiceer** naar je vrijwilligers
 
 Heb je vragen over VOG-beleid of vrijwilligersmanagement? Ik help je graag verder.
+
+
+---
+
+## Gerelateerde artikelen
+
+- [180 vrijwilligers beheren zonder chaos: mijn systeem](/kennisbank/180-vrijwilligers-beheren-systeem)
+- [4 generaties vrijwilligers managen: zo houd je iedereen betrokken](/kennisbank/vier-generaties-vrijwilligers-managen)
+- [Vrijwilligers werven die blijven: wat echt werkt](/kennisbank/vrijwilligers-werven-die-blijven)
 
 ---
 
