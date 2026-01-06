@@ -29,10 +29,6 @@ author_name: Vincent van Munster
 author_title: "Vrijwilligersmanagement Expert"
 ---
 
-# 4 generaties vrijwilligers managen: zo houd je iedereen betrokken
-
-**Leestijd: 9 minuten**
-
 > "De oudere vrijwilligers snappen de app niet, de jongere vrijwilligers willen niet bellen. Hoe krijg ik ze bij elkaar?"
 
 Deze verzuchting hoor ik vaak. Voor het eerst in de geschiedenis werken vier generaties samen: Boomers, Generatie X, Millennials en Gen-Z. Elk met eigen verwachtingen, communicatievoorkeuren en motivaties.

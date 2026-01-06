@@ -29,10 +29,6 @@ author_name: Vincent van Munster
 author_title: "AI Implementatie & Change Expert"
 ---
 
-# Hoe maak je je team AI-ready zonder techneuten in dienst?
-
-**Leestijd: 10 minuten**
-
 > "Mijn team is niet technisch. AI is niks voor ons."
 
 Dit hoor ik regelmatig van managers in de welzijnssector. Het is een misverstand. AI-tools zoals ChatGPT zijn ontworpen voor gewone mensen - je hoeft geen programmeur te zijn.

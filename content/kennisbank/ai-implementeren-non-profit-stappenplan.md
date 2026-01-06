@@ -29,10 +29,6 @@ author_name: Vincent van Munster
 author_title: "AI Implementatie Expert & Sociaal Ondernemer"
 ---
 
-# AI implementeren in je non-profit: stappenplan van 8 weken
-
-**Leestijd: 14 minuten**
-
 > "We gebruiken ChatGPT wel eens, maar het is nog geen vast onderdeel van hoe we werken."
 
 Dit hoor ik bij 80% van de welzijnsorganisaties die ik spreek. Er wordt geëxperimenteerd, maar van echte implementatie is geen sprake. Het blijft hangen bij individuele enthousiastelingen.

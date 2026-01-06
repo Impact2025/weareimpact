@@ -29,10 +29,6 @@ author_name: Vincent van Munster
 author_title: "Sociaal Ondernemer & Strateeg"
 ---
 
-# Theory of Change opstellen in een middag
-
-**Leestijd: 8 minuten**
-
 > "Als je niet kunt uitleggen wat je doet in drie zinnen, snap je het zelf niet."
 
 Ik heb te veel Theory of Change-documenten gezien die 40 pagina's beslaan en door niemand worden gelezen. Dat is zonde, want het concept is waardevol.

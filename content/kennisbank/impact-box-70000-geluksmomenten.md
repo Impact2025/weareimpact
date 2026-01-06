@@ -29,10 +29,6 @@ author_name: Vincent van Munster
 author_title: "Oprichter Impact Box Methodiek"
 ---
 
-# De Impact Box: hoe je jaarlijks 70.000+ geluksmomenten creëert (en documenteert)
-
-**Leestijd: 13 minuten**
-
 > "70.000 geluksmomenten per jaar."
 
 Toen ik dit cijfer noemde in een gesprek met een fonds, veranderde de sfeer. Van beleefd luisteren naar oprechte interesse.

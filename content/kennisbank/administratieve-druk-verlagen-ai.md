@@ -29,10 +29,6 @@ author_name: Vincent van Munster
 author_title: "AI Automatisering Expert"
 ---
 
-# Administratieve druk verlagen met AI: 7 processen die je vandaag kunt automatiseren
-
-**Leestijd: 11 minuten**
-
 > "Ik besteed meer tijd aan rapporteren wat ik doe dan aan het daadwerkelijk doen."
 
 Dit frustrerende citaat van een welzijnswerker vat het probleem samen. Volgens onderzoek van [Vilans](https://www.vilans.nl) besteden professionals in de zorg en welzijn **tot 40% van hun tijd** aan administratie. Tijd die niet naar cliënten gaat.

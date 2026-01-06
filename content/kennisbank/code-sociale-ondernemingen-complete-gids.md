@@ -29,10 +29,6 @@ author_name: Vincent van Munster
 author_title: "Sociaal Ondernemer | Social Enterprise NL netwerk"
 ---
 
-# Code Sociale Ondernemingen: De Complete Gids
-
-**Leestijd: 11 minuten**
-
 "Ben je B Corp gecertificeerd?"
 
 Het is een vraag die ik vaak krijg. Mijn antwoord: "Nee, wij kozen voor de Code Sociale Ondernemingen."

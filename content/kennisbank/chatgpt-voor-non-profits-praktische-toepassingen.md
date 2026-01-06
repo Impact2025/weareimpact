@@ -29,10 +29,6 @@ author_name: Vincent van Munster
 author_title: "AI Welzijn Expert | 2+ jaar ChatGPT ervaring"
 ---
 
-# ChatGPT voor Non-Profits: 20 Praktische Toepassingen
-
-**Leestijd: 14 minuten**
-
 > "Een iPhone van €180 verslaat een enterprise systeem van €180.000."
 
 Dat is mijn filosofie. En ChatGPT is het perfecte voorbeeld: voor €20 per maand (of gratis) heb je toegang tot technologie die twee jaar geleden nog science fiction was.

@@ -29,10 +29,6 @@ author_name: Vincent van Munster
 author_title: "Gecertificeerd LEGO Serious Play Facilitator"
 ---
 
-# LEGO Serious Play: wat het is en wanneer het werkt
-
-**Leestijd: 10 minuten**
-
 > "Wacht, jullie willen dat wij met LEGO gaan spelen? Zijn we soms terug op de kleuterschool?"
 
 Dit is de meest voorkomende reactie als ik LEGO Serious Play voorstel aan een directieteam. Ik snap het. Het klinkt vreemd.

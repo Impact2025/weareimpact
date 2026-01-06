@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "tw-animate-css";
+@plugin "@tailwindcss/typography";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -309,4 +310,269 @@ html {
 
 .typing-dot:nth-child(3) {
   animation: typing-dot 1s infinite 0.4s;
+}
+
+/* Professional Article Prose Styling */
+.prose {
+  color: #334155;
+  line-height: 1.8;
+  font-size: 1.125rem;
+}
+
+.prose > * + * {
+  margin-top: 1.5em;
+}
+
+/* Headings */
+.prose h1 {
+  font-size: 2.25rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+  line-height: 1.2;
+}
+
+.prose h2 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #fed7aa;
+  line-height: 1.3;
+}
+
+.prose h3 {
+  font-size: 1.375rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin-top: 2rem;
+  margin-bottom: 0.75rem;
+  line-height: 1.4;
+}
+
+.prose h4 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #334155;
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+/* Paragraphs */
+.prose p {
+  margin-top: 1.25rem;
+  margin-bottom: 1.25rem;
+}
+
+/* Links */
+.prose a {
+  color: #ea580c;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.prose a:hover {
+  color: #c2410c;
+  text-decoration: underline;
+}
+
+/* Bold and Strong */
+.prose strong {
+  font-weight: 700;
+  color: #0f172a;
+}
+
+/* Blockquotes */
+.prose blockquote {
+  margin: 2rem 0;
+  padding: 1.5rem 2rem;
+  background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%);
+  border-left: 4px solid #f97316;
+  border-radius: 0 0.75rem 0.75rem 0;
+  font-style: italic;
+  color: #1e293b;
+}
+
+.prose blockquote p {
+  margin: 0;
+}
+
+/* Lists */
+.prose ul {
+  margin: 1.5rem 0;
+  padding-left: 0;
+  list-style: none;
+}
+
+.prose ul li {
+  position: relative;
+  padding-left: 1.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.prose ul li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.6em;
+  width: 8px;
+  height: 8px;
+  background-color: #f97316;
+  border-radius: 50%;
+}
+
+.prose ol {
+  margin: 1.5rem 0;
+  padding-left: 0;
+  list-style: none;
+  counter-reset: list-counter;
+}
+
+.prose ol li {
+  position: relative;
+  padding-left: 2.5rem;
+  margin-bottom: 0.75rem;
+  counter-increment: list-counter;
+}
+
+.prose ol li::before {
+  content: counter(list-counter);
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1.75rem;
+  height: 1.75rem;
+  background: linear-gradient(135deg, #f97316 0%, #fb923c 100%);
+  color: white;
+  font-weight: 600;
+  font-size: 0.875rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Code blocks */
+.prose code {
+  background-color: #f1f5f9;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.375rem;
+  font-size: 0.875em;
+  color: #0f172a;
+  font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Monaco, 'Courier New', monospace;
+}
+
+.prose pre {
+  background-color: #1e293b;
+  color: #e2e8f0;
+  padding: 1.5rem;
+  border-radius: 0.75rem;
+  overflow-x: auto;
+  margin: 2rem 0;
+  font-size: 0.875rem;
+  line-height: 1.7;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.prose pre code {
+  background-color: transparent;
+  padding: 0;
+  color: inherit;
+  font-size: inherit;
+}
+
+/* Tables */
+.prose table {
+  width: 100%;
+  margin: 2rem 0;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.prose thead {
+  background: linear-gradient(135deg, #f97316 0%, #fb923c 100%);
+}
+
+.prose th {
+  padding: 1rem 1.25rem;
+  text-align: left;
+  font-weight: 600;
+  color: white;
+}
+
+.prose td {
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.prose tbody tr {
+  background-color: white;
+  transition: background-color 0.2s;
+}
+
+.prose tbody tr:hover {
+  background-color: #fff7ed;
+}
+
+.prose tbody tr:nth-child(even) {
+  background-color: #fafaf9;
+}
+
+.prose tbody tr:nth-child(even):hover {
+  background-color: #fff7ed;
+}
+
+/* Horizontal rules */
+.prose hr {
+  margin: 3rem 0;
+  border: none;
+  height: 2px;
+  background: linear-gradient(to right, transparent, #fed7aa, transparent);
+}
+
+/* Images */
+.prose img {
+  border-radius: 0.75rem;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  margin: 2rem auto;
+}
+
+/* First paragraph styling */
+.prose > p:first-of-type {
+  font-size: 1.25rem;
+  color: #475569;
+  line-height: 1.7;
+}
+
+/* Nested lists */
+.prose ul ul,
+.prose ol ol,
+.prose ul ol,
+.prose ol ul {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+/* Prose lg variant for larger text */
+.prose-lg {
+  font-size: 1.125rem;
+}
+
+.prose-lg h1 {
+  font-size: 2.5rem;
+}
+
+.prose-lg h2 {
+  font-size: 1.875rem;
+}
+
+.prose-lg h3 {
+  font-size: 1.5rem;
 }

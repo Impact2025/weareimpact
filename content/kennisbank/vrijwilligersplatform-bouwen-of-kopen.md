@@ -29,10 +29,6 @@ author_name: Vincent van Munster
 author_title: "Platform-Architect & Technologie-Adviseur"
 ---
 
-# Vrijwilligersplatform bouwen of kopen? Beslisboom voor non-profits
-
-**Leestijd: 12 minuten**
-
 > "We hebben een platform nodig voor onze vrijwilligers. Wie kan dat voor ons bouwen?"
 
 Stop. Voordat je een developer belt, moet je drie vragen beantwoorden:

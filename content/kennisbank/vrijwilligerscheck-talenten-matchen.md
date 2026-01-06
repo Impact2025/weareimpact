@@ -29,10 +29,6 @@ author_name: Vincent van Munster
 author_title: "Ontwikkelaar VrijwilligersCheck"
 ---
 
-# De VrijwilligersCheck: hoe je talenten matcht in plaats van gaten vult
-
-**Leestijd: 10 minuten**
-
 > "We zoeken een vrijwilliger voor de koffieochtend."
 
 Dit is hoe de meeste vrijwilligerswerving werkt: er is een gat, we zoeken iemand om het te vullen. Het probleem? De vrijwilliger past misschien bij de taak, maar de taak past niet bij de vrijwilliger.

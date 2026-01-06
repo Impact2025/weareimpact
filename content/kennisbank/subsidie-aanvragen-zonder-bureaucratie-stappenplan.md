@@ -29,10 +29,6 @@ author_name: Vincent van Munster
 author_title: "Sociaal Ondernemer | Rabobank Foundation alumnus"
 ---
 
-# Subsidie Aanvragen Zonder Bureaucratie-Allergie
-
-**Leestijd: 12 minuten**
-
 Laat ik eerlijk beginnen:
 
 > "De zorgwereld vergadert te veel en doet te weinig."

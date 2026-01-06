@@ -29,10 +29,6 @@ author_name: Vincent van Munster
 author_title: "Sociaal Ondernemer & Adviseur"
 ---
 
-# Vrijwilligersbeleid schrijven dat niemand in een la stopt
-
-**Leestijd: 8 minuten**
-
 > "Hebben jullie een vrijwilligersbeleid?" "Ja, ergens in een map op de server."
 
 Dit gesprek voer ik te vaak. Organisaties hebben vaak wel beleid, maar niemand kent het en niemand gebruikt het.

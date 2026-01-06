@@ -29,10 +29,6 @@ author_name: Vincent van Munster
 author_title: "AI Welzijn Expert & Sociaal Ondernemer"
 ---
 
-# AI voor Warme Handen: Technologie die Mensen Verbindt
-
-**Leestijd: 11 minuten**
-
 > "Ik gebruik kille technologie om warme handen vrij te spelen."
 
 Dit is mijn antwoord wanneer mensen vragen wat ik doe. Het vat samen waar ik in geloof: technologie moet ons menselijker maken, niet vervangen.

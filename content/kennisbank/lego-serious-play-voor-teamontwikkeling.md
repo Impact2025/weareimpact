@@ -29,10 +29,6 @@ author_name: Vincent van Munster
 author_title: "Gecertificeerd LEGO Serious Play Facilitator"
 ---
 
-# LEGO Serious Play voor teamontwikkeling: 5 krachtige toepassingen
-
-**Leestijd: 8 minuten**
-
 > "We werken al jaren samen, maar ik wist niet dat je dit zo zag."
 
 Deze zin hoor ik regelmatig na een LEGO Serious Play sessie. Teams die dachten elkaar te kennen, ontdekken dat ze langs elkaar heen werken. En door dat zichtbaar te maken, verandert het.

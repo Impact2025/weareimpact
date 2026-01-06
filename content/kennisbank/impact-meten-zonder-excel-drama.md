@@ -29,10 +29,6 @@ author_name: Vincent van Munster
 author_title: "Sociaal Ondernemer & Impact Expert"
 ---
 
-# Impact meten zonder Excel-drama: een praktische aanpak
-
-**Leestijd: 9 minuten**
-
 > "We meten 70.000 geluksmomenten per jaar. Niet voor de subsidiegever, maar voor onszelf."
 
 Toen ik directeur was bij Stichting de Baan, werd ik regelmatig gevraagd: "Hoeveel impact maken jullie?" Mijn eerste reactie was altijd: "Wat bedoel je precies met impact?"

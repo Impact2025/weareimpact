@@ -29,10 +29,6 @@ author_name: Vincent van Munster
 author_title: "Sociaal Ondernemer & Fondsenwerver"
 ---
 
-# Fondsenwerving voor sociale organisaties: wat echt werkt
-
-**Leestijd: 10 minuten**
-
 > "We schrijven 30 aanvragen per jaar en krijgen 5 toegekend." Dat hoorde ik van een welzijnsorganisatie. Een conversieratio van 17%. Dat is niet effectief, dat is frustrerend.
 
 Na jaren fondsenwerving voor mijn eigen projecten en als adviseur voor anderen, weet ik één ding zeker: de meeste organisaties doen het verkeerd. Niet omdat ze slechte aanvragen schrijven, maar omdat ze de verkeerde aanpak hebben.

@@ -29,10 +29,6 @@ author_name: Vincent van Munster
 author_title: "Interim-Innovatiemanager & Veranderaar"
 ---
 
-# Van top-down naar inside-out: cultuurverandering in welzijnsorganisaties
-
-**Leestijd: 11 minuten**
-
 > "We hebben een nieuwe visie. Nu moet de cultuur nog veranderen."
 
 Dit is misschien wel de gevaarlijkste zin in management. Alsof cultuur iets is dat je kunt verordonneren. Alsof mensen gaan veranderen omdat het in een beleidsplan staat.

@@ -29,10 +29,6 @@ author_name: Vincent van Munster
 author_title: "Innovatiemanager & Sociaal Ondernemer"
 ---
 
-# Hoe voorkom je dat innovatie een hype-project wordt?
-
-**Leestijd: 9 minuten**
-
 > "We hebben vorig jaar een innovatietraject gedaan. Heel leuk, maar er is niks van overgebleven."
 
 Dit verhaal hoor ik te vaak. Organisaties investeren in innovatie-trajecten, hackathons, pilots - en na een jaar is alles weer bij het oude.

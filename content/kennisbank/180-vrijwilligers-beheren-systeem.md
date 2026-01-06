@@ -29,10 +29,6 @@ author_name: Vincent van Munster
 author_title: "Vrijwilligersmanagement Expert"
 ---
 
-# 180 vrijwilligers beheren zonder chaos: mijn systeem
-
-**Leestijd: 12 minuten**
-
 > "Hoe houd je 180 vrijwilligers georganiseerd zonder 3 coördinatoren in dienst te nemen?"
 
 Dit was mijn vraag toen ik directeur werd van Stichting de Baan. We hadden 700+ deelnemers, 180 vrijwilligers, en budget voor één fulltime coördinator.

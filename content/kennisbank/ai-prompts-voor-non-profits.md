@@ -29,10 +29,6 @@ author_name: Vincent van Munster
 author_title: "AI Welzijn Expert"
 ---
 
-# 25 AI-prompts die ik dagelijks gebruik voor mijn werk
-
-**Leestijd: 12 minuten**
-
 > "AI is geen magie, het is een gereedschap. En zoals elk gereedschap werkt het beter als je weet hoe je het moet gebruiken."
 
 Ik gebruik ChatGPT (en Claude) dagelijks. Niet voor revolutionaire AI-projecten, maar voor de saaie, tijdrovende taken die anders uren kosten.

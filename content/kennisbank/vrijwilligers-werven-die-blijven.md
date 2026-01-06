@@ -29,10 +29,6 @@ author_name: Vincent van Munster
 author_title: "Sociaal Ondernemer & Vrijwilligersexpert"
 ---
 
-# Vrijwilligers werven die blijven: wat echt werkt
-
-**Leestijd: 10 minuten**
-
 > "We hebben een wervingsprobleem!" Dat hoor ik vaak. Maar als ik doorvraag, blijkt het eigenlijk een behoudprobleem te zijn.
 
 Bij Stichting de Baan werkten we met 180 vrijwilligers. Elke maand kwamen er nieuwe bij, maar elke maand vertrokken er ook. Het kostte ons een jaar om te begrijpen: het probleem zat niet in de instroom, maar in de doorstroom.

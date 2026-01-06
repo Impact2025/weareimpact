@@ -29,10 +29,6 @@ author_name: Vincent van Munster
 author_title: "AI Expert voor Sociale Sector"
 ---
 
-# Welke AI-tools zijn geschikt voor welzijnsorganisaties? Vergelijking 2025
-
-**Leestijd: 12 minuten**
-
 > "Moet ik ChatGPT nemen of is Claude beter? En wat is Perplexity eigenlijk?"
 
 Deze vraag krijg ik wekelijks. Het AI-landschap is overweldigend en verandert snel. Wat vorig jaar de beste keuze was, is nu misschien achterhaald.

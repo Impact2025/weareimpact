@@ -30,10 +30,6 @@ author_name: Vincent van Munster
 author_title: "AI & Privacy Expert voor Zorg/Welzijn"
 ---
 
-# Privacy en AI in de zorg: wat mag wel en wat niet?
-
-**Leestijd: 11 minuten**
-
 > "Mag ik dit wel in ChatGPT typen?"
 
 Deze vraag krijg ik dagelijks. En terecht - de regels rond AI en persoonsgegevens zijn onduidelijk en de risico's zijn reëel.

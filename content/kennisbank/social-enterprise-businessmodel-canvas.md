@@ -29,10 +29,6 @@ author_name: Vincent van Munster
 author_title: "Sociaal Ondernemer & Strateeg"
 ---
 
-# Business Model Canvas voor sociale ondernemingen
-
-**Leestijd: 9 minuten**
-
 > "Jullie business model is niet compleet." Dat kreeg ik te horen van een investeerder. Niet omdat we geen geld konden verdienen, maar omdat we niet konden uitleggen hoe onze impact samenhing met ons verdienmodel.
 
 Het klassieke Business Model Canvas van Osterwalder is briljant. Maar het mist iets cruciaals voor sociale ondernemingen: **de dubbele bottom line**.

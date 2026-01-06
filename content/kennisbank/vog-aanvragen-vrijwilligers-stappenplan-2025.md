@@ -29,10 +29,6 @@ author_name: Vincent van Munster
 author_title: "15+ jaar ervaring met 180 vrijwilligers"
 ---
 
-# VOG Aanvragen voor Vrijwilligers: Gratis Stappenplan 2025
-
-**Leestijd: 9 minuten**
-
 Bij onze organisatie werken we met 180 vrijwilligers die in contact komen met kwetsbare mensen. Het VOG-proces is iets waar we jarenlang ervaring mee hebben opgebouwd. In dit artikel deel ik precies wat werkt - zonder bureaucratisch gedoe.
 
 > "De VOG is geen wantrouwen naar je vrijwilligers, het is bescherming voor je doelgroep. Dat verschil in framing maakt alles uit."

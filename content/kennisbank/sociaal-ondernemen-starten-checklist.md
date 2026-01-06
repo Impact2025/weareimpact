@@ -29,10 +29,6 @@ author_name: Vincent van Munster
 author_title: "Sociaal Ondernemer & Oprichter WeAreImpact"
 ---
 
-# Sociaal ondernemen starten: de realistische checklist
-
-**Leestijd: 11 minuten**
-
 > "Ik wil de wereld verbeteren!" "Mooi. Hoe ga je dat betalen?"
 
 Die vraag stelde ik mezelf niet toen ik begon met sociaal ondernemen. Dat was een fout die me duur kwam te staan.

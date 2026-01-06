@@ -29,10 +29,6 @@ author_name: Vincent van Munster
 author_title: "Vrijwilligersmanagement Innovator"
 ---
 
-# De 'Impact Reserve': hoe je vrijwilligers behoudt door ze uit te lenen
-
-**Leestijd: 10 minuten**
-
 > "Ik vind het hier geweldig, maar ik wil ook iets anders zien."
 
 Dit hoorde ik van Maria, vrijwilliger sinds 4 jaar. Trouw, betrouwbaar, gewaardeerd. En op het punt om te stoppen.

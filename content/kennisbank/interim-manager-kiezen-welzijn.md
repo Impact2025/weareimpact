@@ -29,10 +29,6 @@ author_name: Vincent van Munster
 author_title: "Interim-Manager & Adviseur Welzijn"
 ---
 
-# Hoe kies je de juiste interim-manager voor welzijnsorganisaties?
-
-**Leestijd: 10 minuten**
-
 > "We hebben een interim nodig." "Oké, welk type interim?"
 
 Die vraag wordt zelden gesteld. En dat is een gemiste kans. Want 'interim-manager' is geen eenduidig beroep - er zijn fundamenteel verschillende types.

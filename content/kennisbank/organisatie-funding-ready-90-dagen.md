@@ -29,10 +29,6 @@ author_name: Vincent van Munster
 author_title: "Strategisch Adviseur & Fondsenwerver"
 ---
 
-# Je organisatie 'funding-ready' maken in 90 dagen
-
-**Leestijd: 11 minuten**
-
 > "We krijgen steeds afwijzingen op onze subsidieaanvragen. Wat doen we verkeerd?"
 
 Vaak zit het probleem niet in de aanvraag, maar in de organisatie erachter. Fondsen en gemeenten financieren geen projecten - ze financieren **organisaties die projecten kunnen uitvoeren**.
