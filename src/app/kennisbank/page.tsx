@@ -269,6 +269,7 @@ export default async function KennisbankPage() {
                           sizes={index === 0 ? '(max-width: 768px) 100vw, 66vw' : '(max-width: 768px) 100vw, 33vw'}
                           className="object-cover"
                           loading={index < 3 ? 'eager' : 'lazy'}
+                          unoptimized={article.featured_image.includes('blob.vercel-storage.com')}
                         />
                       ) : (
                         <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200">
@@ -410,6 +411,7 @@ export default async function KennisbankPage() {
                           sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 25vw"
                           className="object-cover"
                           loading="lazy"
+                          unoptimized={article.featured_image.includes('blob.vercel-storage.com')}
                         />
                       ) : (
                         <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200">

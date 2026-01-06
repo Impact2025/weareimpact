@@ -293,6 +293,7 @@ export default async function CategoryPage({ params }: Props) {
                       sizes="(max-width: 768px) 100vw, 50vw"
                       className="object-cover"
                       loading="lazy"
+                      unoptimized={article.featured_image.includes('blob.vercel-storage.com')}
                     />
                   ) : (
                     <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200">
