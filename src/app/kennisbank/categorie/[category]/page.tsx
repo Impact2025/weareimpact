@@ -86,13 +86,49 @@ interface Article {
   tags: string[];
   difficulty: string;
   featured_image: string | null;
+  header_type: 'image' | 'color';
+  header_color: 'orange' | 'slate';
+  header_title: string | null;
 }
 
 interface Props {
   params: Promise<{ category: string }>;
 }
 
-async function getArticlesByCategory(category: string): Promise<Article[]> {
+async function getArticlesFromDatabase(category: string): Promise<Article[]> {
+  try {
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+    const response = await fetch(`${baseUrl}/api/kennisbank?category=${category}&limit=100`, {
+      next: { revalidate: 3600 }
+    });
+
+    if (!response.ok) return [];
+
+    const data = await response.json();
+    if (!Array.isArray(data)) return [];
+
+    return data.map((item: Record<string, unknown>) => ({
+      id: item.id as string,
+      title: (item.title as string) || '',
+      slug: (item.slug as string) || '',
+      excerpt: (item.excerpt as string) || '',
+      category_slug: (item.category_slug as string) || 'algemeen',
+      published_at: (item.published_at as string) || new Date().toISOString(),
+      reading_time: (item.reading_time as number) || 5,
+      tags: (item.tags as string[]) || [],
+      difficulty: (item.difficulty as string) || 'beginner',
+      featured_image: (item.featured_image as string) || null,
+      header_type: ((item.header_type as string) || 'image') as 'image' | 'color',
+      header_color: ((item.header_color as string) || 'orange') as 'orange' | 'slate',
+      header_title: (item.header_title as string) || null,
+    }));
+  } catch (error) {
+    console.error('Error fetching from database:', error);
+    return [];
+  }
+}
+
+async function getArticlesFromMarkdown(category: string): Promise<Article[]> {
   try {
     const kennisbankDir = path.join(process.cwd(), 'content', 'kennisbank');
 
@@ -122,18 +158,34 @@ async function getArticlesByCategory(category: string): Promise<Article[]> {
           tags: data.tags || [],
           difficulty: data.difficulty || 'beginner',
           featured_image: data.featured_image || null,
+          header_type: data.header_type || 'image',
+          header_color: data.header_color || 'orange',
+          header_title: data.header_title || null,
         });
       }
     }
 
-    // Sort by published_at descending
-    articles.sort((a, b) => new Date(b.published_at).getTime() - new Date(a.published_at).getTime());
-
     return articles;
   } catch (error) {
-    console.error('Error fetching articles:', error);
+    console.error('Error fetching from markdown:', error);
     return [];
   }
+}
+
+async function getArticlesByCategory(category: string): Promise<Article[]> {
+  // Try database first
+  const dbArticles = await getArticlesFromDatabase(category);
+  if (dbArticles.length > 0) {
+    return dbArticles.sort((a, b) =>
+      new Date(b.published_at).getTime() - new Date(a.published_at).getTime()
+    );
+  }
+
+  // Fallback to markdown
+  const mdArticles = await getArticlesFromMarkdown(category);
+  return mdArticles.sort((a, b) =>
+    new Date(b.published_at).getTime() - new Date(a.published_at).getTime()
+  );
 }
 
 // Generate static params for all categories
@@ -218,8 +270,20 @@ export default async function CategoryPage({ params }: Props) {
                 className="group bg-white rounded-2xl border border-slate-100 overflow-hidden hover:shadow-xl hover:border-orange-200 transition-all"
               >
                 {/* Cover */}
-                <div className="aspect-video bg-gradient-to-br from-slate-100 to-slate-200 relative">
-                  {article.featured_image ? (
+                <div className="aspect-video relative">
+                  {article.header_type === 'color' ? (
+                    // Color background with title
+                    <div
+                      className="absolute inset-0 flex items-center justify-center px-4"
+                      style={{
+                        backgroundColor: article.header_color === 'slate' ? '#0f172a' : '#fb923c',
+                      }}
+                    >
+                      <span className="text-xl md:text-2xl font-bold text-white text-center leading-tight">
+                        {article.header_title || article.title}
+                      </span>
+                    </div>
+                  ) : article.featured_image ? (
                     <Image
                       src={article.featured_image}
                       alt={article.title}
@@ -229,7 +293,7 @@ export default async function CategoryPage({ params }: Props) {
                       loading="lazy"
                     />
                   ) : (
-                    <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200">
                       <span className="text-5xl font-bold text-slate-300">
                         {article.title[0]}
                       </span>

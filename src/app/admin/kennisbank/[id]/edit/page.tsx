@@ -12,6 +12,10 @@ import {
   Search,
   Settings,
   HelpCircle,
+  Upload,
+  X,
+  Calendar,
+  Type,
 } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
@@ -51,6 +55,7 @@ export default function EditKennisbankArticlePage({
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [isFetching, setIsFetching] = useState(true);
+  const [isUploading, setIsUploading] = useState(false);
   const [activeTab, setActiveTab] = useState<TabType>('editor');
 
   const [formData, setFormData] = useState({
@@ -63,8 +68,12 @@ export default function EditKennisbankArticlePage({
     tags: '',
     featured_image: '',
     featured_image_alt: '',
+    header_type: 'image' as 'image' | 'color',
+    header_color: 'orange' as 'orange' | 'slate',
+    header_title: '',
     difficulty: 'beginner',
     status: 'draft',
+    published_at: '',
     seoTitle: '',
     seoDescription: '',
     seoKeywords: '',
@@ -83,6 +92,12 @@ export default function EditKennisbankArticlePage({
       const response = await fetch(`/api/admin/kennisbank/${id}`);
       if (response.ok) {
         const article = await response.json();
+        // Format published_at for datetime-local input
+        let publishedAt = '';
+        if (article.published_at) {
+          const date = new Date(article.published_at);
+          publishedAt = date.toISOString().slice(0, 16);
+        }
         setFormData({
           title: article.title || '',
           slug: article.slug || '',
@@ -93,8 +108,12 @@ export default function EditKennisbankArticlePage({
           tags: article.tags?.join(', ') || '',
           featured_image: article.featured_image || '',
           featured_image_alt: article.featured_image_alt || '',
+          header_type: article.header_type || 'image',
+          header_color: article.header_color || 'orange',
+          header_title: article.header_title || '',
           difficulty: article.difficulty || 'beginner',
           status: article.status || 'draft',
+          published_at: publishedAt,
           seoTitle: article.seo_title || '',
           seoDescription: article.seo_description || '',
           seoKeywords: article.seo_keywords?.join(', ') || '',
@@ -131,6 +150,36 @@ export default function EditKennisbankArticlePage({
     });
   };
 
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsUploading(true);
+    try {
+      const formDataUpload = new FormData();
+      formDataUpload.append('file', file);
+
+      const response = await fetch('/api/upload', {
+        method: 'POST',
+        body: formDataUpload,
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        alert(result.error || 'Upload mislukt');
+        return;
+      }
+
+      setFormData({ ...formData, featured_image: result.url });
+    } catch (error) {
+      console.error('Upload error:', error);
+      alert('Er ging iets fout bij het uploaden');
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -142,6 +191,10 @@ export default function EditKennisbankArticlePage({
         body: JSON.stringify({
           ...formData,
           tags: formData.tags.split(',').map((t) => t.trim()).filter(Boolean),
+          published_at: formData.published_at || undefined,
+          header_type: formData.header_type,
+          header_color: formData.header_color,
+          header_title: formData.header_title,
           seo_title: formData.seoTitle,
           seo_description: formData.seoDescription,
           seo_keywords: formData.seoKeywords.split(',').map((k) => k.trim()).filter(Boolean),
@@ -521,18 +574,174 @@ export default function EditKennisbankArticlePage({
                   />
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="featured_image">Featured Image URL</Label>
-                  <Input
-                    id="featured_image"
-                    value={formData.featured_image}
-                    onChange={(e) =>
-                      setFormData({ ...formData, featured_image: e.target.value })
-                    }
-                  />
+                {/* Header Type Selection */}
+                <div className="space-y-4 border-t pt-4">
+                  <Label>Header Afbeelding</Label>
+                  <div className="flex gap-2">
+                    <Button
+                      type="button"
+                      variant={formData.header_type === 'image' ? 'default' : 'outline'}
+                      size="sm"
+                      onClick={() => setFormData({ ...formData, header_type: 'image' })}
+                      className={formData.header_type === 'image' ? 'bg-orange-600 hover:bg-orange-700' : ''}
+                    >
+                      <Upload size={16} className="mr-2" />
+                      Afbeelding
+                    </Button>
+                    <Button
+                      type="button"
+                      variant={formData.header_type === 'color' ? 'default' : 'outline'}
+                      size="sm"
+                      onClick={() => setFormData({ ...formData, header_type: 'color' })}
+                      className={formData.header_type === 'color' ? 'bg-orange-600 hover:bg-orange-700' : ''}
+                    >
+                      <Type size={16} className="mr-2" />
+                      Kleur + Titel
+                    </Button>
+                  </div>
+
+                  {/* Image Upload Option */}
+                  {formData.header_type === 'image' && (
+                    <div className="space-y-3">
+                      <div className="border-2 border-dashed border-slate-300 rounded-lg p-4 hover:border-orange-400 transition-colors">
+                        {formData.featured_image ? (
+                          <div className="relative">
+                            <img
+                              src={formData.featured_image}
+                              alt="Featured preview"
+                              className="w-full h-48 object-cover rounded-lg"
+                              onError={(e) => {
+                                e.currentTarget.src = 'https://via.placeholder.com/800x400?text=Invalid+Image';
+                              }}
+                            />
+                            <Button
+                              type="button"
+                              variant="destructive"
+                              size="sm"
+                              className="absolute top-2 right-2"
+                              onClick={() => setFormData({ ...formData, featured_image: '' })}
+                            >
+                              <X size={16} />
+                            </Button>
+                          </div>
+                        ) : (
+                          <label className="flex flex-col items-center justify-center h-32 cursor-pointer">
+                            {isUploading ? (
+                              <Loader2 className="w-8 h-8 text-slate-400 animate-spin" />
+                            ) : (
+                              <>
+                                <Upload className="w-8 h-8 text-slate-400 mb-2" />
+                                <span className="text-sm text-slate-500">
+                                  Klik om afbeelding te uploaden
+                                </span>
+                                <span className="text-xs text-slate-400 mt-1">
+                                  JPG, PNG, WebP (max 5MB)
+                                </span>
+                              </>
+                            )}
+                            <input
+                              type="file"
+                              accept="image/jpeg,image/png,image/webp,image/gif"
+                              onChange={handleImageUpload}
+                              className="hidden"
+                              disabled={isUploading}
+                            />
+                          </label>
+                        )}
+                      </div>
+
+                      <div className="flex items-center gap-2 text-xs text-slate-500">
+                        <span>of plak een URL:</span>
+                      </div>
+                      <Input
+                        id="featured_image"
+                        value={formData.featured_image}
+                        onChange={(e) =>
+                          setFormData({ ...formData, featured_image: e.target.value })
+                        }
+                        placeholder="https://..."
+                      />
+                      <div className="space-y-2">
+                        <Label htmlFor="featured_image_alt">Alt tekst (SEO)</Label>
+                        <Input
+                          id="featured_image_alt"
+                          value={formData.featured_image_alt}
+                          onChange={(e) =>
+                            setFormData({ ...formData, featured_image_alt: e.target.value })
+                          }
+                          placeholder="Beschrijvende alt tekst..."
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Color Background Option */}
+                  {formData.header_type === 'color' && (
+                    <div className="space-y-4">
+                      <div className="space-y-2">
+                        <Label>Achtergrondkleur</Label>
+                        <div className="flex gap-3">
+                          <button
+                            type="button"
+                            onClick={() => setFormData({ ...formData, header_color: 'orange' })}
+                            className={`flex-1 h-16 rounded-lg border-2 transition-all ${
+                              formData.header_color === 'orange'
+                                ? 'border-orange-600 ring-2 ring-orange-600 ring-offset-2'
+                                : 'border-slate-200 hover:border-orange-300'
+                            }`}
+                            style={{ backgroundColor: '#fb923c' }}
+                          >
+                            <span className="text-white font-semibold text-sm">Oranje</span>
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setFormData({ ...formData, header_color: 'slate' })}
+                            className={`flex-1 h-16 rounded-lg border-2 transition-all ${
+                              formData.header_color === 'slate'
+                                ? 'border-slate-600 ring-2 ring-slate-600 ring-offset-2'
+                                : 'border-slate-200 hover:border-slate-300'
+                            }`}
+                            style={{ backgroundColor: '#0f172a' }}
+                          >
+                            <span className="text-white font-semibold text-sm">Donkerblauw</span>
+                          </button>
+                        </div>
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="header_title">Header Titel</Label>
+                        <Input
+                          id="header_title"
+                          value={formData.header_title}
+                          onChange={(e) =>
+                            setFormData({ ...formData, header_title: e.target.value })
+                          }
+                          placeholder="Eigen titel voor de header..."
+                        />
+                        <p className="text-xs text-slate-500">
+                          Laat leeg om de artikel titel te gebruiken
+                        </p>
+                      </div>
+
+                      {/* Preview */}
+                      <div className="space-y-2">
+                        <Label>Preview</Label>
+                        <div
+                          className="w-full h-32 rounded-lg flex items-center justify-center px-4"
+                          style={{
+                            backgroundColor: formData.header_color === 'orange' ? '#fb923c' : '#0f172a',
+                          }}
+                        >
+                          <span className="text-white font-bold text-xl text-center">
+                            {formData.header_title || formData.title || 'Artikel Titel'}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
 
-                <div className="border-t pt-4">
+                <div className="border-t pt-4 space-y-4">
                   <div className="flex items-center justify-between">
                     <div>
                       <Label htmlFor="published">Gepubliceerd</Label>
@@ -545,6 +754,25 @@ export default function EditKennisbankArticlePage({
                         setFormData({ ...formData, status: checked ? 'published' : 'draft' })
                       }
                     />
+                  </div>
+
+                  {/* Publicatiedatum */}
+                  <div className="space-y-2">
+                    <Label htmlFor="published_at" className="flex items-center gap-2">
+                      <Calendar size={16} />
+                      Publicatiedatum
+                    </Label>
+                    <Input
+                      id="published_at"
+                      type="datetime-local"
+                      value={formData.published_at}
+                      onChange={(e) =>
+                        setFormData({ ...formData, published_at: e.target.value })
+                      }
+                    />
+                    <p className="text-xs text-slate-500">
+                      Laat leeg om de huidige datum te gebruiken bij publicatie
+                    </p>
                   </div>
                 </div>
               </CardContent>

@@ -30,6 +30,11 @@ interface Article {
   difficulty: string;
   published_at: string;
   views: number;
+  featured_image: string | null;
+  featured_image_alt: string | null;
+  header_type: 'image' | 'color';
+  header_color: 'orange' | 'slate';
+  header_title: string | null;
   faq_items: Array<{ question: string; answer: string }>;
   lead_magnet_title: string | null;
   lead_magnet_description: string | null;
@@ -62,7 +67,52 @@ const difficultyLabels: Record<string, string> = {
   advanced: 'Gevorderd',
 };
 
-async function getArticle(slug: string): Promise<Article | null> {
+async function getArticleFromDatabase(slug: string): Promise<Article | null> {
+  try {
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+    const response = await fetch(`${baseUrl}/api/kennisbank/${slug}`, {
+      next: { revalidate: 3600 }
+    });
+
+    if (!response.ok) return null;
+
+    const data = await response.json();
+    if (data.error) return null;
+
+    return {
+      id: data.id,
+      title: data.title || '',
+      subtitle: data.subtitle || null,
+      slug: data.slug,
+      excerpt: data.excerpt || '',
+      content: data.content || '',
+      category_slug: data.category_slug || 'algemeen',
+      tags: data.tags || [],
+      author_name: data.author_name || 'Vincent van Munster',
+      author_title: data.author_title || 'Sociaal Ondernemer & AI Expert',
+      reading_time: data.reading_time || 5,
+      difficulty: data.difficulty || 'beginner',
+      published_at: data.published_at || new Date().toISOString(),
+      views: data.views || 0,
+      featured_image: data.featured_image || null,
+      featured_image_alt: data.featured_image_alt || null,
+      header_type: data.header_type || 'image',
+      header_color: data.header_color || 'orange',
+      header_title: data.header_title || null,
+      faq_items: data.faq_items || [],
+      lead_magnet_title: data.lead_magnet_title || null,
+      lead_magnet_description: data.lead_magnet_description || null,
+      lead_magnet_type: data.lead_magnet_type || null,
+      seo_title: data.seo_title || null,
+      seo_description: data.seo_description || null,
+    };
+  } catch (error) {
+    console.error('Error fetching from database:', error);
+    return null;
+  }
+}
+
+async function getArticleFromMarkdown(slug: string): Promise<Article | null> {
   try {
     const kennisbankDir = path.join(process.cwd(), 'content', 'kennisbank');
 
@@ -95,6 +145,11 @@ async function getArticle(slug: string): Promise<Article | null> {
           difficulty: data.difficulty || 'beginner',
           published_at: data.published_at || stats.mtime.toISOString(),
           views: 0,
+          featured_image: data.featured_image || null,
+          featured_image_alt: data.featured_image_alt || null,
+          header_type: data.header_type || 'image',
+          header_color: data.header_color || 'orange',
+          header_title: data.header_title || null,
           faq_items: data.faq_items || [],
           lead_magnet_title: data.lead_magnet_title || null,
           lead_magnet_description: data.lead_magnet_description || null,
@@ -107,9 +162,17 @@ async function getArticle(slug: string): Promise<Article | null> {
 
     return null;
   } catch (error) {
-    console.error('Error fetching article:', error);
+    console.error('Error fetching from markdown:', error);
     return null;
   }
+}
+
+async function getArticle(slug: string): Promise<Article | null> {
+  // Try database first, then fall back to markdown
+  const dbArticle = await getArticleFromDatabase(slug);
+  if (dbArticle) return dbArticle;
+
+  return getArticleFromMarkdown(slug);
 }
 
 async function getRelatedArticles(category: string, currentSlug: string): Promise<RelatedArticle[]> {
@@ -271,6 +334,36 @@ export default async function KennisbankArticlePage({ params }: Props) {
           <ArrowLeft size={18} />
           Terug naar kennisbank
         </Link>
+
+        {/* Featured Header Image or Color Banner */}
+        {(article.header_type === 'color' || article.featured_image) && (
+          <div className="mb-8 -mx-6 md:mx-0">
+            {article.header_type === 'color' ? (
+              // Color background with title
+              <div
+                className="w-full h-48 md:h-64 rounded-none md:rounded-2xl flex items-center justify-center px-6"
+                style={{
+                  backgroundColor: article.header_color === 'slate' ? '#0f172a' : '#fb923c',
+                }}
+              >
+                <h2 className="text-2xl md:text-4xl font-bold text-white text-center leading-tight">
+                  {article.header_title || article.title}
+                </h2>
+              </div>
+            ) : article.featured_image ? (
+              // Featured image
+              <div className="relative w-full h-48 md:h-64 rounded-none md:rounded-2xl overflow-hidden">
+                <Image
+                  src={article.featured_image}
+                  alt={article.featured_image_alt || article.title}
+                  fill
+                  className="object-cover"
+                  priority
+                />
+              </div>
+            ) : null}
+          </div>
+        )}
 
         {/* Header */}
         <header className="mb-12">

@@ -53,6 +53,9 @@ export async function PUT(
       seo_keywords = [],
       featured_image,
       featured_image_alt,
+      header_type = 'image',
+      header_color = 'orange',
+      header_title = '',
       table_of_contents = [],
       faq_items = [],
       lead_magnet_title,
@@ -61,6 +64,7 @@ export async function PUT(
       lead_magnet_type,
       difficulty,
       status,
+      published_at,
     } = body;
 
     // Calculate reading time
@@ -69,6 +73,17 @@ export async function PUT(
 
     // Create searchable content
     const search_content = `${title} ${subtitle || ''} ${excerpt} ${content?.replace(/<[^>]*>/g, ' ')}`;
+
+    // Handle published_at: use provided date, or set to now if publishing for first time
+    let publishedAtValue;
+    if (published_at) {
+      publishedAtValue = new Date(published_at).toISOString();
+    } else if (status === 'published') {
+      // Keep existing or set new
+      publishedAtValue = null; // Will be handled in SQL
+    } else {
+      publishedAtValue = null;
+    }
 
     const result = await sql`
       UPDATE kb_articles SET
@@ -84,6 +99,9 @@ export async function PUT(
         seo_keywords = ${seo_keywords},
         featured_image = ${featured_image},
         featured_image_alt = ${featured_image_alt},
+        header_type = ${header_type},
+        header_color = ${header_color},
+        header_title = ${header_title},
         table_of_contents = ${JSON.stringify(table_of_contents)},
         faq_items = ${JSON.stringify(faq_items)},
         lead_magnet_title = ${lead_magnet_title},
@@ -95,6 +113,7 @@ export async function PUT(
         status = ${status},
         search_content = ${search_content},
         published_at = CASE
+          WHEN ${publishedAtValue}::timestamp IS NOT NULL THEN ${publishedAtValue}::timestamp
           WHEN ${status} = 'published' AND published_at IS NULL THEN NOW()
           ELSE published_at
         END

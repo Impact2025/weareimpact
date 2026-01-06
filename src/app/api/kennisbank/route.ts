@@ -16,7 +16,8 @@ export async function GET(request: NextRequest) {
       articles = await sql`
         SELECT
           id, slug, title, subtitle, excerpt, category_slug, tags,
-          featured_image, reading_time, difficulty, published_at
+          featured_image, header_type, header_color, header_title,
+          reading_time, difficulty, published_at
         FROM kb_articles
         WHERE status = 'published' AND category_slug = ${category}
         ORDER BY published_at DESC NULLS LAST
@@ -26,7 +27,8 @@ export async function GET(request: NextRequest) {
       articles = await sql`
         SELECT
           id, slug, title, subtitle, excerpt, category_slug, tags,
-          featured_image, reading_time, difficulty, published_at
+          featured_image, header_type, header_color, header_title,
+          reading_time, difficulty, published_at
         FROM kb_articles
         WHERE status = 'published'
         ORDER BY published_at DESC NULLS LAST
@@ -61,6 +63,9 @@ export async function POST(request: NextRequest) {
       seo_keywords = [],
       featured_image,
       featured_image_alt,
+      header_type = 'image',
+      header_color = 'orange',
+      header_title = '',
       table_of_contents = [],
       faq_items = [],
       lead_magnet_title,
@@ -69,6 +74,7 @@ export async function POST(request: NextRequest) {
       lead_magnet_type,
       difficulty = 'beginner',
       status = 'draft',
+      published_at,
     } = body;
 
     // Calculate reading time (avg 200 words per minute)
@@ -78,20 +84,28 @@ export async function POST(request: NextRequest) {
     // Create searchable content for full-text search
     const search_content = `${title} ${subtitle || ''} ${excerpt} ${content?.replace(/<[^>]*>/g, ' ')}`;
 
+    // Determine publication date
+    let finalPublishedAt = null;
+    if (status === 'published') {
+      finalPublishedAt = published_at ? new Date(published_at).toISOString() : new Date().toISOString();
+    }
+
     const result = await sql`
       INSERT INTO kb_articles (
         title, slug, subtitle, excerpt, content, category_slug, tags,
         seo_title, seo_description, seo_keywords, featured_image, featured_image_alt,
+        header_type, header_color, header_title,
         table_of_contents, faq_items, lead_magnet_title, lead_magnet_description,
         lead_magnet_file, lead_magnet_type, reading_time, difficulty, status,
         search_content, published_at
       ) VALUES (
         ${title}, ${slug}, ${subtitle}, ${excerpt}, ${content}, ${category_slug}, ${tags},
         ${seo_title}, ${seo_description}, ${seo_keywords}, ${featured_image}, ${featured_image_alt},
+        ${header_type}, ${header_color}, ${header_title},
         ${JSON.stringify(table_of_contents)}, ${JSON.stringify(faq_items)},
         ${lead_magnet_title}, ${lead_magnet_description}, ${lead_magnet_file}, ${lead_magnet_type},
         ${reading_time}, ${difficulty}, ${status}, ${search_content},
-        ${status === 'published' ? new Date().toISOString() : null}
+        ${finalPublishedAt}
       )
       RETURNING id, slug
     `;

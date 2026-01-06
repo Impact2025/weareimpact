@@ -35,6 +35,9 @@ interface Article {
   published_at: string;
   reading_time: number;
   featured_image: string | null;
+  header_type: 'image' | 'color';
+  header_color: 'orange' | 'slate';
+  header_title: string | null;
   tags: string[];
   difficulty: string;
 }
@@ -108,13 +111,44 @@ const difficultyLabels: Record<string, string> = {
   advanced: 'Gevorderd',
 };
 
-async function getArticles(): Promise<Article[]> {
+async function getArticlesFromDatabase(): Promise<Article[]> {
+  try {
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+    const response = await fetch(`${baseUrl}/api/kennisbank?limit=100`, {
+      next: { revalidate: 3600 }
+    });
+
+    if (!response.ok) return [];
+
+    const data = await response.json();
+    if (!Array.isArray(data)) return [];
+
+    return data.map((item: Record<string, unknown>) => ({
+      id: item.id as string,
+      title: (item.title as string) || '',
+      slug: (item.slug as string) || '',
+      excerpt: (item.excerpt as string) || '',
+      category_slug: (item.category_slug as string) || 'algemeen',
+      published_at: (item.published_at as string) || new Date().toISOString(),
+      reading_time: (item.reading_time as number) || 5,
+      featured_image: (item.featured_image as string) || null,
+      header_type: ((item.header_type as string) || 'image') as 'image' | 'color',
+      header_color: ((item.header_color as string) || 'orange') as 'orange' | 'slate',
+      header_title: (item.header_title as string) || null,
+      tags: (item.tags as string[]) || [],
+      difficulty: (item.difficulty as string) || 'beginner',
+    }));
+  } catch (error) {
+    console.error('Error fetching from database:', error);
+    return [];
+  }
+}
+
+async function getArticlesFromMarkdown(): Promise<Article[]> {
   try {
     const kennisbankDir = path.join(process.cwd(), 'content', 'kennisbank');
 
-    // Check if directory exists
     if (!fs.existsSync(kennisbankDir)) {
-      console.log('Kennisbank directory not found, returning empty array');
       return [];
     }
 
@@ -124,8 +158,6 @@ async function getArticles(): Promise<Article[]> {
       const filePath = path.join(kennisbankDir, file);
       const fileContents = fs.readFileSync(filePath, 'utf8');
       const { data } = matter(fileContents);
-
-      // Get file stats for published_at fallback
       const stats = fs.statSync(filePath);
 
       return {
@@ -137,19 +169,35 @@ async function getArticles(): Promise<Article[]> {
         published_at: data.published_at || stats.mtime.toISOString(),
         reading_time: data.reading_time || 5,
         featured_image: data.featured_image || null,
+        header_type: data.header_type || 'image',
+        header_color: data.header_color || 'orange',
+        header_title: data.header_title || null,
         tags: data.tags || [],
         difficulty: data.difficulty || 'beginner',
       };
     });
 
-    // Sort by published_at descending
-    articles.sort((a, b) => new Date(b.published_at).getTime() - new Date(a.published_at).getTime());
-
     return articles;
   } catch (error) {
-    console.error('Error fetching kennisbank articles:', error);
+    console.error('Error fetching from markdown:', error);
     return [];
   }
+}
+
+async function getArticles(): Promise<Article[]> {
+  // Try database first
+  const dbArticles = await getArticlesFromDatabase();
+  if (dbArticles.length > 0) {
+    return dbArticles.sort((a, b) =>
+      new Date(b.published_at).getTime() - new Date(a.published_at).getTime()
+    );
+  }
+
+  // Fallback to markdown
+  const mdArticles = await getArticlesFromMarkdown();
+  return mdArticles.sort((a, b) =>
+    new Date(b.published_at).getTime() - new Date(a.published_at).getTime()
+  );
 }
 
 export default async function KennisbankPage() {
@@ -197,9 +245,21 @@ export default async function KennisbankPage() {
                       index === 0 ? 'md:col-span-2 md:row-span-2' : ''
                     }`}
                   >
-                    {/* Cover Image */}
-                    <div className={`${index === 0 ? 'aspect-[2/1]' : 'aspect-video'} bg-gradient-to-br from-slate-100 to-slate-200 relative`}>
-                      {article.featured_image ? (
+                    {/* Cover Image or Color Header */}
+                    <div className={`${index === 0 ? 'aspect-[2/1]' : 'aspect-video'} relative`}>
+                      {article.header_type === 'color' ? (
+                        // Color background with title
+                        <div
+                          className="absolute inset-0 flex items-center justify-center px-4"
+                          style={{
+                            backgroundColor: article.header_color === 'slate' ? '#0f172a' : '#fb923c',
+                          }}
+                        >
+                          <span className={`${index === 0 ? 'text-2xl md:text-3xl' : 'text-lg md:text-xl'} font-bold text-white text-center leading-tight`}>
+                            {article.header_title || article.title}
+                          </span>
+                        </div>
+                      ) : article.featured_image ? (
                         <Image
                           src={article.featured_image}
                           alt={article.title}
@@ -209,7 +269,7 @@ export default async function KennisbankPage() {
                           loading={index < 3 ? 'eager' : 'lazy'}
                         />
                       ) : (
-                        <div className="absolute inset-0 flex items-center justify-center">
+                        <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200">
                           <span className={`${index === 0 ? 'text-6xl' : 'text-4xl'} font-bold text-slate-300`}>
                             {article.title[0]}
                           </span>
@@ -327,8 +387,20 @@ export default async function KennisbankPage() {
                     href={`/kennisbank/${article.slug}`}
                     className="group bg-white rounded-xl border border-slate-100 overflow-hidden hover:shadow-lg hover:border-orange-200 transition-all"
                   >
-                    <div className="aspect-video bg-gradient-to-br from-slate-100 to-slate-200 relative">
-                      {article.featured_image ? (
+                    <div className="aspect-video relative">
+                      {article.header_type === 'color' ? (
+                        // Color background with title
+                        <div
+                          className="absolute inset-0 flex items-center justify-center px-3"
+                          style={{
+                            backgroundColor: article.header_color === 'slate' ? '#0f172a' : '#fb923c',
+                          }}
+                        >
+                          <span className="text-sm md:text-base font-bold text-white text-center leading-tight line-clamp-3">
+                            {article.header_title || article.title}
+                          </span>
+                        </div>
+                      ) : article.featured_image ? (
                         <Image
                           src={article.featured_image}
                           alt={article.title}
@@ -338,7 +410,7 @@ export default async function KennisbankPage() {
                           loading="lazy"
                         />
                       ) : (
-                        <div className="absolute inset-0 flex items-center justify-center">
+                        <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200">
                           <span className="text-3xl font-bold text-slate-300">
                             {article.title[0]}
                           </span>
