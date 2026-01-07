@@ -4,7 +4,7 @@ import { ScannerSection } from '@/components/sections/ScannerSection';
 import { Pillars } from '@/components/sections/Pillars';
 import { Ventures } from '@/components/sections/Ventures';
 import { About } from '@/components/sections/About';
-import { FAQ } from '@/components/sections/FAQ';
+import { HomeFAQ } from '@/components/sections/HomeFAQ';
 import { Contact } from '@/components/sections/Contact';
 import { HomePageJsonLd } from '@/components/seo/JsonLd';
 
@@ -18,7 +18,7 @@ export default function Home() {
       <Pillars />
       <Ventures />
       <About />
-      <FAQ />
+      <HomeFAQ />
       <Contact />
     </>
   );

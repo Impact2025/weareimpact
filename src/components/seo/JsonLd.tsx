@@ -98,52 +98,41 @@ export const websiteSchema = {
   },
 };
 
-// FAQ Schema for Homepage - Sociale Innovatie & AI
+// FAQ Schema for Homepage - Persoonlijke Aanpak
 export const faqSchema = {
   '@context': 'https://schema.org',
   '@type': 'FAQPage',
   mainEntity: [
-    // Categorie 1: Visie & Strategie
     {
       '@type': 'Question',
-      name: 'Wat betekent de rol van \'Strategic Innovation Partner\' precies?',
+      name: 'Mijn organisatie moet vernieuwen. Is AI dan altijd de oplossing?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Dit is fundamenteel anders dan een interim-manager die \'op de winkel past\'. Als Strategic Innovation Partner is Vincent van Munster een veranderaar. Zijn belofte is concreet: hij maakt uw organisatie in precies 3 maanden AI-ready. Dit omvat niet alleen de techniek, maar vooral de implementatie van strategisch sociaal beleid en het ontwerpen van ecosystemen voor menselijk geluk.',
+        text: 'Nee, zeker niet. Innovatie gaat over mensen, niet over systemen. Als Sociaal Architect kijk ik eerst naar uw vraagstuk. Soms is een slimme AI-toepassing de versneller die u zoekt, maar soms ligt de oplossing in cultuurverandering of een creatieve sessie (zoals LEGO® Serious Play). Ik gebruik technologie als het moet, maar menselijk contact waar het kan.',
       },
     },
     {
       '@type': 'Question',
-      name: 'Hoe kijkt u aan tegen de ethiek van AI en privacy?',
+      name: 'Waarin verschilt jouw rol als \'Strategic Innovation Partner\' van een consultant?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'De kernvisie is: "Ik verkoop geen data, ik verkoop impact." In een tijd waarin Big Tech data vaak ziet als handelswaar, ontwikkelt Vincent ecosystemen waarin privacy en empathie leidend zijn. Technologie wordt hier ingezet als een \'enabler\' voor echt contact en om mensen te helpen offline te leven, in plaats van ze aan een scherm te binden.',
+        text: 'Een consultant schrijft een rapport; ik breng beweging. Ik word ingehuurd als veranderaar. Of we nu innoveren met geavanceerde AI of via sociale interventies: ik zorg dat u binnen 3 maanden resultaat ziet. Ik help patronen te doorbreken en maak uw organisatie klaar voor de toekomst, met of zonder stekker.',
       },
     },
-    // Categorie 2: Impact & Software
-    {
-      '@type': 'Question',
-      name: 'Hoe maakt software als DAAR maatschappelijke impact meetbaar?',
-      acceptedAnswer: {
-        '@type': 'Answer',
-        text: 'Traditionele systemen richten zich op administratie. DAAR is ontwikkeld om vrijwilligerswerk te waarderen. De software introduceert een unieke metric voor gemeenten en stichtingen: het meetbaar maken van \'Geluksmomenten\'. Hiermee verschuift de focus van kille cijfers naar daadwerkelijke maatschappelijke waarde.',
-      },
-    },
-    {
-      '@type': 'Question',
-      name: 'Waarin verschilt \'Bewaardvoorjou\' van standaard zorgsystemen?',
-      acceptedAnswer: {
-        '@type': 'Answer',
-        text: 'Veel systemen zijn functionele databases. Bewaardvoorjou is een empathische AI-tool gericht op de \'Life Journey\' van ouderen. Het doel is niet opslag, maar verbinding: het vastleggen van levensverhalen om generaties te verbinden en eenzaamheid actief tegen te gaan.',
-      },
-    },
-    // Categorie 3: Samenwerking
     {
       '@type': 'Question',
       name: 'Wat houdt de \'3-maanden transformatie\' in?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Dit is een intensief traject voor organisaties die willen innoveren zonder jarenlange consultancy-trajecten. In één kwartaal (Q1, Q2, etc.) wordt de \'Funding Engine\' (strategie) gekoppeld aan de \'Growth Engine\' (tech). Let op: Vanwege de intensiteit zijn er per kwartaal slechts beperkte plekken beschikbaar (Status Q1 2026: nog 2 plekken).',
+        text: 'Ik hanteer een bewezen methodiek om organisaties in precies één kwartaal in een nieuwe versnelling te krijgen. We bepalen samen de koers: wordt het \'The Growth Engine\' (tech & AI) of \'The Playground\' (creatieve innovatie)? Mijn doel is altijd: impact maken en uw team eigenaarschap geven.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Ben je beschikbaar voor een interim-opdracht?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Omdat ik geloof in kwaliteit boven kwantiteit, neem ik slechts een beperkt aantal partnerschappen aan. Voor Q1 2026 heb ik momenteel nog 2 plekken beschikbaar voor organisaties die durven te vernieuwen met een sociaal hart.',
       },
     },
   ],
