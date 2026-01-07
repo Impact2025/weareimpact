@@ -64,7 +64,7 @@ export function FAQ() {
             <div key={categoryIndex}>
               <h3 className="text-xl font-semibold mb-4 text-slate-800 flex items-center">
                 <span className="inline-block w-1.5 h-6 bg-orange-500 mr-3 rounded-full"></span>
-                Categorie {categoryIndex + 1}: {category.category}
+                {category.category}
               </h3>
 
               <Accordion type="single" collapsible className="space-y-3">
