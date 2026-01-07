@@ -257,20 +257,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       url: `https://weareimpact.nl/kennisbank/${slug}`,
       publishedTime: article.published_at,
       authors: [article.author_name || 'Vincent van Munster'],
-      images: [
-        {
-          url: '/og-image.jpg',
-          width: 1200,
-          height: 630,
-          alt: title,
-        },
-      ],
     },
     twitter: {
       card: 'summary_large_image',
       title,
       description,
-      images: ['/og-image.jpg'],
     },
   };
 }

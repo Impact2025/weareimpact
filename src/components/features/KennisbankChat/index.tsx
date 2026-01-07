@@ -123,7 +123,7 @@ export function KennisbankChat({ articleTitle, articleSlug, suggestedQuestions }
         const chunk = decoder.decode(value);
         fullContent += chunk;
 
-        const displayContent = fullContent.replace(/<!--ARTICLES:[\s\S]*?-->/, '');
+        const displayContent = fullContent.replace(/<!--META:[\s\S]*?-->/, '');
         setMessages(prev =>
           prev.map(m =>
             m.id === assistantId ? { ...m, content: displayContent } : m
@@ -131,22 +131,23 @@ export function KennisbankChat({ articleTitle, articleSlug, suggestedQuestions }
         );
       }
 
-      // Parse article suggestions
+      // Parse metadata (contains article suggestions and session info)
       let suggestedArticles: Array<{ title: string; slug: string; excerpt: string }> = [];
-      const articlesMatch = fullContent.match(/<!--ARTICLES:([\s\S]*?)-->/);
-      if (articlesMatch) {
+      const metaMatch = fullContent.match(/<!--META:([\s\S]*?)-->/);
+      if (metaMatch) {
         try {
-          suggestedArticles = JSON.parse(articlesMatch[1]);
+          const metadata = JSON.parse(metaMatch[1]);
+          suggestedArticles = metadata.articles || [];
           // Filter out current article
           if (articleSlug) {
             suggestedArticles = suggestedArticles.filter(a => a.slug !== articleSlug);
           }
         } catch (e) {
-          console.error('Failed to parse articles:', e);
+          console.error('Failed to parse metadata:', e);
         }
       }
 
-      const cleanContent = fullContent.replace(/<!--ARTICLES:[\s\S]*?-->/, '').trim();
+      const cleanContent = fullContent.replace(/<!--META:[\s\S]*?-->/, '').trim();
       setMessages(prev =>
         prev.map(m =>
           m.id === assistantId ? {

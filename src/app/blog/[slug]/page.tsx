@@ -102,9 +102,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     };
   }
 
-  const ogImage = post.cover_image || '/og-image.jpg';
-  const ogImageAlt = post.cover_image_alt || post.title;
-
   return {
     title: post.title,
     description: post.excerpt,
@@ -118,20 +115,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       url: `https://weareimpact.nl/blog/${slug}`,
       publishedTime: post.published_at,
       authors: [post.author_name || 'Vincent van Munster'],
-      images: [
-        {
-          url: ogImage,
-          width: 1200,
-          height: 630,
-          alt: ogImageAlt,
-        },
-      ],
     },
     twitter: {
       card: 'summary_large_image',
       title: post.title,
       description: post.excerpt,
-      images: [ogImage],
     },
   };
 }

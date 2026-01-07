@@ -50,21 +50,21 @@ export const metadata: Metadata = {
     title: 'WeAreImpact | Vincent van Munster - AI Welzijn Expert',
     description:
       'Digitale motoren voor menselijk geluk. AI met een sociaal hart.',
-    images: [
-      {
-        url: '/og-image.jpg',
-        width: 1200,
-        height: 630,
-        alt: 'WeAreImpact - Innovatie met een sociaal hart',
-      },
-    ],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'WeAreImpact | Vincent van Munster - AI Welzijn Expert',
     description:
       'Digitale motoren voor menselijk geluk. AI met een sociaal hart.',
-    images: ['/og-image.jpg'],
+  },
+  icons: {
+    icon: [
+      { url: '/favicon.ico', sizes: '32x32' },
+      { url: '/icon-96x96.png', sizes: '96x96', type: 'image/png' },
+    ],
+    apple: [
+      { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
+    ],
   },
   robots: {
     index: true,
@@ -87,9 +87,6 @@ export default function RootLayout({
   return (
     <html lang="nl" className="scroll-smooth">
       <head>
-        <link rel="icon" href="/favicon.ico" sizes="any" />
-        <link rel="icon" href="/icon.svg" type="image/svg+xml" />
-        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         <link rel="manifest" href="/manifest.json" />
       </head>
       <body
