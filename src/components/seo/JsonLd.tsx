@@ -98,49 +98,52 @@ export const websiteSchema = {
   },
 };
 
-// FAQ Schema for Homepage
+// FAQ Schema for Homepage - Sociale Innovatie & AI
 export const faqSchema = {
   '@context': 'https://schema.org',
   '@type': 'FAQPage',
   mainEntity: [
+    // Categorie 1: Visie & Strategie
     {
       '@type': 'Question',
-      name: 'Wat doet Vincent van Munster?',
+      name: 'Wat betekent de rol van \'Strategic Innovation Partner\' precies?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Vincent van Munster is AI Welzijn Expert en sociaal architect. Hij ontwerpt digitale ecosystemen die technologie inzetten voor menselijk welzijn, met focus op privacy en empathie. Hij helpt organisaties met AI-strategie, sociale innovatie en LEGO Serious Play workshops.',
+        text: 'Dit is fundamenteel anders dan een interim-manager die \'op de winkel past\'. Als Strategic Innovation Partner is Vincent van Munster een veranderaar. Zijn belofte is concreet: hij maakt uw organisatie in precies 3 maanden AI-ready. Dit omvat niet alleen de techniek, maar vooral de implementatie van strategisch sociaal beleid en het ontwerpen van ecosystemen voor menselijk geluk.',
       },
     },
     {
       '@type': 'Question',
-      name: 'Wat is WeAreImpact?',
+      name: 'Hoe kijkt u aan tegen de ethiek van AI en privacy?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'WeAreImpact is het platform van Vincent van Munster waar digitale oplossingen worden ontworpen voor maatschappelijke impact. Van software voor vrijwilligerswerk (DAAR) tot AI-tools voor ouderen (Bewaardvoorjou) - alle ventures delen dezelfde missie: technologie die mensen verbindt.',
+        text: 'De kernvisie is: "Ik verkoop geen data, ik verkoop impact." In een tijd waarin Big Tech data vaak ziet als handelswaar, ontwikkelt Vincent ecosystemen waarin privacy en empathie leidend zijn. Technologie wordt hier ingezet als een \'enabler\' voor echt contact en om mensen te helpen offline te leven, in plaats van ze aan een scherm te binden.',
+      },
+    },
+    // Categorie 2: Impact & Software
+    {
+      '@type': 'Question',
+      name: 'Hoe maakt software als DAAR maatschappelijke impact meetbaar?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Traditionele systemen richten zich op administratie. DAAR is ontwikkeld om vrijwilligerswerk te waarderen. De software introduceert een unieke metric voor gemeenten en stichtingen: het meetbaar maken van \'Geluksmomenten\'. Hiermee verschuift de focus van kille cijfers naar daadwerkelijke maatschappelijke waarde.',
       },
     },
     {
       '@type': 'Question',
-      name: 'Wat is LEGO Serious Play?',
+      name: 'Waarin verschilt \'Bewaardvoorjou\' van standaard zorgsystemen?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'LEGO Serious Play is een gefaciliteerde workshop-methode waarbij deelnemers met LEGO bouwen om complexe vraagstukken te verkennen. Vincent is gecertificeerd LSP facilitator en zet deze methode in voor teamontwikkeling, strategievorming en innovatie.',
+        text: 'Veel systemen zijn functionele databases. Bewaardvoorjou is een empathische AI-tool gericht op de \'Life Journey\' van ouderen. Het doel is niet opslag, maar verbinding: het vastleggen van levensverhalen om generaties te verbinden en eenzaamheid actief tegen te gaan.',
       },
     },
+    // Categorie 3: Samenwerking
     {
       '@type': 'Question',
-      name: 'Hoe kan AI helpen in de welzijnssector?',
+      name: 'Wat houdt de \'3-maanden transformatie\' in?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'AI kan de welzijnssector versterken door administratieve taken te automatiseren, patronen te herkennen in hulpvragen, vrijwilligers efficienter te matchen, en gepersonaliseerde ondersteuning te bieden. Vincent focust op ethische AI-toepassingen die privacy respecteren.',
-      },
-    },
-    {
-      '@type': 'Question',
-      name: 'Kan ik Vincent inhuren voor advies?',
-      acceptedAnswer: {
-        '@type': 'Answer',
-        text: 'Ja, Vincent is beschikbaar als Strategic Innovation Partner voor interim opdrachten en adviestrajecten. Hij helpt organisaties AI-ready te worden en sociaal beleid te implementeren. Plan een vrijblijvend kennismakingsgesprek via de website.',
+        text: 'Dit is een intensief traject voor organisaties die willen innoveren zonder jarenlange consultancy-trajecten. In één kwartaal (Q1, Q2, etc.) wordt de \'Funding Engine\' (strategie) gekoppeld aan de \'Growth Engine\' (tech). Let op: Vanwege de intensiteit zijn er per kwartaal slechts beperkte plekken beschikbaar (Status Q1 2026: nog 2 plekken).',
       },
     },
   ],
