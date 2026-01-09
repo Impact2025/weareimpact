@@ -27,9 +27,9 @@ export function Hero() {
         </h1>
 
         <p className="text-xl md:text-2xl text-slate-600 mb-12 max-w-3xl mx-auto font-light leading-relaxed animate-fade-in-up delay-200">
-          Ik ontwerp digitale ecosystemen voor menselijk geluk. Als AI Welzijn Expert
-          combineer ik slimme technologie met privacy en empathie om eenzaamheid
-          te bestrijden en verbinding te versterken.
+          Als innovator en directeur-bestuurder combineer ik het beste van twee werelden.
+          Ik help je 'out of the box' te denken om complexe maatschappelijke vraagstukken
+          op te lossen. Met de kracht van AI en de menselijke maat van nu.
         </p>
 
         <div className="flex flex-col md:flex-row gap-4 justify-center items-center animate-fade-in-up delay-300">
