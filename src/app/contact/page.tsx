@@ -1,19 +1,7 @@
 'use client';
 
-import { useState, FormEvent, useEffect } from 'react';
+import { useState, FormEvent } from 'react';
 import Link from 'next/link';
-import Script from 'next/script';
-
-declare global {
-  interface Window {
-    grecaptcha: {
-      ready: (callback: () => void) => void;
-      execute: (siteKey: string, options: { action: string }) => Promise<string>;
-    };
-  }
-}
-
-const RECAPTCHA_SITE_KEY = '6LdpFEUsAAAAANKVSvcoMVr2-PAOBDf77KlFyxIh';
 import {
   Phone,
   Mail,
@@ -45,27 +33,6 @@ export default function ContactPage() {
   });
   const [status, setStatus] = useState<FormStatus>('idle');
   const [errorMessage, setErrorMessage] = useState('');
-  const [recaptchaReady, setRecaptchaReady] = useState(false);
-
-  useEffect(() => {
-    // Check if grecaptcha is loaded
-    const checkRecaptcha = () => {
-      if (window.grecaptcha) {
-        window.grecaptcha.ready(() => setRecaptchaReady(true));
-      }
-    };
-
-    // Check immediately and also after script loads
-    checkRecaptcha();
-    const interval = setInterval(() => {
-      if (window.grecaptcha) {
-        window.grecaptcha.ready(() => setRecaptchaReady(true));
-        clearInterval(interval);
-      }
-    }, 100);
-
-    return () => clearInterval(interval);
-  }, []);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -85,21 +52,11 @@ export default function ContactPage() {
       return;
     }
 
-    // Get reCAPTCHA v3 token
-    let recaptchaToken = '';
-    try {
-      if (window.grecaptcha && recaptchaReady) {
-        recaptchaToken = await window.grecaptcha.execute(RECAPTCHA_SITE_KEY, { action: 'contact_form' });
-      }
-    } catch (recaptchaError) {
-      console.error('reCAPTCHA error:', recaptchaError);
-    }
-
     try {
       const response = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...formData, recaptchaToken }),
+        body: JSON.stringify(formData),
       });
 
       const data = await response.json();
@@ -124,10 +81,6 @@ export default function ContactPage() {
 
   return (
     <main className="min-h-screen bg-[#FDFBF7]">
-      <Script
-        src={`https://www.google.com/recaptcha/api.js?render=${RECAPTCHA_SITE_KEY}`}
-        strategy="lazyOnload"
-      />
       {/* Hero Section */}
       <section className="relative pt-32 pb-16 overflow-hidden">
         <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-orange-100/30 rounded-full blur-3xl pointer-events-none" />

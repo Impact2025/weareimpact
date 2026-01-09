@@ -10,65 +10,10 @@ export const dynamic = 'force-dynamic';
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-async function verifyRecaptcha(token: string): Promise<{ success: boolean; score?: number }> {
-  const secretKey = process.env.RECAPTCHA_SECRET_KEY;
-  if (!secretKey) {
-    console.log('RECAPTCHA_SECRET_KEY not configured, skipping verification');
-    return { success: true };
-  }
-
-  if (!token) {
-    console.log('No reCAPTCHA token provided');
-    return { success: true }; // Allow without token for now
-  }
-
-  try {
-    const response = await fetch('https://www.google.com/recaptcha/api/siteverify', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: `secret=${secretKey}&response=${token}`,
-    });
-
-    const data = await response.json();
-    console.log('reCAPTCHA response:', JSON.stringify(data));
-
-    // For v3, check score (0.0 = bot, 1.0 = human). Accept score >= 0.3
-    if (data.success && data.score !== undefined) {
-      return { success: data.score >= 0.3, score: data.score };
-    }
-
-    return { success: data.success === true };
-  } catch (error) {
-    console.error('reCAPTCHA verification error:', error);
-    return { success: true }; // Allow on error to not block users
-  }
-}
-
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { name, email, phone, message, recaptchaToken } = body;
-
-    // Verify reCAPTCHA (non-blocking for now to allow debugging)
-    if (process.env.RECAPTCHA_SECRET_KEY && recaptchaToken) {
-      const recaptchaResult = await verifyRecaptcha(recaptchaToken);
-      console.log('reCAPTCHA result:', JSON.stringify(recaptchaResult));
-
-      if (!recaptchaResult.success) {
-        console.log('reCAPTCHA failed but continuing anyway for debugging');
-        // Temporarily allow submissions even if reCAPTCHA fails
-        // Uncomment below to enforce reCAPTCHA:
-        // return NextResponse.json(
-        //   { error: 'reCAPTCHA verificatie mislukt. Probeer opnieuw.' },
-        //   { status: 400 }
-        // );
-      }
-    } else {
-      console.log('reCAPTCHA skipped:', {
-        hasSecretKey: !!process.env.RECAPTCHA_SECRET_KEY,
-        hasToken: !!recaptchaToken
-      });
-    }
+    const { name, email, phone, message } = body;
 
     // Validation
     if (!name || typeof name !== 'string' || !name.trim()) {
