@@ -264,7 +264,7 @@ export default function ContactPage() {
                       </Link>
 
                       <Link
-                        href="https://www.linkedin.com/in/vincentvanmunster/"
+                        href="https://www.linkedin.com/in/vincent-van-m%C3%BCnster/"
                         target="_blank"
                         rel="noopener noreferrer"
                         onClick={() => trackEvents.ctaClick('linkedin_click', 'contact_page')}

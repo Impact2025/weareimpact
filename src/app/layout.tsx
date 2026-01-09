@@ -21,11 +21,11 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL('https://weareimpact.nl'),
   title: {
-    default: 'WeAreImpact | Vincent van Munster - AI Welzijn Expert',
+    default: 'Strategic Innovation Partner & AI Welzijn Expert | Vincent van Munster',
     template: '%s | WeAreImpact',
   },
   description:
-    'Vincent van Munster is AI Welzijn Expert en sociaal architect. Hij ontwerpt digitale ecosystemen voor menselijk geluk met slimme technologie, privacy en empathie.',
+    'Zoek je innovatie die écht werkt? Als strateeg en sociaal ondernemer maak ik organisaties in zorg & welzijn AI-ready. Van post-it tot prototype. Start hier de impact-motor.',
   alternates: {
     canonical: '/',
   },
@@ -47,15 +47,15 @@ export const metadata: Metadata = {
     locale: 'nl_NL',
     url: 'https://weareimpact.nl',
     siteName: 'WeAreImpact',
-    title: 'WeAreImpact | Vincent van Munster - AI Welzijn Expert',
+    title: 'Strategic Innovation Partner & AI Welzijn Expert | Vincent van Munster',
     description:
-      'Digitale motoren voor menselijk geluk. AI met een sociaal hart.',
+      'Zoek je innovatie die écht werkt? Als strateeg en sociaal ondernemer maak ik organisaties in zorg & welzijn AI-ready. Van post-it tot prototype. Start hier de impact-motor.',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'WeAreImpact | Vincent van Munster - AI Welzijn Expert',
+    title: 'Strategic Innovation Partner & AI Welzijn Expert | Vincent van Munster',
     description:
-      'Digitale motoren voor menselijk geluk. AI met een sociaal hart.',
+      'Zoek je innovatie die écht werkt? Als strateeg en sociaal ondernemer maak ik organisaties in zorg & welzijn AI-ready. Van post-it tot prototype. Start hier de impact-motor.',
   },
   icons: {
     icon: [
@@ -84,10 +84,47 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const personSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'Person',
+    name: 'Vincent van Munster',
+    jobTitle: 'Strategic Innovation Partner',
+    description:
+      'Als strateeg en sociaal ondernemer maak ik organisaties in zorg & welzijn AI-ready',
+    url: 'https://weareimpact.nl',
+    sameAs: [
+      'https://www.linkedin.com/in/vincent-van-m%C3%BCnster/',
+      'https://weareimpact.nl',
+    ],
+    worksFor: {
+      '@type': 'Organization',
+      name: 'WeAreImpact',
+      url: 'https://weareimpact.nl',
+    },
+    foundingDate: '2014',
+    knowsAbout: [
+      'Social Entrepreneurship',
+      'Artificial Intelligence',
+      'AI Welzijn',
+      'LEGO Serious Play',
+      'Strategic Innovation',
+      'Digital Transformation',
+      'Social Innovation',
+    ],
+    alumniOf: {
+      '@type': 'EducationalOrganization',
+      name: 'Saxion Hogeschool',
+    },
+  };
+
   return (
     <html lang="nl" className="scroll-smooth">
       <head>
         <link rel="manifest" href="/manifest.json" />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(personSchema) }}
+        />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
