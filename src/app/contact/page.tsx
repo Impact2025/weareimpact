@@ -1,7 +1,25 @@
 'use client';
 
-import { useState, FormEvent } from 'react';
+import { useState, FormEvent, useRef, useEffect } from 'react';
 import Link from 'next/link';
+import Script from 'next/script';
+
+declare global {
+  interface Window {
+    grecaptcha: {
+      ready: (callback: () => void) => void;
+      render: (container: HTMLElement, options: {
+        sitekey: string;
+        callback: (token: string) => void;
+        'expired-callback': () => void;
+      }) => number;
+      reset: (widgetId?: number) => void;
+    };
+    onRecaptchaLoad: () => void;
+  }
+}
+
+const RECAPTCHA_SITE_KEY = '6LdpFEUsAAAANKVSvcoMVr2-PAOBDf77KlFyxlh';
 import {
   Phone,
   Mail,
@@ -33,6 +51,21 @@ export default function ContactPage() {
   });
   const [status, setStatus] = useState<FormStatus>('idle');
   const [errorMessage, setErrorMessage] = useState('');
+  const [recaptchaToken, setRecaptchaToken] = useState('');
+  const recaptchaRef = useRef<HTMLDivElement>(null);
+  const widgetId = useRef<number | null>(null);
+
+  useEffect(() => {
+    window.onRecaptchaLoad = () => {
+      if (recaptchaRef.current && widgetId.current === null) {
+        widgetId.current = window.grecaptcha.render(recaptchaRef.current, {
+          sitekey: RECAPTCHA_SITE_KEY,
+          callback: (token: string) => setRecaptchaToken(token),
+          'expired-callback': () => setRecaptchaToken(''),
+        });
+      }
+    };
+  }, []);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -52,11 +85,17 @@ export default function ContactPage() {
       return;
     }
 
+    if (!recaptchaToken) {
+      setStatus('error');
+      setErrorMessage('Bevestig dat je geen robot bent');
+      return;
+    }
+
     try {
       const response = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({ ...formData, recaptchaToken }),
       });
 
       const data = await response.json();
@@ -68,6 +107,10 @@ export default function ContactPage() {
       setStatus('success');
       trackEvents.ctaClick('contact_form_submit', 'contact_page');
       setFormData({ name: '', email: '', phone: '', message: '' });
+      setRecaptchaToken('');
+      if (window.grecaptcha && widgetId.current !== null) {
+        window.grecaptcha.reset(widgetId.current);
+      }
     } catch (error) {
       setStatus('error');
       setErrorMessage(error instanceof Error ? error.message : 'Er is iets misgegaan');
@@ -81,6 +124,10 @@ export default function ContactPage() {
 
   return (
     <main className="min-h-screen bg-[#FDFBF7]">
+      <Script
+        src="https://www.google.com/recaptcha/api.js?onload=onRecaptchaLoad&render=explicit"
+        strategy="lazyOnload"
+      />
       {/* Hero Section */}
       <section className="relative pt-32 pb-16 overflow-hidden">
         <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-orange-100/30 rounded-full blur-3xl pointer-events-none" />
@@ -321,6 +368,11 @@ export default function ContactPage() {
                           />
                         </div>
 
+                        {/* reCAPTCHA */}
+                        <div className="flex justify-center">
+                          <div ref={recaptchaRef} />
+                        </div>
+
                         {status === 'error' && errorMessage && (
                           <div className="flex items-center gap-2 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm">
                             <AlertCircle size={18} />
@@ -330,7 +382,7 @@ export default function ContactPage() {
 
                         <Button
                           type="submit"
-                          disabled={status === 'loading'}
+                          disabled={status === 'loading' || !recaptchaToken}
                           className="w-full h-14 bg-orange-600 hover:bg-orange-700 text-white font-bold rounded-xl transition-all shadow-lg shadow-orange-500/25 disabled:opacity-50"
                         >
                           {status === 'loading' ? (
