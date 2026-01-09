@@ -13,7 +13,7 @@ declare global {
   }
 }
 
-const RECAPTCHA_SITE_KEY = '6LdpFEUsAAAANKVSvcoMVr2-PAOBDf77KlFyxlh';
+const RECAPTCHA_SITE_KEY = '6LdpFEUsAAAAANKVSvcoMVr2-PAOBDf77KlFyxIh';
 import {
   Phone,
   Mail,
