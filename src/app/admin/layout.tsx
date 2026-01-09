@@ -13,14 +13,18 @@ import {
   Brain,
   MessageSquare,
   BookOpen,
+  Sparkles,
+  Mail,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const sidebarItems = [
+  { label: 'Praat met Iris', href: '/admin/iris', icon: Sparkles },
   { label: 'Dashboard', href: '/admin', icon: LayoutDashboard },
   { label: 'Blog Posts', href: '/admin/blog', icon: FileText },
   { label: 'Kennisbank', href: '/admin/kennisbank', icon: BookOpen },
   { label: 'AI Scanner Leads', href: '/admin/leads', icon: Brain },
+  { label: 'Contact Berichten', href: '/admin/contact', icon: Mail },
   { label: 'Chat Logs', href: '/admin/chats', icon: MessageSquare },
   { label: 'Instellingen', href: '/admin/settings', icon: Settings },
 ];

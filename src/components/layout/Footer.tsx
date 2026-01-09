@@ -19,6 +19,9 @@ export function Footer() {
           </span>
         </div>
         <div className="flex space-x-6">
+          <Link href="/contact" className="hover:text-orange-600 transition-colors">
+            Contact
+          </Link>
           <Link
             href="https://www.linkedin.com/in/vincent-van-münster"
             target="_blank"

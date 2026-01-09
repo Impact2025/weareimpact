@@ -13,7 +13,7 @@ const navItems = [
   { label: 'BLOG', href: '/blog' },
   { label: 'KENNISBANK', href: '/kennisbank', icon: BookOpen },
   { label: 'VENTURES', href: '/#ventures' },
-  { label: 'VINCENT', href: '/#over' },
+  { label: 'CONTACT', href: '/contact' },
 ];
 
 export function Navbar() {
