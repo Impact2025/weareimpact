@@ -6,6 +6,7 @@ import { Ventures } from '@/components/sections/Ventures';
 import { About } from '@/components/sections/About';
 import { HomeFAQ } from '@/components/sections/HomeFAQ';
 import { Contact } from '@/components/sections/Contact';
+import { KennisbankPreview } from '@/components/sections/KennisbankPreview';
 import { HomePageJsonLd } from '@/components/seo/JsonLd';
 
 export default function Home() {
@@ -15,6 +16,7 @@ export default function Home() {
       <Hero />
       <Vision />
       <ScannerSection />
+      <KennisbankPreview />
       <Pillars />
       <Ventures />
       <About />

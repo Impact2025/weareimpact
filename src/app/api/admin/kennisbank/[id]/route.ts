@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { sql } from '@/lib/db/neon';
+import { indexKennisbankArticle } from '@/lib/seo/indexnow';
 
 export const dynamic = 'force-dynamic';
 
@@ -126,6 +127,14 @@ export async function PUT(
         { error: 'Article not found' },
         { status: 404 }
       );
+    }
+
+    // Trigger IndexNow when article is published
+    if (status === 'published' && result[0].slug) {
+      // Don't await - let it happen in background
+      indexKennisbankArticle(result[0].slug as string).catch(err => {
+        console.error('IndexNow submission failed:', err);
+      });
     }
 
     return NextResponse.json({ success: true, data: result[0] });

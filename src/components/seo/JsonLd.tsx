@@ -263,6 +263,24 @@ export function JsonLd({ data }: { data: object }) {
   );
 }
 
+// FAQ Schema Generator for kennisbank articles
+export function generateFAQSchema(faqItems: Array<{ question: string; answer: string }>) {
+  if (!faqItems || faqItems.length === 0) return null;
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqItems.map(faq => ({
+      '@type': 'Question',
+      name: faq.question,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: faq.answer.replace(/\*\*/g, '').replace(/\n/g, ' ').trim(),
+      },
+    })),
+  };
+}
+
 // Pre-built components for easy use
 export function HomePageJsonLd() {
   return <JsonLd data={homePageSchema} />;
@@ -274,4 +292,102 @@ export function ArticleJsonLd({ article }: { article: Parameters<typeof generate
 
 export function BreadcrumbJsonLd({ items }: { items: { name: string; url: string }[] }) {
   return <JsonLd data={generateBreadcrumbSchema(items)} />;
+}
+
+export function FAQPageJsonLd({ faqItems }: { faqItems: Array<{ question: string; answer: string }> }) {
+  const schema = generateFAQSchema(faqItems);
+  if (!schema) return null;
+  return <JsonLd data={schema} />;
+}
+
+// HowTo Schema Generator for step-by-step guides
+interface HowToStep {
+  name: string;
+  text: string;
+  url?: string;
+  image?: string;
+}
+
+export function generateHowToSchema(data: {
+  title: string;
+  description: string;
+  totalTime?: string; // ISO 8601 duration format, e.g., "PT30M" for 30 minutes
+  steps: HowToStep[];
+  url: string;
+}) {
+  if (!data.steps || data.steps.length === 0) return null;
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'HowTo',
+    name: data.title,
+    description: data.description,
+    ...(data.totalTime && { totalTime: data.totalTime }),
+    step: data.steps.map((step, index) => ({
+      '@type': 'HowToStep',
+      position: index + 1,
+      name: step.name,
+      text: step.text,
+      ...(step.url && { url: step.url }),
+      ...(step.image && { image: step.image }),
+    })),
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': data.url,
+    },
+  };
+}
+
+export function HowToJsonLd({ data }: { data: Parameters<typeof generateHowToSchema>[0] }) {
+  const schema = generateHowToSchema(data);
+  if (!schema) return null;
+  return <JsonLd data={schema} />;
+}
+
+// Extract steps from markdown content (looks for numbered lists or ## Stap patterns)
+export function extractStepsFromContent(content: string): HowToStep[] {
+  const steps: HowToStep[] = [];
+
+  // Pattern 1: ## Stap 1: Title or ## 1. Title
+  const stepHeadingRegex = /^##\s*(?:Stap\s*)?(\d+)[:.]\s*(.+)$/gm;
+  let match;
+
+  while ((match = stepHeadingRegex.exec(content)) !== null) {
+    const stepNumber = parseInt(match[1]);
+    const stepTitle = match[2].trim();
+
+    // Get content until next heading
+    const startIndex = match.index + match[0].length;
+    const nextHeadingMatch = content.slice(startIndex).match(/^##\s/m);
+    const endIndex = nextHeadingMatch
+      ? startIndex + (nextHeadingMatch.index || content.length)
+      : content.length;
+
+    const stepContent = content.slice(startIndex, endIndex).trim();
+    // Clean markdown formatting
+    const cleanContent = stepContent
+      .replace(/\*\*/g, '')
+      .replace(/\n+/g, ' ')
+      .replace(/- /g, '')
+      .slice(0, 500)
+      .trim();
+
+    steps.push({
+      name: stepTitle,
+      text: cleanContent || stepTitle,
+    });
+  }
+
+  // Pattern 2: Numbered list items (1. 2. 3.)
+  if (steps.length === 0) {
+    const numberedListRegex = /^(\d+)\.\s+\*\*(.+?)\*\*[:\s]*(.*)$/gm;
+    while ((match = numberedListRegex.exec(content)) !== null) {
+      steps.push({
+        name: match[2].trim(),
+        text: match[3].trim() || match[2].trim(),
+      });
+    }
+  }
+
+  return steps;
 }

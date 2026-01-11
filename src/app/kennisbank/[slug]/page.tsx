@@ -6,11 +6,16 @@ import path from 'path';
 import matter from 'gray-matter';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import rehypeSlug from 'rehype-slug';
 import { ArrowLeft, Calendar, Clock, Linkedin, Twitter, BookOpen, Download, HelpCircle, Building2, Brain, Users, Target, DollarSign, Blocks, ChevronRight } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { KennisbankChat } from '@/components/features/KennisbankChat';
-import { ArticleJsonLd, BreadcrumbJsonLd } from '@/components/seo/JsonLd';
+import { ArticleFeedback } from '@/components/features/ArticleFeedback';
+import { LeadMagnetDownload } from '@/components/features/LeadMagnetDownload';
+import { ViewTracker } from '@/components/features/ViewTracker';
+import { TableOfContents, ReadingProgress, ScrollToTop } from '@/components/features/TableOfContents';
+import { ArticleJsonLd, BreadcrumbJsonLd, FAQPageJsonLd, HowToJsonLd, extractStepsFromContent } from '@/components/seo/JsonLd';
 import { sql } from '@/lib/db/neon';
 import type { Metadata } from 'next';
 
@@ -286,8 +291,26 @@ export default async function KennisbankArticlePage({ params }: Props) {
     { name: article.title, url: `/kennisbank/${article.slug}` },
   ];
 
+  // Check if article is a how-to/steppenplan (by title or tags)
+  const isHowTo = article.title.toLowerCase().includes('stappenplan') ||
+    article.title.toLowerCase().includes('checklist') ||
+    article.title.toLowerCase().includes('gids') ||
+    article.tags?.some(tag => ['stappenplan', 'checklist', 'how-to', 'handleiding'].includes(tag.toLowerCase()));
+
+  // Extract steps for HowTo schema
+  const howToSteps = isHowTo ? extractStepsFromContent(article.content) : [];
+
   return (
     <article className="min-h-screen bg-[#FDFBF7] pt-32 pb-24">
+      {/* Reading Progress Bar */}
+      <ReadingProgress />
+
+      {/* View Tracking */}
+      <ViewTracker articleId={article.id} />
+
+      {/* Scroll to Top Button */}
+      <ScrollToTop />
+
       {/* JSON-LD Structured Data */}
       <ArticleJsonLd
         article={{
@@ -302,6 +325,18 @@ export default async function KennisbankArticlePage({ params }: Props) {
         }}
       />
       <BreadcrumbJsonLd items={breadcrumbItems} />
+      {faqItems.length > 0 && <FAQPageJsonLd faqItems={faqItems} />}
+      {howToSteps.length >= 3 && (
+        <HowToJsonLd
+          data={{
+            title: article.title,
+            description: article.excerpt,
+            totalTime: `PT${article.reading_time}M`,
+            steps: howToSteps,
+            url: `https://weareimpact.nl/kennisbank/${article.slug}`,
+          }}
+        />
+      )}
 
       <div className="container mx-auto px-6 max-w-3xl">
         {/* Breadcrumb Navigation */}
@@ -408,9 +443,12 @@ export default async function KennisbankArticlePage({ params }: Props) {
           </div>
         </header>
 
+        {/* Table of Contents */}
+        <TableOfContents content={article.content} className="mb-8" />
+
         {/* Content */}
-        <div className="prose prose-lg prose-slate max-w-none mb-12 prose-headings:text-slate-900 prose-a:text-orange-600 prose-a:no-underline hover:prose-a:underline prose-img:rounded-xl prose-pre:bg-slate-900">
-          <ReactMarkdown remarkPlugins={[remarkGfm]}>
+        <div className="prose prose-lg prose-slate max-w-none mb-12 prose-headings:text-slate-900 prose-headings:scroll-mt-24 prose-a:text-orange-600 prose-a:no-underline hover:prose-a:underline prose-img:rounded-xl prose-pre:bg-slate-900">
+          <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeSlug]}>
             {article.content}
           </ReactMarkdown>
         </div>
@@ -430,24 +468,13 @@ export default async function KennisbankArticlePage({ params }: Props) {
 
         {/* Lead Magnet */}
         {article.lead_magnet_title && (
-          <div className="bg-gradient-to-br from-orange-50 to-orange-100 border border-orange-200 rounded-2xl p-6 mb-12">
-            <div className="flex items-start gap-4">
-              <div className="w-12 h-12 bg-orange-500 rounded-xl flex items-center justify-center flex-shrink-0">
-                <Download className="text-white" size={24} />
-              </div>
-              <div className="flex-1">
-                <h3 className="text-lg font-bold text-slate-900 mb-2">
-                  {article.lead_magnet_title}
-                </h3>
-                {article.lead_magnet_description && (
-                  <p className="text-slate-600 mb-4">{article.lead_magnet_description}</p>
-                )}
-                <Button className="bg-orange-600 hover:bg-orange-700">
-                  <Download size={16} className="mr-2" />
-                  Download {article.lead_magnet_type === 'pdf' ? 'PDF' : article.lead_magnet_type === 'checklist' ? 'Checklist' : article.lead_magnet_type === 'template' ? 'Template' : 'Bestand'}
-                </Button>
-              </div>
-            </div>
+          <div className="mb-12">
+            <LeadMagnetDownload
+              articleId={article.id}
+              title={article.lead_magnet_title}
+              description={article.lead_magnet_description || undefined}
+              type={article.lead_magnet_type || undefined}
+            />
           </div>
         )}
 
@@ -489,6 +516,9 @@ export default async function KennisbankArticlePage({ params }: Props) {
             ))}
           </div>
         )}
+
+        {/* Feedback */}
+        <ArticleFeedback articleId={article.id} />
 
         {/* Share */}
         <div className="flex items-center justify-between py-6 border-t border-slate-200">

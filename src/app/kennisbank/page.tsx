@@ -3,9 +3,10 @@ import Image from 'next/image';
 import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
-import { Calendar, Clock, ArrowRight, BookOpen, Brain, Target, Users, Blocks, DollarSign, Building2 } from 'lucide-react';
+import { Calendar, Clock, ArrowRight, BookOpen, Brain, Target, Users, Blocks, DollarSign, Building2, Search, Eye } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Newsletter } from '@/components/sections/Newsletter';
+import { KennisbankSearch } from '@/components/features/KennisbankSearch';
 import { sql } from '@/lib/db/neon';
 import type { Metadata } from 'next';
 
@@ -41,6 +42,7 @@ interface Article {
   header_title: string | null;
   tags: string[];
   difficulty: string;
+  views: number;
 }
 
 const categories = [
@@ -118,7 +120,7 @@ async function getArticlesFromDatabase(): Promise<Article[]> {
       SELECT
         id, slug, title, excerpt, category_slug, tags,
         featured_image, header_type, header_color, header_title,
-        reading_time, difficulty, published_at
+        reading_time, difficulty, published_at, views
       FROM kb_articles
       WHERE status = 'published'
       ORDER BY published_at DESC NULLS LAST
@@ -139,6 +141,7 @@ async function getArticlesFromDatabase(): Promise<Article[]> {
       header_title: (item.header_title as string) || null,
       tags: (item.tags as string[]) || [],
       difficulty: (item.difficulty as string) || 'beginner',
+      views: (item.views as number) || 0,
     }));
   } catch (error) {
     console.error('Error fetching from database:', error);
@@ -176,6 +179,7 @@ async function getArticlesFromMarkdown(): Promise<Article[]> {
         header_title: data.header_title || null,
         tags: data.tags || [],
         difficulty: data.difficulty || 'beginner',
+        views: 0,
       };
     });
 
@@ -226,10 +230,27 @@ export default async function KennisbankPage() {
           <h1 className="text-4xl md:text-5xl font-bold text-slate-900 mb-6">
             Praktische Gidsen voor Sociale Organisaties
           </h1>
-          <p className="text-xl text-slate-600 max-w-2xl mx-auto">
+          <p className="text-xl text-slate-600 max-w-2xl mx-auto mb-8">
             Stappenplannen, handleidingen en praktische kennis over AI, vrijwilligers,
             subsidies en meer. Geschreven door Vincent van Munster.
           </p>
+
+          {/* Search Bar */}
+          <div className="max-w-2xl mx-auto">
+            <KennisbankSearch />
+          </div>
+
+          {/* Stats */}
+          <div className="flex items-center justify-center gap-8 mt-8 text-sm text-slate-500">
+            <div className="flex items-center gap-2">
+              <BookOpen size={16} className="text-orange-500" />
+              <span><strong className="text-slate-900">{allArticles.length}</strong> artikelen</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Search size={16} className="text-orange-500" />
+              <span><strong className="text-slate-900">6</strong> categorieën</span>
+            </div>
+          </div>
         </div>
 
         {/* Featured Articles */}
@@ -292,6 +313,12 @@ export default async function KennisbankPage() {
                           <Clock size={12} />
                           {article.reading_time} min
                         </div>
+                        {article.views > 0 && (
+                          <div className="flex items-center gap-1 text-xs text-slate-400">
+                            <Eye size={12} />
+                            {article.views > 999 ? `${(article.views / 1000).toFixed(1)}k` : article.views}
+                          </div>
+                        )}
                       </div>
 
                       <h3 className={`${index === 0 ? 'text-2xl' : 'text-xl'} font-bold text-slate-900 mb-2 group-hover:text-orange-600 transition-colors`}>
