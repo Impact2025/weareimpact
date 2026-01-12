@@ -49,7 +49,7 @@ const DIFFICULTY_LABELS: Record<string, string> = {
 };
 
 export function KennisbankSearch({
-  placeholder = 'Zoek in 100+ artikelen over AI, vrijwilligers, impact...',
+  placeholder = 'Zoek in de kennisbank...',
   autoFocus = false,
   showPopularSearches = true,
   onSearch,
