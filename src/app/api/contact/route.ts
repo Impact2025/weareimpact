@@ -10,10 +10,119 @@ export const dynamic = 'force-dynamic';
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+// Rate limiting configuration
+const RATE_LIMIT_WINDOW_HOURS = 1;
+const MAX_SUBMISSIONS_PER_WINDOW = 3;
+
+// Get client IP address from request headers
+function getClientIp(request: NextRequest): string {
+  // Try various headers (Vercel sets x-forwarded-for and x-real-ip)
+  const forwardedFor = request.headers.get('x-forwarded-for');
+  if (forwardedFor) {
+    return forwardedFor.split(',')[0].trim();
+  }
+
+  const realIp = request.headers.get('x-real-ip');
+  if (realIp) {
+    return realIp;
+  }
+
+  // Fallback to a default (shouldn't happen on Vercel)
+  return 'unknown';
+}
+
+// Check if IP has exceeded rate limit
+async function checkRateLimit(ip: string): Promise<{ allowed: boolean; remaining: number }> {
+  try {
+    // Ensure rate_limit table exists
+    await sql`
+      CREATE TABLE IF NOT EXISTS contact_rate_limits (
+        id SERIAL PRIMARY KEY,
+        ip_address VARCHAR(45) NOT NULL,
+        submission_count INTEGER DEFAULT 1,
+        window_start TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+        created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+      )
+    `;
+
+    await sql`
+      CREATE INDEX IF NOT EXISTS idx_rate_limits_ip ON contact_rate_limits(ip_address, window_start DESC)
+    `;
+
+    // Clean up old entries (older than rate limit window)
+    await sql`
+      DELETE FROM contact_rate_limits
+      WHERE window_start < NOW() - INTERVAL '${RATE_LIMIT_WINDOW_HOURS} hours'
+    `;
+
+    // Check current window
+    const windowStart = new Date();
+    windowStart.setHours(windowStart.getHours() - RATE_LIMIT_WINDOW_HOURS);
+
+    const result = await sql`
+      SELECT COALESCE(SUM(submission_count), 0) as total
+      FROM contact_rate_limits
+      WHERE ip_address = ${ip}
+        AND window_start >= ${windowStart.toISOString()}
+    `;
+
+    const currentCount = Number(result[0]?.total || 0);
+    const remaining = Math.max(0, MAX_SUBMISSIONS_PER_WINDOW - currentCount);
+
+    return {
+      allowed: currentCount < MAX_SUBMISSIONS_PER_WINDOW,
+      remaining
+    };
+  } catch (error) {
+    console.error('Rate limit check failed:', error);
+    // On error, allow the request (fail open)
+    return { allowed: true, remaining: MAX_SUBMISSIONS_PER_WINDOW };
+  }
+}
+
+// Record a submission for rate limiting
+async function recordSubmission(ip: string): Promise<void> {
+  try {
+    await sql`
+      INSERT INTO contact_rate_limits (ip_address, submission_count, window_start)
+      VALUES (${ip}, 1, NOW())
+    `;
+  } catch (error) {
+    console.error('Failed to record submission:', error);
+  }
+}
+
 export async function POST(request: NextRequest) {
   try {
+    // Rate limiting check
+    const clientIp = getClientIp(request);
+    const { allowed, remaining } = await checkRateLimit(clientIp);
+
+    if (!allowed) {
+      console.warn(`Rate limit exceeded for IP: ${clientIp}`);
+      return NextResponse.json(
+        {
+          error: 'Je hebt te veel berichten verstuurd. Probeer het over een uur opnieuw of neem direct contact op via telefoon of e-mail.',
+          rateLimited: true
+        },
+        { status: 429 }
+      );
+    }
+
     const body = await request.json();
-    const { name, email, phone, message } = body;
+    const { name, email, phone, message, honeypot } = body;
+
+    // Honeypot check - if filled, it's a bot
+    if (honeypot && honeypot.trim() !== '') {
+      console.warn(`Honeypot triggered for IP: ${clientIp}`);
+      // Record as spam attempt
+      await recordSubmission(clientIp);
+      // Return generic success to not reveal the honeypot
+      return NextResponse.json({
+        success: true,
+        message: 'Bedankt voor je bericht! Ik neem zo snel mogelijk contact met je op.',
+      }, { status: 201 });
+    }
 
     // Validation
     if (!name || typeof name !== 'string' || !name.trim()) {
@@ -54,6 +163,9 @@ export async function POST(request: NextRequest) {
 
     const submission = result[0];
 
+    // Record submission for rate limiting
+    await recordSubmission(clientIp);
+
     // Log activity (don't fail if this errors)
     try {
       await sql`
@@ -66,7 +178,8 @@ export async function POST(request: NextRequest) {
             submissionId: submission?.id,
             name: trimmedName,
             email: trimmedEmail,
-            hasPhone: !!trimmedPhone
+            hasPhone: !!trimmedPhone,
+            ip: clientIp
           })}
         )
       `;

@@ -31,6 +31,7 @@ export default function ContactPage() {
     phone: '',
     message: '',
   });
+  const [honeypot, setHoneypot] = useState(''); // Anti-spam honeypot
   const [status, setStatus] = useState<FormStatus>('idle');
   const [errorMessage, setErrorMessage] = useState('');
 
@@ -38,6 +39,13 @@ export default function ContactPage() {
     e.preventDefault();
     setStatus('loading');
     setErrorMessage('');
+
+    // Honeypot check - if filled, it's a bot
+    if (honeypot) {
+      setStatus('error');
+      setErrorMessage('Er is iets misgegaan. Probeer het later opnieuw.');
+      return;
+    }
 
     if (!formData.name.trim() || !formData.email.trim() || !formData.message.trim()) {
       setStatus('error');
@@ -56,12 +64,18 @@ export default function ContactPage() {
       const response = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({ ...formData, honeypot }),
       });
 
       const data = await response.json();
 
       if (!response.ok) {
+        // Handle rate limiting separately
+        if (response.status === 429) {
+          setErrorMessage(data.error || 'Je hebt te veel berichten verstuurd. Probeer het later opnieuw.');
+        } else {
+          setErrorMessage(data.error || 'Er is iets misgegaan');
+        }
         throw new Error(data.error || 'Er is iets misgegaan');
       }
 
@@ -70,7 +84,10 @@ export default function ContactPage() {
       setFormData({ name: '', email: '', phone: '', message: '' });
     } catch (error) {
       setStatus('error');
-      setErrorMessage(error instanceof Error ? error.message : 'Er is iets misgegaan');
+      // Error message already set above for rate limiting
+      if (!errorMessage) {
+        setErrorMessage(error instanceof Error ? error.message : 'Er is iets misgegaan');
+      }
     }
   };
 
@@ -260,6 +277,20 @@ export default function ContactPage() {
                       </div>
 
                       <form onSubmit={handleSubmit} className="space-y-5">
+                        {/* Honeypot field - hidden from users, but bots will fill it */}
+                        <div className="hidden" aria-hidden="true">
+                          <label htmlFor="website">Website</label>
+                          <input
+                            id="website"
+                            name="website"
+                            type="text"
+                            value={honeypot}
+                            onChange={(e) => setHoneypot(e.target.value)}
+                            tabIndex={-1}
+                            autoComplete="off"
+                          />
+                        </div>
+
                         <div>
                           <label htmlFor="name" className="block text-sm font-medium text-slate-700 mb-2">
                             Naam <span className="text-orange-500">*</span>
