@@ -560,8 +560,8 @@ export function DigitalTwin() {
         const chunk = decoder.decode(value);
         fullContent += chunk;
 
-        // Don't show the article marker while streaming
-        const displayContent = fullContent.replace(/<!--ARTICLES:[\s\S]*?-->/, '');
+        // Don't show the META marker while streaming
+        const displayContent = fullContent.replace(/<!--META:[\s\S]*?-->/, '');
 
         setMessages(prev =>
           prev.map(m =>
@@ -570,19 +570,22 @@ export function DigitalTwin() {
         );
       }
 
-      // Parse article suggestions from response
+      // Parse metadata from response (includes article suggestions)
       let suggestedArticles: SuggestedArticle[] = [];
-      const articlesMatch = fullContent.match(/<!--ARTICLES:([\s\S]*?)-->/);
-      if (articlesMatch) {
+      const metaMatch = fullContent.match(/<!--META:([\s\S]*?)-->/);
+      if (metaMatch) {
         try {
-          suggestedArticles = JSON.parse(articlesMatch[1]);
+          const metadata = JSON.parse(metaMatch[1]);
+          if (metadata.articles && Array.isArray(metadata.articles)) {
+            suggestedArticles = metadata.articles;
+          }
         } catch (e) {
-          console.error('Failed to parse article suggestions:', e);
+          console.error('Failed to parse metadata:', e);
         }
       }
 
-      // Remove article marker from content
-      const cleanContent = fullContent.replace(/<!--ARTICLES:[\s\S]*?-->/, '').trim();
+      // Remove META marker from content
+      const cleanContent = fullContent.replace(/<!--META:[\s\S]*?-->/, '').trim();
 
       // Mark streaming as complete and enable quick replies
       setMessages(prev =>
