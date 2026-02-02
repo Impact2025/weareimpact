@@ -15,22 +15,36 @@ interface TableOfContentsProps {
   className?: string;
 }
 
-// Extract headings from markdown content
+// Extract headings from markdown content with support for custom IDs {#custom-id}
 function extractHeadings(content: string): TOCItem[] {
   const headingRegex = /^(#{2,4})\s+(.+)$/gm;
+  const customIdRegex = /\s*\{#([a-z0-9-]+)\}\s*$/i;
   const headings: TOCItem[] = [];
   let match;
 
   while ((match = headingRegex.exec(content)) !== null) {
     const level = match[1].length;
-    const title = match[2].replace(/\*\*/g, '').trim();
-    // Generate ID from title (same logic as remark-slug)
-    const id = title
-      .toLowerCase()
-      .replace(/[^a-z0-9\s-]/g, '')
-      .replace(/\s+/g, '-')
-      .replace(/-+/g, '-')
-      .trim();
+    let rawTitle = match[2].replace(/\*\*/g, '').trim();
+
+    // Check for custom ID syntax {#custom-id}
+    const customIdMatch = rawTitle.match(customIdRegex);
+    let id: string;
+    let title: string;
+
+    if (customIdMatch) {
+      // Use custom ID and strip it from title
+      id = customIdMatch[1];
+      title = rawTitle.replace(customIdRegex, '').trim();
+    } else {
+      // Generate ID from title (same logic as remark-slug)
+      title = rawTitle;
+      id = title
+        .toLowerCase()
+        .replace(/[^a-z0-9\s-]/g, '')
+        .replace(/\s+/g, '-')
+        .replace(/-+/g, '-')
+        .trim();
+    }
 
     headings.push({ id, title, level });
   }

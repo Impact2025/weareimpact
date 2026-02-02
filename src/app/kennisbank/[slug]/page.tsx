@@ -4,9 +4,10 @@ import { notFound } from 'next/navigation';
 import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
-import ReactMarkdown from 'react-markdown';
+import ReactMarkdown, { Components } from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeSlug from 'rehype-slug';
+import React from 'react';
 import { ArrowLeft, Calendar, Clock, Linkedin, Twitter, BookOpen, Download, HelpCircle, Building2, Brain, Users, Target, DollarSign, Blocks, ChevronRight } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -71,6 +72,43 @@ const difficultyLabels: Record<string, string> = {
   beginner: 'Beginner',
   intermediate: 'Gemiddeld',
   advanced: 'Gevorderd',
+};
+
+// Custom heading components that handle {#custom-id} syntax
+const customIdRegex = /\s*\{#([a-z0-9-]+)\}\s*$/i;
+
+function extractCustomId(children: React.ReactNode): { id: string | undefined; cleanChildren: React.ReactNode } {
+  // Convert children to string to check for custom ID
+  const childArray = React.Children.toArray(children);
+  const lastChild = childArray[childArray.length - 1];
+
+  if (typeof lastChild === 'string') {
+    const match = lastChild.match(customIdRegex);
+    if (match) {
+      const cleanText = lastChild.replace(customIdRegex, '');
+      const cleanChildren = [...childArray.slice(0, -1), cleanText].filter(Boolean);
+      return { id: match[1], cleanChildren: cleanChildren.length === 1 ? cleanChildren[0] : cleanChildren };
+    }
+  }
+
+  return { id: undefined, cleanChildren: children };
+}
+
+function createHeadingComponent(Tag: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6') {
+  return function CustomHeading({ children, ...props }: React.HTMLAttributes<HTMLHeadingElement>) {
+    const { id: customId, cleanChildren } = extractCustomId(children);
+    const id = customId || props.id;
+    return React.createElement(Tag, { ...props, id }, cleanChildren);
+  };
+}
+
+const markdownComponents: Components = {
+  h1: createHeadingComponent('h1'),
+  h2: createHeadingComponent('h2'),
+  h3: createHeadingComponent('h3'),
+  h4: createHeadingComponent('h4'),
+  h5: createHeadingComponent('h5'),
+  h6: createHeadingComponent('h6'),
 };
 
 async function getArticleFromDatabase(slug: string): Promise<Article | null> {
@@ -448,7 +486,11 @@ export default async function KennisbankArticlePage({ params }: Props) {
 
         {/* Content */}
         <div className="prose prose-lg prose-slate max-w-none mb-12 prose-headings:text-slate-900 prose-headings:scroll-mt-24 prose-a:text-orange-600 prose-a:no-underline hover:prose-a:underline prose-img:rounded-xl prose-pre:bg-slate-900">
-          <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeSlug]}>
+          <ReactMarkdown
+            remarkPlugins={[remarkGfm]}
+            rehypePlugins={[rehypeSlug]}
+            components={markdownComponents}
+          >
             {article.content}
           </ReactMarkdown>
         </div>
