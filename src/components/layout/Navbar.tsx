@@ -1,25 +1,28 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
+import { usePathname, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { Menu, X, Sparkles, BookOpen } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const navItems = [
-  { label: 'MANIFEST', href: '/#visie' },
-  { label: 'EXPERTISE', href: '/#pijlers' },
-  { label: 'AI SCAN', href: '/#scan', icon: Sparkles, highlight: true },
-  { label: 'BLOG', href: '/blog' },
-  { label: 'KENNISBANK', href: '/kennisbank', icon: BookOpen },
-  { label: 'VENTURES', href: '/#ventures' },
-  { label: 'CONTACT', href: '/contact' },
+  { label: 'MANIFEST', href: '/#visie', isHash: true },
+  { label: 'EXPERTISE', href: '/#pijlers', isHash: true },
+  { label: 'AI SCAN', href: '/#scan', icon: Sparkles, highlight: true, isHash: true },
+  { label: 'BLOG', href: '/blog', isHash: false },
+  { label: 'KENNISBANK', href: '/kennisbank', icon: BookOpen, isHash: false },
+  { label: 'VENTURES', href: '/#ventures', isHash: true },
+  { label: 'CONTACT', href: '/contact', isHash: false },
 ];
 
 export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [logoError, setLogoError] = useState(false);
+  const pathname = usePathname();
+  const router = useRouter();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -28,6 +31,31 @@ export function Navbar() {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  const handleNavClick = useCallback((href: string, isHash: boolean) => {
+    if (!isHash) return; // Let Link handle non-hash navigation
+
+    const hashId = href.split('#')[1];
+    if (!hashId) return;
+
+    // If we're on the homepage, scroll directly
+    if (pathname === '/') {
+      const element = document.getElementById(hashId);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    } else {
+      // Navigate to homepage first, then scroll
+      router.push('/');
+      // Wait for navigation and then scroll
+      setTimeout(() => {
+        const element = document.getElementById(hashId);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 100);
+    }
+  }, [pathname, router]);
 
   return (
     <nav
@@ -65,16 +93,29 @@ export function Navbar() {
         {/* Desktop Menu */}
         <div className="hidden md:flex space-x-10 text-sm font-medium tracking-wide text-slate-600">
           {navItems.map((item) => (
-            <Link
-              key={item.label}
-              href={item.href}
-              className={`hover:text-orange-600 transition-colors flex items-center gap-1 ${
-                item.highlight ? 'text-orange-600' : ''
-              }`}
-            >
-              {item.icon && <item.icon size={14} />}
-              {item.label}
-            </Link>
+            item.isHash ? (
+              <button
+                key={item.label}
+                onClick={() => handleNavClick(item.href, true)}
+                className={`hover:text-orange-600 transition-colors flex items-center gap-1 ${
+                  item.highlight ? 'text-orange-600' : ''
+                }`}
+              >
+                {item.icon && <item.icon size={14} />}
+                {item.label}
+              </button>
+            ) : (
+              <Link
+                key={item.label}
+                href={item.href}
+                className={`hover:text-orange-600 transition-colors flex items-center gap-1 ${
+                  item.highlight ? 'text-orange-600' : ''
+                }`}
+              >
+                {item.icon && <item.icon size={14} />}
+                {item.label}
+              </Link>
+            )
           ))}
         </div>
 
@@ -102,16 +143,31 @@ export function Navbar() {
       {isMobileMenuOpen && (
         <div className="absolute top-full left-0 w-full bg-[#FDFBF7] shadow-xl p-6 flex flex-col space-y-4 md:hidden border-t border-slate-100">
           {navItems.map((item) => (
-            <Link
-              key={item.label}
-              href={item.href}
-              onClick={() => setIsMobileMenuOpen(false)}
-              className={`text-left py-2 font-medium ${
-                item.highlight ? 'text-orange-600' : ''
-              }`}
-            >
-              {item.label}
-            </Link>
+            item.isHash ? (
+              <button
+                key={item.label}
+                onClick={() => {
+                  setIsMobileMenuOpen(false);
+                  handleNavClick(item.href, true);
+                }}
+                className={`text-left py-2 font-medium ${
+                  item.highlight ? 'text-orange-600' : ''
+                }`}
+              >
+                {item.label}
+              </button>
+            ) : (
+              <Link
+                key={item.label}
+                href={item.href}
+                onClick={() => setIsMobileMenuOpen(false)}
+                className={`text-left py-2 font-medium ${
+                  item.highlight ? 'text-orange-600' : ''
+                }`}
+              >
+                {item.label}
+              </Link>
+            )
           ))}
           <button
             onClick={() => {

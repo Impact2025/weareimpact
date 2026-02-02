@@ -1,5 +1,13 @@
-import Link from 'next/link';
-import { Brain, Rocket, Lightbulb, Blocks } from 'lucide-react';
+'use client';
+
+import { Brain, Rocket, Lightbulb, Blocks, ArrowRight } from 'lucide-react';
+
+function scrollToSection(id: string) {
+  const element = document.getElementById(id);
+  if (element) {
+    element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+}
 
 export function Pillars() {
   return (
@@ -31,12 +39,16 @@ export function Pillars() {
                 The Funding Engine. Ik maak uw organisatie AI-ready en
                 implementeer strategisch beleid.
               </p>
-              <Link
-                href="/#contact"
-                className="text-slate-900 font-semibold border-b border-slate-900 pb-1 group-hover:text-orange-600 group-hover:border-orange-600 transition-colors"
+              <button
+                onClick={() => scrollToSection('contact')}
+                className="inline-flex items-center gap-2 text-slate-900 font-semibold group-hover:text-orange-600 transition-all duration-300"
               >
-                Ontdek meer
-              </Link>
+                <span className="relative">
+                  Ontdek meer
+                  <span className="absolute bottom-0 left-0 w-full h-0.5 bg-current transform origin-left transition-transform duration-300 scale-x-100 group-hover:scale-x-100" />
+                </span>
+                <ArrowRight size={16} className="transform transition-transform duration-300 group-hover:translate-x-1" />
+              </button>
             </div>
           </div>
 
@@ -52,12 +64,16 @@ export function Pillars() {
                 The Growth Engine. Wij bouwen schaalbare tech-oplossingen.
                 Recurring impact.
               </p>
-              <Link
-                href="/#contact"
-                className="text-white font-semibold border-b border-white pb-1 group-hover:text-orange-300 group-hover:border-orange-300 transition-colors"
+              <button
+                onClick={() => scrollToSection('contact')}
+                className="inline-flex items-center gap-2 text-white font-semibold group-hover:text-orange-300 transition-all duration-300"
               >
-                Bekijk oplossingen
-              </Link>
+                <span className="relative">
+                  Bekijk oplossingen
+                  <span className="absolute bottom-0 left-0 w-full h-0.5 bg-current transform origin-left transition-transform duration-300 scale-x-100" />
+                </span>
+                <ArrowRight size={16} className="transform transition-transform duration-300 group-hover:translate-x-1" />
+              </button>
             </div>
           </div>
 
@@ -83,12 +99,16 @@ export function Pillars() {
                   Teambuilding met Impact
                 </li>
               </ul>
-              <Link
-                href="/#ventures"
-                className="text-slate-900 font-semibold border-b border-slate-900 pb-1 group-hover:text-orange-600 group-hover:border-orange-600 transition-colors"
+              <button
+                onClick={() => scrollToSection('ventures')}
+                className="inline-flex items-center gap-2 text-slate-900 font-semibold group-hover:text-orange-600 transition-all duration-300"
               >
-                Ontdek ventures
-              </Link>
+                <span className="relative">
+                  Ontdek ventures
+                  <span className="absolute bottom-0 left-0 w-full h-0.5 bg-current transform origin-left transition-transform duration-300 scale-x-100" />
+                </span>
+                <ArrowRight size={16} className="transform transition-transform duration-300 group-hover:translate-x-1" />
+              </button>
             </div>
           </div>
         </div>

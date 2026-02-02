@@ -265,9 +265,15 @@
   @apply bg-orange-200 text-orange-900;
 }
 
-/* Smooth scrolling */
+/* Smooth scrolling with offset for fixed header */
 html {
   scroll-behavior: smooth;
+  scroll-padding-top: 100px;
+}
+
+/* Scroll margin for anchor targets */
+[id] {
+  scroll-margin-top: 100px;
 }
 
 /* Voice interface pulse animation */
