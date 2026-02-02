@@ -4,10 +4,12 @@ import { notFound } from 'next/navigation';
 import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
-import ReactMarkdown, { Components } from 'react-markdown';
+import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeSlug from 'rehype-slug';
-import React from 'react';
+import type { Plugin } from 'unified';
+import type { Root, Element } from 'hast';
+import { visit } from 'unist-util-visit';
 import { ArrowLeft, Calendar, Clock, Linkedin, Twitter, BookOpen, Download, HelpCircle, Building2, Brain, Users, Target, DollarSign, Blocks, ChevronRight } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -74,42 +76,54 @@ const difficultyLabels: Record<string, string> = {
   advanced: 'Gevorderd',
 };
 
-// Custom heading components that handle {#custom-id} syntax
-const customIdRegex = /\s*\{#([a-z0-9-]+)\}\s*$/i;
+// Process markdown content to handle custom heading IDs {#custom-id}
+// Returns cleaned content and a rehype plugin that applies the custom IDs
+function processMarkdownWithCustomIds(content: string): {
+  processedContent: string;
+  rehypeCustomIds: Plugin<[], Root>;
+} {
+  const headingIds = new Map<string, string>();
+  const customIdRegex = /^(#{1,6})\s+(.+?)\s*\{#([a-z0-9-]+)\}\s*$/gm;
 
-function extractCustomId(children: React.ReactNode): { id: string | undefined; cleanChildren: React.ReactNode } {
-  // Convert children to string to check for custom ID
-  const childArray = React.Children.toArray(children);
-  const lastChild = childArray[childArray.length - 1];
+  // Strip {#id} syntax and collect the mappings
+  const processedContent = content.replace(customIdRegex, (_, hashes, title, customId) => {
+    const cleanTitle = title.trim();
+    // Normalize title for matching
+    const normalizedTitle = cleanTitle.toLowerCase().replace(/[^a-z0-9\s]/g, '').trim();
+    headingIds.set(normalizedTitle, customId);
+    return `${hashes} ${cleanTitle}`;
+  });
 
-  if (typeof lastChild === 'string') {
-    const match = lastChild.match(customIdRegex);
-    if (match) {
-      const cleanText = lastChild.replace(customIdRegex, '');
-      const cleanChildren = [...childArray.slice(0, -1), cleanText].filter(Boolean);
-      return { id: match[1], cleanChildren: cleanChildren.length === 1 ? cleanChildren[0] : cleanChildren };
-    }
-  }
-
-  return { id: undefined, cleanChildren: children };
-}
-
-function createHeadingComponent(Tag: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6') {
-  return function CustomHeading({ children, ...props }: React.HTMLAttributes<HTMLHeadingElement>) {
-    const { id: customId, cleanChildren } = extractCustomId(children);
-    const id = customId || props.id;
-    return React.createElement(Tag, { ...props, id }, cleanChildren);
+  // Create rehype plugin that applies custom IDs to headings
+  const rehypeCustomIds: Plugin<[], Root> = () => {
+    return (tree: Root) => {
+      visit(tree, 'element', (node: Element) => {
+        if (/^h[1-6]$/.test(node.tagName)) {
+          // Extract text content from heading
+          const textContent = getTextContent(node).toLowerCase().replace(/[^a-z0-9\s]/g, '').trim();
+          const customId = headingIds.get(textContent);
+          if (customId) {
+            node.properties = node.properties || {};
+            node.properties.id = customId;
+          }
+        }
+      });
+    };
   };
+
+  return { processedContent, rehypeCustomIds };
 }
 
-const markdownComponents: Components = {
-  h1: createHeadingComponent('h1'),
-  h2: createHeadingComponent('h2'),
-  h3: createHeadingComponent('h3'),
-  h4: createHeadingComponent('h4'),
-  h5: createHeadingComponent('h5'),
-  h6: createHeadingComponent('h6'),
-};
+// Helper to extract text content from HAST node
+function getTextContent(node: Element | { type: string; value?: string; children?: (Element | { type: string; value?: string })[] }): string {
+  if (node.type === 'text' && 'value' in node) {
+    return node.value || '';
+  }
+  if ('children' in node && Array.isArray(node.children)) {
+    return node.children.map((child) => getTextContent(child as Element)).join('');
+  }
+  return '';
+}
 
 async function getArticleFromDatabase(slug: string): Promise<Article | null> {
   try {
@@ -485,15 +499,19 @@ export default async function KennisbankArticlePage({ params }: Props) {
         <TableOfContents content={article.content} className="mb-8" />
 
         {/* Content */}
-        <div className="prose prose-lg prose-slate max-w-none mb-12 prose-headings:text-slate-900 prose-headings:scroll-mt-24 prose-a:text-orange-600 prose-a:no-underline hover:prose-a:underline prose-img:rounded-xl prose-pre:bg-slate-900">
-          <ReactMarkdown
-            remarkPlugins={[remarkGfm]}
-            rehypePlugins={[rehypeSlug]}
-            components={markdownComponents}
-          >
-            {article.content}
-          </ReactMarkdown>
-        </div>
+        {(() => {
+          const { processedContent, rehypeCustomIds } = processMarkdownWithCustomIds(article.content);
+          return (
+            <div className="prose prose-lg prose-slate max-w-none mb-12 prose-headings:text-slate-900 prose-headings:scroll-mt-24 prose-a:text-orange-600 prose-a:no-underline hover:prose-a:underline prose-img:rounded-xl prose-pre:bg-slate-900">
+              <ReactMarkdown
+                remarkPlugins={[remarkGfm]}
+                rehypePlugins={[rehypeSlug, rehypeCustomIds]}
+              >
+                {processedContent}
+              </ReactMarkdown>
+            </div>
+          );
+        })()}
 
         {/* Iris Kennisbank Chat */}
         <div className="mb-12">
