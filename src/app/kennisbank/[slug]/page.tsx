@@ -353,7 +353,7 @@ export default async function KennisbankArticlePage({ params }: Props) {
   const howToSteps = isHowTo ? extractStepsFromContent(article.content) : [];
 
   return (
-    <article className="min-h-screen bg-[#FDFBF7] pt-32 pb-24">
+    <article className="min-h-screen bg-[#FDFBF7] pt-24 md:pt-32 pb-16 md:pb-24">
       {/* Reading Progress Bar */}
       <ReadingProgress />
 
@@ -390,9 +390,9 @@ export default async function KennisbankArticlePage({ params }: Props) {
         />
       )}
 
-      <div className="container mx-auto px-6 max-w-3xl">
-        {/* Breadcrumb Navigation */}
-        <nav className="flex items-center gap-2 text-sm text-slate-500 mb-6 flex-wrap">
+      <div className="container mx-auto px-4 md:px-6 max-w-3xl">
+        {/* Breadcrumb Navigation - Hidden on mobile */}
+        <nav className="hidden md:flex items-center gap-2 text-sm text-slate-500 mb-6 flex-wrap">
           <Link href="/" className="hover:text-slate-900 transition-colors">Home</Link>
           <ChevronRight size={14} />
           <Link href="/kennisbank" className="hover:text-slate-900 transition-colors">Kennisbank</Link>
@@ -405,7 +405,7 @@ export default async function KennisbankArticlePage({ params }: Props) {
         {/* Back Link */}
         <Link
           href="/kennisbank"
-          className="inline-flex items-center gap-2 text-slate-500 hover:text-slate-900 mb-8 transition-colors"
+          className="inline-flex items-center gap-2 text-slate-600 hover:text-slate-900 mb-6 md:mb-8 transition-colors text-sm md:text-base font-medium"
         >
           <ArrowLeft size={18} />
           Terug naar kennisbank
@@ -443,47 +443,47 @@ export default async function KennisbankArticlePage({ params }: Props) {
         )}
 
         {/* Header */}
-        <header className="mb-12">
-          <div className="flex items-center gap-3 mb-4 flex-wrap">
-            <Badge className={`${categoryInfo.bg} ${categoryInfo.text} gap-1`}>
-              <CategoryIcon size={14} />
+        <header className="mb-8 md:mb-12">
+          <div className="flex items-center gap-2 mb-3 md:mb-4 flex-wrap">
+            <Badge className={`${categoryInfo.bg} ${categoryInfo.text} gap-1 text-xs`}>
+              <CategoryIcon size={12} />
               {categoryInfo.label}
             </Badge>
             <Badge variant="outline" className="text-xs">
               {difficultyLabels[article.difficulty] || article.difficulty}
             </Badge>
-            <div className="flex items-center gap-1 text-sm text-slate-400">
-              <Clock size={14} />
+            <div className="flex items-center gap-1 text-xs md:text-sm text-slate-400">
+              <Clock size={12} />
               {article.reading_time} min leestijd
             </div>
           </div>
 
-          <h1 className="text-4xl md:text-5xl font-bold text-slate-900 mb-4 leading-tight">
+          <h1 className="text-2xl md:text-5xl font-bold text-slate-900 mb-3 md:mb-4 leading-tight">
             {article.title}
           </h1>
 
           {article.subtitle && (
-            <p className="text-xl text-slate-500 mb-4">{article.subtitle}</p>
+            <p className="text-base md:text-xl text-slate-500 mb-3 md:mb-4">{article.subtitle}</p>
           )}
 
-          <p className="text-xl text-slate-600 mb-8">{article.excerpt}</p>
+          <p className="text-base md:text-xl text-slate-600 mb-6 md:mb-8">{article.excerpt}</p>
 
-          <div className="flex items-center justify-between py-6 border-y border-slate-200">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-gradient-to-br from-orange-400 to-orange-600 rounded-full flex items-center justify-center">
-                <span className="font-bold text-white">VM</span>
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 py-4 md:py-6 border-y border-slate-200">
+            <div className="flex items-center gap-3 md:gap-4">
+              <div className="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-orange-400 to-orange-600 rounded-full flex items-center justify-center flex-shrink-0">
+                <span className="font-bold text-white text-sm md:text-base">VM</span>
               </div>
               <div>
-                <div className="font-medium text-slate-900">
+                <div className="font-medium text-slate-900 text-sm md:text-base">
                   {article.author_name || 'Vincent van Munster'}
                 </div>
-                <div className="text-sm text-slate-500">
+                <div className="text-xs md:text-sm text-slate-500">
                   {article.author_title || 'Sociaal Ondernemer & AI Expert'}
                 </div>
               </div>
             </div>
-            <div className="flex items-center gap-1 text-sm text-slate-400">
-              <Calendar size={14} />
+            <div className="flex items-center gap-1 text-xs md:text-sm text-slate-400">
+              <Calendar size={12} className="md:w-3.5 md:h-3.5" />
               {article.published_at
                 ? new Date(article.published_at).toLocaleDateString('nl-NL', {
                     day: 'numeric',
@@ -496,13 +496,13 @@ export default async function KennisbankArticlePage({ params }: Props) {
         </header>
 
         {/* Table of Contents */}
-        <TableOfContents content={article.content} className="mb-8" />
+        <TableOfContents content={article.content} className="mb-6 md:mb-8" />
 
         {/* Content */}
         {(() => {
           const { processedContent, rehypeCustomIds } = processMarkdownWithCustomIds(article.content);
           return (
-            <div className="prose prose-lg prose-slate max-w-none mb-12 prose-headings:text-slate-900 prose-headings:scroll-mt-24 prose-a:text-orange-600 prose-a:no-underline hover:prose-a:underline prose-img:rounded-xl prose-pre:bg-slate-900">
+            <div className="prose prose-slate md:prose-lg max-w-none mb-10 md:mb-12 prose-headings:text-slate-900 prose-headings:scroll-mt-24 prose-a:text-orange-600 prose-a:no-underline hover:prose-a:underline prose-img:rounded-xl prose-pre:bg-slate-900 prose-headings:leading-tight">
               <ReactMarkdown
                 remarkPlugins={[remarkGfm]}
                 rehypePlugins={[rehypeSlug, rehypeCustomIds]}
@@ -514,7 +514,7 @@ export default async function KennisbankArticlePage({ params }: Props) {
         })()}
 
         {/* Iris Kennisbank Chat */}
-        <div className="mb-12">
+        <div className="mb-8 md:mb-12">
           <KennisbankChat
             articleTitle={article.title}
             articleSlug={article.slug}
@@ -528,7 +528,7 @@ export default async function KennisbankArticlePage({ params }: Props) {
 
         {/* Lead Magnet */}
         {article.lead_magnet_title && (
-          <div className="mb-12">
+          <div className="mb-8 md:mb-12">
             <LeadMagnetDownload
               articleId={article.id}
               title={article.lead_magnet_title}
@@ -540,19 +540,19 @@ export default async function KennisbankArticlePage({ params }: Props) {
 
         {/* FAQ Section */}
         {faqItems.length > 0 && (
-          <section className="mb-12">
-            <div className="flex items-center gap-2 mb-6">
-              <HelpCircle className="text-orange-600" size={24} />
-              <h2 className="text-2xl font-bold text-slate-900">Veelgestelde vragen</h2>
+          <section className="mb-8 md:mb-12">
+            <div className="flex items-center gap-2 mb-4 md:mb-6">
+              <HelpCircle className="text-orange-600" size={20} />
+              <h2 className="text-xl md:text-2xl font-bold text-slate-900">Veelgestelde vragen</h2>
             </div>
-            <div className="space-y-4">
+            <div className="space-y-3 md:space-y-4">
               {faqItems.map((faq, index) => (
                 <div
                   key={index}
-                  className="bg-white border border-slate-100 rounded-xl p-6"
+                  className="bg-white border border-slate-100 rounded-xl p-4 md:p-6"
                 >
-                  <h3 className="font-bold text-slate-900 mb-3">{faq.question}</h3>
-                  <div className="prose prose-slate prose-sm">
+                  <h3 className="font-bold text-slate-900 mb-2 md:mb-3 text-sm md:text-base">{faq.question}</h3>
+                  <div className="prose prose-sm prose-slate">
                     <ReactMarkdown remarkPlugins={[remarkGfm]}>
                       {faq.answer}
                     </ReactMarkdown>
@@ -565,11 +565,11 @@ export default async function KennisbankArticlePage({ params }: Props) {
 
         {/* Tags */}
         {article.tags && article.tags.length > 0 && (
-          <div className="flex flex-wrap gap-2 mb-12">
+          <div className="flex flex-wrap gap-2 mb-8 md:mb-12">
             {article.tags.map((tag: string) => (
               <span
                 key={tag}
-                className="px-3 py-1 bg-slate-100 text-slate-600 text-sm rounded-full"
+                className="px-2.5 md:px-3 py-1 bg-slate-100 text-slate-600 text-xs md:text-sm rounded-full"
               >
                 #{tag}
               </span>
@@ -613,34 +613,34 @@ export default async function KennisbankArticlePage({ params }: Props) {
 
         {/* Related Articles */}
         {relatedArticles.length > 0 && (
-          <section className="mt-16">
-            <h2 className="text-2xl font-bold text-slate-900 mb-6">
+          <section className="mt-12 md:mt-16">
+            <h2 className="text-xl md:text-2xl font-bold text-slate-900 mb-4 md:mb-6">
               Gerelateerde artikelen
             </h2>
-            <div className="grid gap-4">
+            <div className="grid gap-3 md:gap-4">
               {relatedArticles.map((related) => (
                 <Link
                   key={related.id}
                   href={`/kennisbank/${related.slug}`}
-                  className="group flex items-center justify-between p-4 bg-white rounded-xl border border-slate-100 hover:border-orange-200 hover:shadow-lg transition-all"
+                  className="group flex items-center justify-between p-3 md:p-4 bg-white rounded-xl border border-slate-100 hover:border-orange-200 hover:shadow-lg transition-all"
                 >
-                  <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 bg-slate-100 rounded-lg flex items-center justify-center">
-                      <BookOpen className="text-slate-400" size={20} />
+                  <div className="flex items-center gap-3 md:gap-4 min-w-0">
+                    <div className="w-8 h-8 md:w-10 md:h-10 bg-slate-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <BookOpen className="text-slate-400" size={16} />
                     </div>
-                    <div>
-                      <h3 className="font-medium text-slate-900 group-hover:text-orange-600 transition-colors">
+                    <div className="min-w-0">
+                      <h3 className="font-medium text-slate-900 group-hover:text-orange-600 transition-colors text-sm md:text-base line-clamp-2">
                         {related.title}
                       </h3>
-                      <div className="flex items-center gap-2 text-sm text-slate-400">
+                      <div className="flex items-center gap-1.5 md:gap-2 text-xs md:text-sm text-slate-400">
                         <Clock size={12} />
                         {related.reading_time} min
                         <span className="text-slate-300">|</span>
-                        {difficultyLabels[related.difficulty]}
+                        <span className="truncate">{difficultyLabels[related.difficulty]}</span>
                       </div>
                     </div>
                   </div>
-                  <ArrowLeft className="text-orange-600 rotate-180 group-hover:translate-x-1 transition-transform" size={18} />
+                  <ArrowLeft className="text-orange-600 rotate-180 group-hover:translate-x-1 transition-transform flex-shrink-0" size={16} />
                 </Link>
               ))}
             </div>
@@ -648,17 +648,17 @@ export default async function KennisbankArticlePage({ params }: Props) {
         )}
 
         {/* CTA */}
-        <div className="mt-16 bg-gradient-to-br from-slate-900 to-slate-800 rounded-2xl p-8 text-center text-white">
-          <h3 className="text-2xl font-bold mb-3">
+        <div className="mt-12 md:mt-16 bg-gradient-to-br from-slate-900 to-slate-800 rounded-xl md:rounded-2xl p-6 md:p-8 text-center text-white">
+          <h3 className="text-lg md:text-2xl font-bold mb-2 md:mb-3">
             Wil je meer weten over dit onderwerp?
           </h3>
-          <p className="text-slate-400 mb-6">
+          <p className="text-sm md:text-base text-slate-400 mb-4 md:mb-6">
             Plan een vrijblijvend gesprek en ontdek hoe ik jouw organisatie kan
             ondersteunen.
           </p>
           <Button
             asChild
-            className="bg-orange-600 hover:bg-orange-700"
+            className="bg-orange-600 hover:bg-orange-700 text-sm md:text-base"
           >
             <Link href="/#contact">Neem contact op</Link>
           </Button>

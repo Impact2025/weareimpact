@@ -170,23 +170,23 @@ export function KennisbankChat({ articleTitle, articleSlug, suggestedQuestions }
   };
 
   return (
-    <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
+    <div className="bg-white border border-slate-200 rounded-xl md:rounded-2xl overflow-hidden shadow-sm">
       {/* Header */}
       <button
         onClick={() => setIsExpanded(!isExpanded)}
-        className="w-full flex items-center justify-between p-4 hover:bg-slate-50 transition-colors"
+        className="w-full flex items-center justify-between p-3 md:p-4 hover:bg-slate-50 transition-colors"
       >
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 md:gap-3">
           <IrisAvatar size="md" />
           <div className="text-left">
-            <div className="font-semibold text-slate-900">Vraag het aan Iris</div>
+            <div className="text-sm md:text-base font-semibold text-slate-900">Vraag het aan Iris</div>
             <div className="text-xs text-slate-500">AI assistent voor dit artikel</div>
           </div>
         </div>
         {isExpanded ? (
-          <ChevronUp className="text-slate-400" size={20} />
+          <ChevronUp className="text-slate-400" size={18} />
         ) : (
-          <ChevronDown className="text-slate-400" size={20} />
+          <ChevronDown className="text-slate-400" size={18} />
         )}
       </button>
 
@@ -194,10 +194,10 @@ export function KennisbankChat({ articleTitle, articleSlug, suggestedQuestions }
       {isExpanded && (
         <div className="border-t border-slate-100">
           {/* Messages */}
-          <div className="max-h-64 overflow-y-auto p-4 space-y-3 bg-slate-50">
+          <div className="max-h-64 md:max-h-80 overflow-y-auto p-3 md:p-4 space-y-3 bg-slate-50">
             {messages.length === 0 ? (
-              <div className="text-center py-4">
-                <p className="text-sm text-slate-500 mb-4">
+              <div className="text-center py-3 md:py-4">
+                <p className="text-xs md:text-sm text-slate-500 mb-3 md:mb-4">
                   Stel een vraag over dit artikel
                 </p>
                 <div className="space-y-2">
@@ -205,7 +205,7 @@ export function KennisbankChat({ articleTitle, articleSlug, suggestedQuestions }
                     <button
                       key={idx}
                       onClick={() => sendMessage(q)}
-                      className="w-full text-left p-3 bg-white rounded-lg border border-slate-200 text-sm text-slate-700 hover:border-orange-300 hover:bg-orange-50 transition-all"
+                      className="w-full text-left p-2.5 md:p-3 bg-white rounded-lg border border-slate-200 text-xs md:text-sm text-slate-700 hover:border-orange-300 hover:bg-orange-50 transition-all"
                     >
                       {q}
                     </button>
@@ -218,21 +218,21 @@ export function KennisbankChat({ articleTitle, articleSlug, suggestedQuestions }
                   <div
                     key={message.id}
                     className={cn(
-                      'flex gap-2',
+                      'flex gap-1.5 md:gap-2',
                       message.role === 'user' ? 'justify-end' : 'justify-start'
                     )}
                   >
                     {message.role === 'assistant' && <IrisAvatar size="sm" />}
-                    <div className="flex flex-col gap-2 max-w-[85%]">
+                    <div className="flex flex-col gap-2 max-w-[85%] md:max-w-[80%]">
                       <div
                         className={cn(
-                          'px-3 py-2 rounded-xl text-sm',
+                          'px-2.5 md:px-3 py-2 rounded-xl text-xs md:text-sm',
                           message.role === 'user'
                             ? 'bg-slate-900 text-white rounded-br-sm'
                             : 'bg-white border border-slate-200 text-slate-700 rounded-bl-sm'
                         )}
                       >
-                        <p className="whitespace-pre-wrap">{message.content}</p>
+                        <p className="whitespace-pre-wrap break-words">{message.content}</p>
                       </div>
 
                       {/* Suggested Articles */}
@@ -248,7 +248,7 @@ export function KennisbankChat({ articleTitle, articleSlug, suggestedQuestions }
                               href={`/kennisbank/${article.slug}`}
                               className="block p-2 bg-orange-50 border border-orange-100 rounded-lg text-xs hover:border-orange-300 transition-colors"
                             >
-                              <span className="font-medium text-slate-800">{article.title}</span>
+                              <span className="font-medium text-slate-800 line-clamp-2">{article.title}</span>
                             </Link>
                           ))}
                         </div>
@@ -275,7 +275,7 @@ export function KennisbankChat({ articleTitle, articleSlug, suggestedQuestions }
           </div>
 
           {/* Input */}
-          <div className="p-3 border-t border-slate-100 bg-white">
+          <div className="p-2.5 md:p-3 border-t border-slate-100 bg-white">
             <form
               onSubmit={(e) => {
                 e.preventDefault();
@@ -288,18 +288,18 @@ export function KennisbankChat({ articleTitle, articleSlug, suggestedQuestions }
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="Stel een vraag..."
                 disabled={isLoading}
-                className="flex-1 text-sm"
+                className="flex-1 text-xs md:text-sm h-9 md:h-10"
               />
               <Button
                 type="submit"
                 disabled={!input.trim() || isLoading}
                 size="icon"
-                className="bg-orange-600 hover:bg-orange-700"
+                className="bg-orange-600 hover:bg-orange-700 h-9 w-9 md:h-10 md:w-10"
               >
                 {isLoading ? (
-                  <Loader2 size={16} className="animate-spin" />
+                  <Loader2 size={14} className="animate-spin md:w-4 md:h-4" />
                 ) : (
-                  <Send size={16} />
+                  <Send size={14} className="md:w-4 md:h-4" />
                 )}
               </Button>
             </form>

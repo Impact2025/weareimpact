@@ -161,7 +161,7 @@ export function KennisbankSearch({
           onKeyDown={handleKeyDown}
           placeholder={placeholder}
           autoFocus={autoFocus}
-          className="w-full h-14 pl-12 pr-12 text-lg rounded-2xl border-slate-200 focus:border-orange-300 focus:ring-orange-200 shadow-sm"
+          className="w-full h-12 md:h-14 pl-11 md:pl-12 pr-11 md:pr-12 text-base md:text-lg rounded-xl md:rounded-2xl border-slate-200 focus:border-orange-300 focus:ring-orange-200 shadow-sm"
         />
         {isLoading && (
           <Loader2
@@ -181,13 +181,13 @@ export function KennisbankSearch({
 
       {/* Popular Searches */}
       {showPopularSearches && !query && !isOpen && (
-        <div className="flex flex-wrap items-center gap-2 mt-3">
-          <span className="text-sm text-slate-500">Populair:</span>
+        <div className="flex flex-wrap items-center gap-2 mt-2 md:mt-3">
+          <span className="text-xs md:text-sm text-slate-500">Populair:</span>
           {POPULAR_SEARCHES.map((search) => (
             <button
               key={search}
               onClick={() => handlePopularSearch(search)}
-              className="text-sm text-slate-600 hover:text-orange-600 hover:underline transition-colors"
+              className="text-xs md:text-sm text-slate-600 hover:text-orange-600 hover:underline transition-colors"
             >
               {search}
             </button>
@@ -197,40 +197,40 @@ export function KennisbankSearch({
 
       {/* Results Dropdown */}
       {isOpen && (query.length >= 2 || results.length > 0) && (
-        <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl border border-slate-200 shadow-xl z-50 overflow-hidden">
+        <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl md:rounded-2xl border border-slate-200 shadow-xl z-50 overflow-hidden max-h-[80vh] overflow-y-auto">
           {results.length > 0 ? (
             <>
-              <div className="p-2">
+              <div className="p-1.5 md:p-2">
                 {results.map((result, index) => (
                   <Link
                     key={result.id}
                     href={`/kennisbank/${result.slug}`}
                     onClick={() => setIsOpen(false)}
                     className={cn(
-                      'flex items-start gap-3 p-3 rounded-xl transition-colors',
+                      'flex items-start gap-2 md:gap-3 p-2.5 md:p-3 rounded-lg md:rounded-xl transition-colors',
                       index === selectedIndex
                         ? 'bg-orange-50'
                         : 'hover:bg-slate-50'
                     )}
                   >
-                    <div className="w-10 h-10 bg-slate-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                      <BookOpen className="text-slate-400" size={18} />
+                    <div className="w-8 h-8 md:w-10 md:h-10 bg-slate-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <BookOpen className="text-slate-400" size={16} />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <div className="font-medium text-slate-900 truncate">
+                      <div className="font-medium text-slate-900 text-sm md:text-base line-clamp-2">
                         {result.title}
                       </div>
-                      <div className="text-sm text-slate-500 line-clamp-1">
+                      <div className="text-xs md:text-sm text-slate-500 line-clamp-1 hidden md:block">
                         {result.excerpt}
                       </div>
-                      <div className="flex items-center gap-2 mt-1">
+                      <div className="flex items-center gap-1.5 md:gap-2 mt-1">
                         <span className={cn(
-                          'text-xs px-2 py-0.5 rounded-full',
+                          'text-xs px-1.5 md:px-2 py-0.5 rounded-full truncate max-w-[120px]',
                           CATEGORY_COLORS[result.category_slug] || 'bg-slate-100 text-slate-600'
                         )}>
                           {result.category_slug.replace(/-/g, ' ')}
                         </span>
-                        <span className="text-xs text-slate-400 flex items-center gap-1">
+                        <span className="text-xs text-slate-400 flex items-center gap-0.5 md:gap-1 flex-shrink-0">
                           <Clock size={10} />
                           {result.reading_time} min
                         </span>
@@ -241,30 +241,30 @@ export function KennisbankSearch({
                         'text-slate-300 flex-shrink-0 transition-colors',
                         index === selectedIndex && 'text-orange-500'
                       )}
-                      size={16}
+                      size={14}
                     />
                   </Link>
                 ))}
               </div>
 
               {/* View All Results */}
-              <div className="border-t border-slate-100 p-3">
+              <div className="border-t border-slate-100 p-2.5 md:p-3">
                 <Link
                   href={`/kennisbank?q=${encodeURIComponent(query)}`}
                   onClick={() => setIsOpen(false)}
-                  className="flex items-center justify-center gap-2 text-sm text-orange-600 hover:text-orange-700 font-medium"
+                  className="flex items-center justify-center gap-2 text-xs md:text-sm text-orange-600 hover:text-orange-700 font-medium"
                 >
                   Bekijk alle resultaten
-                  <ArrowRight size={14} />
+                  <ArrowRight size={12} className="md:w-3.5 md:h-3.5" />
                 </Link>
               </div>
             </>
           ) : !isLoading ? (
-            <div className="p-6 text-center">
-              <div className="text-slate-400 mb-2">
+            <div className="p-4 md:p-6 text-center">
+              <div className="text-sm md:text-base text-slate-400 mb-2">
                 Geen resultaten gevonden voor &quot;{query}&quot;
               </div>
-              <p className="text-sm text-slate-500">
+              <p className="text-xs md:text-sm text-slate-500">
                 Probeer een andere zoekterm of{' '}
                 <Link href="/kennisbank" className="text-orange-600 hover:underline">
                   bekijk alle artikelen

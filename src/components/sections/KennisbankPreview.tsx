@@ -51,33 +51,33 @@ export async function KennisbankPreview() {
   }
 
   return (
-    <section className="py-24 bg-slate-50">
-      <div className="container mx-auto px-6 max-w-6xl">
+    <section className="py-16 md:py-24 bg-slate-50">
+      <div className="container mx-auto px-4 md:px-6 max-w-6xl">
         {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-12">
+        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-8 md:mb-12">
           <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1 bg-orange-100 text-orange-600 rounded-full text-sm font-bold uppercase tracking-widest mb-4">
-              <BookOpen size={14} />
+            <div className="inline-flex items-center gap-1.5 md:gap-2 px-2.5 md:px-3 py-1 bg-orange-100 text-orange-600 rounded-full text-xs md:text-sm font-bold uppercase tracking-widest mb-3 md:mb-4">
+              <BookOpen size={12} className="md:w-3.5 md:h-3.5" />
               Kennisbank
             </div>
-            <h2 className="text-3xl md:text-4xl font-bold text-slate-900">
+            <h2 className="text-2xl md:text-4xl font-bold text-slate-900">
               Gratis Praktische Gidsen
             </h2>
-            <p className="text-slate-600 mt-2 max-w-xl">
+            <p className="text-sm md:text-base text-slate-600 mt-2 max-w-xl">
               Stappenplannen, handleidingen en praktische kennis over AI, vrijwilligers en sociale innovatie.
             </p>
           </div>
           <Link
             href="/kennisbank"
-            className="inline-flex items-center gap-2 text-orange-600 hover:text-orange-700 font-semibold group"
+            className="inline-flex items-center gap-2 text-orange-600 hover:text-orange-700 font-semibold group text-sm md:text-base"
           >
             Bekijk alle artikelen
-            <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+            <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform md:w-[18px] md:h-[18px]" />
           </Link>
         </div>
 
         {/* Articles Grid */}
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-4 md:gap-6 md:grid-cols-2 lg:grid-cols-4">
           {articles.map((article) => {
             const category = categoryConfig[article.category_slug] || {
               label: article.category_slug,
@@ -91,18 +91,18 @@ export async function KennisbankPreview() {
               <Link
                 key={article.slug}
                 href={`/kennisbank/${article.slug}`}
-                className="group bg-white rounded-xl border border-slate-200 p-6 hover:shadow-lg hover:border-orange-200 transition-all"
+                className="group bg-white rounded-xl border border-slate-200 p-4 md:p-6 hover:shadow-lg hover:border-orange-200 transition-all"
               >
-                <div className="flex items-center gap-2 mb-3">
-                  <Badge className={`${category.bg} ${category.text} gap-1`}>
-                    <CategoryIcon size={12} />
-                    {category.label}
+                <div className="flex items-center gap-1.5 md:gap-2 mb-2 md:mb-3">
+                  <Badge className={`${category.bg} ${category.text} gap-1 text-xs`}>
+                    <CategoryIcon size={10} />
+                    <span className="truncate max-w-[120px]">{category.label}</span>
                   </Badge>
                 </div>
-                <h3 className="font-bold text-slate-900 mb-2 group-hover:text-orange-600 transition-colors line-clamp-2">
+                <h3 className="text-sm md:text-base font-bold text-slate-900 mb-2 group-hover:text-orange-600 transition-colors line-clamp-2">
                   {article.title}
                 </h3>
-                <p className="text-sm text-slate-500 mb-4 line-clamp-2">
+                <p className="text-xs md:text-sm text-slate-500 mb-3 md:mb-4 line-clamp-2">
                   {article.excerpt}
                 </p>
                 <div className="flex items-center gap-1 text-xs text-slate-400">
@@ -115,16 +115,16 @@ export async function KennisbankPreview() {
         </div>
 
         {/* Categories Quick Links */}
-        <div className="mt-12 flex flex-wrap items-center justify-center gap-3">
-          <span className="text-sm text-slate-500">Populaire categorieën:</span>
+        <div className="mt-8 md:mt-12 flex flex-wrap items-center justify-center gap-2 md:gap-3">
+          <span className="text-xs md:text-sm text-slate-500 w-full md:w-auto text-center md:text-left mb-1 md:mb-0">Populaire categorieën:</span>
           {Object.entries(categoryConfig).slice(0, 4).map(([slug, config]) => (
             <Link
               key={slug}
               href={`/kennisbank/categorie/${slug}`}
-              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm ${config.bg} ${config.text} hover:opacity-80 transition-opacity`}
+              className={`inline-flex items-center gap-1 md:gap-1.5 px-2.5 md:px-3 py-1 md:py-1.5 rounded-full text-xs md:text-sm ${config.bg} ${config.text} hover:opacity-80 transition-opacity`}
             >
-              <config.icon size={14} />
-              {config.label}
+              <config.icon size={12} className="md:w-3.5 md:h-3.5" />
+              <span className="truncate max-w-[100px] md:max-w-none">{config.label}</span>
             </Link>
           ))}
         </div>

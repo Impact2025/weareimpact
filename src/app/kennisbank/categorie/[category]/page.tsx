@@ -231,31 +231,31 @@ export default async function CategoryPage({ params }: Props) {
   const Icon = cat.icon;
 
   return (
-    <div className="min-h-screen bg-[#FDFBF7] pt-32 pb-24">
-      <div className="container mx-auto px-6 max-w-5xl">
+    <div className="min-h-screen bg-[#FDFBF7] pt-24 md:pt-32 pb-16 md:pb-24">
+      <div className="container mx-auto px-4 md:px-6 max-w-5xl">
         {/* Back Link */}
         <Link
           href="/kennisbank"
-          className="inline-flex items-center gap-2 text-slate-500 hover:text-slate-900 mb-8 transition-colors"
+          className="inline-flex items-center gap-2 text-slate-600 hover:text-slate-900 mb-6 md:mb-8 transition-colors text-sm md:text-base font-medium"
         >
           <ArrowLeft size={18} />
           Terug naar kennisbank
         </Link>
 
         {/* Header */}
-        <div className={`${cat.bgColor} rounded-3xl p-8 md:p-12 mb-12`}>
-          <div className="flex items-start gap-6">
-            <div className={`w-16 h-16 ${cat.color} rounded-2xl flex items-center justify-center flex-shrink-0`}>
-              <Icon className="text-white" size={32} />
+        <div className={`${cat.bgColor} rounded-3xl p-6 md:p-12 mb-8 md:mb-12`}>
+          <div className="flex flex-col md:flex-row items-center md:items-start gap-4 md:gap-6 text-center md:text-left">
+            <div className={`w-14 h-14 md:w-16 md:h-16 ${cat.color} rounded-2xl flex items-center justify-center flex-shrink-0`}>
+              <Icon className="text-white" size={28} />
             </div>
-            <div>
-              <h1 className={`text-3xl md:text-4xl font-bold ${cat.textColor} mb-4`}>
+            <div className="flex-1">
+              <h1 className={`text-2xl md:text-4xl font-bold ${cat.textColor} mb-2 md:mb-4`}>
                 {cat.label}
               </h1>
-              <p className="text-slate-600 text-lg max-w-2xl">
+              <p className="text-slate-600 text-base md:text-lg max-w-2xl mx-auto md:mx-0">
                 {cat.description}
               </p>
-              <p className="text-slate-500 mt-4">
+              <p className="text-slate-500 text-sm md:text-base mt-3 md:mt-4">
                 {articles.length} {articles.length === 1 ? 'artikel' : 'artikelen'}
               </p>
             </div>
@@ -264,7 +264,7 @@ export default async function CategoryPage({ params }: Props) {
 
         {/* Articles */}
         {articles.length > 0 ? (
-          <div className="grid gap-6 md:grid-cols-2">
+          <div className="grid gap-4 md:gap-6 md:grid-cols-2">
             {articles.map((article) => (
               <Link
                 key={article.id}
@@ -304,9 +304,9 @@ export default async function CategoryPage({ params }: Props) {
                   )}
                 </div>
 
-                <div className="p-6">
-                  <div className="flex items-center gap-3 mb-3 flex-wrap">
-                    <Badge className={`${cat.bgColor} ${cat.textColor}`}>
+                <div className="p-4 md:p-6">
+                  <div className="flex items-center gap-2 mb-3 flex-wrap">
+                    <Badge className={`${cat.bgColor} ${cat.textColor} text-xs`}>
                       {cat.label}
                     </Badge>
                     <Badge variant="outline" className="text-xs">
@@ -318,7 +318,7 @@ export default async function CategoryPage({ params }: Props) {
                     </div>
                   </div>
 
-                  <h2 className="text-xl font-bold text-slate-900 mb-2 group-hover:text-orange-600 transition-colors">
+                  <h2 className="text-lg md:text-xl font-bold text-slate-900 mb-2 group-hover:text-orange-600 transition-colors line-clamp-2">
                     {article.title}
                   </h2>
 

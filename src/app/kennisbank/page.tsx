@@ -219,35 +219,35 @@ export default async function KennisbankPage() {
   const featuredArticles = allArticles.slice(0, 3);
 
   return (
-    <div className="min-h-screen bg-[#FDFBF7] pt-32 pb-24">
-      <div className="container mx-auto px-6 max-w-6xl">
+    <div className="min-h-screen bg-[#FDFBF7] pt-24 md:pt-32 pb-16 md:pb-24">
+      <div className="container mx-auto px-4 md:px-6 max-w-6xl">
         {/* Header */}
-        <div className="text-center mb-16">
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-orange-100 text-orange-600 rounded-full text-sm font-bold uppercase tracking-widest mb-6">
-            <BookOpen size={16} />
+        <div className="text-center mb-12 md:mb-16">
+          <div className="inline-flex items-center gap-2 px-3 md:px-4 py-1.5 md:py-2 bg-orange-100 text-orange-600 rounded-full text-xs md:text-sm font-bold uppercase tracking-widest mb-4 md:mb-6">
+            <BookOpen size={14} className="md:w-4 md:h-4" />
             Kennisbank
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold text-slate-900 mb-6">
+          <h1 className="text-3xl md:text-5xl font-bold text-slate-900 mb-4 md:mb-6 px-4">
             Praktische Gidsen voor Sociale Organisaties
           </h1>
-          <p className="text-xl text-slate-600 max-w-2xl mx-auto mb-8">
+          <p className="text-base md:text-xl text-slate-600 max-w-2xl mx-auto mb-6 md:mb-8 px-4">
             Stappenplannen, handleidingen en praktische kennis over AI, vrijwilligers,
             subsidies en meer. Geschreven door Vincent van Munster.
           </p>
 
           {/* Search Bar */}
-          <div className="max-w-2xl mx-auto">
+          <div className="max-w-2xl mx-auto px-4">
             <KennisbankSearch />
           </div>
 
           {/* Stats */}
-          <div className="flex items-center justify-center gap-8 mt-8 text-sm text-slate-500">
-            <div className="flex items-center gap-2">
-              <BookOpen size={16} className="text-orange-500" />
+          <div className="flex items-center justify-center gap-4 md:gap-8 mt-6 md:mt-8 text-xs md:text-sm text-slate-500 px-4">
+            <div className="flex items-center gap-1.5 md:gap-2">
+              <BookOpen size={14} className="text-orange-500 md:w-4 md:h-4" />
               <span><strong className="text-slate-900">{allArticles.length}</strong> artikelen</span>
             </div>
-            <div className="flex items-center gap-2">
-              <Search size={16} className="text-orange-500" />
+            <div className="flex items-center gap-1.5 md:gap-2">
+              <Search size={14} className="text-orange-500 md:w-4 md:h-4" />
               <span><strong className="text-slate-900">6</strong> categorieën</span>
             </div>
           </div>
@@ -255,9 +255,9 @@ export default async function KennisbankPage() {
 
         {/* Featured Articles */}
         {featuredArticles.length > 0 && (
-          <section className="mb-20">
-            <h2 className="text-2xl font-bold text-slate-900 mb-8">Uitgelicht</h2>
-            <div className="grid gap-8 md:grid-cols-3">
+          <section className="mb-12 md:mb-20">
+            <h2 className="text-xl md:text-2xl font-bold text-slate-900 mb-4 md:mb-8">Uitgelicht</h2>
+            <div className="grid gap-4 md:gap-8 md:grid-cols-3">
               {featuredArticles.map((article, index) => {
                 const category = categories.find(c => c.value === article.category_slug);
                 return (
@@ -301,9 +301,9 @@ export default async function KennisbankPage() {
                       )}
                     </div>
 
-                    <div className={`p-6 ${index === 0 ? 'md:p-8' : ''}`}>
-                      <div className="flex items-center gap-3 mb-3 flex-wrap">
-                        <Badge className={`${category?.bgColor || 'bg-slate-100'} ${category?.textColor || 'text-slate-700'}`}>
+                    <div className={`p-4 md:p-6 ${index === 0 ? 'md:p-8' : ''}`}>
+                      <div className="flex items-center gap-2 mb-3 flex-wrap">
+                        <Badge className={`text-xs ${category?.bgColor || 'bg-slate-100'} ${category?.textColor || 'text-slate-700'}`}>
                           {category?.label || article.category_slug}
                         </Badge>
                         <Badge variant="outline" className="text-xs">
@@ -321,7 +321,7 @@ export default async function KennisbankPage() {
                         )}
                       </div>
 
-                      <h3 className={`${index === 0 ? 'text-2xl' : 'text-xl'} font-bold text-slate-900 mb-2 group-hover:text-orange-600 transition-colors`}>
+                      <h3 className={`${index === 0 ? 'text-lg md:text-2xl' : 'text-base md:text-xl'} font-bold text-slate-900 mb-2 group-hover:text-orange-600 transition-colors line-clamp-2`}>
                         {article.title}
                       </h3>
 
@@ -353,9 +353,9 @@ export default async function KennisbankPage() {
         )}
 
         {/* Categories */}
-        <section className="mb-20">
-          <h2 className="text-2xl font-bold text-slate-900 mb-8">Categorieën</h2>
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <section className="mb-12 md:mb-20">
+          <h2 className="text-xl md:text-2xl font-bold text-slate-900 mb-4 md:mb-8">Categorieën</h2>
+          <div className="grid gap-4 md:gap-6 md:grid-cols-2 lg:grid-cols-3">
             {categories.map((category) => {
               const Icon = category.icon;
               const articleCount = allArticles.filter(a => a.category_slug === category.value).length;
@@ -364,20 +364,20 @@ export default async function KennisbankPage() {
                 <Link
                   key={category.value}
                   href={`/kennisbank/categorie/${category.value}`}
-                  className={`group p-6 rounded-2xl border ${category.borderColor} ${category.bgColor} hover:shadow-lg transition-all`}
+                  className={`group p-4 md:p-6 rounded-xl md:rounded-2xl border ${category.borderColor} ${category.bgColor} hover:shadow-lg transition-all`}
                 >
-                  <div className={`w-12 h-12 ${category.color} rounded-xl flex items-center justify-center mb-4`}>
-                    <Icon className="text-white" size={24} />
+                  <div className={`w-10 h-10 md:w-12 md:h-12 ${category.color} rounded-lg md:rounded-xl flex items-center justify-center mb-3 md:mb-4`}>
+                    <Icon className="text-white" size={20} />
                   </div>
-                  <h3 className={`text-lg font-bold ${category.textColor} mb-2`}>
+                  <h3 className={`text-base md:text-lg font-bold ${category.textColor} mb-2`}>
                     {category.label}
                   </h3>
-                  <p className="text-slate-600 text-sm mb-4">
+                  <p className="text-slate-600 text-sm mb-3 md:mb-4 line-clamp-2">
                     {category.description}
                   </p>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-slate-500">{articleCount} artikelen</span>
-                    <ArrowRight className={`${category.textColor} group-hover:translate-x-1 transition-transform`} size={18} />
+                    <span className="text-xs md:text-sm text-slate-500">{articleCount} artikelen</span>
+                    <ArrowRight className={`${category.textColor} group-hover:translate-x-1 transition-transform`} size={16} />
                   </div>
                 </Link>
               );
@@ -393,24 +393,25 @@ export default async function KennisbankPage() {
           const Icon = category.icon;
 
           return (
-            <section key={category.value} className="mb-16">
-              <div className="flex items-center justify-between mb-8">
-                <div className="flex items-center gap-3">
-                  <div className={`w-10 h-10 ${category.color} rounded-lg flex items-center justify-center`}>
-                    <Icon className="text-white" size={20} />
+            <section key={category.value} className="mb-10 md:mb-16">
+              <div className="flex items-center justify-between mb-4 md:mb-8">
+                <div className="flex items-center gap-2 md:gap-3">
+                  <div className={`w-8 h-8 md:w-10 md:h-10 ${category.color} rounded-lg flex items-center justify-center`}>
+                    <Icon className="text-white" size={18} />
                   </div>
-                  <h2 className="text-2xl font-bold text-slate-900">{category.label}</h2>
+                  <h2 className="text-lg md:text-2xl font-bold text-slate-900">{category.label}</h2>
                 </div>
                 <Link
                   href={`/kennisbank/categorie/${category.value}`}
-                  className={`flex items-center gap-1 ${category.textColor} hover:underline text-sm font-medium`}
+                  className={`flex items-center gap-1 ${category.textColor} hover:underline text-xs md:text-sm font-medium`}
                 >
-                  Bekijk alle
-                  <ArrowRight size={16} />
+                  <span className="hidden sm:inline">Bekijk alle</span>
+                  <span className="sm:hidden">Alle</span>
+                  <ArrowRight size={14} className="md:w-4 md:h-4" />
                 </Link>
               </div>
 
-              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+              <div className="grid gap-4 md:gap-6 md:grid-cols-2 lg:grid-cols-4">
                 {categoryArticles.map((article) => (
                   <Link
                     key={article.id}
@@ -426,7 +427,7 @@ export default async function KennisbankPage() {
                             backgroundColor: article.header_color === 'slate' ? '#0f172a' : '#fb923c',
                           }}
                         >
-                          <span className="text-sm md:text-base font-bold text-white text-center leading-tight line-clamp-3">
+                          <span className="text-xs md:text-base font-bold text-white text-center leading-tight line-clamp-3">
                             {article.header_title || article.title}
                           </span>
                         </div>
@@ -442,20 +443,20 @@ export default async function KennisbankPage() {
                         />
                       ) : (
                         <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200">
-                          <span className="text-3xl font-bold text-slate-300">
+                          <span className="text-2xl md:text-3xl font-bold text-slate-300">
                             {article.title[0]}
                           </span>
                         </div>
                       )}
                     </div>
-                    <div className="p-4">
-                      <div className="flex items-center gap-2 mb-2">
-                        <Clock size={12} className="text-slate-400" />
-                        <span className="text-xs text-slate-400">{article.reading_time} min</span>
-                        <span className="text-xs text-slate-300">|</span>
-                        <span className="text-xs text-slate-400">{difficultyLabels[article.difficulty]}</span>
+                    <div className="p-3 md:p-4">
+                      <div className="flex items-center gap-1.5 md:gap-2 mb-2 text-xs">
+                        <Clock size={12} className="text-slate-400 flex-shrink-0" />
+                        <span className="text-slate-400">{article.reading_time} min</span>
+                        <span className="text-slate-300">|</span>
+                        <span className="text-slate-400 truncate">{difficultyLabels[article.difficulty]}</span>
                       </div>
-                      <h3 className="font-semibold text-slate-900 group-hover:text-orange-600 transition-colors line-clamp-2">
+                      <h3 className="text-sm md:text-base font-semibold text-slate-900 group-hover:text-orange-600 transition-colors line-clamp-2">
                         {article.title}
                       </h3>
                     </div>
