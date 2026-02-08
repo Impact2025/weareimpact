@@ -187,6 +187,204 @@ export async function getAvailableSlots(
   return days;
 }
 
+// Block time in calendar (for owner use)
+export async function blockTime(data: {
+  title: string;
+  startTime: string;
+  endTime: string;
+  description?: string;
+}): Promise<{
+  success: boolean;
+  event?: {
+    id: string;
+    title: string;
+    startTime: string;
+    endTime: string;
+  };
+  error?: string;
+}> {
+  const calendar = getCalendarClient();
+  const calendarId = process.env.GOOGLE_CALENDAR_ID || 'primary';
+
+  try {
+    const event = await calendar.events.insert({
+      calendarId,
+      requestBody: {
+        summary: data.title,
+        description: data.description || 'Geblokkeerd via Iris',
+        start: {
+          dateTime: data.startTime,
+          timeZone: 'Europe/Amsterdam',
+        },
+        end: {
+          dateTime: data.endTime,
+          timeZone: 'Europe/Amsterdam',
+        },
+        transparency: 'opaque', // Shows as busy
+      },
+    });
+
+    return {
+      success: true,
+      event: {
+        id: event.data.id!,
+        title: data.title,
+        startTime: data.startTime,
+        endTime: data.endTime,
+      },
+    };
+  } catch (error: unknown) {
+    const err = error as { message?: string };
+    console.error('Error blocking time:', err);
+    return {
+      success: false,
+      error: err?.message || 'Failed to block time',
+    };
+  }
+}
+
+// Search events in calendar
+export async function searchEvents(query: string, daysAhead: number = 30): Promise<{
+  success: boolean;
+  events: Array<{
+    id: string;
+    title: string;
+    description?: string;
+    startTime: string;
+    endTime: string;
+    location?: string;
+  }>;
+  error?: string;
+}> {
+  const calendar = getCalendarClient();
+  const calendarId = process.env.GOOGLE_CALENDAR_ID || 'primary';
+
+  const now = new Date();
+  const future = new Date();
+  future.setDate(future.getDate() + daysAhead);
+
+  try {
+    const response = await calendar.events.list({
+      calendarId,
+      timeMin: now.toISOString(),
+      timeMax: future.toISOString(),
+      singleEvents: true,
+      orderBy: 'startTime',
+      q: query, // Search query
+    });
+
+    const events = (response.data.items || []).map((event) => ({
+      id: event.id!,
+      title: event.summary || 'Geen titel',
+      description: event.description || undefined,
+      startTime: event.start?.dateTime || event.start?.date || '',
+      endTime: event.end?.dateTime || event.end?.date || '',
+      location: event.location || undefined,
+    }));
+
+    return { success: true, events };
+  } catch (error: unknown) {
+    const err = error as { message?: string };
+    console.error('Error searching events:', err);
+    return { success: false, events: [], error: err?.message };
+  }
+}
+
+// Get upcoming events
+export async function getUpcomingEvents(daysAhead: number = 7): Promise<{
+  success: boolean;
+  events: Array<{
+    id: string;
+    title: string;
+    description?: string;
+    startTime: string;
+    endTime: string;
+    location?: string;
+  }>;
+  error?: string;
+}> {
+  const calendar = getCalendarClient();
+  const calendarId = process.env.GOOGLE_CALENDAR_ID || 'primary';
+
+  const now = new Date();
+  const future = new Date();
+  future.setDate(future.getDate() + daysAhead);
+
+  try {
+    const response = await calendar.events.list({
+      calendarId,
+      timeMin: now.toISOString(),
+      timeMax: future.toISOString(),
+      singleEvents: true,
+      orderBy: 'startTime',
+      maxResults: 20,
+    });
+
+    const events = (response.data.items || []).map((event) => ({
+      id: event.id!,
+      title: event.summary || 'Geen titel',
+      description: event.description || undefined,
+      startTime: event.start?.dateTime || event.start?.date || '',
+      endTime: event.end?.dateTime || event.end?.date || '',
+      location: event.location || undefined,
+    }));
+
+    return { success: true, events };
+  } catch (error: unknown) {
+    const err = error as { message?: string };
+    console.error('Error getting upcoming events:', err);
+    return { success: false, events: [], error: err?.message };
+  }
+}
+
+// Get events for a specific date
+export async function getEventsForDate(date: Date): Promise<{
+  success: boolean;
+  events: Array<{
+    id: string;
+    title: string;
+    description?: string;
+    startTime: string;
+    endTime: string;
+    location?: string;
+  }>;
+  error?: string;
+}> {
+  const calendar = getCalendarClient();
+  const calendarId = process.env.GOOGLE_CALENDAR_ID || 'primary';
+
+  const startOfDay = new Date(date);
+  startOfDay.setHours(0, 0, 0, 0);
+
+  const endOfDay = new Date(date);
+  endOfDay.setHours(23, 59, 59, 999);
+
+  try {
+    const response = await calendar.events.list({
+      calendarId,
+      timeMin: startOfDay.toISOString(),
+      timeMax: endOfDay.toISOString(),
+      singleEvents: true,
+      orderBy: 'startTime',
+    });
+
+    const events = (response.data.items || []).map((event) => ({
+      id: event.id!,
+      title: event.summary || 'Geen titel',
+      description: event.description || undefined,
+      startTime: event.start?.dateTime || event.start?.date || '',
+      endTime: event.end?.dateTime || event.end?.date || '',
+      location: event.location || undefined,
+    }));
+
+    return { success: true, events };
+  } catch (error: unknown) {
+    const err = error as { message?: string };
+    console.error('Error getting events for date:', err);
+    return { success: false, events: [], error: err?.message };
+  }
+}
+
 // Create a calendar event (booking)
 export async function createBooking(data: {
   bookingType: BookingTypeSlug;
@@ -234,6 +432,7 @@ Geboekt via weareimpact.nl
   try {
     const event = await calendar.events.insert({
       calendarId,
+      conferenceDataVersion: 1,
       requestBody: {
         summary: `${type.name} - ${data.customer.name}`,
         description,
@@ -245,8 +444,23 @@ Geboekt via weareimpact.nl
           dateTime: endTime.toISOString(),
           timeZone: 'Europe/Amsterdam',
         },
+        attendees: [
+          { email: data.customer.email, displayName: data.customer.name },
+        ],
+        conferenceData: {
+          createRequest: {
+            requestId: `booking-${Date.now()}-${Math.random().toString(36).substring(7)}`,
+            conferenceSolutionKey: {
+              type: 'hangoutsMeet',
+            },
+          },
+        },
       },
     });
+
+    const meetLink = event.data.conferenceData?.entryPoints?.find(
+      (ep) => ep.entryPointType === 'video'
+    )?.uri || undefined;
 
     return {
       success: true,
@@ -256,6 +470,7 @@ Geboekt via weareimpact.nl
         startTime: startTime.toISOString(),
         endTime: endTime.toISOString(),
         duration: type.duration,
+        meetLink,
       },
     };
   } catch (error: unknown) {

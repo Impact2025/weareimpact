@@ -3,6 +3,9 @@ import { createBooking, BOOKING_TYPES, BookingTypeSlug } from '@/lib/google-cale
 import { sql } from '@/lib/db/neon';
 import { sendEmail } from '@/lib/email/send';
 import { generateBookingConfirmationEmail } from '@/lib/email/templates/booking-confirmation';
+import { generateBookingNotificationEmail } from '@/lib/email/templates/booking-notification';
+
+const OWNER_EMAIL = 'v.munster@weareimpact.nl';
 
 interface CreateBookingRequest {
   bookingType: string;
@@ -148,6 +151,29 @@ export async function POST(request: NextRequest) {
         console.error('Failed to send confirmation email:', emailResult.error);
       }
 
+      // Send notification email to owner (no meet link in fallback mode)
+      const notificationTemplate = generateBookingNotificationEmail({
+        customerName: customer.name,
+        customerEmail: customer.email,
+        customerPhone: customer.phone,
+        customerOrganization: customer.organization,
+        bookingType: type.name,
+        startTime: booking.startTime,
+        endTime: booking.endTime,
+        duration: booking.duration,
+      });
+
+      const notificationResult = await sendEmail({
+        to: OWNER_EMAIL,
+        subject: notificationTemplate.subject,
+        html: notificationTemplate.html,
+        text: notificationTemplate.text,
+      });
+
+      if (!notificationResult.success) {
+        console.error('Failed to send notification email:', notificationResult.error);
+      }
+
       return NextResponse.json({
         success: true,
         booking,
@@ -206,7 +232,30 @@ export async function POST(request: NextRequest) {
 
       if (!emailResult.success) {
         console.error('Failed to send confirmation email:', emailResult.error);
-        // Continue anyway - booking is created, email failure shouldn't break the flow
+      }
+
+      // Send notification email to owner
+      const notificationTemplate = generateBookingNotificationEmail({
+        customerName: customer.name,
+        customerEmail: customer.email,
+        customerPhone: customer.phone,
+        customerOrganization: customer.organization,
+        bookingType: BOOKING_TYPES[bookingType as BookingTypeSlug].name,
+        startTime: result.booking!.startTime,
+        endTime: result.booking!.endTime,
+        duration: result.booking!.duration,
+        meetLink: result.booking!.meetLink,
+      });
+
+      const notificationResult = await sendEmail({
+        to: OWNER_EMAIL,
+        subject: notificationTemplate.subject,
+        html: notificationTemplate.html,
+        text: notificationTemplate.text,
+      });
+
+      if (!notificationResult.success) {
+        console.error('Failed to send notification email:', notificationResult.error);
       }
 
       return NextResponse.json({
@@ -249,6 +298,29 @@ export async function POST(request: NextRequest) {
 
     if (!emailResult.success) {
       console.error('Failed to send confirmation email:', emailResult.error);
+    }
+
+    // Send notification email to owner (no meet link in fallback mode)
+    const notificationTemplate = generateBookingNotificationEmail({
+      customerName: customer.name,
+      customerEmail: customer.email,
+      customerPhone: customer.phone,
+      customerOrganization: customer.organization,
+      bookingType: type.name,
+      startTime: booking.startTime,
+      endTime: booking.endTime,
+      duration: booking.duration,
+    });
+
+    const notificationResult = await sendEmail({
+      to: OWNER_EMAIL,
+      subject: notificationTemplate.subject,
+      html: notificationTemplate.html,
+      text: notificationTemplate.text,
+    });
+
+    if (!notificationResult.success) {
+      console.error('Failed to send notification email:', notificationResult.error);
     }
 
     return NextResponse.json({
