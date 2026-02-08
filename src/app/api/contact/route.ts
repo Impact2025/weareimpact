@@ -10,6 +10,63 @@ export const dynamic = 'force-dynamic';
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+// Spam detection functions
+function isGibberish(text: string): boolean {
+  if (!text || text.length < 3) return false;
+
+  // Check for too many consecutive consonants (more than 5)
+  const consonantPattern = /[bcdfghjklmnpqrstvwxyz]{6,}/i;
+  if (consonantPattern.test(text)) return true;
+
+  // Check for random uppercase/lowercase mix pattern (like "AdUIeBqUyTxKLm")
+  const randomCasePattern = /[A-Z][a-z][A-Z][A-Z]|[a-z][A-Z][a-z][A-Z]/;
+  if (randomCasePattern.test(text)) return true;
+
+  // Check for very long words without spaces (real names are usually shorter)
+  const words = text.split(/\s+/);
+  for (const word of words) {
+    if (word.length > 20 && /^[a-zA-Z]+$/.test(word)) return true;
+  }
+
+  // Check ratio of uppercase letters (gibberish often has many)
+  const uppercaseCount = (text.match(/[A-Z]/g) || []).length;
+  const letterCount = (text.match(/[a-zA-Z]/g) || []).length;
+  if (letterCount > 5 && uppercaseCount / letterCount > 0.4) return true;
+
+  return false;
+}
+
+function isSpamContent(name: string, email: string, message: string): { isSpam: boolean; reason?: string } {
+  // Check name for gibberish
+  if (isGibberish(name)) {
+    return { isSpam: true, reason: 'gibberish_name' };
+  }
+
+  // Names should not be too long without spaces
+  if (name.length > 30 && !name.includes(' ')) {
+    return { isSpam: true, reason: 'invalid_name_format' };
+  }
+
+  // Check message for gibberish
+  if (isGibberish(message)) {
+    return { isSpam: true, reason: 'gibberish_message' };
+  }
+
+  // Message should have at least some spaces (real sentences have words)
+  const spaceCount = (message.match(/\s/g) || []).length;
+  if (message.length > 20 && spaceCount < 2) {
+    return { isSpam: true, reason: 'no_words_in_message' };
+  }
+
+  // Check for suspicious email patterns
+  const emailLocalPart = email.split('@')[0];
+  if (isGibberish(emailLocalPart) && emailLocalPart.length > 15) {
+    return { isSpam: true, reason: 'suspicious_email' };
+  }
+
+  return { isSpam: false };
+}
+
 // Rate limiting configuration
 const RATE_LIMIT_WINDOW_HOURS = 1;
 const MAX_SUBMISSIONS_PER_WINDOW = 3;
@@ -118,6 +175,19 @@ export async function POST(request: NextRequest) {
       // Record as spam attempt
       await recordSubmission(clientIp);
       // Return generic success to not reveal the honeypot
+      return NextResponse.json({
+        success: true,
+        message: 'Bedankt voor je bericht! Ik neem zo snel mogelijk contact met je op.',
+      }, { status: 201 });
+    }
+
+    // Spam content detection
+    const spamCheck = isSpamContent(name || '', email || '', message || '');
+    if (spamCheck.isSpam) {
+      console.warn(`Spam detected for IP: ${clientIp}, reason: ${spamCheck.reason}`);
+      // Record as spam attempt
+      await recordSubmission(clientIp);
+      // Return generic success to not reveal the spam detection
       return NextResponse.json({
         success: true,
         message: 'Bedankt voor je bericht! Ik neem zo snel mogelijk contact met je op.',
