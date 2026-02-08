@@ -47,34 +47,58 @@ export default function AdminLayout({
   const pathname = usePathname();
   const router = useRouter();
 
-  // Use admin-specific manifest for PWA installation
+  // PWA setup for admin
   useEffect(() => {
-    // Find existing manifest link
-    const existingManifest = document.querySelector('link[rel="manifest"]');
-
-    // Create or update manifest link for admin
-    let adminManifest = document.querySelector('link[data-admin-manifest]') as HTMLLinkElement;
-    if (!adminManifest) {
-      adminManifest = document.createElement('link');
-      adminManifest.rel = 'manifest';
-      adminManifest.setAttribute('data-admin-manifest', 'true');
-      adminManifest.href = '/manifest-admin.json';
-      document.head.appendChild(adminManifest);
+    // Set theme color for admin
+    let themeColor = document.querySelector('meta[name="theme-color"]') as HTMLMetaElement;
+    if (!themeColor) {
+      themeColor = document.createElement('meta');
+      themeColor.name = 'theme-color';
+      document.head.appendChild(themeColor);
     }
+    themeColor.content = '#fb923c';
 
-    // Hide original manifest while on admin
-    if (existingManifest && !existingManifest.hasAttribute('data-admin-manifest')) {
-      existingManifest.setAttribute('data-original-href', existingManifest.getAttribute('href') || '');
-      existingManifest.removeAttribute('href');
+    // Add PWA meta tags for iOS
+    const addMetaTag = (name: string, content: string) => {
+      if (!document.querySelector(`meta[name="${name}"]`)) {
+        const meta = document.createElement('meta');
+        meta.name = name;
+        meta.content = content;
+        document.head.appendChild(meta);
+      }
+    };
+
+    addMetaTag('apple-mobile-web-app-capable', 'yes');
+    addMetaTag('apple-mobile-web-app-status-bar-style', 'black-translucent');
+    addMetaTag('apple-mobile-web-app-title', 'WI Admin');
+    addMetaTag('mobile-web-app-capable', 'yes');
+
+    // Switch to admin manifest
+    const existingManifest = document.querySelector('link[rel="manifest"]:not([data-admin])') as HTMLLinkElement;
+    if (existingManifest) {
+      existingManifest.setAttribute('data-original-href', existingManifest.href);
+      existingManifest.href = '/manifest-admin.json';
+      existingManifest.setAttribute('data-admin', 'true');
+    } else {
+      // Create manifest link if not exists
+      const manifest = document.createElement('link');
+      manifest.rel = 'manifest';
+      manifest.href = '/manifest-admin.json';
+      manifest.setAttribute('data-admin', 'true');
+      document.head.appendChild(manifest);
     }
 
     return () => {
-      // Restore original manifest when leaving admin
-      if (existingManifest && existingManifest.hasAttribute('data-original-href')) {
-        existingManifest.setAttribute('href', existingManifest.getAttribute('data-original-href') || '/manifest.json');
-        existingManifest.removeAttribute('data-original-href');
+      // Restore original manifest when unmounting
+      const manifest = document.querySelector('link[rel="manifest"][data-admin]') as HTMLLinkElement;
+      if (manifest) {
+        const originalHref = manifest.getAttribute('data-original-href');
+        if (originalHref) {
+          manifest.href = originalHref;
+          manifest.removeAttribute('data-original-href');
+          manifest.removeAttribute('data-admin');
+        }
       }
-      adminManifest?.remove();
     };
   }, []);
 
