@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { Mic, MicOff, X, Send, Sparkles, Volume2, VolumeX } from 'lucide-react';
+import { haptic } from '@/hooks/useHaptic';
 import { createPortal } from 'react-dom';
 
 interface SpeechRecognitionEvent {
@@ -134,6 +135,7 @@ export default function IrisVoiceButton() {
 
   const toggleListening = () => {
     if (isListening) {
+      haptic('light');
       recognitionRef.current?.stop();
       setIsListening(false);
       if (autoSubmitTimeoutRef.current) {
@@ -144,6 +146,7 @@ export default function IrisVoiceButton() {
         handleSubmit(transcript.trim());
       }
     } else {
+      haptic('medium');
       setTranscript('');
       if (!recognitionRef.current) {
         recognitionRef.current = initRecognition();
@@ -222,10 +225,12 @@ export default function IrisVoiceButton() {
       }
 
       if (fullContent) {
+        haptic('success');
         speakText(fullContent);
       }
     } catch (error) {
       console.error('Chat error:', error);
+      haptic('error');
       setMessages(prev => [
         ...prev,
         {
@@ -240,6 +245,7 @@ export default function IrisVoiceButton() {
   };
 
   const openModal = () => {
+    haptic('medium');
     setIsOpen(true);
     // Auto-start listening when opening
     setTimeout(() => {

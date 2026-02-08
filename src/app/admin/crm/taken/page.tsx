@@ -15,7 +15,10 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
-import { TaskItem, CreateTaskDialog } from '@/components/crm';
+import { PullToRefreshIndicator } from '@/components/ui/PullToRefreshIndicator';
+import { SwipeableTaskItem, CreateTaskDialog } from '@/components/crm';
+import { usePullToRefresh } from '@/hooks/usePullToRefresh';
+import { haptic } from '@/hooks/useHaptic';
 import type { CrmTask } from '@/lib/crm/types';
 
 interface TaskCounts {
@@ -82,6 +85,31 @@ function TasksPageContent() {
       console.error('Failed to uncomplete task:', err);
     }
   };
+
+  const handleDelete = async (taskId: string) => {
+    try {
+      haptic('warning');
+      await fetch(`/api/admin/crm/tasks/${taskId}`, {
+        method: 'DELETE',
+      });
+      fetchTasks(activeTab);
+    } catch (err) {
+      console.error('Failed to delete task:', err);
+    }
+  };
+
+  // Pull to refresh
+  const {
+    pullDistance,
+    isRefreshing,
+    pullProgress,
+    shouldRefresh,
+    handlers: pullHandlers,
+  } = usePullToRefresh({
+    onRefresh: async () => {
+      await fetchTasks(activeTab);
+    },
+  });
 
   const getTabIcon = (tab: string) => {
     switch (tab) {
@@ -216,50 +244,62 @@ function TasksPageContent() {
           })}
         </TabsList>
 
-        {/* Tab Content */}
+        {/* Tab Content with Pull to Refresh */}
         {['today', 'week', 'overdue', 'completed'].map((tab) => (
           <TabsContent key={tab} value={tab} className="mt-4">
-            {loading ? (
-              <div className="flex items-center justify-center py-12">
-                <Loader2 size={32} className="animate-spin text-orange-600" />
-              </div>
-            ) : tasks.length > 0 ? (
-              <div className="space-y-2">
-                {tasks.map((task) => (
-                  <TaskItem
-                    key={task.id}
-                    task={task}
-                    onComplete={handleComplete}
-                    onUncomplete={tab === 'completed' ? handleUncomplete : undefined}
-                    showEntity
-                  />
-                ))}
-              </div>
-            ) : (
-              <Card>
-                <CardContent className="py-12">
-                  <div className="text-center text-slate-500">
-                    <CheckSquare size={48} className="mx-auto mb-4 opacity-50" />
-                    <p className="text-lg font-medium">
-                      {tab === 'today' && 'Geen taken voor vandaag'}
-                      {tab === 'week' && 'Geen taken deze week'}
-                      {tab === 'overdue' && 'Geen achterstallige taken'}
-                      {tab === 'completed' && 'Nog geen afgeronde taken'}
-                    </p>
-                    {tab !== 'completed' && tab !== 'overdue' && (
-                      <Button
-                        className="mt-4"
-                        variant="outline"
-                        onClick={() => setShowCreateDialog(true)}
-                      >
-                        <Plus size={16} className="mr-2" />
-                        Taak toevoegen
-                      </Button>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
-            )}
+            <div
+              {...pullHandlers}
+              className="touch-pan-y"
+            >
+              <PullToRefreshIndicator
+                pullDistance={pullDistance}
+                isRefreshing={isRefreshing}
+                pullProgress={pullProgress}
+                shouldRefresh={shouldRefresh}
+              />
+              {loading && !isRefreshing ? (
+                <div className="flex items-center justify-center py-12">
+                  <Loader2 size={32} className="animate-spin text-orange-600" />
+                </div>
+              ) : tasks.length > 0 ? (
+                <div className="space-y-2">
+                  {tasks.map((task) => (
+                    <SwipeableTaskItem
+                      key={task.id}
+                      task={task}
+                      onComplete={handleComplete}
+                      onUncomplete={tab === 'completed' ? handleUncomplete : undefined}
+                      onDelete={handleDelete}
+                      showEntity
+                    />
+                  ))}
+                </div>
+              ) : (
+                <Card>
+                  <CardContent className="py-12">
+                    <div className="text-center text-slate-500">
+                      <CheckSquare size={48} className="mx-auto mb-4 opacity-50" />
+                      <p className="text-lg font-medium">
+                        {tab === 'today' && 'Geen taken voor vandaag'}
+                        {tab === 'week' && 'Geen taken deze week'}
+                        {tab === 'overdue' && 'Geen achterstallige taken'}
+                        {tab === 'completed' && 'Nog geen afgeronde taken'}
+                      </p>
+                      {tab !== 'completed' && tab !== 'overdue' && (
+                        <Button
+                          className="mt-4"
+                          variant="outline"
+                          onClick={() => setShowCreateDialog(true)}
+                        >
+                          <Plus size={16} className="mr-2" />
+                          Taak toevoegen
+                        </Button>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+            </div>
           </TabsContent>
         ))}
       </Tabs>

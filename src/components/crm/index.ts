@@ -4,6 +4,7 @@ export { ContactCard } from './ContactCard';
 export { DealCard } from './DealCard';
 export { ActivityTimeline } from './ActivityTimeline';
 export { TaskItem } from './TaskItem';
+export { SwipeableTaskItem } from './SwipeableTaskItem';
 export { CreateCompanyDialog } from './CreateCompanyDialog';
 export { CreateContactDialog } from './CreateContactDialog';
 export { CreateDealDialog } from './CreateDealDialog';
