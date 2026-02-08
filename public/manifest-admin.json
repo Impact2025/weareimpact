@@ -1,0 +1,66 @@
+{
+  "name": "WeAreImpact Admin",
+  "short_name": "WI Admin",
+  "description": "Jouw persoonlijke command center met Iris AI",
+  "start_url": "/admin",
+  "scope": "/admin",
+  "display": "standalone",
+  "background_color": "#f1f5f9",
+  "theme_color": "#fb923c",
+  "orientation": "portrait-primary",
+  "lang": "nl",
+  "categories": ["business", "productivity"],
+  "icons": [
+    {
+      "src": "/icon-48x48.png",
+      "sizes": "48x48",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-96x96.png",
+      "sizes": "96x96",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/WeAreImpact_hart.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Praat met Iris",
+      "short_name": "Iris",
+      "description": "Open Iris spraakassistent",
+      "url": "/admin/iris",
+      "icons": [{ "src": "/icon-96x96.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "Agenda",
+      "short_name": "Agenda",
+      "description": "Bekijk je agenda",
+      "url": "/admin/agenda",
+      "icons": [{ "src": "/icon-96x96.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "CRM",
+      "short_name": "CRM",
+      "description": "Bekijk je CRM",
+      "url": "/admin/crm",
+      "icons": [{ "src": "/icon-96x96.png", "sizes": "96x96" }]
+    }
+  ]
+}

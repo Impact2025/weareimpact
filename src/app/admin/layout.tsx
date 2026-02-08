@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import {
@@ -15,12 +15,20 @@ import {
   BookOpen,
   Sparkles,
   Mail,
+  Briefcase,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import IrisVoiceButton from '@/components/admin/IrisVoiceButton';
+import MobileNav from '@/components/admin/MobileNav';
+import PWAProvider from '@/components/admin/PWAProvider';
+
+import { Calendar } from 'lucide-react';
 
 const sidebarItems = [
   { label: 'Praat met Iris', href: '/admin/iris', icon: Sparkles },
   { label: 'Dashboard', href: '/admin', icon: LayoutDashboard },
+  { label: 'Agenda', href: '/admin/agenda', icon: Calendar },
+  { label: 'CRM', href: '/admin/crm', icon: Briefcase },
   { label: 'Blog Posts', href: '/admin/blog', icon: FileText },
   { label: 'Kennisbank', href: '/admin/kennisbank', icon: BookOpen },
   { label: 'AI Scanner Leads', href: '/admin/leads', icon: Brain },
@@ -38,6 +46,37 @@ export default function AdminLayout({
   const [loggingOut, setLoggingOut] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
+
+  // Use admin-specific manifest for PWA installation
+  useEffect(() => {
+    // Find existing manifest link
+    const existingManifest = document.querySelector('link[rel="manifest"]');
+
+    // Create or update manifest link for admin
+    let adminManifest = document.querySelector('link[data-admin-manifest]') as HTMLLinkElement;
+    if (!adminManifest) {
+      adminManifest = document.createElement('link');
+      adminManifest.rel = 'manifest';
+      adminManifest.setAttribute('data-admin-manifest', 'true');
+      adminManifest.href = '/manifest-admin.json';
+      document.head.appendChild(adminManifest);
+    }
+
+    // Hide original manifest while on admin
+    if (existingManifest && !existingManifest.hasAttribute('data-admin-manifest')) {
+      existingManifest.setAttribute('data-original-href', existingManifest.getAttribute('href') || '');
+      existingManifest.removeAttribute('href');
+    }
+
+    return () => {
+      // Restore original manifest when leaving admin
+      if (existingManifest && existingManifest.hasAttribute('data-original-href')) {
+        existingManifest.setAttribute('href', existingManifest.getAttribute('data-original-href') || '/manifest.json');
+        existingManifest.removeAttribute('data-original-href');
+      }
+      adminManifest?.remove();
+    };
+  }, []);
 
   // Don't render admin layout on login page
   if (pathname === '/admin/login') {
@@ -58,9 +97,10 @@ export default function AdminLayout({
   };
 
   return (
-    <div className="min-h-screen bg-slate-100">
-      {/* Top Bar */}
-      <header className="fixed top-0 left-0 right-0 h-16 bg-white border-b border-slate-200 z-50 flex items-center justify-between px-4">
+    <PWAProvider>
+      <div className="min-h-screen bg-slate-100 pb-16 lg:pb-0">
+        {/* Top Bar */}
+        <header className="fixed top-0 left-0 right-0 h-16 bg-white border-b border-slate-200 z-50 flex items-center justify-between px-4">
         <div className="flex items-center gap-4">
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
@@ -96,7 +136,7 @@ export default function AdminLayout({
       >
         <nav className="p-4 space-y-2">
           {sidebarItems.map((item) => {
-            const isActive = pathname === item.href;
+            const isActive = pathname === item.href || (item.href !== '/admin' && pathname.startsWith(item.href));
             return (
               <Link
                 key={item.href}
@@ -128,6 +168,13 @@ export default function AdminLayout({
       <main className="pt-16 lg:pl-64">
         <div className="p-6">{children}</div>
       </main>
+
+      {/* Floating Iris Voice Button */}
+      <IrisVoiceButton />
+
+      {/* Mobile Bottom Navigation */}
+      <MobileNav />
     </div>
+    </PWAProvider>
   );
 }

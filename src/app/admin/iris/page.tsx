@@ -1,7 +1,20 @@
 'use client';
 
 import { useState, useRef, useEffect, useCallback } from 'react';
-import { Mic, MicOff, Send, Calendar, Clock, Trash2, Volume2, VolumeX } from 'lucide-react';
+import {
+  Mic,
+  MicOff,
+  Send,
+  Calendar,
+  Briefcase,
+  CheckSquare,
+  Trash2,
+  Volume2,
+  VolumeX,
+  Sparkles,
+  Clock,
+  TrendingUp
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 // Web Speech API types
@@ -11,6 +24,7 @@ interface SpeechRecognitionEvent {
       [index: number]: {
         transcript: string;
       };
+      isFinal: boolean;
     };
     length: number;
   };
@@ -29,6 +43,7 @@ interface SpeechRecognitionInstance {
   onerror: ((event: SpeechRecognitionErrorEvent) => void) | null;
   start: () => void;
   stop: () => void;
+  abort: () => void;
 }
 
 type Message = {
@@ -44,10 +59,64 @@ export default function IrisAdminPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const [speechSupported, setSpeechSupported] = useState(false);
-  const [speakEnabled, setSpeakEnabled] = useState(false);
+  const [speakEnabled, setSpeakEnabled] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const recognitionRef = useRef<SpeechRecognitionInstance | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const autoSubmitTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Initialize speech recognition
+  const initRecognition = useCallback(() => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (!SpeechRecognition) return null;
+
+    const recognition = new SpeechRecognition() as SpeechRecognitionInstance;
+    recognition.lang = 'nl-NL';
+    recognition.continuous = true;
+    recognition.interimResults = true;
+
+    recognition.onresult = (event: SpeechRecognitionEvent) => {
+      let finalTranscript = '';
+      let interimTranscript = '';
+
+      for (let i = 0; i < event.results.length; i++) {
+        const result = event.results[i];
+        if (result.isFinal) {
+          finalTranscript += result[0].transcript;
+        } else {
+          interimTranscript += result[0].transcript;
+        }
+      }
+
+      setInput(finalTranscript || interimTranscript);
+
+      // Auto-submit after 1.5s of silence on final result
+      if (finalTranscript) {
+        if (autoSubmitTimeoutRef.current) {
+          clearTimeout(autoSubmitTimeoutRef.current);
+        }
+        autoSubmitTimeoutRef.current = setTimeout(() => {
+          if (finalTranscript.trim()) {
+            sendMessage(finalTranscript.trim());
+          }
+        }, 1500);
+      }
+    };
+
+    recognition.onend = () => {
+      setIsListening(false);
+    };
+
+    recognition.onerror = (event: SpeechRecognitionErrorEvent) => {
+      if (event.error !== 'no-speech' && event.error !== 'aborted') {
+        console.error('Speech recognition error:', event.error);
+      }
+      setIsListening(false);
+    };
+
+    return recognition;
+  }, []);
 
   // Check for speech recognition support
   useEffect(() => {
@@ -55,34 +124,9 @@ export default function IrisAdminPage() {
     const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
     if (SpeechRecognition) {
       setSpeechSupported(true);
-      const recognition = new SpeechRecognition() as SpeechRecognitionInstance;
-      recognition.lang = 'nl-NL';
-      recognition.continuous = false;
-      recognition.interimResults = true;
-
-      recognition.onresult = (event: SpeechRecognitionEvent) => {
-        let transcript = '';
-        for (let i = 0; i < event.results.length; i++) {
-          transcript += event.results[i][0].transcript;
-        }
-        setInput(transcript);
-      };
-
-      recognition.onend = () => {
-        setIsListening(false);
-      };
-
-      recognition.onerror = (event: SpeechRecognitionErrorEvent) => {
-        // Ignore "no-speech" - just means user didn't say anything
-        if (event.error !== 'no-speech') {
-          console.error('Speech recognition error:', event.error);
-        }
-        setIsListening(false);
-      };
-
-      recognitionRef.current = recognition;
+      recognitionRef.current = initRecognition();
     }
-  }, []);
+  }, [initRecognition]);
 
   // Scroll to bottom on new messages
   useEffect(() => {
@@ -93,6 +137,8 @@ export default function IrisAdminPage() {
   const speakText = useCallback((text: string) => {
     if (!speakEnabled || !window.speechSynthesis) return;
 
+    window.speechSynthesis.cancel();
+
     // Remove markdown formatting
     const cleanText = text
       .replace(/\*\*(.*?)\*\*/g, '$1')
@@ -101,25 +147,47 @@ export default function IrisAdminPage() {
 
     const utterance = new SpeechSynthesisUtterance(cleanText);
     utterance.lang = 'nl-NL';
-    utterance.rate = 1.0;
+    utterance.rate = 1.1;
     utterance.pitch = 1.0;
     window.speechSynthesis.speak(utterance);
   }, [speakEnabled]);
 
   const toggleListening = () => {
-    if (!recognitionRef.current) return;
-
     if (isListening) {
-      recognitionRef.current.stop();
+      recognitionRef.current?.stop();
       setIsListening(false);
+      if (autoSubmitTimeoutRef.current) {
+        clearTimeout(autoSubmitTimeoutRef.current);
+      }
+      // Submit what we have
+      if (input.trim()) {
+        sendMessage(input.trim());
+      }
     } else {
-      recognitionRef.current.start();
-      setIsListening(true);
+      setInput('');
+      if (!recognitionRef.current) {
+        recognitionRef.current = initRecognition();
+      }
+      try {
+        recognitionRef.current?.start();
+        setIsListening(true);
+      } catch (e) {
+        console.error('Recognition start error:', e);
+      }
     }
   };
 
   const sendMessage = async (content: string) => {
     if (!content.trim() || isLoading) return;
+
+    // Stop listening
+    if (isListening) {
+      recognitionRef.current?.abort();
+      setIsListening(false);
+    }
+    if (autoSubmitTimeoutRef.current) {
+      clearTimeout(autoSubmitTimeoutRef.current);
+    }
 
     const userMessage: Message = {
       id: Date.now().toString(),
@@ -218,19 +286,73 @@ export default function IrisAdminPage() {
     window.speechSynthesis?.cancel();
   };
 
-  const quickActions = [
-    { label: 'Komende week', action: 'Wat staat er deze week op de planning?' },
-    { label: 'Morgen', action: 'Wat heb ik morgen?' },
-    { label: 'Blokkeer vandaag', action: 'Blokkeer de rest van vandaag' },
+  // Quick action categories
+  const quickActionCategories = [
+    {
+      title: 'Agenda',
+      icon: Calendar,
+      color: 'orange',
+      actions: [
+        { label: 'Vandaag', action: 'Wat heb ik vandaag?' },
+        { label: 'Morgen', action: 'Wat heb ik morgen?' },
+        { label: 'Deze week', action: 'Wat staat er deze week op de planning?' },
+        { label: 'Blokkeer tijd', action: 'Blokkeer morgenochtend van 9 tot 12' },
+      ]
+    },
+    {
+      title: 'CRM',
+      icon: Briefcase,
+      color: 'blue',
+      actions: [
+        { label: 'Briefing', action: 'Geef me mijn morning briefing' },
+        { label: 'Pipeline', action: 'Wat is mijn pipeline waard?' },
+        { label: 'Follow-ups', action: 'Welke klanten moet ik opvolgen?' },
+        { label: 'Nieuwe deal', action: 'Voeg een nieuwe deal toe' },
+      ]
+    },
+    {
+      title: 'Taken',
+      icon: CheckSquare,
+      color: 'green',
+      actions: [
+        { label: 'Vandaag', action: 'Wat moet ik vandaag doen?' },
+        { label: 'Achterstallig', action: 'Welke taken zijn achterstallig?' },
+        { label: 'Nieuwe taak', action: 'Plan een follow-up met' },
+        { label: 'Voltooid', action: 'Wat heb ik deze week afgerond?' },
+      ]
+    }
   ];
+
+  const getColorClasses = (color: string) => {
+    switch (color) {
+      case 'orange': return 'bg-orange-50 border-orange-200 hover:bg-orange-100';
+      case 'blue': return 'bg-blue-50 border-blue-200 hover:bg-blue-100';
+      case 'green': return 'bg-green-50 border-green-200 hover:bg-green-100';
+      default: return 'bg-slate-50 border-slate-200 hover:bg-slate-100';
+    }
+  };
+
+  const getIconColorClasses = (color: string) => {
+    switch (color) {
+      case 'orange': return 'text-orange-600';
+      case 'blue': return 'text-blue-600';
+      case 'green': return 'text-green-600';
+      default: return 'text-slate-600';
+    }
+  };
 
   return (
     <div className="h-[calc(100vh-7rem)] flex flex-col">
       {/* Header */}
-      <div className="flex items-center justify-between mb-4">
-        <div>
-          <h1 className="text-2xl font-bold text-slate-900">Praat met Iris</h1>
-          <p className="text-slate-500">Je persoonlijke agenda-assistent</p>
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-4">
+          <div className="w-14 h-14 bg-gradient-to-br from-orange-400 to-orange-600 rounded-2xl flex items-center justify-center shadow-lg shadow-orange-500/30">
+            <Sparkles className="text-white" size={28} />
+          </div>
+          <div>
+            <h1 className="text-2xl font-bold text-slate-900">Iris</h1>
+            <p className="text-slate-500">Je persoonlijke AI-assistent</p>
+          </div>
         </div>
         <div className="flex items-center gap-2">
           <Button
@@ -256,132 +378,186 @@ export default function IrisAdminPage() {
         </div>
       </div>
 
-      {/* Chat Area */}
-      <div className="flex-1 bg-white rounded-xl border border-slate-200 flex flex-col overflow-hidden">
-        {/* Messages */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-4">
+      {/* Main Content */}
+      <div className="flex-1 bg-white rounded-2xl border border-slate-200 flex flex-col overflow-hidden shadow-sm">
+        {/* Messages Area */}
+        <div className="flex-1 overflow-y-auto p-6">
           {messages.length === 0 ? (
-            <div className="h-full flex flex-col items-center justify-center text-center p-8">
-              <div className="w-20 h-20 bg-gradient-to-br from-orange-400 to-orange-600 rounded-full flex items-center justify-center mb-4">
-                <span className="text-4xl">👋</span>
+            <div className="h-full flex flex-col">
+              {/* Welcome Section */}
+              <div className="text-center mb-8">
+                <h2 className="text-xl font-semibold text-slate-900 mb-2">
+                  Goedemorgen, Vincent!
+                </h2>
+                <p className="text-slate-500">
+                  Vraag me om je agenda te bekijken, CRM updates te geven, of taken te beheren.
+                </p>
               </div>
-              <h2 className="text-xl font-semibold text-slate-900 mb-2">
-                Hoi Vincent!
-              </h2>
-              <p className="text-slate-500 max-w-md mb-6">
-                Ik ben Iris, je persoonlijke agenda-assistent. Vraag me om je agenda te bekijken,
-                tijd te blokkeren, of afspraken op te zoeken.
-              </p>
 
-              {/* Quick Actions */}
-              <div className="flex flex-wrap gap-2 justify-center">
-                {quickActions.map((qa) => (
-                  <button
-                    key={qa.label}
-                    onClick={() => sendMessage(qa.action)}
-                    className="px-4 py-2 bg-slate-100 hover:bg-slate-200 rounded-full text-sm text-slate-700 transition-colors flex items-center gap-2"
-                  >
-                    <Calendar size={14} />
-                    {qa.label}
-                  </button>
+              {/* Voice Input Hero */}
+              <div className="flex flex-col items-center justify-center py-8">
+                <button
+                  onClick={toggleListening}
+                  disabled={!speechSupported}
+                  className={`relative w-32 h-32 rounded-full flex items-center justify-center transition-all duration-300 ${
+                    isListening
+                      ? 'bg-red-500 hover:bg-red-600 scale-110'
+                      : 'bg-gradient-to-br from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 hover:scale-105'
+                  } ${!speechSupported ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+                >
+                  {isListening && (
+                    <>
+                      <span className="absolute inset-0 rounded-full bg-red-500 animate-ping opacity-25" />
+                      <span className="absolute inset-[-12px] rounded-full border-4 border-red-300 animate-pulse opacity-50" />
+                    </>
+                  )}
+                  {isListening ? (
+                    <MicOff className="text-white relative z-10" size={48} />
+                  ) : (
+                    <Mic className="text-white relative z-10" size={48} />
+                  )}
+                </button>
+                <p className={`mt-4 text-sm ${isListening ? 'text-red-500 font-medium' : 'text-slate-400'}`}>
+                  {isListening ? 'Luisteren... Tik om te stoppen' : 'Tik om te spreken'}
+                </p>
+                {isListening && input && (
+                  <p className="mt-2 text-lg text-slate-700 max-w-md text-center">
+                    &ldquo;{input}&rdquo;
+                  </p>
+                )}
+              </div>
+
+              {/* Quick Actions Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-auto">
+                {quickActionCategories.map((category) => (
+                  <div key={category.title} className={`rounded-xl border p-4 ${getColorClasses(category.color)}`}>
+                    <div className="flex items-center gap-2 mb-3">
+                      <category.icon className={getIconColorClasses(category.color)} size={20} />
+                      <h3 className="font-semibold text-slate-900">{category.title}</h3>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {category.actions.map((action) => (
+                        <button
+                          key={action.label}
+                          onClick={() => sendMessage(action.action)}
+                          className="px-3 py-1.5 bg-white/80 hover:bg-white rounded-full text-xs text-slate-700 transition-colors shadow-sm"
+                        >
+                          {action.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
                 ))}
               </div>
 
-              {/* Capabilities */}
-              <div className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-4 w-full max-w-2xl">
-                <div className="p-4 bg-orange-50 rounded-lg text-left">
-                  <Calendar className="text-orange-600 mb-2" size={20} />
-                  <h3 className="font-medium text-slate-900">Agenda blokkeren</h3>
-                  <p className="text-sm text-slate-600">&quot;Blokkeer vrijdag 17 januari&quot;</p>
+              {/* Stats Row */}
+              <div className="flex items-center justify-center gap-8 mt-6 pt-6 border-t border-slate-100">
+                <div className="flex items-center gap-2 text-slate-500">
+                  <Clock size={16} />
+                  <span className="text-sm">Realtime agenda sync</span>
                 </div>
-                <div className="p-4 bg-blue-50 rounded-lg text-left">
-                  <Clock className="text-blue-600 mb-2" size={20} />
-                  <h3 className="font-medium text-slate-900">Afspraken zoeken</h3>
-                  <p className="text-sm text-slate-600">&quot;Wanneer is de notaris?&quot;</p>
+                <div className="flex items-center gap-2 text-slate-500">
+                  <TrendingUp size={16} />
+                  <span className="text-sm">CRM integratie</span>
                 </div>
-                <div className="p-4 bg-green-50 rounded-lg text-left">
-                  <Mic className="text-green-600 mb-2" size={20} />
-                  <h3 className="font-medium text-slate-900">Spraakbesturing</h3>
-                  <p className="text-sm text-slate-600">Klik op de microfoon</p>
+                <div className="flex items-center gap-2 text-slate-500">
+                  <Mic size={16} />
+                  <span className="text-sm">Nederlandse spraakherkenning</span>
                 </div>
               </div>
             </div>
           ) : (
             <>
-              {messages.map((message) => (
-                <div
-                  key={message.id}
-                  className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
-                >
+              {/* Messages */}
+              <div className="space-y-4">
+                {messages.map((message) => (
                   <div
-                    className={`max-w-[80%] rounded-2xl px-4 py-3 ${
-                      message.role === 'user'
-                        ? 'bg-orange-600 text-white'
-                        : 'bg-slate-100 text-slate-900'
-                    }`}
+                    key={message.id}
+                    className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
                   >
-                    <div className="whitespace-pre-wrap text-sm leading-relaxed">
-                      {message.content.split('\n').map((line, i) => (
-                        <span key={i}>
-                          {line.split(/(\*\*.*?\*\*)/).map((part, j) => {
-                            if (part.startsWith('**') && part.endsWith('**')) {
-                              return <strong key={j}>{part.slice(2, -2)}</strong>;
-                            }
-                            return part;
-                          })}
-                          {i < message.content.split('\n').length - 1 && <br />}
-                        </span>
-                      ))}
-                    </div>
                     <div
-                      className={`text-xs mt-1 ${
-                        message.role === 'user' ? 'text-orange-200' : 'text-slate-400'
+                      className={`max-w-[80%] rounded-2xl px-5 py-3 ${
+                        message.role === 'user'
+                          ? 'bg-gradient-to-br from-orange-500 to-orange-600 text-white'
+                          : 'bg-slate-100 text-slate-900'
                       }`}
                     >
-                      {message.timestamp.toLocaleTimeString('nl-NL', {
-                        hour: '2-digit',
-                        minute: '2-digit',
-                      })}
+                      <div className="whitespace-pre-wrap text-sm leading-relaxed">
+                        {message.content.split('\n').map((line, i) => (
+                          <span key={i}>
+                            {line.split(/(\*\*.*?\*\*)/).map((part, j) => {
+                              if (part.startsWith('**') && part.endsWith('**')) {
+                                return <strong key={j}>{part.slice(2, -2)}</strong>;
+                              }
+                              return part;
+                            })}
+                            {i < message.content.split('\n').length - 1 && <br />}
+                          </span>
+                        ))}
+                      </div>
+                      <div
+                        className={`text-xs mt-2 ${
+                          message.role === 'user' ? 'text-orange-200' : 'text-slate-400'
+                        }`}
+                      >
+                        {message.timestamp.toLocaleTimeString('nl-NL', {
+                          hour: '2-digit',
+                          minute: '2-digit',
+                        })}
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
-              {isLoading && (
-                <div className="flex justify-start">
-                  <div className="bg-slate-100 rounded-2xl px-4 py-3">
-                    <div className="flex gap-1">
-                      <span className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" />
-                      <span
-                        className="w-2 h-2 bg-slate-400 rounded-full animate-bounce"
-                        style={{ animationDelay: '0.1s' }}
-                      />
-                      <span
-                        className="w-2 h-2 bg-slate-400 rounded-full animate-bounce"
-                        style={{ animationDelay: '0.2s' }}
-                      />
+                ))}
+                {isLoading && (
+                  <div className="flex justify-start">
+                    <div className="bg-slate-100 rounded-2xl px-5 py-3">
+                      <div className="flex gap-1.5">
+                        <span className="w-2 h-2 bg-orange-400 rounded-full animate-bounce" />
+                        <span
+                          className="w-2 h-2 bg-orange-400 rounded-full animate-bounce"
+                          style={{ animationDelay: '0.15s' }}
+                        />
+                        <span
+                          className="w-2 h-2 bg-orange-400 rounded-full animate-bounce"
+                          style={{ animationDelay: '0.3s' }}
+                        />
+                      </div>
                     </div>
                   </div>
-                </div>
-              )}
+                )}
+              </div>
               <div ref={messagesEndRef} />
             </>
           )}
         </div>
 
         {/* Input Area */}
-        <div className="border-t border-slate-200 p-4">
-          <form onSubmit={handleSubmit} className="flex gap-2">
+        <div className="border-t border-slate-200 p-4 bg-slate-50">
+          {/* Voice status */}
+          {isListening && (
+            <div className="mb-3 flex items-center justify-center gap-2">
+              <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
+              <span className="text-sm text-red-500 font-medium">Luisteren...</span>
+              {input && (
+                <span className="text-sm text-slate-600 ml-2">&ldquo;{input}&rdquo;</span>
+              )}
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit} className="flex gap-3">
             {/* Microphone Button */}
             {speechSupported && (
-              <Button
+              <button
                 type="button"
-                variant={isListening ? 'default' : 'outline'}
-                size="icon"
                 onClick={toggleListening}
-                className={isListening ? 'bg-red-500 hover:bg-red-600 animate-pulse' : ''}
+                className={`w-12 h-12 rounded-full flex items-center justify-center transition-all duration-200 ${
+                  isListening
+                    ? 'bg-red-500 hover:bg-red-600 text-white scale-110'
+                    : 'bg-white border-2 border-slate-200 hover:border-orange-300 hover:bg-orange-50 text-slate-600'
+                }`}
               >
-                {isListening ? <MicOff size={20} /> : <Mic size={20} />}
-              </Button>
+                {isListening ? <MicOff size={22} /> : <Mic size={22} />}
+              </button>
             )}
 
             {/* Text Input */}
@@ -392,27 +568,19 @@ export default function IrisAdminPage() {
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder={isListening ? 'Luisteren...' : 'Vraag Iris iets...'}
-              className="flex-1 px-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+              className="flex-1 px-5 py-3 bg-white border-2 border-slate-200 rounded-full focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent text-slate-900 placeholder-slate-400"
               disabled={isLoading}
             />
 
             {/* Send Button */}
-            <Button
+            <button
               type="submit"
               disabled={!input.trim() || isLoading}
-              className="bg-orange-600 hover:bg-orange-700"
+              className="w-12 h-12 bg-gradient-to-br from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 disabled:opacity-50 disabled:cursor-not-allowed rounded-full flex items-center justify-center text-white transition-all duration-200"
             >
               <Send size={20} />
-            </Button>
+            </button>
           </form>
-
-          {/* Speech Status */}
-          {isListening && (
-            <p className="text-sm text-red-500 mt-2 flex items-center gap-2">
-              <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
-              Luisteren... Spreek nu.
-            </p>
-          )}
         </div>
       </div>
     </div>
