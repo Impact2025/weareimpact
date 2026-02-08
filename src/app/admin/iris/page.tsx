@@ -342,16 +342,16 @@ export default function IrisAdminPage() {
   };
 
   return (
-    <div className="h-[calc(100vh-7rem)] flex flex-col">
-      {/* Header */}
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center gap-4">
-          <div className="w-14 h-14 bg-gradient-to-br from-orange-400 to-orange-600 rounded-2xl flex items-center justify-center shadow-lg shadow-orange-500/30">
-            <Sparkles className="text-white" size={28} />
+    <div className="h-[calc(100vh-8rem)] lg:h-[calc(100vh-7rem)] flex flex-col pb-16 lg:pb-0">
+      {/* Header - compact on mobile */}
+      <div className="flex items-center justify-between mb-4 lg:mb-6">
+        <div className="flex items-center gap-3 lg:gap-4">
+          <div className="w-10 h-10 lg:w-14 lg:h-14 bg-gradient-to-br from-orange-400 to-orange-600 rounded-xl lg:rounded-2xl flex items-center justify-center shadow-lg shadow-orange-500/30">
+            <Sparkles className="text-white" size={20} />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-slate-900">Iris</h1>
-            <p className="text-slate-500">Je persoonlijke AI-assistent</p>
+            <h1 className="text-xl lg:text-2xl font-bold text-slate-900">Iris</h1>
+            <p className="text-sm text-slate-500 hidden sm:block">Je persoonlijke AI-assistent</p>
           </div>
         </div>
         <div className="flex items-center gap-2">
@@ -359,11 +359,11 @@ export default function IrisAdminPage() {
             variant="outline"
             size="sm"
             onClick={() => setSpeakEnabled(!speakEnabled)}
-            className={speakEnabled ? 'bg-orange-50 border-orange-300' : ''}
+            className={`h-10 w-10 lg:h-9 lg:w-auto p-0 lg:px-3 ${speakEnabled ? 'bg-orange-50 border-orange-300' : ''}`}
           >
-            {speakEnabled ? <Volume2 size={16} /> : <VolumeX size={16} />}
-            <span className="ml-2 hidden sm:inline">
-              {speakEnabled ? 'Spraak aan' : 'Spraak uit'}
+            {speakEnabled ? <Volume2 size={18} /> : <VolumeX size={18} />}
+            <span className="ml-2 hidden lg:inline">
+              {speakEnabled ? 'Aan' : 'Uit'}
             </span>
           </Button>
           <Button
@@ -371,9 +371,10 @@ export default function IrisAdminPage() {
             size="sm"
             onClick={clearChat}
             disabled={messages.length === 0}
+            className="h-10 w-10 lg:h-9 lg:w-auto p-0 lg:px-3"
           >
-            <Trash2 size={16} />
-            <span className="ml-2 hidden sm:inline">Wissen</span>
+            <Trash2 size={18} />
+            <span className="ml-2 hidden lg:inline">Wissen</span>
           </Button>
         </div>
       </div>
@@ -381,25 +382,25 @@ export default function IrisAdminPage() {
       {/* Main Content */}
       <div className="flex-1 bg-white rounded-2xl border border-slate-200 flex flex-col overflow-hidden shadow-sm">
         {/* Messages Area */}
-        <div className="flex-1 overflow-y-auto p-6">
+        <div className="flex-1 overflow-y-auto p-4 lg:p-6">
           {messages.length === 0 ? (
             <div className="h-full flex flex-col">
-              {/* Welcome Section */}
-              <div className="text-center mb-8">
-                <h2 className="text-xl font-semibold text-slate-900 mb-2">
-                  Goedemorgen, Vincent!
+              {/* Welcome Section - compact on mobile */}
+              <div className="text-center mb-4 lg:mb-8">
+                <h2 className="text-lg lg:text-xl font-semibold text-slate-900 mb-1">
+                  Hoi Vincent!
                 </h2>
-                <p className="text-slate-500">
-                  Vraag me om je agenda te bekijken, CRM updates te geven, of taken te beheren.
+                <p className="text-sm text-slate-500 hidden sm:block">
+                  Vraag me om je agenda, CRM of taken te beheren.
                 </p>
               </div>
 
-              {/* Voice Input Hero */}
-              <div className="flex flex-col items-center justify-center py-8">
+              {/* Voice Input Hero - responsive size */}
+              <div className="flex flex-col items-center justify-center py-4 lg:py-8">
                 <button
                   onClick={toggleListening}
                   disabled={!speechSupported}
-                  className={`relative w-32 h-32 rounded-full flex items-center justify-center transition-all duration-300 ${
+                  className={`relative w-24 h-24 lg:w-32 lg:h-32 rounded-full flex items-center justify-center transition-all duration-300 active:scale-95 ${
                     isListening
                       ? 'bg-red-500 hover:bg-red-600 scale-110'
                       : 'bg-gradient-to-br from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 hover:scale-105'
@@ -408,39 +409,39 @@ export default function IrisAdminPage() {
                   {isListening && (
                     <>
                       <span className="absolute inset-0 rounded-full bg-red-500 animate-ping opacity-25" />
-                      <span className="absolute inset-[-12px] rounded-full border-4 border-red-300 animate-pulse opacity-50" />
+                      <span className="absolute inset-[-8px] lg:inset-[-12px] rounded-full border-4 border-red-300 animate-pulse opacity-50" />
                     </>
                   )}
                   {isListening ? (
-                    <MicOff className="text-white relative z-10" size={48} />
+                    <MicOff className="text-white relative z-10" size={36} />
                   ) : (
-                    <Mic className="text-white relative z-10" size={48} />
+                    <Mic className="text-white relative z-10" size={36} />
                   )}
                 </button>
-                <p className={`mt-4 text-sm ${isListening ? 'text-red-500 font-medium' : 'text-slate-400'}`}>
-                  {isListening ? 'Luisteren... Tik om te stoppen' : 'Tik om te spreken'}
+                <p className={`mt-3 text-sm ${isListening ? 'text-red-500 font-medium' : 'text-slate-400'}`}>
+                  {isListening ? 'Tik om te stoppen' : 'Tik om te spreken'}
                 </p>
                 {isListening && input && (
-                  <p className="mt-2 text-lg text-slate-700 max-w-md text-center">
+                  <p className="mt-2 text-base text-slate-700 max-w-xs text-center px-4">
                     &ldquo;{input}&rdquo;
                   </p>
                 )}
               </div>
 
-              {/* Quick Actions Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-auto">
+              {/* Quick Actions Grid - responsive */}
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 lg:gap-4 mt-auto">
                 {quickActionCategories.map((category) => (
-                  <div key={category.title} className={`rounded-xl border p-4 ${getColorClasses(category.color)}`}>
-                    <div className="flex items-center gap-2 mb-3">
-                      <category.icon className={getIconColorClasses(category.color)} size={20} />
-                      <h3 className="font-semibold text-slate-900">{category.title}</h3>
+                  <div key={category.title} className={`rounded-xl border p-3 lg:p-4 ${getColorClasses(category.color)}`}>
+                    <div className="flex items-center gap-2 mb-2 lg:mb-3">
+                      <category.icon className={getIconColorClasses(category.color)} size={18} />
+                      <h3 className="font-semibold text-slate-900 text-sm lg:text-base">{category.title}</h3>
                     </div>
                     <div className="flex flex-wrap gap-2">
                       {category.actions.map((action) => (
                         <button
                           key={action.label}
                           onClick={() => sendMessage(action.action)}
-                          className="px-3 py-1.5 bg-white/80 hover:bg-white rounded-full text-xs text-slate-700 transition-colors shadow-sm"
+                          className="px-4 py-2.5 bg-white/80 hover:bg-white active:bg-white rounded-full text-sm text-slate-700 transition-colors shadow-sm min-h-[44px]"
                         >
                           {action.label}
                         </button>
@@ -450,8 +451,8 @@ export default function IrisAdminPage() {
                 ))}
               </div>
 
-              {/* Stats Row */}
-              <div className="flex items-center justify-center gap-8 mt-6 pt-6 border-t border-slate-100">
+              {/* Stats Row - hidden on mobile */}
+              <div className="hidden lg:flex items-center justify-center gap-8 mt-6 pt-6 border-t border-slate-100">
                 <div className="flex items-center gap-2 text-slate-500">
                   <Clock size={16} />
                   <span className="text-sm">Realtime agenda sync</span>
@@ -531,52 +532,49 @@ export default function IrisAdminPage() {
           )}
         </div>
 
-        {/* Input Area */}
-        <div className="border-t border-slate-200 p-4 bg-slate-50">
+        {/* Input Area - larger touch targets */}
+        <div className="border-t border-slate-200 p-3 lg:p-4 bg-slate-50">
           {/* Voice status */}
           {isListening && (
-            <div className="mb-3 flex items-center justify-center gap-2">
+            <div className="mb-2 flex items-center justify-center gap-2">
               <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
               <span className="text-sm text-red-500 font-medium">Luisteren...</span>
-              {input && (
-                <span className="text-sm text-slate-600 ml-2">&ldquo;{input}&rdquo;</span>
-              )}
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="flex gap-3">
-            {/* Microphone Button */}
+          <form onSubmit={handleSubmit} className="flex gap-2 lg:gap-3">
+            {/* Microphone Button - 48px touch target */}
             {speechSupported && (
               <button
                 type="button"
                 onClick={toggleListening}
-                className={`w-12 h-12 rounded-full flex items-center justify-center transition-all duration-200 ${
+                className={`w-12 h-12 flex-shrink-0 rounded-full flex items-center justify-center transition-all duration-200 active:scale-95 ${
                   isListening
-                    ? 'bg-red-500 hover:bg-red-600 text-white scale-110'
-                    : 'bg-white border-2 border-slate-200 hover:border-orange-300 hover:bg-orange-50 text-slate-600'
+                    ? 'bg-red-500 hover:bg-red-600 text-white'
+                    : 'bg-white border-2 border-slate-200 hover:border-orange-300 active:bg-orange-50 text-slate-600'
                 }`}
               >
                 {isListening ? <MicOff size={22} /> : <Mic size={22} />}
               </button>
             )}
 
-            {/* Text Input */}
+            {/* Text Input - larger on mobile */}
             <input
               ref={inputRef}
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder={isListening ? 'Luisteren...' : 'Vraag Iris iets...'}
-              className="flex-1 px-5 py-3 bg-white border-2 border-slate-200 rounded-full focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent text-slate-900 placeholder-slate-400"
+              placeholder={isListening ? 'Luisteren...' : 'Vraag Iris...'}
+              className="flex-1 min-w-0 px-4 py-3 bg-white border-2 border-slate-200 rounded-full focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent text-base text-slate-900 placeholder-slate-400"
               disabled={isLoading}
             />
 
-            {/* Send Button */}
+            {/* Send Button - 48px touch target */}
             <button
               type="submit"
               disabled={!input.trim() || isLoading}
-              className="w-12 h-12 bg-gradient-to-br from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 disabled:opacity-50 disabled:cursor-not-allowed rounded-full flex items-center justify-center text-white transition-all duration-200"
+              className="w-12 h-12 flex-shrink-0 bg-gradient-to-br from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed rounded-full flex items-center justify-center text-white transition-all duration-200"
             >
               <Send size={20} />
             </button>

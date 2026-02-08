@@ -182,25 +182,31 @@ function TasksPageContent() {
         </div>
       )}
 
-      {/* Tabs */}
+      {/* Tabs - mobile optimized with labels */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-4 h-auto p-1">
           {['today', 'week', 'overdue', 'completed'].map((tab) => {
             const count = getTabCount(tab);
+            const shortLabels: Record<string, string> = {
+              today: 'Vandaag',
+              week: 'Week',
+              overdue: 'Te laat',
+              completed: 'Klaar'
+            };
             return (
               <TabsTrigger
                 key={tab}
                 value={tab}
-                className={`flex items-center gap-1 ${
-                  tab === 'overdue' && counts.overdue > 0 ? 'text-red-600' : ''
+                className={`flex flex-col sm:flex-row items-center justify-center gap-0.5 sm:gap-1.5 py-2.5 px-1 sm:px-3 min-h-[52px] ${
+                  tab === 'overdue' && counts.overdue > 0 ? 'text-red-600 data-[state=active]:text-red-600' : ''
                 }`}
               >
                 {getTabIcon(tab)}
-                <span className="hidden sm:inline">{getTabLabel(tab)}</span>
+                <span className="text-[10px] sm:text-sm font-medium">{shortLabels[tab]}</span>
                 {count !== null && count > 0 && (
                   <Badge
                     variant={tab === 'overdue' ? 'destructive' : 'secondary'}
-                    className="ml-1 h-5 px-1.5"
+                    className="ml-0 sm:ml-1 h-5 px-1.5 text-[10px]"
                   >
                     {count}
                   </Badge>

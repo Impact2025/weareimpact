@@ -469,16 +469,16 @@ export default function IrisVoiceButton() {
 
   return (
     <>
-      {/* Floating Action Button */}
+      {/* Floating Action Button - positioned above bottom nav */}
       <button
         onClick={openModal}
-        className="fixed bottom-6 right-6 z-50 w-16 h-16 bg-gradient-to-br from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 rounded-full shadow-lg shadow-orange-500/30 flex items-center justify-center transition-all duration-300 hover:scale-110 group"
+        className="fixed bottom-24 right-4 lg:bottom-6 lg:right-6 z-50 w-14 h-14 lg:w-16 lg:h-16 bg-gradient-to-br from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 rounded-full shadow-lg shadow-orange-500/30 flex items-center justify-center transition-all duration-300 hover:scale-110 active:scale-95 group"
         aria-label="Praat met Iris"
       >
-        <Sparkles className="text-white" size={28} />
+        <Sparkles className="text-white" size={24} />
 
-        {/* Tooltip */}
-        <span className="absolute right-full mr-3 px-3 py-1.5 bg-slate-900 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+        {/* Tooltip - hidden on mobile, shown on desktop hover */}
+        <span className="hidden lg:block absolute right-full mr-3 px-3 py-1.5 bg-slate-900 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
           Praat met Iris
         </span>
       </button>

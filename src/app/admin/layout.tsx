@@ -16,6 +16,11 @@ import {
   Sparkles,
   Mail,
   Briefcase,
+  Building2,
+  Users,
+  Target,
+  CheckSquare,
+  ChevronDown,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import IrisVoiceButton from '@/components/admin/IrisVoiceButton';
@@ -24,11 +29,28 @@ import PWAProvider from '@/components/admin/PWAProvider';
 
 import { Calendar } from 'lucide-react';
 
-const sidebarItems = [
+interface SidebarItem {
+  label: string;
+  href: string;
+  icon: React.ComponentType<{ size?: number }>;
+  subItems?: { label: string; href: string; icon: React.ComponentType<{ size?: number }> }[];
+}
+
+const sidebarItems: SidebarItem[] = [
   { label: 'Praat met Iris', href: '/admin/iris', icon: Sparkles },
   { label: 'Dashboard', href: '/admin', icon: LayoutDashboard },
   { label: 'Agenda', href: '/admin/agenda', icon: Calendar },
-  { label: 'CRM', href: '/admin/crm', icon: Briefcase },
+  {
+    label: 'CRM',
+    href: '/admin/crm',
+    icon: Briefcase,
+    subItems: [
+      { label: 'Bedrijven', href: '/admin/crm/bedrijven', icon: Building2 },
+      { label: 'Contacten', href: '/admin/crm/contacten', icon: Users },
+      { label: 'Deals', href: '/admin/crm/deals', icon: Target },
+      { label: 'Taken', href: '/admin/crm/taken', icon: CheckSquare },
+    ]
+  },
   { label: 'Blog Posts', href: '/admin/blog', icon: FileText },
   { label: 'Kennisbank', href: '/admin/kennisbank', icon: BookOpen },
   { label: 'AI Scanner Leads', href: '/admin/leads', icon: Brain },
@@ -44,8 +66,22 @@ export default function AdminLayout({
 }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
+  const [expandedMenus, setExpandedMenus] = useState<string[]>([]);
   const pathname = usePathname();
   const router = useRouter();
+
+  // Auto-expand CRM menu if we're on a CRM page
+  useEffect(() => {
+    if (pathname.startsWith('/admin/crm') && !expandedMenus.includes('/admin/crm')) {
+      setExpandedMenus(prev => [...prev, '/admin/crm']);
+    }
+  }, [pathname]);
+
+  const toggleMenu = (href: string) => {
+    setExpandedMenus(prev =>
+      prev.includes(href) ? prev.filter(h => h !== href) : [...prev, href]
+    );
+  };
 
   // PWA setup for admin
   useEffect(() => {
@@ -158,23 +194,83 @@ export default function AdminLayout({
           sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
         }`}
       >
-        <nav className="p-4 space-y-2">
+        <nav className="p-4 space-y-1">
           {sidebarItems.map((item) => {
             const isActive = pathname === item.href || (item.href !== '/admin' && pathname.startsWith(item.href));
+            const isExpanded = expandedMenus.includes(item.href);
+            const hasSubItems = item.subItems && item.subItems.length > 0;
+
             return (
-              <Link
-                key={item.href}
-                href={item.href}
-                onClick={() => setSidebarOpen(false)}
-                className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
-                  isActive
-                    ? 'bg-orange-100 text-orange-700'
-                    : 'text-slate-600 hover:bg-slate-100'
-                }`}
-              >
-                <item.icon size={20} />
-                <span className="font-medium">{item.label}</span>
-              </Link>
+              <div key={item.href}>
+                {hasSubItems ? (
+                  <>
+                    <button
+                      onClick={() => toggleMenu(item.href)}
+                      className={`w-full flex items-center justify-between px-4 py-3 rounded-lg transition-colors ${
+                        isActive
+                          ? 'bg-orange-100 text-orange-700'
+                          : 'text-slate-600 hover:bg-slate-100'
+                      }`}
+                    >
+                      <div className="flex items-center gap-3">
+                        <item.icon size={20} />
+                        <span className="font-medium">{item.label}</span>
+                      </div>
+                      <ChevronDown
+                        size={16}
+                        className={`transition-transform ${isExpanded ? 'rotate-180' : ''}`}
+                      />
+                    </button>
+                    {isExpanded && (
+                      <div className="ml-4 mt-1 space-y-1 border-l-2 border-slate-200 pl-4">
+                        <Link
+                          href={item.href}
+                          onClick={() => setSidebarOpen(false)}
+                          className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors ${
+                            pathname === item.href
+                              ? 'bg-orange-100 text-orange-700'
+                              : 'text-slate-600 hover:bg-slate-100'
+                          }`}
+                        >
+                          <LayoutDashboard size={16} />
+                          <span>Overzicht</span>
+                        </Link>
+                        {item.subItems?.map((subItem) => {
+                          const isSubActive = pathname === subItem.href;
+                          return (
+                            <Link
+                              key={subItem.href}
+                              href={subItem.href}
+                              onClick={() => setSidebarOpen(false)}
+                              className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors ${
+                                isSubActive
+                                  ? 'bg-orange-100 text-orange-700'
+                                  : 'text-slate-600 hover:bg-slate-100'
+                              }`}
+                            >
+                              <subItem.icon size={16} />
+                              <span>{subItem.label}</span>
+                            </Link>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <Link
+                    href={item.href}
+                    onClick={() => setSidebarOpen(false)}
+                    className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
+                      isActive
+                        ? 'bg-orange-100 text-orange-700'
+                        : 'text-slate-600 hover:bg-slate-100'
+                    }`}
+                  >
+                    <item.icon size={20} />
+                    <span className="font-medium">{item.label}</span>
+                  </Link>
+                )}
+              </div>
             );
           })}
         </nav>
