@@ -71,32 +71,25 @@ export default function IrisVoiceButton() {
 
     const recognition = new SpeechRecognition() as SpeechRecognitionInstance;
     recognition.lang = 'nl-NL';
-    recognition.continuous = true;
+    recognition.continuous = false; // Single utterance mode - prevents accumulation
     recognition.interimResults = true;
 
     recognition.onresult = (event: SpeechRecognitionEvent) => {
-      let finalTranscript = '';
-      let interimTranscript = '';
+      // Get only the latest result to prevent accumulation
+      const lastResultIndex = event.results.length - 1;
+      const result = event.results[lastResultIndex];
+      const transcript = result[0].transcript;
 
-      for (let i = 0; i < event.results.length; i++) {
-        const result = event.results[i];
-        if (result.isFinal) {
-          finalTranscript += result[0].transcript;
-        } else {
-          interimTranscript += result[0].transcript;
-        }
-      }
-
-      setTranscript(finalTranscript || interimTranscript);
+      setTranscript(transcript);
 
       // Auto-submit after 1.5s of silence on final result
-      if (finalTranscript) {
+      if (result.isFinal) {
         if (autoSubmitTimeoutRef.current) {
           clearTimeout(autoSubmitTimeoutRef.current);
         }
         autoSubmitTimeoutRef.current = setTimeout(() => {
-          if (finalTranscript.trim()) {
-            handleSubmit(finalTranscript.trim());
+          if (transcript.trim()) {
+            handleSubmit(transcript.trim());
           }
         }, 1500);
       }
