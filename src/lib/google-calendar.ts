@@ -433,6 +433,7 @@ Geboekt via weareimpact.nl
     const event = await calendar.events.insert({
       calendarId,
       conferenceDataVersion: 1,
+      sendUpdates: 'all', // Google sends calendar invite to attendees
       requestBody: {
         summary: `${type.name} - ${data.customer.name}`,
         description,
@@ -455,12 +456,20 @@ Geboekt via weareimpact.nl
             },
           },
         },
+        guestsCanSeeOtherGuests: false,
       },
+    });
+
+    // Log conference data for debugging
+    console.log('Calendar event created:', {
+      id: event.data.id,
+      conferenceData: event.data.conferenceData,
+      hangoutLink: event.data.hangoutLink,
     });
 
     const meetLink = event.data.conferenceData?.entryPoints?.find(
       (ep) => ep.entryPointType === 'video'
-    )?.uri || undefined;
+    )?.uri || event.data.hangoutLink || undefined;
 
     return {
       success: true,
