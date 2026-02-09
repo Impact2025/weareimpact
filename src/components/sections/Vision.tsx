@@ -26,10 +26,20 @@ export function Vision() {
               2026 is helder: ik ontwerp ecosystemen waarin technologie dient als
               enabler voor echt contact.
             </p>
-            <div className="p-6 bg-slate-50 rounded-2xl border-l-4 border-orange-500 italic text-slate-700">
+            <div className="p-6 bg-slate-50 rounded-2xl border-l-4 border-orange-500 italic text-slate-700 mb-6">
               &ldquo;Ik verkoop geen data. Ik verkoop impact. Ik ontwerp geen apps om
               je online te houden, maar tools die je helpen offline te
               leven.&rdquo;
+            </div>
+
+            <div className="p-5 bg-orange-50 rounded-xl border border-orange-100">
+              <p className="text-sm text-slate-700 leading-relaxed">
+                <span className="font-bold text-orange-600">Waarom WeAreImpact?</span>{' '}
+                Omdat ik niet alleen werk. Samen met jou, mijn AI-collega&apos;s en
+                een sterk netwerk van experts maak ik impact. &ldquo;We&rdquo; staat voor
+                de kracht van samenwerking &mdash; mens én machine, gericht op
+                echte verandering.
+              </p>
             </div>
           </div>
 

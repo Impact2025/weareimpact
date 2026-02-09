@@ -7,7 +7,7 @@ const portfolio = [
     name: 'DAAR',
     tagline: 'Grip op Geluk',
     description:
-      'Vrijwilligerswerk is de motor van de samenleving. Met DAAR leveren we software die niet alleen administreert, maar waardeert. We maken "Geluksmomenten" meetbaar voor gemeenten en stichtingen.',
+      'Vrijwilligerswerk is de motor van de samenleving. Met DAAR lever ik software die niet alleen administreert, maar waardeert. Ik maak "Geluksmomenten" meetbaar voor gemeenten en stichtingen.',
     color: 'text-orange-600',
   },
   {
@@ -28,7 +28,7 @@ const labs = [
     name: 'DatingAssistent',
     tagline: 'Verbinden zonder Ruis',
     description:
-      'Wat in 2009 begon als pionierswerk met LiefdevoorIedereen.nl en in 2014 startte als de eerste DatingAssistent, is nu geëvolueerd tot Iris: onze geavanceerde AI-coach.',
+      'Wat in 2009 begon als pionierswerk met LiefdevoorIedereen.nl en in 2014 startte als de eerste DatingAssistent, is nu geëvolueerd tot Iris: mijn geavanceerde AI-coach.',
     color: 'text-pink-500',
   },
   {
@@ -95,7 +95,7 @@ export function Ventures() {
             Experimentele concepten.
           </h3>
           <p className="text-slate-500">
-            Proof-of-concepts die onze filosofie in de praktijk brengen.
+            Proof-of-concepts die mijn filosofie in de praktijk brengen.
             Innovatieve ideeën in ontwikkeling.
           </p>
         </div>

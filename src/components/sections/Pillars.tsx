@@ -15,7 +15,7 @@ export function Pillars() {
       <div className="container mx-auto px-6">
         <div className="text-center max-w-3xl mx-auto mb-20">
           <h2 className="text-sm font-bold tracking-widest text-orange-600 uppercase mb-3">
-            Onze Expertise
+            Mijn Expertise
           </h2>
           <h3 className="text-4xl md:text-5xl font-bold text-slate-900 mb-6">
             Drie motoren voor groei
@@ -61,7 +61,7 @@ export function Pillars() {
               </div>
               <h4 className="text-2xl font-bold mb-4">DAAR & Tech</h4>
               <p className="text-slate-300 mb-6 leading-relaxed">
-                The Growth Engine. Wij bouwen schaalbare tech-oplossingen.
+                The Growth Engine. Ik bouw schaalbare tech-oplossingen.
                 Recurring impact.
               </p>
               <button

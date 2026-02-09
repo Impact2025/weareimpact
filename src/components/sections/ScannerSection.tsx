@@ -27,7 +27,7 @@ export function ScannerSection() {
             </h2>
             <p className="text-slate-400 text-lg mb-8 leading-relaxed">
               Benieuwd waar jouw grootste groeikans ligt? Doe de gratis
-              Quick-Scan. Onze AI analyseert direct je situatie en geeft
+              Quick-Scan. De AI analyseert direct je situatie en geeft
               strategisch advies op maat.
             </p>
             <div className="flex items-center gap-4 text-sm text-slate-500">
