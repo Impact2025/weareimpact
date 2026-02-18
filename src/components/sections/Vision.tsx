@@ -1,4 +1,5 @@
 import { Heart, Brain, Quote } from 'lucide-react';
+import Image from 'next/image';
 
 export function Vision() {
   return (
@@ -20,12 +21,23 @@ export function Vision() {
             <p className="text-lg text-slate-600 mb-6 leading-relaxed font-medium">
               Ik geloof dat het anders kan.
             </p>
-            <p className="text-lg text-slate-600 mb-8 leading-relaxed">
-              Mijn naam is Vincent van Munster. Ik ben geen standaard
-              tech-ondernemer. Ik ben een sociaal architect. Mijn missie voor
-              2026 is helder: ik ontwerp ecosystemen waarin technologie dient als
-              enabler voor echt contact.
-            </p>
+            <div className="flex items-start gap-4 mb-8">
+              <div className="flex-shrink-0">
+                <Image
+                  src="/Vincent van Munster WeAreImpact.png"
+                  alt="Vincent van Munster"
+                  width={128}
+                  height={128}
+                  className="rounded-full border-2 border-orange-200 shadow-lg"
+                />
+              </div>
+              <p className="text-lg text-slate-600 leading-relaxed flex-1">
+                Mijn naam is Vincent van Munster. Ik ben geen standaard
+                tech-ondernemer. Ik ben een sociaal architect. Mijn missie voor
+                2026 is helder: ik ontwerp ecosystemen waarin technologie dient als
+                enabler voor echt contact.
+              </p>
+            </div>
             <div className="p-6 bg-slate-50 rounded-2xl border-l-4 border-orange-500 italic text-slate-700 mb-6">
               &ldquo;Ik verkoop geen data. Ik verkoop impact. Ik ontwerp geen apps om
               je online te houden, maar tools die je helpen offline te
