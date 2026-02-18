@@ -24,7 +24,7 @@ export function Vision() {
             <div className="flex items-start gap-4 mb-8">
               <div className="flex-shrink-0">
                 <Image
-                  src="/Vincent van Munster WeAreImpact.png"
+                  src="/vincent-van-munster.png"
                   alt="Vincent van Munster"
                   width={128}
                   height={128}
