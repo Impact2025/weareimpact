@@ -1,6 +1,6 @@
 'use client';
 
-import { Brain, Rocket, Lightbulb, Blocks, ArrowRight } from 'lucide-react';
+import { ArrowRight, Rocket, Zap, Heart, Blocks } from 'lucide-react';
 
 function scrollToSection(id: string) {
   const element = document.getElementById(id);
@@ -9,108 +9,108 @@ function scrollToSection(id: string) {
   }
 }
 
+const cards = [
+  {
+    number: '01',
+    icon: Rocket,
+    title: 'In 90 dagen AI-ready',
+    description:
+      'Je weet dat AI kansen biedt voor jouw organisatie, maar je weet niet waar te beginnen. Of je hebt al plannen die niet van de grond komen. Ik stap tijdelijk in als aanjager, niet als beheerder. Ik analyseer waar AI echt waarde toevoegt, implementeer wat werkt en zorg dat jouw team het zelf kan voortzetten.',
+    cta: 'Plan een gesprek',
+    target: 'contact',
+  },
+  {
+    number: '02',
+    icon: Zap,
+    title: 'Meer tijd voor mensen',
+    description:
+      'Je medewerkers besteden te veel tijd aan rapportages, roosters en e-mails en te weinig aan de mensen om wie het draait. Ik breng AI-automatisering die past bij jouw organisatie: van AI-assistenten per medewerker tot autonome workflows die routinetaken volledig overnemen. Geen experiment, maar een werkende oplossing.',
+    cta: 'Bekijk de mogelijkheden',
+    target: 'contact',
+  },
+  {
+    number: '03',
+    icon: Heart,
+    title: 'Technologie die voor mensen werkt',
+    description:
+      'Je zoekt een digitale oplossing, maar wil niet eindigen met een systeem dat niemand gebruikt. Ik bouw tools die aansluiten op de menselijke maat, van vrijwilligerssoftware tot AI-coaching applicaties. Geen leverancier die vertrekt, maar een partner die begrijpt hoe technologie een welzijnsorganisatie versterkt.',
+    cta: 'Vertel mij jouw vraagstuk',
+    target: 'contact',
+  },
+  {
+    number: '04',
+    icon: Blocks,
+    title: 'Beweging waar het vastzit',
+    description:
+      'Samenwerking loopt stroef, een team trekt niet één kant op, of een verandertraject stuit op weerstand. Met LEGO® Serious Play faciliteer ik sessies die in één dag zichtbaar maken wat maanden vergaderen niet lukt, met concrete afspraken en vervolgstappen die je team zelf in handen neemt.',
+    cta: 'Ontdek LEGO® Serious Play',
+    target: 'ventures',
+  },
+];
+
 export function Pillars() {
   return (
-    <section id="pijlers" className="py-32 bg-[#FDFBF7]">
+    <section id="pijlers" className="py-24 bg-[#FDFBF7]">
       <div className="container mx-auto px-6">
-        <div className="text-center max-w-3xl mx-auto mb-20">
-          <h2 className="text-sm font-bold tracking-widest text-orange-600 uppercase mb-3">
-            Mijn Expertise
-          </h2>
-          <h3 className="text-4xl md:text-5xl font-bold text-slate-900 mb-6">
-            Drie motoren voor groei
-          </h3>
-          <p className="text-slate-600 text-lg">
-            Van strategisch advies tot hands-on tech ontwikkeling en impactvolle
-            workshops. Een integrale aanpak.
+
+        {/* Header */}
+        <div className="max-w-2xl mx-auto text-center mb-20">
+          <p className="text-sm font-bold tracking-widest text-orange-600 uppercase mb-4">
+            WeAreImpact in de praktijk
           </p>
+          <h2 className="text-4xl md:text-5xl font-bold text-slate-900 leading-tight">
+            In de praktijk
+          </h2>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-8">
-          {/* Pillar 1 */}
-          <div className="group bg-white p-10 rounded-3xl shadow-sm hover:shadow-xl transition-all duration-300 border border-slate-100 hover:border-orange-100 relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-orange-50 rounded-bl-full -mr-10 -mt-10 transition-transform group-hover:scale-110" />
-            <div className="relative z-10">
-              <div className="w-14 h-14 bg-white border border-slate-100 rounded-2xl flex items-center justify-center text-slate-900 mb-8 shadow-sm group-hover:bg-orange-600 group-hover:text-white transition-colors">
-                <Brain size={28} />
-              </div>
-              <h4 className="text-2xl font-bold mb-4">Interim & Advies</h4>
-              <p className="text-slate-600 mb-6 leading-relaxed">
-                The Funding Engine. Ik maak uw organisatie AI-ready en
-                implementeer strategisch beleid.
-              </p>
-              <button
-                onClick={() => scrollToSection('contact')}
-                className="inline-flex items-center gap-2 text-slate-900 font-semibold group-hover:text-orange-600 transition-all duration-300"
+        {/* Cards grid */}
+        <div className="grid md:grid-cols-2 gap-6 max-w-5xl mx-auto">
+          {cards.map((card) => {
+            const Icon = card.icon;
+            return (
+              <div
+                key={card.number}
+                className="group relative bg-white rounded-3xl p-10 border border-slate-100 overflow-hidden transition-all duration-500 hover:shadow-2xl hover:-translate-y-1"
               >
-                <span className="relative">
-                  Ontdek meer
-                  <span className="absolute bottom-0 left-0 w-full h-0.5 bg-current transform origin-left transition-transform duration-300 scale-x-100 group-hover:scale-x-100" />
-                </span>
-                <ArrowRight size={16} className="transform transition-transform duration-300 group-hover:translate-x-1" />
-              </button>
-            </div>
-          </div>
+                {/* Animated orange top bar */}
+                <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-orange-500 to-orange-300 transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-500 ease-out" />
 
-          {/* Pillar 2 - Featured */}
-          <div className="group bg-slate-900 p-10 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-300 relative overflow-hidden text-white transform md:-translate-y-4">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-slate-800 rounded-bl-full -mr-10 -mt-10 transition-transform group-hover:scale-110" />
-            <div className="relative z-10">
-              <div className="w-14 h-14 bg-slate-800 border border-slate-700 rounded-2xl flex items-center justify-center text-white mb-8 shadow-sm group-hover:bg-white group-hover:text-slate-900 transition-colors">
-                <Rocket size={28} />
-              </div>
-              <h4 className="text-2xl font-bold mb-4">DAAR & Tech</h4>
-              <p className="text-slate-300 mb-6 leading-relaxed">
-                The Growth Engine. Ik bouw schaalbare tech-oplossingen.
-                Recurring impact.
-              </p>
-              <button
-                onClick={() => scrollToSection('contact')}
-                className="inline-flex items-center gap-2 text-white font-semibold group-hover:text-orange-300 transition-all duration-300"
-              >
-                <span className="relative">
-                  Bekijk oplossingen
-                  <span className="absolute bottom-0 left-0 w-full h-0.5 bg-current transform origin-left transition-transform duration-300 scale-x-100" />
+                {/* Ghost number */}
+                <span className="absolute -bottom-4 right-6 text-9xl font-black text-slate-50 select-none leading-none transition-colors duration-500 group-hover:text-orange-50/80">
+                  {card.number}
                 </span>
-                <ArrowRight size={16} className="transform transition-transform duration-300 group-hover:translate-x-1" />
-              </button>
-            </div>
-          </div>
 
-          {/* Pillar 3 */}
-          <div className="group bg-white p-10 rounded-3xl shadow-sm hover:shadow-xl transition-all duration-300 border border-slate-100 hover:border-orange-100 relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-orange-50 rounded-bl-full -mr-10 -mt-10 transition-transform group-hover:scale-110" />
-            <div className="relative z-10">
-              <div className="w-14 h-14 bg-white border border-slate-100 rounded-2xl flex items-center justify-center text-slate-900 mb-8 shadow-sm group-hover:bg-orange-600 group-hover:text-white transition-colors">
-                <Lightbulb size={28} />
+                <div className="relative z-10">
+                  {/* Icon */}
+                  <div className="w-12 h-12 bg-orange-50 rounded-2xl flex items-center justify-center text-orange-600 mb-7 transition-all duration-300 group-hover:bg-orange-600 group-hover:text-white group-hover:scale-110">
+                    <Icon size={22} strokeWidth={1.75} />
+                  </div>
+
+                  {/* Title */}
+                  <h3 className="text-xl font-bold text-slate-900 mb-4 leading-snug min-h-[3.5rem] flex items-start">
+                    {card.title}
+                  </h3>
+
+                  {/* Description */}
+                  <p className="text-slate-600 leading-relaxed mb-8 text-[0.925rem]">
+                    {card.description}
+                  </p>
+
+                  {/* CTA */}
+                  <button
+                    onClick={() => scrollToSection(card.target)}
+                    className="inline-flex items-center gap-2 text-sm font-semibold text-slate-900 group-hover:text-orange-600 transition-colors duration-300"
+                  >
+                    {card.cta}
+                    <ArrowRight
+                      size={15}
+                      className="transition-transform duration-300 group-hover:translate-x-1"
+                    />
+                  </button>
+                </div>
               </div>
-              <h4 className="text-2xl font-bold mb-4">Ventures & LSP</h4>
-              <p className="text-slate-600 mb-6 leading-relaxed">
-                The Playground. Van high-end LEGO&reg; Serious Play sessies tot
-                innovatieve concepten die de wereld mooier maken.
-              </p>
-              <ul className="space-y-1 text-sm text-slate-500 mb-6">
-                <li className="flex items-center gap-2">
-                  <Blocks size={14} className="text-orange-500" /> LEGO&reg;
-                  Serious Play
-                </li>
-                <li className="flex items-center gap-2">
-                  <div className="w-1.5 h-1.5 bg-orange-500 rounded-full" />
-                  Teambuilding met Impact
-                </li>
-              </ul>
-              <button
-                onClick={() => scrollToSection('ventures')}
-                className="inline-flex items-center gap-2 text-slate-900 font-semibold group-hover:text-orange-600 transition-all duration-300"
-              >
-                <span className="relative">
-                  Ontdek ventures
-                  <span className="absolute bottom-0 left-0 w-full h-0.5 bg-current transform origin-left transition-transform duration-300 scale-x-100" />
-                </span>
-                <ArrowRight size={16} className="transform transition-transform duration-300 group-hover:translate-x-1" />
-              </button>
-            </div>
-          </div>
+            );
+          })}
         </div>
       </div>
     </section>

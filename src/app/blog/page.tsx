@@ -61,8 +61,18 @@ async function getPosts(): Promise<Post[]> {
   }
 }
 
-export default async function BlogPage() {
-  const posts = await getPosts();
+interface BlogPageProps {
+  searchParams: Promise<{ categorie?: string }>;
+}
+
+export default async function BlogPage({ searchParams }: BlogPageProps) {
+  const { categorie } = await searchParams;
+  const allPosts = await getPosts();
+
+  const activeCategory = categorie && categories.find(c => c.value === categorie) ? categorie : 'all';
+  const posts = activeCategory === 'all'
+    ? allPosts
+    : allPosts.filter(p => p.category === activeCategory);
 
   const breadcrumbItems = [
     { name: 'Home', url: '/' },
@@ -100,9 +110,9 @@ export default async function BlogPage() {
           {categories.map((category) => (
             <Link
               key={category.value}
-              href={category.value === 'all' ? '/blog' : `/kennisbank/categorie/${category.value}`}
+              href={category.value === 'all' ? '/blog' : `/blog?categorie=${category.value}`}
               className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                category.value === 'all'
+                activeCategory === category.value
                   ? 'bg-slate-900 text-white'
                   : 'bg-white border border-slate-200 text-slate-600 hover:border-orange-300'
               }`}
@@ -197,11 +207,16 @@ export default async function BlogPage() {
           <div className="text-center py-20">
             <BookOpen className="mx-auto text-slate-300 mb-4" size={64} />
             <h3 className="text-xl font-bold text-slate-600 mb-2">
-              De blog wordt gevuld
+              {activeCategory === 'all' ? 'De blog wordt gevuld' : 'Nog geen artikelen in deze categorie'}
             </h3>
-            <p className="text-slate-500">
+            <p className="text-slate-500 mb-4">
               Binnenkort vind je hier artikelen over AI, welzijn en sociale innovatie.
             </p>
+            {activeCategory !== 'all' && (
+              <Link href="/blog" className="text-orange-600 text-sm font-medium hover:underline">
+                Bekijk alle artikelen
+              </Link>
+            )}
           </div>
         )}
 

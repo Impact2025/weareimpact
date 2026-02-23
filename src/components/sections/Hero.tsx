@@ -16,7 +16,7 @@ export function Hero() {
         <div className="inline-flex items-center gap-3 px-5 py-2.5 rounded-full bg-white border border-slate-100 shadow-sm text-sm mb-8 animate-fade-in-up hover:border-orange-200 transition-colors cursor-default">
           <span className="font-bold text-slate-900">Vincent van Munster</span>
           <span className="w-1.5 h-1.5 bg-orange-400 rounded-full" />
-          <span className="text-slate-500 font-medium tracking-wide uppercase text-xs">
+          <span className="text-slate-600 font-medium tracking-wide uppercase text-xs">
             AI Welzijn Expert
           </span>
         </div>
@@ -27,9 +27,9 @@ export function Hero() {
         </h1>
 
         <p className="text-xl md:text-2xl text-slate-600 mb-12 max-w-3xl mx-auto font-light leading-relaxed animate-fade-in-up delay-200">
-          Als innovator en directeur-bestuurder combineer ik het beste van twee werelden.
-          Ik help je 'out of the box' te denken om complexe maatschappelijke vraagstukken
-          op te lossen. Met de kracht van AI en de menselijke maat van nu.
+          Welzijnsorganisaties hebben geen tekort aan goede bedoelingen.
+          Wel aan tijd, technologie en de mensen die het verschil maken.
+          Ik stap tijdelijk in, implementeer wat werkt, en zorg dat jouw team het zelf kan voortzetten.
         </p>
 
         <div className="flex flex-col md:flex-row gap-4 justify-center items-center animate-fade-in-up delay-300">

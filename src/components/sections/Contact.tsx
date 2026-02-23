@@ -23,18 +23,18 @@ export function Contact() {
           <div className="absolute top-0 right-0 w-64 h-64 bg-orange-50 rounded-bl-full -mr-10 -mt-10 opacity-50 pointer-events-none" />
 
           <div className="inline-block px-4 py-1.5 bg-slate-900 text-white rounded-full text-xs font-bold uppercase tracking-widest mb-6 relative z-10">
-            Voor Zakelijke Klanten
+            Partnerships
           </div>
 
           <h2 className="text-3xl md:text-5xl font-bold text-slate-900 mb-6 relative z-10">
-            Huur mij in als <br />
-            <span className="text-orange-600">Strategic Innovation Partner</span>
+            Jouw organisatie, <br />
+            <span className="text-orange-600">90 dagen van nu.</span>
           </h2>
 
           <p className="text-slate-600 text-lg mb-10 relative z-10 max-w-2xl mx-auto leading-relaxed">
-            Zoek je geen manager die op de winkel past, maar iemand die je
-            organisatie in 3 maanden AI-ready maakt? Ik help organisaties met
-            strategische innovatie en het implementeren van sociaal beleid.
+            Je zoekt geen manager die vergaderingen vult. Je zoekt iemand die
+            in 90 dagen zichtbaar resultaat boekt — en daarna zorgt dat jouw
+            team het zelf kan. Dat is wat ik doe.
           </p>
 
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-orange-50 border border-orange-200 rounded-lg text-sm text-orange-700 font-medium mb-10 relative z-10">

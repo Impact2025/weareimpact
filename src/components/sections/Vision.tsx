@@ -14,9 +14,9 @@ export function Vision() {
               Tech die ons menselijker maakt.
             </h2>
             <p className="text-lg text-slate-600 mb-6 leading-relaxed">
-              We leven in een tijdperk van exponentiële technologie. Maar te
-              vaak wordt AI ingezet om ons verslaafd te maken aan schermen of om
-              onze data te verkopen aan Big Tech.
+              Technologie belooft ons te verbinden. Maar te vaak maakt het ons
+              eenzamer, verslaafder en afhankelijker van systemen die ons niet
+              kennen en er geen bal om geven wie jij bent.
             </p>
             <p className="text-lg text-slate-600 mb-6 leading-relaxed font-medium">
               Ik geloof dat het anders kan.
@@ -33,9 +33,9 @@ export function Vision() {
               </div>
               <p className="text-lg text-slate-600 leading-relaxed flex-1">
                 Mijn naam is Vincent van Munster. Ik ben geen standaard
-                tech-ondernemer. Ik ben een sociaal architect. Mijn missie voor
-                2026 is helder: ik ontwerp ecosystemen waarin technologie dient als
-                enabler voor echt contact.
+                tech-ondernemer. Ik ben een sociaal architect. Mijn missie is
+                helder: ik bouw platforms en processen waarbij technologie mensen
+                dichter bij elkaar brengt, niet verder van elkaar af.
               </p>
             </div>
             <div className="p-6 bg-slate-50 rounded-2xl border-l-4 border-orange-500 italic text-slate-700 mb-6">
@@ -47,10 +47,9 @@ export function Vision() {
             <div className="p-5 bg-orange-50 rounded-xl border border-orange-100">
               <p className="text-sm text-slate-700 leading-relaxed">
                 <span className="font-bold text-orange-600">Waarom WeAreImpact?</span>{' '}
-                Omdat ik niet alleen werk. Samen met jou, mijn AI-collega&apos;s en
-                een sterk netwerk van experts maak ik impact. &ldquo;We&rdquo; staat voor
-                de kracht van samenwerking &mdash; mens én machine, gericht op
-                echte verandering.
+                &ldquo;We&rdquo; staat niet voor een groot bureau. Het staat voor jou,
+                mijn AI-collega&apos;s en een netwerk van mensen die begrijpen wat
+                impact écht betekent. Samen, gericht op echte verandering.
               </p>
             </div>
           </div>
@@ -64,11 +63,11 @@ export function Vision() {
                 <Quote size={120} />
               </div>
               <h3 className="text-2xl font-bold mb-6">
-                Welkom in de toekomst van welzijn.
+                Niet efficiënter. Menselijker.
               </h3>
               <p className="text-slate-300 mb-8 leading-relaxed">
-                Van strategisch advies voor gemeenten tot AI-coaching voor
-                singles: ik combineer slimme technologie met menselijke waarden.
+                Ik werk met gemeenten, stichtingen en zorginstellingen die willen
+                innoveren zonder de menselijke maat te verliezen.
               </p>
               <div className="flex flex-col gap-4">
                 <div className="flex items-center gap-4 p-4 bg-slate-800 rounded-xl hover:bg-slate-700 transition-colors cursor-default">

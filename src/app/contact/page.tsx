@@ -2,6 +2,7 @@
 
 import { useState, FormEvent } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import {
   Phone,
   Mail,
@@ -131,8 +132,14 @@ export default function ContactPage() {
                     {/* Avatar & Info */}
                     <div className="flex items-start gap-5 mb-8">
                       <div className="relative">
-                        <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white text-2xl font-bold shadow-lg">
-                          VM
+                        <div className="w-20 h-20 rounded-2xl overflow-hidden shadow-lg">
+                          <Image
+                            src="/vincent-van-munster.png"
+                            alt="Vincent van Munster"
+                            width={80}
+                            height={80}
+                            className="w-full h-full object-cover"
+                          />
                         </div>
                         <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-green-500 rounded-full border-2 border-white" />
                       </div>

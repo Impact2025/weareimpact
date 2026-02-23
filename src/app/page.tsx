@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import { Hero } from '@/components/sections/Hero';
 import { Vision } from '@/components/sections/Vision';
 import { ScannerSection } from '@/components/sections/ScannerSection';
@@ -7,6 +8,7 @@ import { About } from '@/components/sections/About';
 import { HomeFAQ } from '@/components/sections/HomeFAQ';
 import { Contact } from '@/components/sections/Contact';
 import { KennisbankPreview } from '@/components/sections/KennisbankPreview';
+import { KennisbankSkeleton } from '@/components/sections/KennisbankSkeleton';
 import { HomePageJsonLd } from '@/components/seo/JsonLd';
 
 export default function Home() {
@@ -16,7 +18,9 @@ export default function Home() {
       <Hero />
       <Vision />
       <ScannerSection />
-      <KennisbankPreview />
+      <Suspense fallback={<KennisbankSkeleton />}>
+        <KennisbankPreview />
+      </Suspense>
       <Pillars />
       <Ventures />
       <About />

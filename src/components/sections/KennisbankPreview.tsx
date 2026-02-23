@@ -51,7 +51,7 @@ export async function KennisbankPreview() {
   }
 
   return (
-    <section className="py-16 md:py-24 bg-slate-50">
+    <section className="py-24 bg-slate-50">
       <div className="container mx-auto px-4 md:px-6 max-w-6xl">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-8 md:mb-12">
@@ -102,10 +102,10 @@ export async function KennisbankPreview() {
                 <h3 className="text-sm md:text-base font-bold text-slate-900 mb-2 group-hover:text-orange-600 transition-colors line-clamp-2">
                   {article.title}
                 </h3>
-                <p className="text-xs md:text-sm text-slate-500 mb-3 md:mb-4 line-clamp-2">
+                <p className="text-xs md:text-sm text-slate-600 mb-3 md:mb-4 line-clamp-2">
                   {article.excerpt}
                 </p>
-                <div className="flex items-center gap-1 text-xs text-slate-400">
+                <div className="flex items-center gap-1 text-xs text-slate-500">
                   <Clock size={12} />
                   {article.reading_time} min leestijd
                 </div>
@@ -116,7 +116,7 @@ export async function KennisbankPreview() {
 
         {/* Categories Quick Links */}
         <div className="mt-8 md:mt-12 flex flex-wrap items-center justify-center gap-2 md:gap-3">
-          <span className="text-xs md:text-sm text-slate-500 w-full md:w-auto text-center md:text-left mb-1 md:mb-0">Populaire categorieën:</span>
+          <span className="text-xs md:text-sm text-slate-600 w-full md:w-auto text-center md:text-left mb-1 md:mb-0">Populaire categorieën:</span>
           {Object.entries(categoryConfig).slice(0, 4).map(([slug, config]) => (
             <Link
               key={slug}

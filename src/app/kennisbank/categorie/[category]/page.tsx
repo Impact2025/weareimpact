@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { notFound } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
@@ -219,8 +219,24 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
+const categoryAliases: Record<string, string> = {
+  'ai': 'ai-tech',
+  'tech': 'ai-tech',
+  'vrijwilliger': 'vrijwilligers',
+  'subsidie': 'subsidie-funding',
+  'lego': 'lego-serious-play',
+  'impact': 'impact-meten',
+  'sociaal': 'sociaal-ondernemen',
+};
+
 export default async function CategoryPage({ params }: Props) {
   const { category } = await params;
+
+  // Redirect aliases to canonical slugs
+  if (categoryAliases[category]) {
+    redirect(`/kennisbank/categorie/${categoryAliases[category]}`);
+  }
+
   const cat = categories[category];
 
   if (!cat) {
