@@ -14,18 +14,6 @@ const portfolio = [
     url: null,
   },
   {
-    id: 'bewaard',
-    initial: 'BJ',
-    name: 'Bewaardvoorjou',
-    tagline: 'Levensverhalen voor de Eeuwigheid',
-    description:
-      'Een empathische AI-tool die ouderen helpt hun levensverhalen vast te leggen. Geen kille database, maar een warme "Life Journey" die generaties verbindt en eenzaamheid tegengaat.',
-    color: 'text-blue-500',
-    accent: 'border-blue-400',
-    dot: 'bg-blue-400',
-    url: null,
-  },
-  {
     id: 'bijeen',
     initial: 'BN',
     name: 'Bijeen',
