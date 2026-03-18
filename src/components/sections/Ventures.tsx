@@ -1,4 +1,4 @@
-import { Blocks, FlaskConical, CheckCircle2, Clock } from 'lucide-react';
+import { Blocks, FlaskConical, CheckCircle2, Clock, ExternalLink } from 'lucide-react';
 
 const portfolio = [
   {
@@ -11,6 +11,7 @@ const portfolio = [
     color: 'text-orange-600',
     accent: 'border-orange-400',
     dot: 'bg-orange-400',
+    url: null,
   },
   {
     id: 'bewaard',
@@ -22,6 +23,19 @@ const portfolio = [
     color: 'text-blue-500',
     accent: 'border-blue-400',
     dot: 'bg-blue-400',
+    url: null,
+  },
+  {
+    id: 'bijeen',
+    initial: 'BN',
+    name: 'Bijeen',
+    tagline: 'Evenementen die écht verbinding maken',
+    description:
+      'Het eerste eventplatform gebouwd voor de welzijnssector. Van vrijwilligersdag tot buurtfestival — organiseer met impact, meet wat je bereikt.',
+    color: 'text-amber-600',
+    accent: 'border-amber-400',
+    dot: 'bg-amber-400',
+    url: 'https://bijeen.app',
   },
 ];
 
@@ -68,35 +82,57 @@ export function Ventures() {
 
         {/* Portfolio Cards */}
         <div className="grid md:grid-cols-2 gap-6 mb-24">
-          {portfolio.map((venture) => (
-            <div
-              key={venture.id}
-              className={`bg-white p-8 rounded-3xl border border-slate-100 border-l-4 ${venture.accent} hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5`}
-            >
-              <div className="flex items-center justify-between mb-5">
-                <div className="flex items-center gap-3">
-                  <div
-                    className={`w-12 h-12 bg-slate-50 rounded-xl flex items-center justify-center shadow-sm ${venture.color} font-bold text-sm`}
-                  >
-                    {venture.initial}
+          {portfolio.map((venture) => {
+            const inner = (
+              <>
+                <div className="flex items-center justify-between mb-5">
+                  <div className="flex items-center gap-3">
+                    <div
+                      className={`w-12 h-12 bg-slate-50 rounded-xl flex items-center justify-center shadow-sm ${venture.color} font-bold text-sm`}
+                    >
+                      {venture.initial}
+                    </div>
+                    <div>
+                      <h4 className="text-xl font-bold text-slate-900 leading-none mb-1">
+                        {venture.name}
+                      </h4>
+                      <span className="text-xs font-bold text-slate-500 uppercase tracking-widest">
+                        {venture.tagline}
+                      </span>
+                    </div>
                   </div>
-                  <div>
-                    <h4 className="text-xl font-bold text-slate-900 leading-none mb-1">
-                      {venture.name}
-                    </h4>
-                    <span className="text-xs font-bold text-slate-500 uppercase tracking-widest">
-                      {venture.tagline}
+                  <div className="flex items-center gap-2 shrink-0">
+                    {venture.url && (
+                      <ExternalLink size={14} className="text-slate-400" />
+                    )}
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-green-50 text-green-700 rounded-full text-xs font-semibold">
+                      <span className={`w-1.5 h-1.5 rounded-full ${venture.dot} animate-pulse`} />
+                      Live
                     </span>
                   </div>
                 </div>
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-green-50 text-green-700 rounded-full text-xs font-semibold shrink-0">
-                  <span className={`w-1.5 h-1.5 rounded-full ${venture.dot} animate-pulse`} />
-                  Live
-                </span>
+                <p className="text-slate-600 leading-relaxed">{venture.description}</p>
+              </>
+            );
+            return venture.url ? (
+              <a
+                key={venture.id}
+                href={venture.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`block bg-white p-8 rounded-3xl border border-slate-100 border-l-4 ${venture.accent} hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5`}
+              >
+                {inner}
+              </a>
+            ) : (
+              <div
+                key={venture.id}
+                className={`bg-white p-8 rounded-3xl border border-slate-100 border-l-4 ${venture.accent} hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5`}
+              >
+                {inner}
               </div>
-              <p className="text-slate-600 leading-relaxed">{venture.description}</p>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
         {/* Labs Divider */}

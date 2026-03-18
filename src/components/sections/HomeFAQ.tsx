@@ -25,7 +25,7 @@ export function HomeFAQ() {
     {
       question: 'Ben je beschikbaar voor een interim-opdracht?',
       answer:
-        'Ik neem bewust een beperkt aantal trajecten aan, zodat ik elke klant de aandacht kan geven die het verdient. Voor Q1 2026 zijn er nog 2 plekken beschikbaar voor organisaties die durven te vernieuwen met een sociaal hart.',
+        'Ik neem bewust een beperkt aantal trajecten aan, zodat ik elke klant de aandacht kan geven die het verdient. Voor Q2 2026 zijn er nog 2 plekken beschikbaar voor organisaties die durven te vernieuwen met een sociaal hart.',
     },
   ];
 

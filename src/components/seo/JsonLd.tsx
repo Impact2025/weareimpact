@@ -132,7 +132,7 @@ export const faqSchema = {
       name: 'Ben je beschikbaar voor een interim-opdracht?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Omdat ik geloof in kwaliteit boven kwantiteit, neem ik slechts een beperkt aantal partnerschappen aan. Voor Q1 2026 heb ik momenteel nog 2 plekken beschikbaar voor organisaties die durven te vernieuwen met een sociaal hart.',
+        text: 'Omdat ik geloof in kwaliteit boven kwantiteit, neem ik slechts een beperkt aantal partnerschappen aan. Voor Q2 2026 heb ik momenteel nog 2 plekken beschikbaar voor organisaties die durven te vernieuwen met een sociaal hart.',
       },
     },
   ],

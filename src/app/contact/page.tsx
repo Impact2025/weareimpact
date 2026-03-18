@@ -165,7 +165,7 @@ export default function ContactPage() {
                       </div>
                       <div className="text-center">
                         <div className="text-2xl font-bold text-orange-600">2</div>
-                        <div className="text-xs text-slate-500">Plekken Q1</div>
+                        <div className="text-xs text-slate-500">Plekken Q2</div>
                       </div>
                     </div>
 
