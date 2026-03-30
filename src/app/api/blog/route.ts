@@ -3,6 +3,24 @@ import { sql } from '@/lib/db/neon';
 
 export const dynamic = 'force-dynamic';
 
+const BASE_URL = 'https://weareimpact.nl';
+
+async function pingSearchEngines(slug: string) {
+  const pageUrl = encodeURIComponent(`${BASE_URL}/blog/${slug}`);
+  const sitemapUrl = encodeURIComponent(`${BASE_URL}/sitemap.xml`);
+
+  await Promise.allSettled([
+    // Notify Google to re-crawl the sitemap
+    fetch(`https://www.google.com/ping?sitemap=${sitemapUrl}`),
+    // Notify Bing to re-crawl the sitemap
+    fetch(`https://www.bing.com/ping?sitemap=${sitemapUrl}`),
+    // IndexNow for Bing/Yandex (if key is set)
+    ...(process.env.INDEXNOW_KEY
+      ? [fetch(`https://api.indexnow.org/indexnow?url=${pageUrl}&key=${process.env.INDEXNOW_KEY}`)]
+      : []),
+  ]);
+}
+
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
@@ -156,6 +174,11 @@ export async function POST(request: NextRequest) {
 
     const post = result[0];
 
+    // Notify search engines when publishing
+    if (status === 'published') {
+      pingSearchEngines(post.slug as string).catch(() => {});
+    }
+
     return NextResponse.json({
       post: {
         id: post.id,
@@ -245,6 +268,11 @@ export async function PUT(request: NextRequest) {
         { error: 'Post not found' },
         { status: 404 }
       );
+    }
+
+    // Notify search engines when publishing or updating a published post
+    if (updates.status === 'published' || result[0].status === 'published') {
+      pingSearchEngines(result[0].slug as string).catch(() => {});
     }
 
     return NextResponse.json({ post: result[0] });

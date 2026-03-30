@@ -61,6 +61,23 @@ interface RelatedArticle {
   difficulty: string;
 }
 
+interface RelatedBlogPost {
+  title: string;
+  slug: string;
+  reading_time: number;
+  category: string;
+}
+
+// Kennisbank category slug → blog category
+const kennisbankToBlogCategory: Record<string, string> = {
+  'ai-tech': 'ai',
+  'impact-meten': 'impact',
+  'sociaal-ondernemen': 'strategie',
+  'vrijwilligers': 'impact',
+  'subsidie-funding': 'strategie',
+  'lego-serious-play': 'strategie',
+};
+
 const categoryConfig: Record<string, { label: string; bg: string; text: string; icon: React.ElementType }> = {
   'sociaal-ondernemen': { label: 'Sociaal Ondernemen', bg: 'bg-orange-100', text: 'text-orange-700', icon: Building2 },
   'ai-tech': { label: 'AI & Technologie', bg: 'bg-blue-100', text: 'text-blue-700', icon: Brain },
@@ -267,6 +284,22 @@ async function getRelatedArticles(category: string, currentSlug: string): Promis
   }
 }
 
+async function getRelatedBlogPosts(kennisbankCategory: string): Promise<RelatedBlogPost[]> {
+  const blogCategory = kennisbankToBlogCategory[kennisbankCategory] || 'ai';
+  try {
+    const posts = await sql`
+      SELECT title, slug, reading_time, category
+      FROM posts
+      WHERE category = ${blogCategory} AND status = 'published'
+      ORDER BY published_at DESC
+      LIMIT 3
+    `;
+    return posts as RelatedBlogPost[];
+  } catch {
+    return [];
+  }
+}
+
 interface Props {
   params: Promise<{ slug: string }>;
 }
@@ -332,6 +365,7 @@ export default async function KennisbankArticlePage({ params }: Props) {
   }
 
   const relatedArticles = await getRelatedArticles(article.category_slug, slug);
+  const relatedBlogPosts = await getRelatedBlogPosts(article.category_slug);
   const categoryInfo = categoryConfig[article.category_slug] || { label: article.category_slug, bg: 'bg-slate-100', text: 'text-slate-700', icon: BookOpen };
   const CategoryIcon = categoryInfo.icon;
   const faqItems = article.faq_items || [];
@@ -641,6 +675,40 @@ export default async function KennisbankArticlePage({ params }: Props) {
                     </div>
                   </div>
                   <ArrowLeft className="text-orange-600 rotate-180 group-hover:translate-x-1 transition-transform flex-shrink-0" size={16} />
+                </Link>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* Related Blog Posts */}
+        {relatedBlogPosts.length > 0 && (
+          <section className="mt-10 md:mt-12">
+            <h2 className="text-xl md:text-2xl font-bold text-slate-900 mb-4 md:mb-6">
+              Gerelateerde blogposts
+            </h2>
+            <div className="grid gap-3 md:gap-4">
+              {relatedBlogPosts.map((post) => (
+                <Link
+                  key={post.slug}
+                  href={`/blog/${post.slug}`}
+                  className="group flex items-center justify-between p-3 md:p-4 bg-white rounded-xl border border-slate-100 hover:border-orange-200 hover:shadow-lg transition-all"
+                >
+                  <div className="flex items-center gap-3 md:gap-4 min-w-0">
+                    <div className="w-8 h-8 md:w-10 md:h-10 bg-orange-50 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <BookOpen className="text-orange-500" size={16} />
+                    </div>
+                    <div className="min-w-0">
+                      <h3 className="font-medium text-slate-900 group-hover:text-orange-600 transition-colors text-sm md:text-base line-clamp-2">
+                        {post.title}
+                      </h3>
+                      <div className="flex items-center gap-1.5 text-xs md:text-sm text-slate-400 mt-0.5">
+                        <Clock size={12} />
+                        {post.reading_time} min leestijd
+                      </div>
+                    </div>
+                  </div>
+                  <ChevronRight className="text-orange-500 group-hover:translate-x-1 transition-transform flex-shrink-0" size={16} />
                 </Link>
               ))}
             </div>

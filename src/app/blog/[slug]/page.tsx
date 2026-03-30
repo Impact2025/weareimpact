@@ -1,8 +1,11 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
+import fs from 'fs';
+import path from 'path';
+import matter from 'gray-matter';
 import { sql } from '@/lib/db/neon';
-import { ArrowLeft, Calendar, Clock, Linkedin, Twitter, ChevronRight } from 'lucide-react';
+import { ArrowLeft, Calendar, Clock, Linkedin, Twitter, ChevronRight, BookOpen } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ArticleJsonLd, BreadcrumbJsonLd } from '@/components/seo/JsonLd';
@@ -55,6 +58,63 @@ const categoryColors: Record<string, string> = {
   strategie: 'bg-purple-100 text-purple-700',
   nieuws: 'bg-orange-100 text-orange-700',
 };
+
+// Blog category → kennisbank category slug
+const blogToKennisbankCategory: Record<string, string> = {
+  ai: 'ai-tech',
+  impact: 'impact-meten',
+  strategie: 'sociaal-ondernemen',
+  nieuws: 'ai-tech',
+};
+
+interface RelatedKennisbankArticle {
+  title: string;
+  slug: string;
+  reading_time: number;
+}
+
+async function getRelatedKennisbankArticles(blogCategory: string): Promise<RelatedKennisbankArticle[]> {
+  const kennisbankCategory = blogToKennisbankCategory[blogCategory] || 'ai-tech';
+
+  // Try database first
+  try {
+    const articles = await sql`
+      SELECT title, slug, reading_time
+      FROM kb_articles
+      WHERE category_slug = ${kennisbankCategory} AND status = 'published'
+      ORDER BY views DESC NULLS LAST
+      LIMIT 3
+    `;
+    if (articles.length > 0) return articles as RelatedKennisbankArticle[];
+  } catch {
+    // fall through to markdown
+  }
+
+  // Fallback: markdown files
+  try {
+    const kennisbankDir = path.join(process.cwd(), 'content', 'kennisbank');
+    if (!fs.existsSync(kennisbankDir)) return [];
+
+    const files = fs.readdirSync(kennisbankDir).filter(f => f.endsWith('.md'));
+    const results: RelatedKennisbankArticle[] = [];
+
+    for (const file of files) {
+      const { data } = matter(fs.readFileSync(path.join(kennisbankDir, file), 'utf8'));
+      if (data.category_slug === kennisbankCategory) {
+        results.push({
+          title: data.title || file.replace('.md', ''),
+          slug: data.slug || file.replace('.md', ''),
+          reading_time: data.reading_time || 5,
+        });
+      }
+      if (results.length >= 3) break;
+    }
+
+    return results;
+  } catch {
+    return [];
+  }
+}
 
 async function getPost(slug: string): Promise<Post | null> {
   try {
@@ -131,6 +191,8 @@ export default async function BlogPostPage({ params }: Props) {
   if (!post) {
     notFound();
   }
+
+  const relatedKennisbank = await getRelatedKennisbankArticles(post.category);
 
   const breadcrumbItems = [
     { name: 'Home', url: '/' },
@@ -308,6 +370,40 @@ export default async function BlogPostPage({ params }: Props) {
             </Button>
           </div>
         </div>
+
+        {/* Related Kennisbank Articles */}
+        {relatedKennisbank.length > 0 && (
+          <section className="mt-12">
+            <h2 className="text-xl font-bold text-slate-900 mb-4">
+              Verdiep je verder in de kennisbank
+            </h2>
+            <div className="grid gap-3">
+              {relatedKennisbank.map((article) => (
+                <Link
+                  key={article.slug}
+                  href={`/kennisbank/${article.slug}`}
+                  className="group flex items-center justify-between p-4 bg-white rounded-xl border border-slate-100 hover:border-orange-200 hover:shadow-md transition-all"
+                >
+                  <div className="flex items-center gap-4 min-w-0">
+                    <div className="w-9 h-9 bg-orange-50 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <BookOpen className="text-orange-500" size={16} />
+                    </div>
+                    <div className="min-w-0">
+                      <h3 className="font-medium text-slate-900 group-hover:text-orange-600 transition-colors text-sm line-clamp-2">
+                        {article.title}
+                      </h3>
+                      <div className="flex items-center gap-1 text-xs text-slate-400 mt-0.5">
+                        <Clock size={11} />
+                        {article.reading_time} min leestijd
+                      </div>
+                    </div>
+                  </div>
+                  <ChevronRight className="text-orange-500 group-hover:translate-x-1 transition-transform flex-shrink-0 ml-2" size={16} />
+                </Link>
+              ))}
+            </div>
+          </section>
+        )}
 
         {/* CTA */}
         <div className="mt-12 bg-gradient-to-br from-slate-900 to-slate-800 rounded-2xl p-8 text-center text-white">
