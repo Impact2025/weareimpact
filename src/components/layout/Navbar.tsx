@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import Image from 'next/image';
-import { Menu, X, Sparkles, BookOpen } from 'lucide-react';
+import { Menu, X, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const navItems = [
@@ -12,7 +12,6 @@ const navItems = [
   { label: 'EXPERTISE', href: '/#pijlers', isHash: true },
   { label: 'AI SCAN', href: '/#scan', icon: Sparkles, highlight: true, isHash: true },
   { label: 'BLOG', href: '/blog', isHash: false },
-  { label: 'KENNISBANK', href: '/kennisbank', icon: BookOpen, isHash: false },
   { label: 'VENTURES', href: '/#ventures', isHash: true },
   { label: 'CONTACT', href: '/contact', isHash: false },
 ];

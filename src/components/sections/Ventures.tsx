@@ -1,4 +1,4 @@
-import { Blocks, FlaskConical, CheckCircle2, Clock, ExternalLink } from 'lucide-react';
+import { Blocks, FlaskConical, CheckCircle2, Clock, ExternalLink, Bot } from 'lucide-react';
 
 const portfolio = [
   {
@@ -12,6 +12,24 @@ const portfolio = [
     accent: 'border-orange-400',
     dot: 'bg-orange-400',
     url: null,
+    badge: 'Live',
+    badgeColor: 'bg-green-50 text-green-700',
+    dotColor: 'bg-green-400',
+  },
+  {
+    id: 'vrijwilligersmatch',
+    initial: 'VM',
+    name: 'Vrijwilligersmatch.nl',
+    tagline: 'Lopende gemeentepilot',
+    description:
+      'Het platform dat vrijwilligers koppelt aan organisaties die ze echt nodig hebben. Momenteel actief als gemeentepilot — bewijs dat de aanpak werkt én schaalbaar is.',
+    color: 'text-emerald-600',
+    accent: 'border-emerald-400',
+    dot: 'bg-emerald-400',
+    url: 'https://vrijwilligersmatch.nl',
+    badge: 'Gemeentepilot',
+    badgeColor: 'bg-emerald-50 text-emerald-700',
+    dotColor: 'bg-emerald-400',
   },
   {
     id: 'bijeen',
@@ -24,18 +42,31 @@ const portfolio = [
     accent: 'border-amber-400',
     dot: 'bg-amber-400',
     url: 'https://bijeen.app',
+    badge: 'Live',
+    badgeColor: 'bg-green-50 text-green-700',
+    dotColor: 'bg-green-400',
   },
 ];
 
 const labs = [
   {
-    id: 'dating',
-    initial: 'DA',
-    name: 'DatingAssistent → Iris',
-    tagline: 'Verbinden zonder Ruis',
+    id: 'iris',
+    initial: null,
+    icon: Bot,
+    name: 'Iris — AI Werkassistent',
+    tagline: 'Jouw team, geautomatiseerd',
     description:
-      'Wat in 2009 begon als pionierswerk met LiefdevoorIedereen.nl en in 2014 startte als de eerste DatingAssistent, is nu geëvolueerd tot Iris: mijn geavanceerde AI-coach.',
-    color: 'text-pink-500',
+      'Ik heb een AI-werkassistent gebouwd die agenda, mail en rapportages automatiseert. Dit implementeer ik ook voor jouw team. Geen theorie — ik gebruik het zelf dagelijks.',
+    color: 'text-violet-500',
+  },
+  {
+    id: 'ictusgo',
+    initial: 'IG',
+    name: 'IctusGO',
+    tagline: 'Buurtverbinding in de praktijk',
+    description:
+      'Buurtbewoners activeren via beweging en ontmoeting. De maatschappelijke variant van IctusGO verbindt mensen die anders naast elkaar leven — bewegen als smeermiddel voor sociale cohesie.',
+    color: 'text-sky-500',
   },
   {
     id: 'steentje',
@@ -69,7 +100,7 @@ export function Ventures() {
         </div>
 
         {/* Portfolio Cards */}
-        <div className="grid md:grid-cols-2 gap-6 mb-24">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-24">
           {portfolio.map((venture) => {
             const inner = (
               <>
@@ -93,9 +124,9 @@ export function Ventures() {
                     {venture.url && (
                       <ExternalLink size={14} className="text-slate-400" />
                     )}
-                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-green-50 text-green-700 rounded-full text-xs font-semibold">
-                      <span className={`w-1.5 h-1.5 rounded-full ${venture.dot} animate-pulse`} />
-                      Live
+                    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 ${venture.badgeColor} rounded-full text-xs font-semibold`}>
+                      <span className={`w-1.5 h-1.5 rounded-full ${venture.dotColor} animate-pulse`} />
+                      {venture.badge}
                     </span>
                   </div>
                 </div>
@@ -131,7 +162,7 @@ export function Ventures() {
           <div className="relative flex justify-center">
             <div className="bg-white px-6 flex items-center gap-2 text-slate-400">
               <FlaskConical size={16} />
-              <span className="text-sm font-bold uppercase tracking-widest">Labs</span>
+              <span className="text-sm font-bold uppercase tracking-widest">In de praktijk</span>
             </div>
           </div>
         </div>
@@ -140,18 +171,18 @@ export function Ventures() {
         <div className="text-center max-w-3xl mx-auto mb-12">
           <div className="inline-flex items-center gap-2 px-3 py-1 bg-slate-100 text-slate-500 rounded-full text-xs font-bold uppercase tracking-widest mb-4">
             <Clock size={13} />
-            In ontwikkeling
+            Ventures &amp; tools
           </div>
           <h3 className="text-3xl font-bold text-slate-900 mb-4">
-            Experimentele concepten
+            Wat ik bouw en inzet
           </h3>
           <p className="text-slate-600">
-            Proof-of-concepts die mijn filosofie in de praktijk brengen.
+            Van AI-automatisering tot buurtverbinding — concepten die ik zelf gebruik en implementeer.
           </p>
         </div>
 
         {/* Labs Cards */}
-        <div className="grid md:grid-cols-2 gap-6">
+        <div className="grid md:grid-cols-3 gap-6">
           {labs.map((venture) => (
             <div
               key={venture.id}

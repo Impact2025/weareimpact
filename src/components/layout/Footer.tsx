@@ -1,21 +1,12 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { BookOpen, Brain, Users, Target, DollarSign, Blocks } from 'lucide-react';
-
-const kennisbankCategories = [
-  { slug: 'ai-tech', label: 'AI & Technologie', icon: Brain },
-  { slug: 'vrijwilligers', label: 'Vrijwilligersmanagement', icon: Users },
-  { slug: 'impact-meten', label: 'Impact Meten', icon: Target },
-  { slug: 'subsidie-funding', label: 'Subsidie & Funding', icon: DollarSign },
-  { slug: 'lego-serious-play', label: 'LEGO Serious Play', icon: Blocks },
-];
 
 export function Footer() {
   return (
     <footer className="bg-slate-900 text-slate-300">
       {/* Main Footer Content */}
       <div className="container mx-auto px-6 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
           {/* Brand Column */}
           <div className="lg:col-span-1">
             <Link href="/" className="flex items-center gap-3 mb-4">
@@ -44,35 +35,6 @@ export function Footer() {
                 </svg>
               </Link>
             </div>
-          </div>
-
-          {/* Kennisbank Column - Important for SEO */}
-          <div>
-            <h3 className="text-white font-semibold mb-4 flex items-center gap-2">
-              <BookOpen size={18} className="text-orange-500" />
-              Kennisbank
-            </h3>
-            <ul className="space-y-2">
-              <li>
-                <Link
-                  href="/kennisbank"
-                  className="text-sm hover:text-orange-400 transition-colors"
-                >
-                  Alle artikelen
-                </Link>
-              </li>
-              {kennisbankCategories.map((category) => (
-                <li key={category.slug}>
-                  <Link
-                    href={`/kennisbank/categorie/${category.slug}`}
-                    className="text-sm hover:text-orange-400 transition-colors flex items-center gap-2"
-                  >
-                    <category.icon size={14} className="text-slate-500" />
-                    {category.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
           </div>
 
           {/* Services Column */}
