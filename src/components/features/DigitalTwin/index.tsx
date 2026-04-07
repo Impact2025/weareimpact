@@ -346,7 +346,6 @@ export function DigitalTwin() {
   const [showWelcomeTyping, setShowWelcomeTyping] = useState(false);
   const [welcomeMessageStep, setWelcomeMessageStep] = useState(0);
   const welcomeVideoRef = useRef<HTMLVideoElement>(null);
-  const [videoMuted, setVideoMuted] = useState(true);
 
   // Iris state
   const { currentMoment, isVisible: isIrisVisible, showIris, hideIris } = useIris();
@@ -398,20 +397,6 @@ export function DigitalTwin() {
     }
   }, [isOpen, hasSeenWelcome, messages.length]);
 
-  // Play welcome video imperatively when it appears (needed for autoplay policy)
-  useEffect(() => {
-    if (showWelcomeVideo && welcomeVideoRef.current) {
-      const video = welcomeVideoRef.current;
-      video.muted = true;
-      video.play().then(() => {
-        // Probeer unmuten na succesvolle start
-        setVideoMuted(false);
-        video.muted = false;
-      }).catch(() => {
-        // Autoplay geblokkeerd, blijf gedempt
-      });
-    }
-  }, [showWelcomeVideo]);
 
   // Handle welcome video end - start the fade and typing sequence
   const handleWelcomeVideoEnd = () => {
@@ -798,23 +783,21 @@ export function DigitalTwin() {
                     ref={welcomeVideoRef}
                     src="/videos/iris/welcome.mp4"
                     className="w-full h-full object-cover"
+                    autoPlay
                     playsInline
-                    muted={videoMuted}
+                    muted
                     onEnded={handleWelcomeVideoEnd}
                     onError={handleWelcomeVideoEnd}
                   />
-                  {/* Unmute knop als video gedempt is */}
-                  {videoMuted && (
-                    <button
-                      onClick={() => {
-                        setVideoMuted(false);
-                        if (welcomeVideoRef.current) welcomeVideoRef.current.muted = false;
-                      }}
-                      className="absolute top-4 right-4 px-3 py-1.5 bg-black/50 hover:bg-black/70 rounded-full text-white text-xs transition-colors flex items-center gap-1"
-                    >
-                      🔇 Geluid aan
-                    </button>
-                  )}
+                  {/* Unmute knop */}
+                  <button
+                    onClick={() => {
+                      if (welcomeVideoRef.current) welcomeVideoRef.current.muted = false;
+                    }}
+                    className="absolute top-4 right-4 px-3 py-1.5 bg-black/50 hover:bg-black/70 rounded-full text-white text-xs transition-colors flex items-center gap-1"
+                  >
+                    🔇 Geluid aan
+                  </button>
                   {/* Skip button */}
                   <button
                     onClick={skipWelcomeVideo}
