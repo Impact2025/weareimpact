@@ -63,9 +63,9 @@ const labs = [
     id: 'ictusgo',
     initial: 'IG',
     name: 'IctusGO',
-    tagline: 'Buurtverbinding in de praktijk',
+    tagline: 'GPS teambuilding met impact',
     description:
-      'Buurtbewoners activeren via beweging en ontmoeting. De maatschappelijke variant van IctusGO verbindt mensen die anders naast elkaar leven. Bewegen als smeermiddel voor sociale cohesie.',
+      'IctusGo combineert GPS-avontuur met sociale missies. Voor bedrijven, gezinnen, scholen en voetbalclubs — in 5 varianten die passen bij jouw groep en doel.',
     color: 'text-sky-500',
     url: 'https://ictusgo.nl',
   },
