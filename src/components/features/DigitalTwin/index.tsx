@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useRef, useEffect, useCallback } from 'react';
-import { Send, X, MessageSquare, Calendar, User, Mail, Building, Phone, Check, Loader2, ArrowLeft, ChevronRight, Play, BookOpen } from 'lucide-react';
+import { Send, X, MessageSquare, Calendar, User, Mail, Building, Phone, Check, Loader2, ArrowLeft, ChevronRight, Play, BookOpen, ChevronDown, Sparkles, Clock, Download } from 'lucide-react';
+import { Textarea } from '@/components/ui/textarea';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -355,12 +356,15 @@ export function DigitalTwin() {
   const [selectedType, setSelectedType] = useState<BookingType | null>(null);
   const [selectedSlot, setSelectedSlot] = useState<TimeSlot | null>(null);
   const [availableDays, setAvailableDays] = useState<DaySlots[]>([]);
+  const [activeDayIndex, setActiveDayIndex] = useState(0);
   const [customerData, setCustomerData] = useState<CustomerData>({
     name: '',
     email: '',
     phone: '',
     organization: '',
   });
+  const [bookingNotes, setBookingNotes] = useState('');
+  const [showExtraFields, setShowExtraFields] = useState(false);
   const [bookingResult, setBookingResult] = useState<{ id: string; typeName: string; startTime: string; duration: number } | null>(null);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -693,7 +697,10 @@ export function DigitalTwin() {
     setBookingStep('none');
     setSelectedType(null);
     setSelectedSlot(null);
+    setActiveDayIndex(0);
     setCustomerData({ name: '', email: '', phone: '', organization: '' });
+    setBookingNotes('');
+    setShowExtraFields(false);
     setBookingResult(null);
   };
 
@@ -701,6 +708,7 @@ export function DigitalTwin() {
     if (bookingStep === 'select_time') {
       setBookingStep('select_type');
       setSelectedType(null);
+      setActiveDayIndex(0);
     } else if (bookingStep === 'fill_form') {
       setBookingStep('select_time');
       setSelectedSlot(null);
@@ -722,6 +730,34 @@ export function DigitalTwin() {
       addMessage('assistant', 'Welk type gesprek past het beste bij je situatie?');
       setBookingStep('select_type');
     }
+  };
+
+  // Generate .ics calendar file for download
+  const downloadICS = () => {
+    if (!bookingResult) return;
+    const start = new Date(bookingResult.startTime);
+    const end = new Date(start.getTime() + bookingResult.duration * 60000);
+    const format = (d: Date) => d.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+    const ics = [
+      'BEGIN:VCALENDAR',
+      'VERSION:2.0',
+      'PRODID:-//WeAreImpact//Booking//NL',
+      'BEGIN:VEVENT',
+      `DTSTART:${format(start)}`,
+      `DTEND:${format(end)}`,
+      `SUMMARY:${bookingResult.typeName} met Vincent van Munster`,
+      'DESCRIPTION:WeAreImpact gesprek. Vincent neemt contact op met de details.',
+      'LOCATION:Online (link volgt per e-mail)',
+      'END:VEVENT',
+      'END:VCALENDAR',
+    ].join('\r\n');
+    const blob = new Blob([ics], { type: 'text/calendar' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'weareimpact-gesprek.ics';
+    a.click();
+    URL.revokeObjectURL(url);
   };
 
   const greeting = getTimeBasedGreeting();
@@ -925,194 +961,400 @@ export function DigitalTwin() {
               />
             ))}
 
-            {/* Booking Type Selection */}
-            {bookingStep === 'select_type' && (
-              <div className="space-y-2 mt-2 animate-in fade-in-0 slide-in-from-bottom-2 duration-300">
-                {BOOKING_TYPES.map((type, idx) => (
-                  <button
-                    key={type.slug}
-                    onClick={() => handleSelectType(type)}
-                    className="w-full text-left p-4 bg-white rounded-xl border border-slate-200 hover:border-slate-300 hover:shadow-sm transition-all duration-200 group animate-in fade-in-0 slide-in-from-bottom-2"
-                    style={{ animationDelay: `${idx * 50}ms` }}
-                  >
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <div className="font-medium text-slate-900 group-hover:text-slate-700">
-                          {type.name}
+            {/* ── BOOKING FLOW ── */}
+            {bookingStep !== 'none' && bookingStep !== 'confirmed' && (
+              <div className="mt-2 mb-1 animate-in fade-in-0 duration-300">
+                {/* Progress steps */}
+                <div className="flex items-center justify-between px-1 mb-4">
+                  {[
+                    { label: 'Gesprek', step: 'select_type' },
+                    { label: 'Tijdstip', step: 'select_time' },
+                    { label: 'Gegevens', step: 'fill_form' },
+                  ].map((s, i) => {
+                    const stepOrder = ['select_type', 'select_time', 'fill_form'];
+                    const currentIdx = stepOrder.indexOf(bookingStep);
+                    const isActive = bookingStep === s.step;
+                    const isDone = currentIdx > i;
+                    return (
+                      <div key={s.step} className="flex items-center flex-1">
+                        <div className="flex flex-col items-center gap-1 flex-1">
+                          <div className={cn(
+                            'w-6 h-6 rounded-full flex items-center justify-center text-xs font-semibold transition-all duration-300',
+                            isDone ? 'bg-emerald-500 text-white' :
+                            isActive ? 'bg-orange-500 text-white shadow-lg shadow-orange-500/30' :
+                            'bg-slate-200 text-slate-400'
+                          )}>
+                            {isDone ? <Check size={12} /> : i + 1}
+                          </div>
+                          <span className={cn(
+                            'text-[10px] font-medium transition-colors',
+                            isActive ? 'text-orange-600' : isDone ? 'text-emerald-600' : 'text-slate-400'
+                          )}>{s.label}</span>
                         </div>
-                        <div className="text-xs text-slate-500 mt-0.5">
-                          {type.duration} min · {type.price}
-                        </div>
+                        {i < 2 && (
+                          <div className={cn(
+                            'h-0.5 flex-1 mx-1 mb-4 rounded-full transition-all duration-500',
+                            isDone ? 'bg-emerald-400' : 'bg-slate-200'
+                          )} />
+                        )}
                       </div>
-                      <ChevronRight size={18} className="text-slate-300 group-hover:text-slate-500 group-hover:translate-x-0.5 transition-all" />
-                    </div>
-                  </button>
-                ))}
+                    );
+                  })}
+                </div>
               </div>
             )}
 
-            {/* Time Selection */}
-            {bookingStep === 'select_time' && (
-              <div className="space-y-3 mt-2 animate-in fade-in-0 slide-in-from-bottom-2 duration-300">
+            {/* Step 1: Type Selection */}
+            {bookingStep === 'select_type' && (
+              <div className="space-y-2 animate-in fade-in-0 slide-in-from-bottom-2 duration-300">
+                {/* Featured: Gratis kennismaking */}
                 <button
-                  onClick={goBackBooking}
-                  className="flex items-center gap-1 text-xs text-slate-500 hover:text-slate-700 transition-colors"
+                  onClick={() => handleSelectType(BOOKING_TYPES[0])}
+                  className="w-full text-left p-4 bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl shadow-lg shadow-orange-500/20 hover:shadow-orange-500/30 hover:from-orange-600 hover:to-orange-700 transition-all duration-200 group animate-in fade-in-0 slide-in-from-bottom-2"
                 >
-                  <ArrowLeft size={14} />
-                  Terug
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="text-xs font-semibold bg-white/25 text-white px-2 py-0.5 rounded-full">GRATIS</span>
+                        <span className="text-xs text-orange-100">30 min</span>
+                      </div>
+                      <div className="font-semibold text-white text-base">Kennismakingsgesprek</div>
+                      <div className="text-sm text-orange-100 mt-0.5">Vrijblijvend ontdekken of we een match zijn</div>
+                      <div className="flex items-center gap-3 mt-3">
+                        <span className="text-xs text-orange-100 flex items-center gap-1"><Check size={10} /> Geen verplichting</span>
+                        <span className="text-xs text-orange-100 flex items-center gap-1"><Check size={10} /> Snel ingepland</span>
+                      </div>
+                    </div>
+                    <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center group-hover:bg-white/30 transition-colors mt-0.5 flex-shrink-0">
+                      <ChevronRight size={16} className="text-white group-hover:translate-x-0.5 transition-transform" />
+                    </div>
+                  </div>
                 </button>
 
-                {availableDays.length === 0 ? (
-                  <div className="text-center py-6">
-                    <Loader2 className="w-5 h-5 animate-spin mx-auto mb-2 text-slate-400" />
-                    <span className="text-sm text-slate-500">Beschikbaarheid laden...</span>
-                  </div>
-                ) : (
-                  availableDays.slice(0, 5).map((day, idx) => (
-                    <div
-                      key={day.date}
-                      className="bg-white rounded-xl p-4 border border-slate-200 animate-in fade-in-0 slide-in-from-bottom-2"
-                      style={{ animationDelay: `${idx * 50}ms` }}
+                {/* Divider */}
+                <div className="flex items-center gap-2 py-1 px-1">
+                  <div className="flex-1 h-px bg-slate-200" />
+                  <span className="text-xs text-slate-400">of kies specifiek</span>
+                  <div className="flex-1 h-px bg-slate-200" />
+                </div>
+
+                {/* Paid options: compact */}
+                {BOOKING_TYPES.slice(1).map((type, idx) => {
+                  const icons: Record<string, string> = {
+                    'strategie-ai': '🤖',
+                    'strategie-impact': '📊',
+                    'lego-intro': '🧱',
+                  };
+                  return (
+                    <button
+                      key={type.slug}
+                      onClick={() => handleSelectType(type)}
+                      className="w-full text-left px-4 py-3 bg-white rounded-xl border border-slate-200 hover:border-orange-200 hover:shadow-sm transition-all duration-200 group animate-in fade-in-0 slide-in-from-bottom-2"
+                      style={{ animationDelay: `${(idx + 1) * 60}ms` }}
                     >
-                      <div className="font-medium text-slate-900 text-sm mb-3 flex items-center gap-2">
-                        <Calendar size={14} className="text-slate-400" />
-                        {day.dayName}
+                      <div className="flex items-center gap-3">
+                        <span className="text-xl flex-shrink-0">{icons[type.slug]}</span>
+                        <div className="flex-1 min-w-0">
+                          <div className="font-medium text-slate-800 text-sm group-hover:text-slate-900">{type.name}</div>
+                          <div className="text-xs text-slate-400 mt-0.5">{type.duration} min</div>
+                        </div>
+                        <div className="text-right flex-shrink-0">
+                          <div className="text-sm font-semibold text-slate-600">{type.price}</div>
+                          <ChevronRight size={14} className="text-slate-300 group-hover:text-orange-400 group-hover:translate-x-0.5 transition-all mt-0.5 ml-auto" />
+                        </div>
                       </div>
-                      <div className="flex flex-wrap gap-2">
-                        {day.slots.slice(0, 6).map((slot, slotIdx) => {
-                          const time = new Date(slot.start).toLocaleTimeString('nl-NL', {
-                            hour: '2-digit',
-                            minute: '2-digit',
-                          });
-                          return (
-                            <button
-                              key={slotIdx}
-                              onClick={() => handleSelectSlot(slot)}
-                              className="px-3 py-1.5 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-lg text-sm font-medium text-slate-700 transition-all duration-200 hover:scale-105"
-                            >
-                              {time}
-                            </button>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  ))
-                )}
+                    </button>
+                  );
+                })}
               </div>
             )}
 
-            {/* Form */}
-            {bookingStep === 'fill_form' && (
-              <div className="mt-2 animate-in fade-in-0 slide-in-from-bottom-2 duration-300">
+            {/* Step 2: Time Selection */}
+            {bookingStep === 'select_time' && (
+              <div className="animate-in fade-in-0 slide-in-from-bottom-2 duration-300">
                 <button
                   onClick={goBackBooking}
                   className="flex items-center gap-1 text-xs text-slate-500 hover:text-slate-700 transition-colors mb-3"
                 >
-                  <ArrowLeft size={14} />
-                  Terug
+                  <ArrowLeft size={13} /> Terug
                 </button>
 
-                <form onSubmit={handleSubmitBooking} className="bg-white rounded-xl p-4 border border-slate-200 space-y-4">
-                  <div>
-                    <label className="flex items-center gap-2 text-xs font-medium text-slate-600 mb-1.5">
-                      <User size={12} /> Naam
-                    </label>
-                    <Input
-                      value={customerData.name}
-                      onChange={(e) => setCustomerData({ ...customerData, name: e.target.value })}
-                      placeholder="Je volledige naam"
-                      required
-                      className="text-sm transition-all duration-200 focus:scale-[1.01]"
-                    />
+                {/* Selected type chip */}
+                {selectedType && (
+                  <div className="flex items-center gap-2 mb-3 px-3 py-1.5 bg-orange-50 border border-orange-100 rounded-full w-fit">
+                    <div className="w-1.5 h-1.5 bg-orange-500 rounded-full" />
+                    <span className="text-xs font-medium text-orange-700">{selectedType.name}</span>
+                    <span className="text-xs text-orange-400">· {selectedType.duration} min</span>
                   </div>
-                  <div>
-                    <label className="flex items-center gap-2 text-xs font-medium text-slate-600 mb-1.5">
-                      <Mail size={12} /> E-mail
-                    </label>
-                    <Input
-                      type="email"
-                      value={customerData.email}
-                      onChange={(e) => setCustomerData({ ...customerData, email: e.target.value })}
-                      placeholder="je@email.nl"
-                      required
-                      className="text-sm transition-all duration-200 focus:scale-[1.01]"
-                    />
+                )}
+
+                {availableDays.length === 0 ? (
+                  <div className="bg-white rounded-xl border border-slate-200 p-6">
+                    <div className="flex flex-col items-center gap-2">
+                      <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center">
+                        <Loader2 className="w-4 h-4 animate-spin text-slate-400" />
+                      </div>
+                      <span className="text-sm text-slate-500">Beschikbaarheid ophalen...</span>
+                    </div>
                   </div>
-                  <div>
-                    <label className="flex items-center gap-2 text-xs font-medium text-slate-600 mb-1.5">
-                      <Building size={12} /> Organisatie
-                      <span className="text-slate-400 font-normal">optioneel</span>
-                    </label>
-                    <Input
-                      value={customerData.organization}
-                      onChange={(e) => setCustomerData({ ...customerData, organization: e.target.value })}
-                      placeholder="Bedrijf of organisatie"
-                      className="text-sm transition-all duration-200 focus:scale-[1.01]"
-                    />
+                ) : (
+                  <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+                    {/* Day tabs */}
+                    <div className="flex overflow-x-auto border-b border-slate-100 scrollbar-none">
+                      {availableDays.slice(0, 7).map((day, idx) => {
+                        const d = new Date(day.date);
+                        const dayShort = d.toLocaleDateString('nl-NL', { weekday: 'short' });
+                        const dayNum = d.getDate();
+                        const isActive = idx === activeDayIndex;
+                        return (
+                          <button
+                            key={day.date}
+                            onClick={() => setActiveDayIndex(idx)}
+                            className={cn(
+                              'flex flex-col items-center px-3 py-2.5 min-w-[52px] text-center transition-all duration-200 border-b-2 flex-shrink-0',
+                              isActive
+                                ? 'border-orange-500 text-orange-600 bg-orange-50/50'
+                                : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50'
+                            )}
+                          >
+                            <span className="text-[10px] font-medium uppercase tracking-wide">{dayShort}</span>
+                            <span className={cn('text-base font-semibold leading-tight', isActive && 'text-orange-600')}>{dayNum}</span>
+                          </button>
+                        );
+                      })}
+                    </div>
+
+                    {/* Time slots for active day */}
+                    <div className="p-3">
+                      {availableDays[activeDayIndex]?.slots.length === 0 ? (
+                        <p className="text-center text-sm text-slate-400 py-4">Geen beschikbaarheid</p>
+                      ) : (
+                        <div className="grid grid-cols-3 gap-2">
+                          {availableDays[activeDayIndex]?.slots.slice(0, 9).map((slot, slotIdx) => {
+                            const time = new Date(slot.start).toLocaleTimeString('nl-NL', {
+                              hour: '2-digit',
+                              minute: '2-digit',
+                            });
+                            return (
+                              <button
+                                key={slotIdx}
+                                onClick={() => handleSelectSlot(slot)}
+                                className="py-2.5 bg-slate-50 hover:bg-orange-50 hover:text-orange-700 hover:border-orange-200 border border-slate-200 rounded-lg text-sm font-semibold text-slate-700 transition-all duration-200 hover:scale-[1.03] active:scale-95 animate-in fade-in-0"
+                                style={{ animationDelay: `${slotIdx * 30}ms` }}
+                              >
+                                {time}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      )}
+                      <p className="text-center text-xs text-slate-400 mt-3">
+                        Geen passend moment?{' '}
+                        <a href="mailto:v.munster@weareimpact.nl" className="text-orange-500 hover:underline">Mail ons</a>
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <label className="flex items-center gap-2 text-xs font-medium text-slate-600 mb-1.5">
-                      <Phone size={12} /> Telefoon
-                      <span className="text-slate-400 font-normal">optioneel</span>
-                    </label>
-                    <Input
-                      type="tel"
-                      value={customerData.phone}
-                      onChange={(e) => setCustomerData({ ...customerData, phone: e.target.value })}
-                      placeholder="+31 6 12345678"
-                      className="text-sm transition-all duration-200 focus:scale-[1.01]"
-                    />
+                )}
+              </div>
+            )}
+
+            {/* Step 3: Form */}
+            {bookingStep === 'fill_form' && (
+              <div className="animate-in fade-in-0 slide-in-from-bottom-2 duration-300">
+                <button
+                  onClick={goBackBooking}
+                  className="flex items-center gap-1 text-xs text-slate-500 hover:text-slate-700 transition-colors mb-3"
+                >
+                  <ArrowLeft size={13} /> Terug
+                </button>
+
+                {/* Summary strip */}
+                {selectedType && selectedSlot && (
+                  <div className="flex items-center gap-2 mb-3 p-3 bg-slate-900 rounded-xl">
+                    <div className="flex-1 min-w-0">
+                      <div className="text-xs font-semibold text-white truncate">{selectedType.name}</div>
+                      <div className="text-xs text-slate-400 mt-0.5">
+                        {new Date(selectedSlot.start).toLocaleDateString('nl-NL', { weekday: 'short', day: 'numeric', month: 'short' })}
+                        {' · '}
+                        {new Date(selectedSlot.start).toLocaleTimeString('nl-NL', { hour: '2-digit', minute: '2-digit' })}
+                        {' · '}{selectedType.duration} min
+                      </div>
+                    </div>
+                    <div className="w-6 h-6 bg-emerald-500/20 rounded-full flex items-center justify-center flex-shrink-0">
+                      <Check size={12} className="text-emerald-400" />
+                    </div>
                   </div>
-                  <Button
-                    type="submit"
-                    className="w-full bg-slate-900 hover:bg-slate-800 text-sm transition-all duration-200 hover:scale-[1.02]"
-                    disabled={isLoading || !customerData.name || !customerData.email}
-                  >
-                    {isLoading ? (
-                      <Loader2 className="w-4 h-4 animate-spin mr-2" />
-                    ) : (
-                      <Check className="w-4 h-4 mr-2" />
+                )}
+
+                <form onSubmit={handleSubmitBooking} className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+                  <div className="p-4 space-y-3">
+                    <div>
+                      <label className="text-xs font-semibold text-slate-500 uppercase tracking-wide block mb-1.5">Naam *</label>
+                      <Input
+                        value={customerData.name}
+                        onChange={(e) => setCustomerData({ ...customerData, name: e.target.value })}
+                        placeholder="Je volledige naam"
+                        required
+                        autoFocus
+                        className="text-sm border-slate-200 focus:border-orange-300 focus:ring-orange-100"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-xs font-semibold text-slate-500 uppercase tracking-wide block mb-1.5">E-mail *</label>
+                      <Input
+                        type="email"
+                        value={customerData.email}
+                        onChange={(e) => setCustomerData({ ...customerData, email: e.target.value })}
+                        placeholder="je@organisatie.nl"
+                        required
+                        className="text-sm border-slate-200 focus:border-orange-300 focus:ring-orange-100"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-xs font-semibold text-slate-500 uppercase tracking-wide block mb-1.5">
+                        Wil je iets meegeven? <span className="font-normal normal-case text-slate-400">(optioneel)</span>
+                      </label>
+                      <Textarea
+                        value={bookingNotes}
+                        onChange={(e) => setBookingNotes(e.target.value)}
+                        placeholder="Korte toelichting, context of vraag voor Vincent..."
+                        rows={2}
+                        className="text-sm border-slate-200 focus:border-orange-300 focus:ring-orange-100 resize-none"
+                      />
+                    </div>
+
+                    {/* Expandable extra fields */}
+                    <button
+                      type="button"
+                      onClick={() => setShowExtraFields(!showExtraFields)}
+                      className="flex items-center gap-1 text-xs text-slate-400 hover:text-slate-600 transition-colors"
+                    >
+                      <ChevronDown size={13} className={cn('transition-transform duration-200', showExtraFields && 'rotate-180')} />
+                      {showExtraFields ? 'Minder' : 'Organisatie & telefoon toevoegen'}
+                    </button>
+
+                    {showExtraFields && (
+                      <div className="space-y-3 animate-in fade-in-0 slide-in-from-top-1 duration-200">
+                        <div>
+                          <label className="text-xs font-semibold text-slate-500 uppercase tracking-wide block mb-1.5">Organisatie</label>
+                          <Input
+                            value={customerData.organization}
+                            onChange={(e) => setCustomerData({ ...customerData, organization: e.target.value })}
+                            placeholder="Bedrijf of instelling"
+                            className="text-sm border-slate-200"
+                          />
+                        </div>
+                        <div>
+                          <label className="text-xs font-semibold text-slate-500 uppercase tracking-wide block mb-1.5">Telefoon</label>
+                          <Input
+                            type="tel"
+                            value={customerData.phone}
+                            onChange={(e) => setCustomerData({ ...customerData, phone: e.target.value })}
+                            placeholder="+31 6 ..."
+                            className="text-sm border-slate-200"
+                          />
+                        </div>
+                      </div>
                     )}
-                    Bevestigen
-                  </Button>
+                  </div>
+
+                  <div className="px-4 pb-4">
+                    <Button
+                      type="submit"
+                      className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-semibold shadow-lg shadow-orange-500/20 hover:shadow-orange-500/30 transition-all duration-200 hover:scale-[1.01]"
+                      disabled={isLoading || !customerData.name || !customerData.email}
+                    >
+                      {isLoading ? (
+                        <><Loader2 className="w-4 h-4 animate-spin mr-2" />Bezig...</>
+                      ) : (
+                        <>Bevestig gesprek <ChevronRight size={16} className="ml-1" /></>
+                      )}
+                    </Button>
+                    <p className="text-center text-xs text-slate-400 mt-2">
+                      Vincent bereidt zich voor op jullie gesprek
+                    </p>
+                  </div>
                 </form>
               </div>
             )}
 
             {/* Confirmation */}
             {bookingStep === 'confirmed' && bookingResult && (
-              <div className="mt-2 bg-white rounded-xl p-5 border border-slate-200 text-center animate-in fade-in-0 zoom-in-95 duration-300">
-                <div className="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Check className="w-6 h-6 text-emerald-600" />
+              <div className="mt-2 animate-in fade-in-0 zoom-in-95 duration-500">
+                {/* Animated success */}
+                <div className="text-center py-5">
+                  <div className="relative inline-flex">
+                    <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center">
+                      <Check className="w-8 h-8 text-emerald-600" strokeWidth={2.5} />
+                    </div>
+                    <div className="absolute inset-0 rounded-full bg-emerald-400/20 animate-ping" />
+                  </div>
+                  <h4 className="font-bold text-slate-900 text-lg mt-4 mb-1">Je staat in de agenda!</h4>
+                  <p className="text-sm text-slate-500">Bevestiging gestuurd naar <span className="font-medium text-slate-700">{customerData.email}</span></p>
                 </div>
-                <h4 className="font-semibold text-slate-900 mb-1">Afspraak bevestigd</h4>
-                <div className="text-sm text-slate-600 space-y-1 mb-4">
-                  <p className="font-medium">{bookingResult.typeName}</p>
-                  <p>
-                    {new Date(bookingResult.startTime).toLocaleDateString('nl-NL', {
-                      weekday: 'long',
-                      day: 'numeric',
-                      month: 'long',
-                    })}
-                  </p>
-                  <p className="text-slate-500">
-                    {new Date(bookingResult.startTime).toLocaleTimeString('nl-NL', {
-                      hour: '2-digit',
-                      minute: '2-digit',
-                    })} · {bookingResult.duration} min
-                  </p>
+
+                {/* Appointment card */}
+                <div className="bg-slate-900 rounded-xl p-4 mb-3">
+                  <div className="flex items-start gap-3">
+                    <div className="w-10 h-10 bg-orange-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <Calendar size={18} className="text-orange-400" />
+                    </div>
+                    <div>
+                      <div className="font-semibold text-white text-sm">{bookingResult.typeName}</div>
+                      <div className="text-slate-300 text-sm mt-1">
+                        {new Date(bookingResult.startTime).toLocaleDateString('nl-NL', {
+                          weekday: 'long', day: 'numeric', month: 'long',
+                        })}
+                      </div>
+                      <div className="text-slate-400 text-sm flex items-center gap-1 mt-0.5">
+                        <Clock size={12} />
+                        {new Date(bookingResult.startTime).toLocaleTimeString('nl-NL', { hour: '2-digit', minute: '2-digit' })}
+                        {' '}&mdash;{' '}
+                        {new Date(new Date(bookingResult.startTime).getTime() + bookingResult.duration * 60000).toLocaleTimeString('nl-NL', { hour: '2-digit', minute: '2-digit' })}
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <p className="text-xs text-slate-500 mb-4">
-                  Bevestiging verzonden naar {customerData.email}
-                </p>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={resetBooking}
-                  className="text-sm transition-all duration-200 hover:scale-105"
-                >
-                  Nieuwe afspraak
-                </Button>
+
+                {/* What to expect */}
+                <div className="bg-white rounded-xl border border-slate-200 p-4 mb-3">
+                  <div className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-3">Wat kun je verwachten?</div>
+                  <div className="space-y-2">
+                    {[
+                      'Vincent stuurt een Google Meet link per e-mail',
+                      'Gesprek duurt precies ' + bookingResult.duration + ' minuten',
+                      'Vrijuit praten, geen verkooppitch',
+                    ].map((item, i) => (
+                      <div key={i} className="flex items-start gap-2">
+                        <div className="w-4 h-4 bg-emerald-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <Check size={9} className="text-emerald-600" />
+                        </div>
+                        <span className="text-sm text-slate-600">{item}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Actions */}
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={downloadICS}
+                    className="flex-1 text-xs border-slate-200 hover:border-slate-300 gap-1.5"
+                  >
+                    <Download size={13} />
+                    Agenda
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={resetBooking}
+                    className="flex-1 text-xs border-slate-200 hover:border-slate-300"
+                  >
+                    Nieuw gesprek
+                  </Button>
+                </div>
               </div>
             )}
 
