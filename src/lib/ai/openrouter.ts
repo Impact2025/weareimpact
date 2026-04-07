@@ -24,15 +24,15 @@ export function getOpenRouter(): OpenAI {
 // Available models via OpenRouter
 export const MODELS = {
   // Fast & cheap
-  HAIKU: 'anthropic/claude-3-haiku',
+  HAIKU: 'anthropic/claude-haiku-4.5',
   GPT_4_MINI: 'openai/gpt-4o-mini',
 
   // Balanced
-  SONNET: 'anthropic/claude-3.5-sonnet',
+  SONNET: 'anthropic/claude-sonnet-4.5',
   GPT_4O: 'openai/gpt-4o',
 
   // Powerful
-  OPUS: 'anthropic/claude-3-opus',
+  OPUS: 'anthropic/claude-opus-4.5',
 
   // Open source alternatives
   LLAMA_70B: 'meta-llama/llama-3.1-70b-instruct',
@@ -42,7 +42,7 @@ export const MODELS = {
 // Default model for different use cases
 export const DEFAULT_MODELS = {
   scanner: MODELS.SONNET,      // Good balance for analysis
-  chat: MODELS.SONNET,         // Conversational
-  voice: MODELS.GPT_4_MINI,    // Fast for voice
+  chat: MODELS.HAIKU,          // Fast & cheap for conversational
+  voice: MODELS.HAIKU,         // Fast for voice
   embedding: 'openai/text-embedding-3-small',
 } as const;
