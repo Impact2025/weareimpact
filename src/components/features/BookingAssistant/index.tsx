@@ -70,10 +70,10 @@ export function BookingAssistant() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const bookingTypes: BookingType[] = [
-    { slug: 'kennismaking', name: 'Kennismakingsgesprek', duration: 30, price: 'Gratis', icon: '👋' },
-    { slug: 'strategie-ai', name: 'AI Strategiesessie', duration: 60, price: '€150', icon: '🤖' },
-    { slug: 'strategie-impact', name: 'Impact Strategiesessie', duration: 60, price: '€150', icon: '📊' },
-    { slug: 'lego-intro', name: 'LEGO Serious Play', duration: 90, price: '€250', icon: '🧱' },
+    { slug: 'kennismaking', name: 'Kennismakingsgesprek', duration: 30, price: '', icon: '' },
+    { slug: 'strategie-ai', name: 'AI Strategiesessie', duration: 60, price: '', icon: '' },
+    { slug: 'strategie-impact', name: 'Impact Strategiesessie', duration: 60, price: '', icon: '' },
+    { slug: 'lego-intro', name: 'LEGO Serious Play Intro', duration: 90, price: '', icon: '' },
   ];
 
   // Scroll to bottom of messages
@@ -307,13 +307,12 @@ export function BookingAssistant() {
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
-                        <span className="text-2xl">{type.icon}</span>
                         <div>
                           <div className="font-medium text-slate-800 group-hover:text-orange-600">
                             {type.name}
                           </div>
                           <div className="text-sm text-slate-500">
-                            {type.duration} min • {type.price}
+                            {type.duration} min
                           </div>
                         </div>
                       </div>
