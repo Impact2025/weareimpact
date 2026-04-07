@@ -22,7 +22,7 @@ const portfolio = [
     name: 'Teambuilding met Impact',
     tagline: 'Samen bouwen aan sterke teams én een betere wereld',
     description:
-      'Een teamdag die méér is dan gezellig samen zijn. We combineren teamontwikkeling met maatschappelijke betekenis — samenwerken, plezier maken én bijdragen aan een concreet goed doel.',
+      'Een teamdag die méér is dan gezellig samen zijn. We combineren teamontwikkeling met maatschappelijke betekenis: samenwerken, plezier maken én bijdragen aan een concreet goed doel.',
     color: 'text-teal-600',
     accent: 'border-teal-400',
     dot: 'bg-teal-400',
@@ -37,7 +37,7 @@ const portfolio = [
     name: 'Bijeen',
     tagline: 'Evenementen die écht verbinding maken',
     description:
-      'Het eerste eventplatform gebouwd voor de welzijnssector. Van vrijwilligersdag tot buurtfestival — organiseer met impact, meet wat je bereikt.',
+      'Het eerste eventplatform gebouwd voor de welzijnssector. Van vrijwilligersdag tot buurtfestival: organiseer met impact, meet wat je bereikt.',
     color: 'text-amber-600',
     accent: 'border-amber-400',
     dot: 'bg-amber-400',
@@ -53,10 +53,10 @@ const labs = [
     id: 'iris',
     initial: null,
     icon: Bot,
-    name: 'Iris — AI Werkassistent',
+    name: 'Iris: AI Werkassistent',
     tagline: 'Jouw team, geautomatiseerd',
     description:
-      'Ik heb een AI-werkassistent gebouwd die agenda, mail en rapportages automatiseert. Dit implementeer ik ook voor jouw team. Geen theorie — ik gebruik het zelf dagelijks.',
+      'Ik heb een AI-werkassistent gebouwd die agenda, mail en rapportages automatiseert. Dit implementeer ik ook voor jouw team. Geen theorie, ik gebruik het zelf dagelijks.',
     color: 'text-violet-500',
   },
   {
@@ -65,8 +65,9 @@ const labs = [
     name: 'IctusGO',
     tagline: 'Buurtverbinding in de praktijk',
     description:
-      'Buurtbewoners activeren via beweging en ontmoeting. De maatschappelijke variant van IctusGO verbindt mensen die anders naast elkaar leven — bewegen als smeermiddel voor sociale cohesie.',
+      'Buurtbewoners activeren via beweging en ontmoeting. De maatschappelijke variant van IctusGO verbindt mensen die anders naast elkaar leven. Bewegen als smeermiddel voor sociale cohesie.',
     color: 'text-sky-500',
+    url: 'https://ictusgo.nl',
   },
   {
     id: 'brickme',
@@ -74,7 +75,7 @@ const labs = [
     name: 'Brickme',
     tagline: 'Bouw wat je niet kunt zeggen',
     description:
-      'Sommige dingen zijn te groot voor woorden. Brickme helpt ze zichtbaar te maken — door te bouwen, te fotograferen en een reflectie te ontvangen. Een concept van WeAreImpact.',
+      'Sommige dingen zijn te groot voor woorden. Brickme helpt ze zichtbaar te maken door te bouwen, te fotograferen en een reflectie te ontvangen. Een concept van WeAreImpact.',
     color: 'text-orange-500',
     url: 'https://brickme.nl',
   },
@@ -177,7 +178,7 @@ export function Ventures() {
             Wat ik bouw en inzet
           </h3>
           <p className="text-slate-600">
-            Van AI-automatisering tot buurtverbinding — concepten die ik zelf gebruik en implementeer.
+            Van AI-automatisering tot buurtverbinding: concepten die ik zelf gebruik en implementeer.
           </p>
         </div>
 

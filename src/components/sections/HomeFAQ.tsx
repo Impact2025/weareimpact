@@ -10,7 +10,7 @@ export function HomeFAQ() {
     {
       question: 'Mijn organisatie wil innoveren. Is AI dan altijd het antwoord?',
       answer:
-        'Nee, zeker niet. Innovatie gaat over mensen, niet over systemen. Ik kijk eerst naar jouw vraagstuk. Soms is een slimme AI-toepassing de versneller die je zoekt. Soms ligt de oplossing in een andere manier van samenwerken of een LEGO® Serious Play sessie die in één dag blootlegt wat maanden vergaderen niet lukt. Ik gebruik technologie als het moet — en menselijk contact waar het kan.',
+        'Nee, zeker niet. Innovatie gaat over mensen, niet over systemen. Ik kijk eerst naar jouw vraagstuk. Soms is een slimme AI-toepassing de versneller die je zoekt. Soms ligt de oplossing in een andere manier van samenwerken of een LEGO® Serious Play sessie die in één dag blootlegt wat maanden vergaderen niet lukt. Ik gebruik technologie als het moet, en menselijk contact waar het kan.',
     },
     {
       question: 'Wat is het verschil tussen jou en een gewone consultant?',
@@ -20,7 +20,7 @@ export function HomeFAQ() {
     {
       question: 'Wat houdt het 90-dagentraject precies in?',
       answer:
-        'We starten met een scherpe analyse van waar jouw organisatie staat en wat écht nodig is. Daarna implementeer ik — samen met jouw team — wat werkt. Geen eindeloze planningsfase, geen dikke rapporten. Aan het einde van de 90 dagen heb je resultaat én eigenaarschap.',
+        'We starten met een scherpe analyse van waar jouw organisatie staat en wat écht nodig is. Daarna implementeer ik samen met jouw team wat werkt. Geen eindeloze planningsfase, geen dikke rapporten. Aan het einde van de 90 dagen heb je resultaat én eigenaarschap.',
     },
     {
       question: 'Ben je beschikbaar voor een interim-opdracht?',
