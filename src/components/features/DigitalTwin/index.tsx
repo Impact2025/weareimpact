@@ -373,6 +373,17 @@ export function DigitalTwin() {
     setHasSeenWelcome(!!hasSeenIris);
   }, []);
 
+  // Auto-open chat with Iris video for first-time visitors
+  useEffect(() => {
+    const hasSeenIris = localStorage.getItem('weareimpact_iris_welcome');
+    if (!hasSeenIris) {
+      const timer = setTimeout(() => {
+        setIsOpen(true);
+      }, 4000); // 4 seconden na paginaload
+      return () => clearTimeout(timer);
+    }
+  }, []);
+
   // Show Iris welcome video on first chat open
   useEffect(() => {
     if (isOpen && !hasSeenWelcome && messages.length === 0) {
