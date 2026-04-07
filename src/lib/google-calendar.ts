@@ -243,6 +243,69 @@ export async function blockTime(data: {
   }
 }
 
+// Block time recurring in calendar (weekly repeat)
+export async function blockTimeRecurring(data: {
+  title: string;
+  dayOfWeek: number; // 0=Sun, 1=Mon, ..., 6=Sat
+  startHour: number;
+  startMinute: number;
+  endHour: number;
+  endMinute: number;
+  weeksCount?: number; // default 13 (~3 months)
+  description?: string;
+}): Promise<{
+  success: boolean;
+  event?: { id: string; title: string };
+  error?: string;
+}> {
+  const calendar = getCalendarClient();
+  const calendarId = process.env.GOOGLE_CALENDAR_ID || 'primary';
+
+  const weeksCount = data.weeksCount || 13;
+
+  // Find the next occurrence of the requested day of week
+  const now = new Date();
+  const firstOccurrence = new Date(now);
+  firstOccurrence.setHours(data.startHour, data.startMinute, 0, 0);
+  const daysUntilTarget = (data.dayOfWeek - now.getDay() + 7) % 7 || 7;
+  firstOccurrence.setDate(firstOccurrence.getDate() + daysUntilTarget);
+
+  const firstEnd = new Date(firstOccurrence);
+  firstEnd.setHours(data.endHour, data.endMinute, 0, 0);
+
+  const dayNames = ['SU', 'MO', 'TU', 'WE', 'TH', 'FR', 'SA'];
+  const rrule = `RRULE:FREQ=WEEKLY;COUNT=${weeksCount};BYDAY=${dayNames[data.dayOfWeek]}`;
+
+  try {
+    const event = await calendar.events.insert({
+      calendarId,
+      requestBody: {
+        summary: data.title,
+        description: data.description || 'Geblokkeerd via Iris (wekelijks)',
+        start: {
+          dateTime: firstOccurrence.toISOString(),
+          timeZone: 'Europe/Amsterdam',
+        },
+        end: {
+          dateTime: firstEnd.toISOString(),
+          timeZone: 'Europe/Amsterdam',
+        },
+        recurrence: [rrule],
+        transparency: 'opaque',
+      },
+    });
+
+    return {
+      success: true,
+      event: { id: event.data.id!, title: data.title },
+    };
+  } catch (error: unknown) {
+    const err = error as { message?: string };
+    console.error('Error blocking recurring time:', err);
+    return { success: false, error: err?.message || 'Failed to block recurring time' };
+  }
+}
+
 // Search events in calendar
 export async function searchEvents(query: string, daysAhead: number = 30): Promise<{
   success: boolean;

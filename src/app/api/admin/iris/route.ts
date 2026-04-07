@@ -3,10 +3,20 @@ import { cookies } from 'next/headers';
 import { getOpenRouter, DEFAULT_MODELS } from '@/lib/ai/openrouter';
 import {
   blockTime,
+  blockTimeRecurring,
   searchEvents,
   getUpcomingEvents,
   getEventsForDate
 } from '@/lib/google-calendar';
+import {
+  getPipelineSummary,
+  getOverdueFollowups,
+  getTodayTasks,
+  getCompanyInfo,
+  addCompanyNote,
+  createFollowupTask,
+  getMorningBriefing,
+} from '@/lib/crm/iris-actions';
 
 export const dynamic = 'force-dynamic';
 
@@ -95,16 +105,105 @@ function parseDate(text: string): Date | null {
 }
 
 // Detect intent from message
+type RecurringBlock = {
+  dayOfWeek: number;
+  startHour: number;
+  startMinute: number;
+  endHour: number;
+  endMinute: number;
+  label: string;
+};
+
 type Intent = {
-  type: 'block_time' | 'search_events' | 'get_upcoming' | 'get_date_events' | 'general';
+  type: 'block_time' | 'block_time_recurring' | 'search_events' | 'get_upcoming' | 'get_date_events' | 'general'
+    | 'pipeline_summary' | 'overdue_followups' | 'today_tasks' | 'company_info'
+    | 'add_note' | 'create_task' | 'morning_briefing';
   date?: Date;
   query?: string;
   isFullDay?: boolean;
   title?: string;
+  entityName?: string;
+  noteContent?: string;
+  recurringBlocks?: RecurringBlock[];
 };
+
+// Parse time like "14.30", "14:30", "14u30", "14" from text
+function parseTimeFromText(text: string): { hour: number; minute: number } | null {
+  const patterns = [
+    /(\d{1,2})[.:](\d{2})/,
+    /(\d{1,2})u(\d{2})/,
+    /(\d{1,2})u\b/,
+    /\b(\d{1,2})\b/,
+  ];
+  for (const pattern of patterns) {
+    const match = text.match(pattern);
+    if (match) {
+      return { hour: parseInt(match[1]), minute: parseInt(match[2] || '0') };
+    }
+  }
+  return null;
+}
+
+// Parse recurring block pattern: "maandag na 14.30" or "woensdag na 14.00"
+function parseRecurringBlocks(message: string): RecurringBlock[] {
+  const lowered = message.toLowerCase();
+  const dayMap: { [key: string]: number } = {
+    maandag: 1, dinsdag: 2, woensdag: 3, donderdag: 4, vrijdag: 5,
+  };
+
+  const blocks: RecurringBlock[] = [];
+
+  // Split on common day keywords to find multiple days
+  const parts = lowered.split(/(?=\b(?:maandag|dinsdag|woensdag|donderdag|vrijdag)\b)/);
+
+  for (const part of parts) {
+    for (const [dayName, dayNum] of Object.entries(dayMap)) {
+      if (!part.startsWith(dayName)) continue;
+
+      // Extract time after "na", "vanaf", "om", or directly after day name
+      const afterDay = part.replace(dayName, '').trim();
+      const timeMatch = afterDay.match(/(?:na|vanaf|om|>)?\s*(\d{1,2})[.:](\d{2})/);
+      const simpleTimeMatch = afterDay.match(/(?:na|vanaf|om)?\s*(\d{1,2})\b/);
+
+      let startHour = 0, startMinute = 0;
+
+      if (timeMatch) {
+        startHour = parseInt(timeMatch[1]);
+        startMinute = parseInt(timeMatch[2]);
+      } else if (simpleTimeMatch && parseInt(simpleTimeMatch[1]) >= 8) {
+        startHour = parseInt(simpleTimeMatch[1]);
+        startMinute = 0;
+      } else {
+        continue;
+      }
+
+      blocks.push({
+        dayOfWeek: dayNum,
+        startHour,
+        startMinute,
+        endHour: 17,
+        endMinute: 0,
+        label: `${dayName.charAt(0).toUpperCase() + dayName.slice(1)} ${startHour}:${startMinute.toString().padStart(2, '0')} - 17:00`,
+      });
+    }
+  }
+
+  return blocks;
+}
 
 function detectIntent(message: string): Intent {
   const lowered = message.toLowerCase();
+
+  // Recurring block intent: "voor alle weken", "elke week", "wekelijks"
+  const recurringKeywords = ['voor alle weken', 'elke week', 'wekelijks', 'iedere week', 'alle weken'];
+  const blockKeywordsPresent = ['blokkeer', 'blok', 'vrij', 'niet beschikbaar'].some(k => lowered.includes(k));
+
+  if (blockKeywordsPresent && recurringKeywords.some(k => lowered.includes(k))) {
+    const recurringBlocks = parseRecurringBlocks(message);
+    if (recurringBlocks.length > 0) {
+      return { type: 'block_time_recurring', recurringBlocks };
+    }
+  }
 
   // Block time intent
   const blockKeywords = ['blokkeer', 'blok', 'vrij', 'niet beschikbaar', 'vakantie', 'vrije dag'];
@@ -161,6 +260,76 @@ function detectIntent(message: string): Intent {
     return { type: 'get_upcoming' };
   }
 
+  // CRM Intents
+
+  // Morning briefing
+  const briefingKeywords = ['briefing', 'goedemorgen', 'ochtend', 'stand van zaken', 'update'];
+  if (briefingKeywords.some(k => lowered.includes(k)) ||
+      (lowered.includes('geef') && lowered.includes('overzicht'))) {
+    return { type: 'morning_briefing' };
+  }
+
+  // Pipeline summary
+  const pipelineKeywords = ['pipeline', 'deals', 'omzet', 'waarde', 'prospects'];
+  if (pipelineKeywords.some(k => lowered.includes(k)) &&
+      (lowered.includes('wat') || lowered.includes('hoeveel') || lowered.includes('overzicht'))) {
+    return { type: 'pipeline_summary' };
+  }
+
+  // Overdue follow-ups
+  const overdueKeywords = ['opvolgen', 'follow-up', 'followup', 'achterstallig', 'vergeten', 'gemist'];
+  if (overdueKeywords.some(k => lowered.includes(k)) ||
+      (lowered.includes('klanten') && lowered.includes('moet'))) {
+    return { type: 'overdue_followups' };
+  }
+
+  // Today's tasks
+  if ((lowered.includes('vandaag') || lowered.includes('nu')) &&
+      (lowered.includes('doen') || lowered.includes('taken') || lowered.includes('to do') || lowered.includes('todo'))) {
+    return { type: 'today_tasks' };
+  }
+
+  // Company info
+  const companyInfoPattern = /wat weet je over (.+?)(\?|$)/i;
+  const companyMatch = message.match(companyInfoPattern);
+  if (companyMatch) {
+    return { type: 'company_info', entityName: companyMatch[1].trim() };
+  }
+
+  // Also check for "vertel me over" pattern
+  const tellMePattern = /vertel.*over (.+?)(\?|$)/i;
+  const tellMeMatch = message.match(tellMePattern);
+  if (tellMeMatch) {
+    return { type: 'company_info', entityName: tellMeMatch[1].trim() };
+  }
+
+  // Add note
+  const notePattern = /(?:voeg|zet|maak).*notitie.*(?:bij|voor|over)\s+(.+?)[:.]?\s*(.+)?$/i;
+  const noteMatch = message.match(notePattern);
+  if (noteMatch) {
+    return {
+      type: 'add_note',
+      entityName: noteMatch[1].trim(),
+      noteContent: noteMatch[2]?.trim() || '',
+    };
+  }
+
+  // Create task
+  const taskPatterns = [
+    /(?:plan|maak|zet).*(?:follow-up|followup|taak|herinnering).*(?:voor|bij|met)\s+(.+)/i,
+    /(?:herinner|remind).*(?:aan|over)\s+(.+)/i,
+  ];
+  for (const pattern of taskPatterns) {
+    const taskMatch = message.match(pattern);
+    if (taskMatch) {
+      return {
+        type: 'create_task',
+        entityName: taskMatch[1].trim(),
+        date: parseDate(message) || undefined,
+      };
+    }
+  }
+
   return { type: 'general' };
 }
 
@@ -182,6 +351,34 @@ function formatTime(isoString: string): string {
 // Execute calendar action based on intent
 async function executeCalendarAction(intent: Intent, originalMessage: string): Promise<string | null> {
   switch (intent.type) {
+    case 'block_time_recurring': {
+      const blocks = intent.recurringBlocks || [];
+      if (blocks.length === 0) {
+        return 'Ik kon geen dag/tijden herkennen. Probeer: "Blokkeer maandag na 14:30 en woensdag na 14:00 voor alle weken"';
+      }
+
+      const results: string[] = [];
+      for (const block of blocks) {
+        const result = await blockTimeRecurring({
+          title: 'Geblokkeerd',
+          dayOfWeek: block.dayOfWeek,
+          startHour: block.startHour,
+          startMinute: block.startMinute,
+          endHour: block.endHour,
+          endMinute: block.endMinute,
+          description: `Wekelijks geblokkeerd via Iris: "${originalMessage}"`,
+        });
+
+        if (result.success) {
+          results.push(`✓ ${block.label} (wekelijks, ~3 maanden)`);
+        } else {
+          results.push(`✗ ${block.label}: ${result.error}`);
+        }
+      }
+
+      return `Wekelijkse blokkering aangemaakt:\n${results.join('\n')}`;
+    }
+
     case 'block_time': {
       if (!intent.date) {
         return 'Ik begrijp dat je tijd wilt blokkeren, maar ik kon geen datum vinden. Kun je de datum specificeren? Bijvoorbeeld: "Blokkeer vrijdag 17 januari"';
@@ -283,27 +480,86 @@ async function executeCalendarAction(intent: Intent, originalMessage: string): P
   }
 }
 
-const OWNER_SYSTEM_PROMPT = `Je bent Iris, de persoonlijke AI-assistent van Vincent van Munster. Je praat nu DIRECT met Vincent zelf (niet met een klant).
+// Execute CRM action based on intent
+async function executeCrmAction(intent: Intent, originalMessage: string): Promise<string | null> {
+  switch (intent.type) {
+    case 'morning_briefing':
+      return await getMorningBriefing();
+
+    case 'pipeline_summary':
+      return await getPipelineSummary();
+
+    case 'overdue_followups':
+      return await getOverdueFollowups();
+
+    case 'today_tasks':
+      return await getTodayTasks();
+
+    case 'company_info':
+      if (!intent.entityName) {
+        return 'Over welk bedrijf wil je informatie?';
+      }
+      return await getCompanyInfo(intent.entityName);
+
+    case 'add_note':
+      if (!intent.entityName) {
+        return 'Bij welk bedrijf wil je een notitie toevoegen?';
+      }
+      if (!intent.noteContent) {
+        return `Wat wil je noteren bij ${intent.entityName}?`;
+      }
+      return await addCompanyNote(intent.entityName, intent.noteContent);
+
+    case 'create_task':
+      if (!intent.entityName) {
+        return 'Voor wie wil je een taak aanmaken?';
+      }
+      // Extract task description from original message or use default
+      const taskTitle = originalMessage.includes(':')
+        ? originalMessage.split(':').slice(1).join(':').trim()
+        : `Follow-up met ${intent.entityName}`;
+      return await createFollowupTask(intent.entityName, taskTitle, intent.date);
+
+    default:
+      return null;
+  }
+}
+
+const OWNER_SYSTEM_PROMPT = `Je bent Iris, de persoonlijke AI-assistent en business partner van Vincent van Munster. Je praat nu DIRECT met Vincent zelf (niet met een klant).
 
 BELANGRIJKE CONTEXT:
 - Vincent is de eigenaar van WeAreImpact
-- Je hebt toegang tot Vincent's Google Agenda
-- Je kunt tijd blokkeren, afspraken zoeken, en agenda-informatie opvragen
+- Je hebt toegang tot Vincent's Google Agenda EN zijn CRM-systeem
+- Je kent zijn klanten, deals, taken en pipeline
 - Wees informeel en direct - Vincent kent je goed
 
 WAT JE KUNT DOEN:
-1. Agenda blokkeren: "Blokkeer vrijdag 17 januari" → blokt de hele dag
-2. Afspraken zoeken: "Wanneer is de afspraak met de notaris?" → zoekt in agenda
-3. Agenda bekijken: "Wat staat er morgen?" → toont afspraken
-4. Komende week: "Wat komt er aan?" → overzicht komende afspraken
+
+AGENDA:
+- Agenda blokkeren: "Blokkeer vrijdag 17 januari" → blokt de hele dag
+- Wekelijks blokkeren: "Blokkeer maandag na 14:30 voor alle weken" → wekelijks herhalend
+- Meerdere dagen: "Blokkeer maandag na 14:30 en woensdag na 14:00 voor alle weken" → meerdere slots tegelijk
+- Afspraken zoeken: "Wanneer is de afspraak met de notaris?" → zoekt in agenda
+- Agenda bekijken: "Wat staat er morgen?" → toont afspraken
+- Komende week: "Wat komt er aan?" → overzicht komende afspraken
+
+CRM & SALES:
+- Pipeline overzicht: "Wat is mijn pipeline waard?" → totale waarde en deals per fase
+- Follow-ups: "Welke klanten moet ik opvolgen?" → achterstallige taken
+- Taken vandaag: "Wat moet ik vandaag doen?" → taken voor vandaag
+- Bedrijfsinfo: "Wat weet je over [bedrijf]?" → details van een klant
+- Briefing: "Geef me mijn briefing" → dagelijks overzicht
+- Notitie toevoegen: "Voeg notitie toe bij [klant]: [notitie]"
+- Taak aanmaken: "Plan follow-up met [klant]"
 
 STIJL:
 - Informeel Nederlands, je mag Vincent tutoyeren
 - Kort en bondig
-- Bevestig acties duidelijk
+- Proactief met suggesties
 - Als je iets niet snapt, vraag door
+- Gebruik emoji's spaarzaam maar gepast (voor positief nieuws)
 
-Je krijgt informatie over agenda-acties die al zijn uitgevoerd. Verwerk die natuurlijk in je antwoord.`;
+Je krijgt informatie over uitgevoerde acties. Verwerk die natuurlijk in je antwoord. Bij CRM-vragen kun je ook suggesties doen voor vervolgacties.`;
 
 export async function POST(request: NextRequest) {
   // Check authentication
@@ -323,17 +579,25 @@ export async function POST(request: NextRequest) {
 
     // Detect intent and execute calendar action
     const intent = detectIntent(lastUserMessage);
-    const calendarResult = await executeCalendarAction(intent, lastUserMessage);
 
-    // Build enhanced system prompt with calendar result
+    // Execute both calendar and CRM actions in parallel
+    const [calendarResult, crmResult] = await Promise.all([
+      executeCalendarAction(intent, lastUserMessage),
+      executeCrmAction(intent, lastUserMessage),
+    ]);
+
+    // Build enhanced system prompt with action results
     let enhancedSystemPrompt = OWNER_SYSTEM_PROMPT;
     if (calendarResult) {
       enhancedSystemPrompt += `\n\n[AGENDA-ACTIE UITGEVOERD]\n${calendarResult}\n\nGebruik deze informatie in je antwoord aan Vincent.`;
     }
+    if (crmResult) {
+      enhancedSystemPrompt += `\n\n[CRM-INFORMATIE]\n${crmResult}\n\nGebruik deze informatie in je antwoord aan Vincent. Wees behulpzaam en suggereer vervolgacties indien relevant.`;
+    }
 
     // Generate AI response
     const response = await getOpenRouter().chat.completions.create({
-      model: DEFAULT_MODELS.chat,
+      model: DEFAULT_MODELS.admin,
       messages: [
         { role: 'system', content: enhancedSystemPrompt },
         ...messages,

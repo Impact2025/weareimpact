@@ -42,7 +42,8 @@ export const MODELS = {
 // Default model for different use cases
 export const DEFAULT_MODELS = {
   scanner: MODELS.SONNET,      // Good balance for analysis
-  chat: MODELS.HAIKU,          // Fast & cheap for conversational
+  chat: MODELS.HAIKU,          // Fast & cheap for public conversational
+  admin: MODELS.SONNET,        // Smarter model for admin/Iris actions
   voice: MODELS.HAIKU,         // Fast for voice
   embedding: 'openai/text-embedding-3-small',
 } as const;
