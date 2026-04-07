@@ -1,4 +1,4 @@
-import { Blocks, FlaskConical, CheckCircle2, Clock, ExternalLink, Bot } from 'lucide-react';
+import { FlaskConical, CheckCircle2, Clock, ExternalLink, Bot } from 'lucide-react';
 
 const portfolio = [
   {
@@ -17,19 +17,19 @@ const portfolio = [
     dotColor: 'bg-green-400',
   },
   {
-    id: 'vrijwilligersmatch',
-    initial: 'VM',
-    name: 'Vrijwilligersmatch.nl',
-    tagline: 'Lopende gemeentepilot',
+    id: 'teambuildingmetimpact',
+    initial: 'TI',
+    name: 'Teambuilding met Impact',
+    tagline: 'Samen bouwen aan sterke teams én een betere wereld',
     description:
-      'Het platform dat vrijwilligers koppelt aan organisaties die ze echt nodig hebben. Momenteel actief als gemeentepilot — bewijs dat de aanpak werkt én schaalbaar is.',
-    color: 'text-emerald-600',
-    accent: 'border-emerald-400',
-    dot: 'bg-emerald-400',
-    url: 'https://vrijwilligersmatch.nl',
-    badge: 'Gemeentepilot',
-    badgeColor: 'bg-emerald-50 text-emerald-700',
-    dotColor: 'bg-emerald-400',
+      'Een teamdag die méér is dan gezellig samen zijn. We combineren teamontwikkeling met maatschappelijke betekenis — samenwerken, plezier maken én bijdragen aan een concreet goed doel.',
+    color: 'text-teal-600',
+    accent: 'border-teal-400',
+    dot: 'bg-teal-400',
+    url: 'https://teambuildingmetimpact.nl',
+    badge: 'Live',
+    badgeColor: 'bg-green-50 text-green-700',
+    dotColor: 'bg-green-400',
   },
   {
     id: 'bijeen',
@@ -69,14 +69,14 @@ const labs = [
     color: 'text-sky-500',
   },
   {
-    id: 'steentje',
-    initial: null,
-    icon: Blocks,
-    name: 'SteentjeBijSteentje',
-    tagline: 'Bouwen aan je Relatie',
+    id: 'brickme',
+    initial: 'BM',
+    name: 'Brickme',
+    tagline: 'Bouw wat je niet kunt zeggen',
     description:
-      'Omdat liefde een werkwoord is. Een hybride platform dat koppels helpt om letterlijk en figuurlijk weer aan hun relatie te bouwen, ondersteund door LEGO Serious Play workshops.',
-    color: 'text-green-500',
+      'Sommige dingen zijn te groot voor woorden. Brickme helpt ze zichtbaar te maken — door te bouwen, te fotograferen en een reflectie te ontvangen. Een concept van WeAreImpact.',
+    color: 'text-orange-500',
+    url: 'https://brickme.nl',
   },
 ];
 
@@ -204,6 +204,17 @@ export function Ventures() {
                 </div>
               </div>
               <p className="text-slate-500 leading-relaxed">{venture.description}</p>
+              {'url' in venture && venture.url && (
+                <a
+                  href={venture.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1 mt-4 text-xs font-semibold text-slate-400 hover:text-slate-600 transition-colors"
+                >
+                  <ExternalLink size={12} />
+                  {venture.url.replace('https://', '')}
+                </a>
+              )}
             </div>
           ))}
         </div>
