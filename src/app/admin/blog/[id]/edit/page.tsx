@@ -57,6 +57,7 @@ export default function EditBlogPostPage() {
   const [isOptimizing, setIsOptimizing] = useState(false);
   const [isEnhancing, setIsEnhancing] = useState(false);
   const [isFormatting, setIsFormatting] = useState(false);
+  const [isGeneratingSocial, setIsGeneratingSocial] = useState(false);
   const [activeTab, setActiveTab] = useState<TabType>('editor');
   const [showAIPanel, setShowAIPanel] = useState(false);
 
@@ -266,6 +267,43 @@ export default function EditBlogPostPage() {
       alert('Er ging iets fout: ' + (error instanceof Error ? error.message : ''));
     } finally {
       setIsEnhancing(false);
+    }
+  };
+
+  // Generate social media posts only
+  const handleGenerateSocial = async () => {
+    if (!formData.content || formData.content.trim().length < 100) {
+      alert('Voeg eerst inhoud toe (minimaal 100 karakters)');
+      return;
+    }
+
+    setIsGeneratingSocial(true);
+    try {
+      const response = await fetch('/api/admin/blog/enhance', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          content: formData.content,
+          title: formData.title,
+        }),
+      });
+
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || 'Generatie mislukt');
+
+      const { data } = result;
+      setFormData({
+        ...formData,
+        socialInstagram: data.socialMedia?.instagram || formData.socialInstagram,
+        socialFacebook: data.socialMedia?.facebook || formData.socialFacebook,
+        socialLinkedIn: data.socialMedia?.linkedin || formData.socialLinkedIn,
+        socialTwitter: data.socialMedia?.twitter || formData.socialTwitter,
+        imagePrompt: data.coverImage?.prompt || formData.imagePrompt,
+      });
+    } catch (error) {
+      alert('Er ging iets fout: ' + (error instanceof Error ? error.message : ''));
+    } finally {
+      setIsGeneratingSocial(false);
     }
   };
 
@@ -685,8 +723,26 @@ export default function EditBlogPostPage() {
               <TabsContent value="social" className="space-y-4 mt-4">
                 <Card>
                   <CardHeader>
-                    <CardTitle>Social Media Posts</CardTitle>
-                    <CardDescription>Bereid je social media posts voor</CardDescription>
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <CardTitle>Social Media Posts</CardTitle>
+                        <CardDescription>Bereid je social media posts voor</CardDescription>
+                      </div>
+                      <Button
+                        onClick={handleGenerateSocial}
+                        disabled={isGeneratingSocial}
+                        variant="outline"
+                        size="sm"
+                        className="gap-2"
+                      >
+                        {isGeneratingSocial ? (
+                          <Loader2 size={16} className="animate-spin" />
+                        ) : (
+                          <Sparkles size={16} />
+                        )}
+                        {isGeneratingSocial ? 'Genereren...' : 'Genereer met AI'}
+                      </Button>
+                    </div>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div className="space-y-2">
