@@ -1015,7 +1015,6 @@ export function DigitalTwin() {
                   <div className="flex items-center justify-between">
                     <div>
                       <div className="flex items-center gap-2 mb-1.5">
-                        <span className="text-xs font-semibold bg-white/20 text-white px-2 py-0.5 rounded-full tracking-wide">GRATIS</span>
                         <span className="text-xs text-orange-100">30 min</span>
                       </div>
                       <div className="font-semibold text-white text-base">Kennismakingsgesprek</div>
