@@ -1012,22 +1012,16 @@ export function DigitalTwin() {
                   onClick={() => handleSelectType(BOOKING_TYPES[0])}
                   className="w-full text-left p-4 bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl shadow-lg shadow-orange-500/20 hover:shadow-orange-500/30 hover:from-orange-600 hover:to-orange-700 transition-all duration-200 group animate-in fade-in-0 slide-in-from-bottom-2"
                 >
-                  <div className="flex items-start justify-between">
+                  <div className="flex items-center justify-between">
                     <div>
-                      <div className="flex items-center gap-2 mb-1">
-                        <span className="text-xs font-semibold bg-white/25 text-white px-2 py-0.5 rounded-full">GRATIS</span>
+                      <div className="flex items-center gap-2 mb-1.5">
+                        <span className="text-xs font-semibold bg-white/20 text-white px-2 py-0.5 rounded-full tracking-wide">GRATIS</span>
                         <span className="text-xs text-orange-100">30 min</span>
                       </div>
                       <div className="font-semibold text-white text-base">Kennismakingsgesprek</div>
                       <div className="text-sm text-orange-100 mt-0.5">Vrijblijvend ontdekken of we een match zijn</div>
-                      <div className="flex items-center gap-3 mt-3">
-                        <span className="text-xs text-orange-100 flex items-center gap-1"><Check size={10} /> Geen verplichting</span>
-                        <span className="text-xs text-orange-100 flex items-center gap-1"><Check size={10} /> Snel ingepland</span>
-                      </div>
                     </div>
-                    <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center group-hover:bg-white/30 transition-colors mt-0.5 flex-shrink-0">
-                      <ChevronRight size={16} className="text-white group-hover:translate-x-0.5 transition-transform" />
-                    </div>
+                    <ChevronRight size={18} className="text-white/60 group-hover:text-white group-hover:translate-x-0.5 transition-all flex-shrink-0" />
                   </div>
                 </button>
 
@@ -1039,33 +1033,22 @@ export function DigitalTwin() {
                 </div>
 
                 {/* Paid options: compact */}
-                {BOOKING_TYPES.slice(1).map((type, idx) => {
-                  const icons: Record<string, string> = {
-                    'strategie-ai': '🤖',
-                    'strategie-impact': '📊',
-                    'lego-intro': '🧱',
-                  };
-                  return (
-                    <button
-                      key={type.slug}
-                      onClick={() => handleSelectType(type)}
-                      className="w-full text-left px-4 py-3 bg-white rounded-xl border border-slate-200 hover:border-orange-200 hover:shadow-sm transition-all duration-200 group animate-in fade-in-0 slide-in-from-bottom-2"
-                      style={{ animationDelay: `${(idx + 1) * 60}ms` }}
-                    >
-                      <div className="flex items-center gap-3">
-                        <span className="text-xl flex-shrink-0">{icons[type.slug]}</span>
-                        <div className="flex-1 min-w-0">
-                          <div className="font-medium text-slate-800 text-sm group-hover:text-slate-900">{type.name}</div>
-                          <div className="text-xs text-slate-400 mt-0.5">{type.duration} min</div>
-                        </div>
-                        <div className="text-right flex-shrink-0">
-                          <div className="text-sm font-semibold text-slate-600">{type.price}</div>
-                          <ChevronRight size={14} className="text-slate-300 group-hover:text-orange-400 group-hover:translate-x-0.5 transition-all mt-0.5 ml-auto" />
-                        </div>
+                {BOOKING_TYPES.slice(1).map((type, idx) => (
+                  <button
+                    key={type.slug}
+                    onClick={() => handleSelectType(type)}
+                    className="w-full text-left px-4 py-3 bg-white rounded-xl border border-slate-200 hover:border-slate-300 hover:shadow-sm transition-all duration-200 group animate-in fade-in-0 slide-in-from-bottom-2"
+                    style={{ animationDelay: `${(idx + 1) * 60}ms` }}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <div className="font-medium text-slate-800 text-sm group-hover:text-slate-900">{type.name}</div>
+                        <div className="text-xs text-slate-400 mt-0.5">{type.duration} min</div>
                       </div>
-                    </button>
-                  );
-                })}
+                      <ChevronRight size={14} className="text-slate-300 group-hover:text-slate-500 group-hover:translate-x-0.5 transition-all flex-shrink-0" />
+                    </div>
+                  </button>
+                ))}
               </div>
             )}
 
