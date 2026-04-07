@@ -82,11 +82,38 @@ OPDRACHT - GENEREER ALLEEN METADATA:
 
 **4. EXCERPT:** 2-3 pakkende zinnen als samenvatting (max 250 karakters)
 
-**5. SOCIAL MEDIA POSTS:**
-- Instagram: Max 150 karakters + 3-5 hashtags
-- Facebook: Max 250 karakters, vraag om interactie
-- LinkedIn: Max 200 karakters, professionele toon
-- Twitter/X: Max 280 karakters, pakkend met emoji
+**5. SOCIAL MEDIA POSTS (STRIKT NEDERLANDSTALIG):**
+
+KRITISCHE REGELS VOOR ALLE POSTS:
+- ALLES in het Nederlands — GEEN Engelse woorden of zinnen
+- Hashtags zijn ALTIJD Nederlands (bijv. #sociaalondernemen, #welzijn, #kunstmatigeintelligentie)
+- Uitzondering: technische termen die geen Nederlandse vertaling hebben (AI, LEGO, app, etc.)
+- Gebruik persoonlijke, warme toon passend bij Vincent van Munster / WeAreImpact
+
+INSTAGRAM (STRIKT max 130 tekens voor tekst, dan 3-5 Nederlandse hashtags):
+- Begin met een haak: vraag, opvallend feit, of krachtige uitspraak
+- Emoji aan het einde van de tekst, vóór de hashtags
+- 3-5 hashtags in het Nederlands, aansluitend op het artikel thema
+- TOTAAL (tekst + hashtags) mag NOOIT meer dan 150 tekens zijn — tel zorgvuldig!
+- Voorbeeld: "Van directeur naar app-bouwer in 2 jaar. Mijn eerlijkste verhaal ooit. 🧱 #sociaalondernemen #persoonlijkegroei #lego #welzijn #impact"
+
+FACEBOOK (max 250 tekens):
+- Stel een prikkelende vraag die de lezer aanzet tot reactie
+- Conversationeel en persoonlijk
+- Eindig met 2-3 Nederlandse hashtags
+- Voorbeeld: "Heb jij jezelf weleens kwijtgeraakt in je werk? Vincent deelt hoe hij de weg terug vond — via LEGO. Herkenbaar? 🧩 #persoonlijkegroei #welzijn #impact"
+
+LINKEDIN (max 200 tekens):
+- Professioneel maar persoonlijk — geen corporate taal
+- Benoem de zakelijke/professionele waarde van het artikel
+- Eindig met 2-3 Nederlandse professionele hashtags
+- VOLLEDIG in het Nederlands — geen Engelse zinnen
+- Voorbeeld: "Van non-profit directeur naar tech-ondernemer: hoe persoonlijke kwetsbaarheid de sleutel bleek tot innovatie. ✨ #sociaalondernemen #innovatie #leiderschap"
+
+TWITTER/X (max 280 tekens):
+- Kort, scherp, nieuwsgierig makend
+- 1 emoji, 2-3 Nederlandse hashtags
+- Voorbeeld: "Jezelf kwijt? Bouw jezelf terug met LEGO 🧱 Hoe Brickme.nl ontstond uit een persoonlijke crisis. #sociaalondernemen #persoonlijkegroei #AI"
 
 **6. COVER IMAGE:**
 - AI Prompt: Moderne, minimalistische header afbeelding prompt (voor Midjourney/DALL-E)
@@ -142,8 +169,7 @@ RESPONSE FORMAAT (JSON):
 
     // Try models in order of preference
     const models = [
-      'anthropic/claude-sonnet-4',
-      'anthropic/claude-3.5-sonnet:beta',
+      'anthropic/claude-sonnet-4.5',
       'openai/gpt-4o',
       'google/gemini-2.0-flash-001',
     ];

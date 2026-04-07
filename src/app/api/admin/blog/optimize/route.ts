@@ -19,99 +19,119 @@ export async function POST(request: NextRequest) {
     }
 
     // Create AI prompt for SEO optimization
-    const prompt = `Je bent een wereldklasse SEO expert en content optimizer voor WeAreImpact, een bedrijf dat gespecialiseerd is in AI en impact-gedreven oplossingen.
+    const prompt = `Je bent een wereldklasse SEO expert en content optimizer voor WeAreImpact.
 
-OPDRACHT: Optimaliseer de onderstaande ruwe blog tekst naar een SEO wereldklasse artikel.
+OPDRACHT: Transformeer de ruwe tekst naar een visueel aantrekkelijk, SEO-geoptimaliseerd artikel.
 
-**Originele Titel (indien aanwezig):** ${title || 'Niet opgegeven - genereer zelf een SEO-titel'}
+**KRITISCH: BEHOUD DE ORIGINELE TEKST EXACT!**
+- Verander GEEN woorden, zinnen of betekenis
+- Voeg GEEN nieuwe content toe, alleen HTML structuur
+- Behoud de persoonlijke tone of voice EXACT
+
+**Originele Titel:** ${title || 'Gebruik de eerste krachtige zin als titel'}
 
 **Ruwe Content:**
 ${rawContent}
 
-TRANSFORMATIE VEREISTEN:
+═══════════════════════════════════════════════════════════════
+KRITIEKE HTML STRUCTUUR VEREISTEN:
+═══════════════════════════════════════════════════════════════
 
-1. **SEO HTML STRUCTUUR:**
-   - Maak een pakkende H1 titel (gebruik het hoofdonderwerp + keyword)
-   - Structureer de content met logische H2 en H3 koppen
-   - Gebruik HTML tags: <h2>, <h3>, <p>, <ul>, <li>, <strong>, <em>, <a>
-   - Maak korte, scannbare paragrafen (max 3-4 zinnen)
-   - Gebruik bullet points en genummerde lijsten waar passend
+**VERPLICHT - Dit maakt het verschil tussen lelijke en professionele content:**
 
-2. **INTERNE LINKS:**
-   Voeg relevante interne links toe naar deze WeAreImpact paginas (alleen waar natuurlijk passend):
-   - https://weareimpact.nl/ (homepage - voor algemene verwijzingen naar het bedrijf)
-   - https://weareimpact.nl/kennisbank (kennisbank - voor gerelateerde artikelen en kennis)
-   - https://weareimpact.nl/blog (blog overzicht - voor meer artikelen)
+1. **ELKE ALINEA moet in <p> tags** - NOOIT platte tekst zonder tags!
+   FOUT: Mijn laatste dag als directeur...
+   GOED: <p>Mijn laatste dag als directeur...</p>
 
-   Gebruik beschrijvende anchor teksten (niet "klik hier" maar bijvoorbeeld "bekijk onze kennisbank over AI")
-   Voeg 2-5 interne links toe op natuurlijke plekken in de tekst.
+2. **SECTIES MAKEN met H2 koppen** (identificeer 4-6 logische secties)
+   - Zoek naar thema-wisselingen in de tekst
+   - Maak beschrijvende H2 koppen die de sectie samenvatten
+   - Voorbeeld H2's: "De uitdaging", "Mijn aanpak", "Het resultaat", "Waarom dit werkt"
 
-3. **KEYWORDS & SEO:**
-   - Identificeer het primaire keyword en gebruik dit 1-2% door de tekst
-   - Identificeer 5-8 secundaire keywords/LSI keywords
-   - Optimaliseer voor Featured Snippets (gebruik vraag-antwoord formaat waar mogelijk)
+3. **SUBSECTIES met H3 koppen** waar nodig (2-4 per sectie indien logisch)
 
-4. **METADATA:**
-   - SEO Title: Max 60 karakters, bevat primair keyword
-   - Meta Description: 150-155 karakters, overtuigend en met keyword
-   - Keywords/Tags: 5-8 relevante tags
+4. **WITRUIMTE EN STRUCTUUR:**
+   - Splits lange alinea's (max 3-4 zinnen per <p>)
+   - Groepeer gerelateerde zinnen samen
+   - Maak duidelijke visuele secties
 
-5. **CATEGORIE BEPALING:**
-   Bepaal automatisch de beste categorie uit:
-   - "ai" (voor AI, machine learning, technologie onderwerpen)
-   - "impact" (voor maatschappelijke impact, duurzaamheid, sociale onderwerpen)
-   - "strategie" (voor business strategie, organisatieontwikkeling, management)
-   - "nieuws" (voor actuele ontwikkelingen en nieuwsberichten)
+5. **FORMATTING VOOR NADRUK:**
+   - <strong> voor belangrijke termen, namen, getallen
+   - <em> voor nadruk op woorden
+   - Bullet points <ul><li> waar logisch (opsommingen)
 
-6. **SOCIAL MEDIA POSTS:**
-   Genereer posts voor:
-   - Instagram: Max 150 karakters, gebruik 3-5 relevante hashtags
-   - Facebook: Max 250 karakters, conversationeel
-   - LinkedIn: Max 200 karakters, professioneel en zakelijk
-   - Twitter/X: Max 280 karakters, pakkend en to-the-point
+6. **INTERNE LINKS (2-5 stuks):**
+   - <a href="https://weareimpact.nl/">WeAreImpact</a>
+   - <a href="https://weareimpact.nl/kennisbank">kennisbank</a>
+   - <a href="https://weareimpact.nl/blog">meer artikelen</a>
+   Gebruik beschrijvende anchor tekst, niet "klik hier"
 
-7. **EXCERPT:**
-   Maak een korte, pakkende samenvatting van 2-3 zinnen die de lezer triggert
+═══════════════════════════════════════════════════════════════
+VOORBEELD TRANSFORMATIE:
+═══════════════════════════════════════════════════════════════
 
-8. **IMAGE PROMPT & ALT TEXT:**
-   - Genereer een Midjourney/DALL-E prompt voor een passende, moderne header afbeelding
-   - Genereer SEO-geoptimaliseerde alt tekst (max 125 karakters) die de afbeelding beschrijft
-   - Alt tekst moet beschrijvend zijn en relevant keywords bevatten
+INPUT (ruw):
+"Mijn laatste dag als directeur. 1 oktober 2025. Twee jaar lang leidde ik een organisatie. Ik vond het geweldig werk. Maar op die dag maakte ik een keuze."
 
-KWALITEITSEISEN:
-- Behoud de oorspronkelijke boodschap en tone of voice van de auteur
-- Maak de tekst leesbaarder en professioneler
-- Voeg waarde toe met structuur, niet door inhoud te veranderen
-- Gebruik Nederlandse taal (tenzij de originele tekst Engels is)
-- Zorg dat interne links natuurlijk aanvoelen en echt waardevol zijn
+OUTPUT (geoptimaliseerd):
+<h2>Mijn laatste dag als directeur</h2>
+<p><strong>1 oktober 2025.</strong> Mijn laatste dag als directeur van Stichting de Baan. Twee jaar lang leidde ik een organisatie met 700+ deelnemers en 180 vrijwilligers.</p>
+<p>Ik vond het geweldig werk. Impact maken voor zo'n mooie doelgroep, samenwerken met betrokken vrijwilligers - dat geeft energie.</p>
+<h3>De beslissende keuze</h3>
+<p>Maar op die dag maakte ik een keuze: ik zou nooit meer fulltime operationeel directeur worden.</p>
 
-RESPONSE FORMAAT:
-Geef je antwoord in dit JSON formaat:
+═══════════════════════════════════════════════════════════════
+AANVULLENDE VEREISTEN:
+═══════════════════════════════════════════════════════════════
+
+**CATEGORIE:** Kies uit: "ai", "impact", "strategie", "nieuws"
+
+**SEO METADATA:**
+- Title: Max 60 karakters met primair keyword
+- Description: 150-155 karakters, overtuigend
+- Keywords: 5-8 relevante tags
+
+**SOCIAL MEDIA (STRIKT NEDERLANDSTALIG):**
+- Instagram: Max 130 tekens tekst + emoji + 3-5 NEDERLANDSE hashtags (totaal max 150 tekens)
+- Facebook: Max 250 tekens, conversationeel, eindig met 2-3 Nederlandse hashtags
+- LinkedIn: Max 200 tekens, professioneel maar persoonlijk, volledig Nederlands, 2-3 Nederlandse hashtags
+- Twitter/X: Max 280 tekens, scherp en nieuwsgierig makend, 2-3 Nederlandse hashtags
+- ALLE hashtags zijn in het Nederlands — geen Engelse hashtags!
+
+**EXCERPT:** 2-3 pakkende zinnen als samenvatting
+
+**COVER IMAGE:**
+- AI prompt voor moderne header afbeelding
+- Alt tekst (max 125 karakters) met keywords
+
+═══════════════════════════════════════════════════════════════
+RESPONSE FORMAAT (JSON):
+═══════════════════════════════════════════════════════════════
 
 {
-  "title": "SEO-geoptimaliseerde H1 titel",
-  "content": "Volledige HTML content met H2/H3/paragrafen/interne links (zonder <h1>, begin met eerste <h2>)",
-  "excerpt": "Korte samenvatting van 2-3 zinnen",
+  "title": "Originele titel EXACT behouden",
+  "content": "<h2>Eerste sectie</h2><p>Eerste alinea...</p><p>Tweede alinea...</p><h2>Tweede sectie</h2>...",
+  "excerpt": "Pakkende samenvatting...",
   "category": "ai|impact|strategie|nieuws",
-  "tags": ["tag1", "tag2", "tag3", ...],
+  "tags": ["tag1", "tag2", ...],
   "seo": {
-    "title": "SEO meta title (max 60 karakters)",
-    "description": "SEO meta description (150-155 karakters)",
-    "keywords": ["keyword1", "keyword2", ...]
+    "title": "Max 60 karakters",
+    "description": "150-155 karakters",
+    "keywords": ["keyword1", ...]
   },
   "socialMedia": {
-    "instagram": "Instagram post #hashtag1 #hashtag2 #hashtag3",
-    "facebook": "Facebook post",
-    "linkedin": "LinkedIn post",
-    "twitter": "Twitter post"
+    "instagram": "Post #hashtag",
+    "facebook": "Post",
+    "linkedin": "Post",
+    "twitter": "Post"
   },
   "coverImage": {
-    "prompt": "Midjourney/DALL-E prompt voor header afbeelding",
-    "alt": "SEO-geoptimaliseerde alt tekst (max 125 karakters)"
+    "prompt": "AI image prompt",
+    "alt": "Alt tekst met keywords"
   }
 }
 
-Begin nu met het optimaliseren van de content!`;
+BELANGRIJK: De "content" moet ECHTE HTML zijn met <h2>, <h3>, <p>, <strong>, <em>, <ul>, <li>, <a> tags. GEEN platte tekst!`;
 
     // Call OpenRouter API
     const apiKey = process.env.OPENROUTER_API_KEY;
@@ -124,8 +144,7 @@ Begin nu met het optimaliseren van de content!`;
 
     // Try models in order of preference
     const models = [
-      'anthropic/claude-sonnet-4',
-      'anthropic/claude-3.5-sonnet:beta',
+      'anthropic/claude-sonnet-4.5',
       'openai/gpt-4o',
       'google/gemini-2.0-flash-001',
     ];
