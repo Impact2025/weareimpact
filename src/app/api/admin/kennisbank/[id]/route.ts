@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { sql } from '@/lib/db/neon';
 import { indexKennisbankArticle } from '@/lib/seo/indexnow';
+import { generateEmbedding } from '../embeddings/route';
 
 export const dynamic = 'force-dynamic';
 
@@ -128,6 +129,14 @@ export async function PUT(
         { status: 404 }
       );
     }
+
+    // Generate embedding in background (don't block response)
+    generateEmbedding(search_content).then(embedding => {
+      const vectorString = `[${embedding.join(',')}]`;
+      return sql`UPDATE kb_articles SET embedding = ${vectorString}::vector WHERE id = ${id}`;
+    }).catch(err => {
+      console.error('Embedding generation failed:', err);
+    });
 
     // Trigger IndexNow when article is published
     if (status === 'published' && result[0].slug) {

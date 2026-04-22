@@ -22,7 +22,7 @@ import { ArticleJsonLd, BreadcrumbJsonLd, FAQPageJsonLd, HowToJsonLd, extractSte
 import { sql } from '@/lib/db/neon';
 import type { Metadata } from 'next';
 
-export const dynamic = 'force-dynamic'; // Always render fresh content
+export const revalidate = 3600; // ISR: revalidate every hour
 
 interface Article {
   id: string;
@@ -38,6 +38,7 @@ interface Article {
   reading_time: number;
   difficulty: string;
   published_at: string;
+  updated_at: string;
   views: number;
   featured_image: string | null;
   featured_image_alt: string | null;
@@ -165,6 +166,7 @@ async function getArticleFromDatabase(slug: string): Promise<Article | null> {
       reading_time: (data.reading_time as number) || 5,
       difficulty: (data.difficulty as string) || 'beginner',
       published_at: (data.published_at as string) || new Date().toISOString(),
+      updated_at: (data.updated_at as string) || (data.published_at as string) || new Date().toISOString(),
       views: (data.views as number) || 0,
       featured_image: (data.featured_image as string) || null,
       featured_image_alt: (data.featured_image_alt as string) || null,
@@ -216,6 +218,7 @@ async function getArticleFromMarkdown(slug: string): Promise<Article | null> {
           reading_time: data.reading_time || 5,
           difficulty: data.difficulty || 'beginner',
           published_at: data.published_at || stats.mtime.toISOString(),
+          updated_at: data.updated_at || stats.mtime.toISOString(),
           views: 0,
           featured_image: data.featured_image || null,
           featured_image_alt: data.featured_image_alt || null,
@@ -346,6 +349,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       type: 'article',
       url: `https://weareimpact.nl/kennisbank/${slug}`,
       publishedTime: article.published_at,
+      modifiedTime: article.updated_at,
       authors: [article.author_name || 'Vincent van Munster'],
     },
     twitter: {
@@ -404,6 +408,7 @@ export default async function KennisbankArticlePage({ params }: Props) {
           description: article.excerpt,
           slug: `kennisbank/${article.slug}`,
           publishedAt: article.published_at,
+          modifiedAt: article.updated_at,
           authorName: article.author_name || 'Vincent van Munster',
           category: article.category_slug,
           tags: article.tags,

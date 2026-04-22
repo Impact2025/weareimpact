@@ -42,6 +42,7 @@ interface RichTextEditorProps {
 
 export function RichTextEditor({ content, onChange, placeholder = 'Start met schrijven...' }: RichTextEditorProps) {
   const editor = useEditor({
+    immediatelyRender: false,
     extensions: [
       StarterKit.configure({
         heading: {
@@ -91,9 +92,13 @@ export function RichTextEditor({ content, onChange, placeholder = 'Start met sch
 
   const addImage = () => {
     const url = window.prompt('Afbeelding URL:');
-    if (url) {
-      editor.chain().focus().setImage({ src: url }).run();
+    if (!url) return;
+    const alt = window.prompt('Alt tekst (verplicht voor SEO en toegankelijkheid):');
+    if (!alt) {
+      window.alert('Alt tekst is verplicht. Voeg een beschrijvende alt tekst toe.');
+      return;
     }
+    editor.chain().focus().setImage({ src: url, alt }).run();
   };
 
   const addLink = () => {

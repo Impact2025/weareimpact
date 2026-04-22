@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { sql } from '@/lib/db/neon';
+import { generateEmbedding } from '../admin/kennisbank/embeddings/route';
 
 export const dynamic = 'force-dynamic';
 
@@ -109,6 +110,16 @@ export async function POST(request: NextRequest) {
       )
       RETURNING id, slug
     `;
+
+    const articleId = result[0].id as string;
+
+    // Generate embedding in background
+    generateEmbedding(search_content).then(embedding => {
+      const vectorString = `[${embedding.join(',')}]`;
+      return sql`UPDATE kb_articles SET embedding = ${vectorString}::vector WHERE id = ${articleId}`;
+    }).catch(err => {
+      console.error('Embedding generation failed:', err);
+    });
 
     return NextResponse.json({ success: true, data: result[0] });
   } catch (error) {

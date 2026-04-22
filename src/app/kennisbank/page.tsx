@@ -26,7 +26,7 @@ export const metadata: Metadata = {
   },
 };
 
-export const dynamic = 'force-dynamic'; // Always render fresh content
+export const revalidate = 3600; // ISR: revalidate every hour
 
 interface Article {
   id: string;

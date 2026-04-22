@@ -1,131 +1,138 @@
 import { MetadataRoute } from 'next';
-import fs from 'fs';
-import path from 'path';
-import matter from 'gray-matter';
+import { sql } from '@/lib/db/neon';
+
+export const revalidate = 3600;
+
+const BASE_URL = 'https://weareimpact.nl';
+
+const KENNISBANK_CATEGORIES = [
+  'sociaal-ondernemen',
+  'ai-tech',
+  'vrijwilligers',
+  'impact-meten',
+  'subsidie-funding',
+  'lego-serious-play',
+] as const;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = 'https://weareimpact.nl';
-
-  // Static pages with proper priorities
-  const staticPages: MetadataRoute.Sitemap = [
-    {
-      url: baseUrl,
-      lastModified: new Date(),
-      changeFrequency: 'weekly',
-      priority: 1.0,
-    },
-    {
-      url: `${baseUrl}/kennisbank`,
-      lastModified: new Date(),
-      changeFrequency: 'daily',
-      priority: 0.95, // High priority - main content hub
-    },
-    {
-      url: `${baseUrl}/blog`,
-      lastModified: new Date(),
-      changeFrequency: 'daily',
-      priority: 0.85,
-    },
-    {
-      url: `${baseUrl}/ai-scan`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.8,
-    },
-  ];
-
-  // Dynamic kennisbank articles from database
-  let kennisbankPages: MetadataRoute.Sitemap = [];
-  const dbSlugs = new Set<string>();
-
+  // Fetch all published kennisbank articles
+  let kennisbankArticles: { slug: string; updated_at: string; published_at: string; views: number; category_slug: string }[] = [];
   try {
-    const { sql } = await import('@/lib/db/neon');
-    const articles = await sql`
-      SELECT slug, updated_at, published_at, views
+    kennisbankArticles = (await sql`
+      SELECT slug, updated_at, published_at, views, category_slug
       FROM kb_articles
       WHERE status = 'published'
       ORDER BY published_at DESC
-    `;
-    kennisbankPages = articles.map((article) => {
-      dbSlugs.add(article.slug as string);
-      // Higher priority for popular articles (SEO signal)
-      const views = (article.views as number) || 0;
-      const priority = views > 500 ? 0.9 : views > 100 ? 0.85 : 0.8;
-
-      return {
-        url: `${baseUrl}/kennisbank/${article.slug}`,
-        lastModified: new Date(article.updated_at || article.published_at),
-        changeFrequency: 'weekly' as const,
-        priority,
-      };
-    });
-  } catch (error) {
-    console.error('Error generating kennisbank sitemap:', error);
+    `) as typeof kennisbankArticles;
+  } catch {
+    // sitemap degrades gracefully if DB is unavailable
   }
 
-  // Also include markdown articles not yet in database
+  // Fetch all published blog posts
+  let blogPosts: { slug: string; updated_at: string; published_at: string }[] = [];
   try {
-    const kennisbankDir = path.join(process.cwd(), 'content', 'kennisbank');
-    if (fs.existsSync(kennisbankDir)) {
-      const files = fs.readdirSync(kennisbankDir).filter(f => f.endsWith('.md'));
-      for (const file of files) {
-        const filePath = path.join(kennisbankDir, file);
-        const fileContents = fs.readFileSync(filePath, 'utf8');
-        const { data } = matter(fileContents);
-        const slug = data.slug || file.replace('.md', '');
-
-        // Skip if already in DB
-        if (dbSlugs.has(slug)) continue;
-
-        const stats = fs.statSync(filePath);
-        kennisbankPages.push({
-          url: `${baseUrl}/kennisbank/${slug}`,
-          lastModified: stats.mtime,
-          changeFrequency: 'weekly' as const,
-          priority: 0.8,
-        });
-      }
-    }
-  } catch (error) {
-    console.error('Error reading markdown articles for sitemap:', error);
-  }
-
-  // Dynamic blog posts from database
-  let blogPages: MetadataRoute.Sitemap = [];
-  try {
-    const { sql } = await import('@/lib/db/neon');
-    const posts = await sql`
+    blogPosts = (await sql`
       SELECT slug, updated_at, published_at
       FROM posts
       WHERE status = 'published'
       ORDER BY published_at DESC
-    `;
-    blogPages = posts.map((post) => ({
-      url: `${baseUrl}/blog/${post.slug}`,
-      lastModified: new Date(post.updated_at || post.published_at),
-      changeFrequency: 'monthly' as const,
-      priority: 0.7,
-    }));
-  } catch (error) {
-    console.error('Error generating blog sitemap:', error);
+    `) as typeof blogPosts;
+  } catch {
+    // sitemap degrades gracefully
   }
 
-  // Kennisbank category pages - higher priority as pillar pages
-  const kennisbankCategories = [
-    'sociaal-ondernemen',
-    'ai-tech',
-    'vrijwilligers',
-    'impact-meten',
-    'subsidie-funding',
-    'lego-serious-play',
+  // Most recent kennisbank article date → used as hub lastModified
+  const latestKennisbankDate = kennisbankArticles[0]
+    ? new Date(kennisbankArticles[0].updated_at || kennisbankArticles[0].published_at)
+    : new Date('2025-12-01');
+
+  const latestBlogDate = blogPosts[0]
+    ? new Date(blogPosts[0].updated_at || blogPosts[0].published_at)
+    : new Date('2025-12-01');
+
+  // Most recent article per category → used as category lastModified
+  const categoryLatestDate: Record<string, Date> = {};
+  for (const article of kennisbankArticles) {
+    if (!categoryLatestDate[article.category_slug]) {
+      categoryLatestDate[article.category_slug] = new Date(
+        article.updated_at || article.published_at
+      );
+    }
+  }
+
+  // === STATIC PAGES ===
+  const staticPages: MetadataRoute.Sitemap = [
+    {
+      url: BASE_URL,
+      lastModified: latestKennisbankDate, // Homepage shows latest content
+      changeFrequency: 'weekly',
+      priority: 1.0,
+    },
+    {
+      url: `${BASE_URL}/kennisbank`,
+      lastModified: latestKennisbankDate,
+      changeFrequency: 'daily',
+      priority: 0.95,
+    },
+    {
+      url: `${BASE_URL}/blog`,
+      lastModified: latestBlogDate,
+      changeFrequency: 'weekly',
+      priority: 0.85,
+    },
+    {
+      url: `${BASE_URL}/ai-scan`,
+      lastModified: new Date('2025-11-01'),
+      changeFrequency: 'monthly',
+      priority: 0.8,
+    },
+    {
+      url: `${BASE_URL}/ai-proof-checklist`,
+      lastModified: new Date('2025-11-01'),
+      changeFrequency: 'monthly',
+      priority: 0.75,
+    },
+    {
+      url: `${BASE_URL}/contact`,
+      lastModified: new Date('2025-10-01'),
+      changeFrequency: 'monthly',
+      priority: 0.6,
+    },
   ];
 
-  const categoryPages: MetadataRoute.Sitemap = kennisbankCategories.map((category) => ({
-    url: `${baseUrl}/kennisbank/categorie/${category}`,
-    lastModified: new Date(),
+  // === KENNISBANK CATEGORY PILLAR PAGES ===
+  const categoryPages: MetadataRoute.Sitemap = KENNISBANK_CATEGORIES.map((category) => ({
+    url: `${BASE_URL}/kennisbank/categorie/${category}`,
+    lastModified: categoryLatestDate[category] ?? latestKennisbankDate,
     changeFrequency: 'weekly' as const,
-    priority: 0.85, // Pillar pages get high priority
+    priority: 0.85,
   }));
 
-  return [...staticPages, ...categoryPages, ...kennisbankPages, ...blogPages];
+  // === KENNISBANK ARTICLES ===
+  const kennisbankPages: MetadataRoute.Sitemap = kennisbankArticles.map((article) => {
+    const views = article.views || 0;
+    const priority = views > 500 ? 0.9 : views > 100 ? 0.85 : 0.8;
+
+    return {
+      url: `${BASE_URL}/kennisbank/${article.slug}`,
+      lastModified: new Date(article.updated_at || article.published_at),
+      changeFrequency: 'monthly' as const,
+      priority,
+    };
+  });
+
+  // === BLOG POSTS ===
+  const blogPages: MetadataRoute.Sitemap = blogPosts.map((post) => ({
+    url: `${BASE_URL}/blog/${post.slug}`,
+    lastModified: new Date(post.updated_at || post.published_at),
+    changeFrequency: 'monthly' as const,
+    priority: 0.75,
+  }));
+
+  return [
+    ...staticPages,
+    ...categoryPages,
+    ...kennisbankPages,
+    ...blogPages,
+  ];
 }
