@@ -23,27 +23,39 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Get article details
-    const articles = await sql`
-      SELECT id, title, slug, lead_magnet_file, lead_magnet_title
-      FROM kb_articles
-      WHERE id = ${articleId}::uuid
-    `;
+    // Get article details — markdown articles use a non-UUID id like "kb-slug"
+    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(articleId);
 
-    if (articles.length === 0) {
+    let article: { id: string; title: string; slug: string; lead_magnet_file: string | null; lead_magnet_title: string | null } | null = null;
+
+    if (isUuid) {
+      const articles = await sql`
+        SELECT id, title, slug, lead_magnet_file, lead_magnet_title
+        FROM kb_articles
+        WHERE id = ${articleId}::uuid
+      `;
+      if (articles.length > 0) article = articles[0] as { id: string; title: string; slug: string; lead_magnet_file: string | null; lead_magnet_title: string | null };
+    }
+
+    // For markdown-based articles (non-UUID id), still log the lead without a DB lookup
+    if (!article && !isUuid) {
+      article = { id: articleId, title: articleId, slug: articleId.replace(/^kb-/, ''), lead_magnet_file: null, lead_magnet_title: null };
+    }
+
+    if (!article) {
       return NextResponse.json(
         { error: 'Article not found' },
         { status: 404 }
       );
     }
 
-    const article = articles[0];
-
-    // Record the download/lead
-    await sql`
-      INSERT INTO kb_downloads (article_id, email, lead_magnet_type, source)
-      VALUES (${articleId}::uuid, ${email}, ${leadMagnetType || 'unknown'}, 'article')
-    `;
+    // Record the download/lead (only for DB articles with a real UUID)
+    if (isUuid) {
+      await sql`
+        INSERT INTO kb_downloads (article_id, email, lead_magnet_type, source)
+        VALUES (${articleId}::uuid, ${email}, ${leadMagnetType || 'unknown'}, 'article')
+      `;
+    }
 
     // Log activity
     try {

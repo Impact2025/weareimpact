@@ -49,6 +49,7 @@ interface Article {
   lead_magnet_title: string | null;
   lead_magnet_description: string | null;
   lead_magnet_type: string | null;
+  lead_magnet_file: string | null;
   seo_title: string | null;
   seo_description: string | null;
 }
@@ -177,6 +178,7 @@ async function getArticleFromDatabase(slug: string): Promise<Article | null> {
       lead_magnet_title: (data.lead_magnet_title as string) || null,
       lead_magnet_description: (data.lead_magnet_description as string) || null,
       lead_magnet_type: (data.lead_magnet_type as string) || null,
+      lead_magnet_file: (data.lead_magnet_file as string) || null,
       seo_title: (data.seo_title as string) || null,
       seo_description: (data.seo_description as string) || null,
     };
@@ -229,6 +231,7 @@ async function getArticleFromMarkdown(slug: string): Promise<Article | null> {
           lead_magnet_title: data.lead_magnet_title || null,
           lead_magnet_description: data.lead_magnet_description || null,
           lead_magnet_type: data.lead_magnet_type || null,
+          lead_magnet_file: data.lead_magnet_file || null,
           seo_title: data.seo_title || null,
           seo_description: data.seo_description || null,
         };
@@ -573,6 +576,7 @@ export default async function KennisbankArticlePage({ params }: Props) {
               title={article.lead_magnet_title}
               description={article.lead_magnet_description || undefined}
               type={article.lead_magnet_type || undefined}
+              downloadUrl={article.lead_magnet_file || undefined}
             />
           </div>
         )}
