@@ -34,10 +34,10 @@ const portfolio = [
   {
     id: 'bijeen',
     initial: 'BN',
-    name: 'Bijeen',
-    tagline: 'Evenementen die écht verbinding maken',
+    name: 'Bijeen.app',
+    tagline: 'Evenementenbeheer voor de welzijnssector',
     description:
-      'Het eerste eventplatform gebouwd voor de welzijnssector. Van vrijwilligersdag tot buurtfestival: organiseer met impact, meet wat je bereikt.',
+      'Bijeen helpt welzijnsorganisaties en gemeenten bijeenkomsten te organiseren, deelnemers te beheren en impact te meten. Van QR-check-in tot automatische e-mailcommunicatie, gebouwd voor de sector die niet altijd het budget heeft voor dure enterprise software. Technologie die past bij de schaal en het tempo van welzijnswerk.',
     color: 'text-amber-600',
     accent: 'border-amber-400',
     dot: 'bg-amber-400',
@@ -53,10 +53,10 @@ const labs = [
     id: 'iris',
     initial: null,
     icon: Bot,
-    name: 'Iris: AI Werkassistent',
-    tagline: 'Jouw team, geautomatiseerd',
+    name: 'Iris',
+    tagline: 'AI-assistent voor welzijnsprofessionals',
     description:
-      'Ik heb een AI-werkassistent gebouwd die agenda, mail en rapportages automatiseert. Dit implementeer ik ook voor jouw team. Geen theorie, ik gebruik het zelf dagelijks.',
+      'Iris is mijn eigen AI-assistent, gebouwd voor professionals in het sociale domein. Ze helpt bij intakegesprekken, ondersteunt bij verslaglegging en beantwoordt vragen van cliënten op een warme, menselijke manier. Iris toont aan dat AI niet koud en afstandelijk hoeft te zijn, maar juist de menselijke professional kan versterken.',
     color: 'text-violet-500',
   },
   {
@@ -72,10 +72,10 @@ const labs = [
   {
     id: 'brickme',
     initial: 'BM',
-    name: 'Brickme',
-    tagline: 'Bouw wat je niet kunt zeggen',
+    name: 'Brickme.nl',
+    tagline: 'Zelfontdekking via AI en LEGO® Serious Play®',
     description:
-      'Sommige dingen zijn te groot voor woorden. Brickme helpt ze zichtbaar te maken door te bouwen, te fotograferen en een reflectie te ontvangen. Een concept van WeAreImpact.',
+      'Brickme combineert mijn achtergrond als LEGO® Serious Play facilitator met AI. Gebruikers doorlopen een begeleide zelfsessie, ze bouwen, fotograferen en krijgen reflectieve feedback van een AI-coach. Een tool voor iedereen die vastloopt op wat hij of zij écht wil.',
     color: 'text-orange-500',
     url: 'https://brickme.nl',
   },

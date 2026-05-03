@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { Coffee, CheckCircle } from 'lucide-react';
+import { Coffee, CheckCircle, Cpu, BarChart3 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { trackEvents } from '@/components/analytics';
 
@@ -42,7 +42,7 @@ export function Contact() {
             Q2 2026: Nog 2 trajectplekken beschikbaar
           </div>
 
-          <div className="flex flex-col sm:flex-row justify-center gap-4 relative z-10">
+          <div className="flex flex-col sm:flex-row justify-center gap-4 relative z-10 flex-wrap">
             <Button
               size="lg"
               onClick={openBookingChat}
@@ -57,7 +57,21 @@ export function Contact() {
               size="lg"
               className="px-8 py-4 bg-white text-slate-900 border border-slate-200 rounded-full font-bold hover:bg-slate-50 transition-all"
             >
-              <Link href="tel:0614470977" onClick={handleCallClick}>Bel direct</Link>
+              <Link href="/#scan" className="flex items-center gap-2">
+                <Cpu size={18} />
+                Doe de gratis AI-scan
+              </Link>
+            </Button>
+            <Button
+              asChild
+              variant="outline"
+              size="lg"
+              className="px-8 py-4 bg-white text-slate-900 border border-slate-200 rounded-full font-bold hover:bg-slate-50 transition-all"
+            >
+              <Link href="/impact-calculator" className="flex items-center gap-2">
+                <BarChart3 size={18} />
+                Bereken mijn impact
+              </Link>
             </Button>
           </div>
         </div>

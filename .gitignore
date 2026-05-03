@@ -36,6 +36,14 @@ yarn-error.log*
 # vercel
 .vercel
 
+# Windows reserved device name (accidentally created)
+nul
+
+# Claude Code local settings (may contain API keys)
+.claude/settings.local.json
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+.vercel

@@ -172,14 +172,14 @@ export function CreateDealDialog({
             <div>
               <Label htmlFor="company">Bedrijf</Label>
               <Select
-                value={form.companyId}
-                onValueChange={(value) => setForm({ ...form, companyId: value, contactId: '' })}
+                value={form.companyId || '__none__'}
+                onValueChange={(value) => setForm({ ...form, companyId: value === '__none__' ? '' : value, contactId: '' })}
               >
                 <SelectTrigger>
                   <SelectValue placeholder={loadingData ? 'Laden...' : 'Selecteer bedrijf'} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Geen bedrijf</SelectItem>
+                  <SelectItem value="__none__">Geen bedrijf</SelectItem>
                   {companies.map((company) => (
                     <SelectItem key={company.id} value={company.id}>
                       {company.name}
@@ -192,14 +192,14 @@ export function CreateDealDialog({
             <div>
               <Label htmlFor="contact">Contact</Label>
               <Select
-                value={form.contactId}
-                onValueChange={(value) => setForm({ ...form, contactId: value })}
+                value={form.contactId || '__none__'}
+                onValueChange={(value) => setForm({ ...form, contactId: value === '__none__' ? '' : value })}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Selecteer contact" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Geen contact</SelectItem>
+                  <SelectItem value="__none__">Geen contact</SelectItem>
                   {filteredContacts.map((contact) => (
                     <SelectItem key={contact.id} value={contact.id}>
                       {contact.firstName} {contact.lastName}

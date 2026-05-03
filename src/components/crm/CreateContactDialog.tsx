@@ -158,14 +158,14 @@ export function CreateContactDialog({
               <div className="col-span-2">
                 <Label htmlFor="company">Bedrijf</Label>
                 <Select
-                  value={form.companyId}
-                  onValueChange={(value) => setForm({ ...form, companyId: value })}
+                  value={form.companyId || '__none__'}
+                  onValueChange={(value) => setForm({ ...form, companyId: value === '__none__' ? '' : value })}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder={loadingCompanies ? 'Laden...' : 'Selecteer bedrijf'} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">Geen bedrijf</SelectItem>
+                    <SelectItem value="__none__">Geen bedrijf</SelectItem>
                     {companies.map((company) => (
                       <SelectItem key={company.id} value={company.id}>
                         {company.name}

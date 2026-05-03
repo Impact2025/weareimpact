@@ -329,6 +329,61 @@ html {
   animation: typing-dot 1s infinite 0.4s;
 }
 
+/* ── Impact Calculator Sliders ── */
+.impact-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 6px;
+  border-radius: 9999px;
+  background-color: #e2e8f0;
+  background-image: linear-gradient(#ea580c, #ea580c);
+  background-repeat: no-repeat;
+  cursor: pointer;
+  outline: none;
+  transition: background-size 0.05s ease;
+}
+
+.impact-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #ea580c;
+  cursor: grab;
+  box-shadow: 0 0 0 4px rgba(234, 88, 12, 0.12), 0 2px 8px rgba(234, 88, 12, 0.35);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.impact-slider::-webkit-slider-thumb:hover,
+.impact-slider::-webkit-slider-thumb:active {
+  transform: scale(1.2);
+  box-shadow: 0 0 0 7px rgba(234, 88, 12, 0.18), 0 4px 14px rgba(234, 88, 12, 0.45);
+  cursor: grabbing;
+}
+
+.impact-slider::-moz-range-thumb {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #ea580c;
+  cursor: grab;
+  border: none;
+  box-shadow: 0 0 0 4px rgba(234, 88, 12, 0.12), 0 2px 8px rgba(234, 88, 12, 0.35);
+}
+
+.impact-slider::-moz-range-track {
+  height: 6px;
+  border-radius: 9999px;
+  background-color: #e2e8f0;
+}
+
+.impact-slider:focus-visible {
+  outline: 2px solid #f97316;
+  outline-offset: 4px;
+  border-radius: 9999px;
+}
+
 /* Professional Article Prose Styling */
 .prose {
   color: #334155;

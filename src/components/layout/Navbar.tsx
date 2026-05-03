@@ -11,8 +11,8 @@ const navItems = [
   { label: 'MANIFEST', href: '/#visie', isHash: true },
   { label: 'EXPERTISE', href: '/#pijlers', isHash: true },
   { label: 'AI SCAN', href: '/#scan', icon: Sparkles, highlight: true, isHash: true },
+  { label: 'IMPACT CALC', href: '/impact-calculator', isHash: false },
   { label: 'BLOG', href: '/blog', isHash: false },
-  { label: 'VENTURES', href: '/#ventures', isHash: true },
   { label: 'CONTACT', href: '/contact', isHash: false },
 ];
 

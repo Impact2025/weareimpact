@@ -1,7 +1,42 @@
 import { NextRequest } from 'next/server';
 import { getOpenRouter, DEFAULT_MODELS } from '@/lib/ai/openrouter';
+import { sql } from '@/lib/db/neon';
 
-export const runtime = 'edge';
+export const dynamic = 'force-dynamic';
+
+// Helper to save lead to database
+async function saveScanLead(
+  sector: string,
+  challenge: string,
+  aiUsage: string,
+  aiAdvice: string
+): Promise<string | null> {
+  try {
+    const result = await sql`
+      INSERT INTO ai_scan_leads (sector, challenge, ai_usage, ai_advice, source, status)
+      VALUES (${sector}, ${challenge}, ${aiUsage}, ${aiAdvice}, '/ai-scanner', 'new')
+      RETURNING id
+    `;
+
+    const leadId = result[0]?.id;
+
+    // Log activity
+    await sql`
+      INSERT INTO activity_log (type, title, description, metadata)
+      VALUES (
+        'scan',
+        'Nieuwe AI scan afgerond',
+        ${`${sector} - ${challenge}`},
+        ${JSON.stringify({ leadId, sector, challenge })}
+      )
+    `;
+
+    return leadId;
+  } catch (error) {
+    console.error('Failed to save scan lead:', error);
+    return null;
+  }
+}
 
 // Sector-specific expertise that Vincent brings
 const SECTOR_EXPERTISE: Record<string, string> = {
@@ -136,17 +171,24 @@ ${challengeSolution}
       temperature: 0.7,
     });
 
-    // Create a streaming response
+    // Create a streaming response and collect the full advice
     const encoder = new TextEncoder();
+    let fullAdvice = '';
+
     const stream = new ReadableStream({
       async start(controller) {
         try {
           for await (const chunk of response) {
             const content = chunk.choices[0]?.delta?.content || '';
             if (content) {
+              fullAdvice += content;
               controller.enqueue(encoder.encode(content));
             }
           }
+
+          // Save the lead after streaming completes
+          await saveScanLead(sector, challenge, aiUsage, fullAdvice);
+
           controller.close();
         } catch (error) {
           controller.error(error);

@@ -165,14 +165,14 @@ export function CreateTaskDialog({
                 <div>
                   <Label htmlFor="company">Bedrijf</Label>
                   <Select
-                    value={form.companyId}
-                    onValueChange={(value) => setForm({ ...form, companyId: value })}
+                    value={form.companyId || '__none__'}
+                    onValueChange={(value) => setForm({ ...form, companyId: value === '__none__' ? '' : value })}
                   >
                     <SelectTrigger>
                       <SelectValue placeholder={loadingData ? 'Laden...' : 'Selecteer'} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">Geen</SelectItem>
+                      <SelectItem value="__none__">Geen</SelectItem>
                       {companies.map((company) => (
                         <SelectItem key={company.id} value={company.id}>
                           {company.name}
@@ -187,14 +187,14 @@ export function CreateTaskDialog({
                 <div>
                   <Label htmlFor="deal">Deal</Label>
                   <Select
-                    value={form.dealId}
-                    onValueChange={(value) => setForm({ ...form, dealId: value })}
+                    value={form.dealId || '__none__'}
+                    onValueChange={(value) => setForm({ ...form, dealId: value === '__none__' ? '' : value })}
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="Selecteer" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">Geen</SelectItem>
+                      <SelectItem value="__none__">Geen</SelectItem>
                       {deals
                         .filter((d) => !form.companyId || d.companyId === form.companyId)
                         .map((deal) => (
