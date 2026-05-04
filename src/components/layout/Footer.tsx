@@ -20,7 +20,7 @@ export function Footer() {
               <span className="text-xl font-bold text-white">WeAreImpact</span>
             </Link>
             <p className="text-sm text-slate-400 mb-4">
-              Digitale ecosystemen voor menselijk geluk. AI met een sociaal hart.
+              AI consultant die mensen, teams en technologie verbindt.
             </p>
             <div className="flex items-center gap-4">
               <Link
