@@ -81,6 +81,14 @@ export function Footer() {
                   Blog
                 </Link>
               </li>
+              <li>
+                <Link
+                  href="https://www.weareimpact.nl/kennisbank"
+                  className="text-sm hover:text-orange-400 transition-colors"
+                >
+                  Kennisbank
+                </Link>
+              </li>
             </ul>
           </div>
 
