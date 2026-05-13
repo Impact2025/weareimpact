@@ -210,22 +210,28 @@ function VincentAvatar({ size = 'md', showStatus = false }: { size?: 'sm' | 'md'
   );
 }
 
-function renderWithLinks(text: string) {
-  const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
+function renderContent(text: string): React.ReactNode[] {
+  // Strip markdown headers and parse **bold** + [link](url)
+  const cleaned = text.replace(/^#{1,3}\s*/gm, '');
+  const tokenRegex = /(\*\*([^*]+)\*\*|\[([^\]]+)\]\(([^)]+)\))/g;
   const parts: React.ReactNode[] = [];
   let lastIndex = 0;
   let match;
-  while ((match = linkRegex.exec(text)) !== null) {
-    if (match.index > lastIndex) parts.push(text.slice(lastIndex, match.index));
-    parts.push(
-      <a key={match.index} href={match[2]} className="text-orange-500 underline hover:text-orange-600 transition-colors">
-        {match[1]}
-      </a>
-    );
+  while ((match = tokenRegex.exec(cleaned)) !== null) {
+    if (match.index > lastIndex) parts.push(cleaned.slice(lastIndex, match.index));
+    if (match[0].startsWith('**')) {
+      parts.push(<strong key={match.index}>{match[2]}</strong>);
+    } else {
+      parts.push(
+        <a key={match.index} href={match[4]} className="text-orange-500 underline hover:text-orange-600 transition-colors">
+          {match[3]}
+        </a>
+      );
+    }
     lastIndex = match.index + match[0].length;
   }
-  if (lastIndex < text.length) parts.push(text.slice(lastIndex));
-  return parts.length ? parts : text;
+  if (lastIndex < cleaned.length) parts.push(cleaned.slice(lastIndex));
+  return parts.length ? parts : [text];
 }
 
 // Animated Message Component
@@ -241,17 +247,31 @@ function AnimatedMessage({
   const [displayedContent, setDisplayedContent] = useState('');
   const [isAnimating, setIsAnimating] = useState(false);
   const [showReplies, setShowReplies] = useState(false);
+  // Track if this message was shown via live streaming to avoid re-animating it
+  const wasStreamedRef = useRef(false);
 
   useEffect(() => {
-    if (message.role === 'assistant' && isLatest && message.content && !message.isStreaming) {
-      // Streaming text effect for new assistant messages
+    // During live streaming: show content directly as it arrives
+    if (message.isStreaming) {
+      wasStreamedRef.current = true;
+      setDisplayedContent(message.content);
+      return;
+    }
+
+    // After streaming finished: don't replay the animation
+    if (wasStreamedRef.current) {
+      setDisplayedContent(message.content);
+      if (message.showQuickReplies) setTimeout(() => setShowReplies(true), 200);
+      return;
+    }
+
+    // Non-streamed assistant message (e.g. booking flow): animate character by character
+    if (message.role === 'assistant' && isLatest && message.content) {
       setIsAnimating(true);
       setDisplayedContent('');
-
       let index = 0;
       const content = message.content;
-      const speed = Math.max(10, Math.min(30, 1500 / content.length)); // Adaptive speed
-
+      const speed = Math.max(10, Math.min(30, 1500 / content.length));
       const timer = setInterval(() => {
         if (index < content.length) {
           setDisplayedContent(content.slice(0, index + 1));
@@ -259,19 +279,13 @@ function AnimatedMessage({
         } else {
           clearInterval(timer);
           setIsAnimating(false);
-          // Show quick replies after animation completes
-          if (message.showQuickReplies) {
-            setTimeout(() => setShowReplies(true), 200);
-          }
+          if (message.showQuickReplies) setTimeout(() => setShowReplies(true), 200);
         }
       }, speed);
-
       return () => clearInterval(timer);
     } else {
       setDisplayedContent(message.content);
-      if (message.showQuickReplies && !isLatest) {
-        setShowReplies(true);
-      }
+      if (message.showQuickReplies && !isLatest) setShowReplies(true);
     }
   }, [message.content, message.role, isLatest, message.isStreaming, message.showQuickReplies]);
 
@@ -300,7 +314,7 @@ function AnimatedMessage({
           )}
         >
           <p className="whitespace-pre-wrap leading-relaxed">
-            {renderWithLinks(displayedContent)}
+            {renderContent(displayedContent)}
             {isAnimating && (
               <span className="inline-block w-0.5 h-4 bg-slate-400 ml-0.5 animate-pulse" />
             )}
