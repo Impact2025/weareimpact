@@ -210,6 +210,24 @@ function VincentAvatar({ size = 'md', showStatus = false }: { size?: 'sm' | 'md'
   );
 }
 
+function renderWithLinks(text: string) {
+  const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
+  const parts: React.ReactNode[] = [];
+  let lastIndex = 0;
+  let match;
+  while ((match = linkRegex.exec(text)) !== null) {
+    if (match.index > lastIndex) parts.push(text.slice(lastIndex, match.index));
+    parts.push(
+      <a key={match.index} href={match[2]} className="text-orange-500 underline hover:text-orange-600 transition-colors">
+        {match[1]}
+      </a>
+    );
+    lastIndex = match.index + match[0].length;
+  }
+  if (lastIndex < text.length) parts.push(text.slice(lastIndex));
+  return parts.length ? parts : text;
+}
+
 // Animated Message Component
 function AnimatedMessage({
   message,
@@ -282,7 +300,7 @@ function AnimatedMessage({
           )}
         >
           <p className="whitespace-pre-wrap leading-relaxed">
-            {displayedContent}
+            {renderWithLinks(displayedContent)}
             {isAnimating && (
               <span className="inline-block w-0.5 h-4 bg-slate-400 ml-0.5 animate-pulse" />
             )}
