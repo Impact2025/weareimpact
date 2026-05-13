@@ -96,14 +96,27 @@ export default async function Image() {
         {/* Tagline */}
         <p
           style={{
-            fontSize: '28px',
+            fontSize: '30px',
+            color: 'white',
+            margin: '0 0 16px 0',
+            textAlign: 'center',
+            maxWidth: '800px',
+            fontWeight: '600',
+            letterSpacing: '-0.5px',
+          }}
+        >
+          Ik verbind mensen, teams en technologieën
+        </p>
+        <p
+          style={{
+            fontSize: '22px',
             color: '#94a3b8',
             margin: 0,
             textAlign: 'center',
-            maxWidth: '800px',
+            maxWidth: '700px',
           }}
         >
-          AI Welzijn Expert • Digitale motoren voor menselijk geluk
+          AI consultant voor welzijnsorganisaties, gemeenten en sociaal ondernemers
         </p>
 
         {/* Bottom accent */}
