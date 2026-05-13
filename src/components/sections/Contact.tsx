@@ -37,11 +37,6 @@ export function Contact() {
             team het zelf kan. Dat is wat ik doe.
           </p>
 
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-orange-50 border border-orange-200 rounded-lg text-sm text-orange-700 font-medium mb-10 relative z-10">
-            <CheckCircle size={16} className="text-orange-500" />
-            Q2 2026: Nog 2 trajectplekken beschikbaar
-          </div>
-
           <div className="flex flex-col sm:flex-row justify-center gap-4 relative z-10 flex-wrap">
             <Button
               size="lg"

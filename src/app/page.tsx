@@ -493,10 +493,6 @@ export default function Home() {
             <p className="text-slate-600 text-lg mb-10 relative z-10 max-w-2xl mx-auto leading-relaxed">
               Je zoekt geen manager die vergaderingen vult. Je zoekt iemand die in 90 dagen zichtbaar resultaat boekt, en daarna zorgt dat jouw team het zelf kan voortzetten.
             </p>
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-orange-50 border border-orange-200 rounded-lg text-sm text-orange-700 font-medium mb-10 relative z-10">
-              <CheckCircle size={16} className="text-orange-500" />
-              Q2 2026: Nog 2 trajectplekken beschikbaar
-            </div>
             <div className="flex flex-col sm:flex-row justify-center gap-4 relative z-10 flex-wrap">
               <Button size="lg" onClick={openBookingChat} className="px-8 py-4 bg-orange-600 text-white rounded-full font-bold hover:bg-orange-700 transition-all shadow-lg shadow-orange-500/30 flex items-center gap-2">
                 Drink koffie met Vincent
