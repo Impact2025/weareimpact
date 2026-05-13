@@ -4,7 +4,6 @@ import './globals.css';
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
 import { DigitalTwin } from '@/components/features/DigitalTwin';
-import { VoiceInterface } from '@/components/features/VoiceInterface';
 import { Toaster } from '@/components/ui/sonner';
 import { GoogleAnalytics, PageViewTracker } from '@/components/analytics';
 
@@ -135,8 +134,7 @@ export default function RootLayout({
         <main>{children}</main>
         <Footer />
         <DigitalTwin />
-        <VoiceInterface />
-        <Toaster />
+<Toaster />
       </body>
     </html>
   );
