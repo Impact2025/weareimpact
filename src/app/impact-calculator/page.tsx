@@ -17,6 +17,7 @@ import {
   Target,
   HeartHandshake,
   MessageSquare,
+  Lock,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -330,49 +331,39 @@ export default function ImpactCalculatorPage() {
               </div>
 
               <div className="grid grid-cols-2 gap-4">
-                <div className="bg-white rounded-2xl p-5 border border-slate-100">
-                  <div className="flex items-center gap-2 mb-3">
-                    <HeartHandshake className="w-4 h-4 text-orange-600" />
-                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Cliëntcontact</span>
-                  </div>
-                  <p className="text-3xl font-bold text-orange-600 tabular-nums leading-none mb-1">
-                    +{fmtN(results.extraContactsPerMonth)}
-                  </p>
-                  <p className="text-xs font-medium text-slate-600">extra gesprekken per maand</p>
-                </div>
-
-                <div className="bg-white rounded-2xl p-5 border border-slate-100">
-                  <div className="flex items-center gap-2 mb-3">
-                    <TrendingUp className="w-4 h-4 text-emerald-600" />
-                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Financieel</span>
-                  </div>
-                  <p className="text-3xl font-bold text-emerald-600 tabular-nums leading-none mb-1">
-                    {fmtEuro(results.grossSavingsPerYear)}
-                  </p>
-                  <p className="text-xs font-medium text-slate-600">operationele waarde per jaar</p>
-                </div>
-
-                <div className="bg-white rounded-2xl p-5 border border-slate-100">
-                  <div className="flex items-center gap-2 mb-3">
-                    <Activity className="w-4 h-4 text-violet-600" />
-                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Werkdruk</span>
-                  </div>
-                  <p className="text-3xl font-bold text-violet-600 tabular-nums leading-none mb-1">
-                    {results.burnoutRange}
-                  </p>
-                  <p className="text-xs font-medium text-slate-600">verwachte daling burn-out</p>
-                </div>
-
-                <div className="bg-white rounded-2xl p-5 border border-slate-100">
-                  <div className="flex items-center gap-2 mb-3">
-                    <BarChart3 className="w-4 h-4 text-slate-500" />
-                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Per jaar</span>
-                  </div>
-                  <p className="text-3xl font-bold text-slate-800 tabular-nums leading-none mb-1">
-                    {fmtN(results.yearlyHoursSaved)}
-                  </p>
-                  <p className="text-xs font-medium text-slate-600">uur teruggewonnen /jaar</p>
-                </div>
+                {[
+                  { icon: <HeartHandshake className="w-4 h-4 text-orange-600" />, label: 'Cliëntcontact', value: `+${fmtN(results.extraContactsPerMonth)}`, valueColor: 'text-orange-600', sub: 'extra gesprekken per maand' },
+                  { icon: <TrendingUp className="w-4 h-4 text-emerald-600" />, label: 'Financieel', value: fmtEuro(results.grossSavingsPerYear), valueColor: 'text-emerald-600', sub: 'operationele waarde per jaar' },
+                  { icon: <Activity className="w-4 h-4 text-violet-600" />, label: 'Werkdruk', value: results.burnoutRange, valueColor: 'text-violet-600', sub: 'verwachte daling burn-out' },
+                  { icon: <BarChart3 className="w-4 h-4 text-slate-500" />, label: 'Per jaar', value: fmtN(results.yearlyHoursSaved), valueColor: 'text-slate-800', sub: 'uur teruggewonnen /jaar' },
+                ].map(({ icon, label, value, valueColor, sub }) =>
+                  isSuccess ? (
+                    <div key={label} className="bg-white rounded-2xl p-5 border border-slate-100">
+                      <div className="flex items-center gap-2 mb-3">{icon}<span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{label}</span></div>
+                      <p className={`text-3xl font-bold ${valueColor} tabular-nums leading-none mb-1`}>{value}</p>
+                      <p className="text-xs font-medium text-slate-600">{sub}</p>
+                    </div>
+                  ) : (
+                    <button
+                      key={label}
+                      onClick={() => document.getElementById('rapport')?.scrollIntoView({ behavior: 'smooth' })}
+                      className="bg-white rounded-2xl p-5 border border-slate-100 relative overflow-hidden text-left group hover:border-orange-200 transition-colors"
+                    >
+                      <div className="flex items-center gap-2 mb-3">
+                        <span className="opacity-20">{icon}</span>
+                        <span className="text-[10px] font-bold text-slate-200 uppercase tracking-widest">{label}</span>
+                      </div>
+                      <p className="text-3xl font-bold text-slate-200 tabular-nums leading-none mb-1 blur-sm select-none">{value}</p>
+                      <p className="text-xs font-medium text-slate-200 blur-sm select-none">{sub}</p>
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <div className="flex items-center gap-1.5 bg-white rounded-full px-3 py-1.5 border border-slate-200 shadow-sm group-hover:border-orange-300 group-hover:bg-orange-50 transition-colors">
+                          <Lock className="w-3 h-3 text-slate-400 group-hover:text-orange-500" />
+                          <span className="text-xs font-bold text-slate-500 group-hover:text-orange-600">Ontgrendel</span>
+                        </div>
+                      </div>
+                    </button>
+                  )
+                )}
               </div>
 
               <Button
@@ -380,7 +371,7 @@ export default function ImpactCalculatorPage() {
                 className="w-full py-4 bg-orange-600 hover:bg-orange-700 text-white rounded-full font-medium text-base transition-all flex items-center justify-center gap-2"
                 onClick={() => document.getElementById('rapport')?.scrollIntoView({ behavior: 'smooth' })}
               >
-                Ontvang mijn persoonlijk Impact Rapport
+                {isSuccess ? 'Bekijk jouw volledige rapport' : 'Ontgrendel het volledige dashboard'}
                 <ArrowRight size={18} />
               </Button>
             </div>
@@ -389,7 +380,28 @@ export default function ImpactCalculatorPage() {
       </section>
 
       {/* ── Volledig resultaten dashboard ── */}
-      <section className="py-24 bg-[#FDFBF7]">
+      <section className="py-24 bg-[#FDFBF7] relative overflow-hidden">
+        {!isSuccess && (
+          <div className="absolute inset-0 z-10 flex items-center justify-center bg-[#FDFBF7]/75 backdrop-blur-[3px]">
+            <div className="text-center max-w-sm mx-auto px-6">
+              <div className="w-14 h-14 bg-white border border-orange-200 rounded-full flex items-center justify-center mx-auto mb-5 shadow-sm">
+                <Lock className="w-5 h-5 text-orange-500" />
+              </div>
+              <h3 className="text-xl font-bold text-slate-900 mb-3">Volledig dashboard ontgrendelen</h3>
+              <p className="text-slate-500 text-sm mb-6 font-light leading-relaxed">
+                Sectorvergelijking, drie dimensies van impact en werkweekvisualisatie — gratis in je inbox.
+              </p>
+              <Button
+                className="bg-orange-600 hover:bg-orange-700 text-white rounded-full px-8 py-3 font-medium flex items-center gap-2 mx-auto shadow-lg shadow-orange-500/25"
+                onClick={() => document.getElementById('rapport')?.scrollIntoView({ behavior: 'smooth' })}
+              >
+                Ontgrendel het volledige dashboard
+                <ArrowRight size={16} />
+              </Button>
+            </div>
+          </div>
+        )}
+        <div className={!isSuccess ? 'blur-[2px] pointer-events-none select-none' : ''}>
         <div className="container mx-auto px-6 max-w-6xl">
           <div className="text-center mb-14">
             <div className="inline-block px-3 py-1 bg-orange-100 text-orange-600 rounded-full text-xs font-bold uppercase tracking-widest mb-4">
@@ -481,6 +493,7 @@ export default function ImpactCalculatorPage() {
               </div>
             </div>
           </div>
+        </div>
         </div>
       </section>
 
