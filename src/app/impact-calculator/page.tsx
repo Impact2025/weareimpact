@@ -642,10 +642,9 @@ export default function ImpactCalculatorPage() {
                     Ontvang jouw Impact Rapport
                   </h2>
                   <p className="text-slate-500 text-base leading-relaxed font-light">
-                    Een volledig PDF-rapport op maat — met jouw berekende tijdwinst van{' '}
-                    <strong className="text-orange-600 font-medium">{fmtN(results.weeklyHoursSaved)} uur/week</strong>,{' '}
-                    <strong className="text-orange-600 font-medium">{fmtN(results.extraContactsPerMonth)} extra gesprekken/maand</strong>{' '}
-                    en <strong className="text-orange-600 font-medium">{fmtEuro(results.grossSavingsPerYear)} ROI</strong> — klaar voor je bestuur.
+                    Jouw persoonlijke impactanalyse — inclusief{' '}
+                    <strong className="text-orange-600 font-medium">{fmtN(results.weeklyHoursSaved)} uur/week tijdwinst</strong>,{' '}
+                    sectorvergelijking op basis van Movisie-data en een concreet implementatieplan — direct in je inbox.
                   </p>
                 </div>
 
@@ -710,10 +709,10 @@ export default function ImpactCalculatorPage() {
 
                 <div className="mt-8 pt-8 border-t border-slate-100 grid grid-cols-1 gap-2">
                   {[
-                    'Gepersonaliseerd rapport met jouw exacte berekeningen',
-                    'Sectorvergelijking: hoe scoor jij vs. het gemiddelde?',
-                    'Concreet implementatieplan voor Voice-to-Report',
-                    'Uitnodiging voor gratis AI Readiness Scan + LEGO® Serious Play®',
+                    'Jouw exacte berekeningen + onderbouwing van de methode',
+                    'Sectorvergelijking: jouw score vs. Movisie- en GemeenteNL-benchmarks',
+                    '3 gepersonaliseerde inzichten op basis van jouw inputs',
+                    'Concreet 12-weekse implementatieplan voor Voice-to-Report',
                   ].map((item) => (
                     <div key={item} className="flex items-start gap-2">
                       <CheckCircle className="w-4 h-4 text-orange-500 shrink-0 mt-0.5" />
