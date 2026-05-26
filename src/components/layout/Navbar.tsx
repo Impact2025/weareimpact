@@ -8,8 +8,8 @@ import { Menu, X, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const navItems = [
-  { label: 'MANIFEST', href: '/#visie', isHash: true },
-  { label: 'EXPERTISE', href: '/#pijlers', isHash: true },
+  { label: 'MANIFEST', href: '/#manifest', isHash: true },
+  { label: 'EXPERTISE', href: '/#diensten', isHash: true },
   { label: 'AI SCAN', href: '/#scan', icon: Sparkles, highlight: true, isHash: true },
   { label: 'IMPACT CALC', href: '/impact-calculator', isHash: false },
   { label: 'BLOG', href: '/blog', isHash: false },
