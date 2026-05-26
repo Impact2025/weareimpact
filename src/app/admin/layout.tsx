@@ -21,6 +21,9 @@ import {
   Target,
   CheckSquare,
   ChevronDown,
+  BarChart2,
+  Zap,
+  Search,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import IrisVoiceButton from '@/components/admin/IrisVoiceButton';
@@ -51,6 +54,16 @@ const sidebarItems: SidebarItem[] = [
       { label: 'Taken', href: '/admin/crm/taken', icon: CheckSquare },
     ]
   },
+  {
+    label: 'SEO Intelligence',
+    href: '/admin/seo',
+    icon: BarChart2,
+    subItems: [
+      { label: 'Prestaties', href: '/admin/seo', icon: BarChart2 },
+      { label: 'CTR Booster', href: '/admin/seo?tab=ctr-booster', icon: Zap },
+      { label: 'Keywords', href: '/admin/seo?tab=keywords', icon: Search },
+    ],
+  },
   { label: 'Blog Posts', href: '/admin/blog', icon: FileText },
   { label: 'Kennisbank', href: '/admin/kennisbank', icon: BookOpen },
   { label: 'AI Scanner Leads', href: '/admin/leads', icon: Brain },
@@ -70,11 +83,19 @@ export default function AdminLayout({
   const pathname = usePathname();
   const router = useRouter();
 
-  // Auto-expand CRM menu if we're on a CRM page
+  // Auto-expand menus based on current path
   useEffect(() => {
+    const toExpand: string[] = [];
     if (pathname.startsWith('/admin/crm') && !expandedMenus.includes('/admin/crm')) {
-      setExpandedMenus(prev => [...prev, '/admin/crm']);
+      toExpand.push('/admin/crm');
     }
+    if (pathname.startsWith('/admin/seo') && !expandedMenus.includes('/admin/seo')) {
+      toExpand.push('/admin/seo');
+    }
+    if (toExpand.length > 0) {
+      setExpandedMenus(prev => [...prev, ...toExpand]);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname]);
 
   const toggleMenu = (href: string) => {
@@ -236,7 +257,8 @@ export default function AdminLayout({
                           <span>Overzicht</span>
                         </Link>
                         {item.subItems?.map((subItem) => {
-                          const isSubActive = pathname === subItem.href;
+                          // Compare only pathname, ignore query params
+                          const isSubActive = pathname === subItem.href.split('?')[0];
                           return (
                             <Link
                               key={subItem.href}
