@@ -19,6 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import Link from 'next/link';
 import {
   TrendingUp,
   TrendingDown,
@@ -35,6 +36,7 @@ import {
   ExternalLink,
   Database,
   CheckCircle2,
+  Settings,
 } from 'lucide-react';
 
 type GSCSite = { siteUrl: string; permissionLevel: string };
@@ -298,6 +300,12 @@ function SeoPageInner() {
           <p className="text-slate-500 mt-1">Google Search Console data + AI-optimalisatie</p>
         </div>
         <div className="flex items-center gap-2">
+          <Link href="/admin/seo/setup">
+            <Button variant="outline" size="sm">
+              <Settings size={14} className="mr-1.5" />
+              Koppeling
+            </Button>
+          </Link>
           {cacheInfo && (
             <span className="flex items-center gap-1 text-xs text-slate-400">
               <Database size={12} />
@@ -328,9 +336,16 @@ function SeoPageInner() {
       {/* Site + Period selectors */}
       <div className="flex flex-col sm:flex-row gap-3">
         {sitesError ? (
-          <div className="flex items-center gap-2 text-sm text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-4 py-3 flex-1">
-            <AlertTriangle size={16} />
-            <span>{sitesError}</span>
+          <div className="flex items-center justify-between gap-2 text-sm text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-4 py-3 flex-1">
+            <div className="flex items-center gap-2">
+              <AlertTriangle size={16} className="shrink-0" />
+              <span>{sitesError}</span>
+            </div>
+            <Link href="/admin/seo/setup">
+              <Button size="sm" variant="outline" className="border-amber-400 text-amber-700 hover:bg-amber-100 shrink-0">
+                Koppel Google Account
+              </Button>
+            </Link>
           </div>
         ) : (
           <div className="flex items-center gap-2 flex-1">

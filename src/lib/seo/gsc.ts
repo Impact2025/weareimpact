@@ -1,4 +1,5 @@
 import { google } from 'googleapis';
+import { sql } from '@/lib/db/neon';
 
 export type GSCSite = {
   siteUrl: string;
@@ -22,15 +23,81 @@ export type GSCQueryRow = {
   position: number;
 };
 
-function getAuth() {
-  const json = process.env.GOOGLE_SERVICE_ACCOUNT_JSON;
-  if (!json) throw new Error('GOOGLE_SERVICE_ACCOUNT_JSON not configured');
+const GSC_SCOPES = ['https://www.googleapis.com/auth/webmasters.readonly'];
 
-  const credentials = JSON.parse(json);
-  return new google.auth.GoogleAuth({
-    credentials,
-    scopes: ['https://www.googleapis.com/auth/webmasters.readonly'],
-  });
+async function getSetting(key: string): Promise<string | null> {
+  try {
+    await sql`
+      CREATE TABLE IF NOT EXISTS seo_settings (
+        key   TEXT PRIMARY KEY,
+        value TEXT NOT NULL,
+        updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+      )
+    `;
+    const rows = await sql`SELECT value FROM seo_settings WHERE key = ${key} LIMIT 1`;
+    return rows.length > 0 ? (rows[0].value as string) : null;
+  } catch {
+    return null;
+  }
+}
+
+export async function setSetting(key: string, value: string): Promise<void> {
+  await sql`
+    CREATE TABLE IF NOT EXISTS seo_settings (
+      key   TEXT PRIMARY KEY,
+      value TEXT NOT NULL,
+      updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+    )
+  `;
+  await sql`
+    INSERT INTO seo_settings (key, value, updated_at)
+    VALUES (${key}, ${value}, NOW())
+    ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value, updated_at = NOW()
+  `;
+}
+
+export async function getGscConnectionStatus(): Promise<{
+  connected: boolean;
+  email?: string;
+  method?: 'oauth2' | 'service-account';
+}> {
+  const refreshToken = await getSetting('gsc_refresh_token');
+  if (refreshToken) {
+    const email = await getSetting('gsc_account_email');
+    return { connected: true, email: email || undefined, method: 'oauth2' };
+  }
+  if (process.env.GOOGLE_SERVICE_ACCOUNT_JSON) {
+    return { connected: true, method: 'service-account' };
+  }
+  return { connected: false };
+}
+
+async function getAuth() {
+  // Prefer OAuth2 refresh token (user's own Google account)
+  const refreshToken = await getSetting('gsc_refresh_token');
+  if (refreshToken) {
+    const clientId = process.env.GOOGLE_CLIENT_ID;
+    const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
+    if (!clientId || !clientSecret) throw new Error('GOOGLE_CLIENT_ID / GOOGLE_CLIENT_SECRET not configured');
+
+    const oauth2 = new google.auth.OAuth2(clientId, clientSecret);
+    oauth2.setCredentials({ refresh_token: refreshToken });
+    return oauth2;
+  }
+
+  // Fall back to service account (won't work for GSC without GSC UI grant)
+  const json = process.env.GOOGLE_SERVICE_ACCOUNT_JSON;
+  if (json) {
+    const credentials = JSON.parse(json);
+    return new google.auth.GoogleAuth({
+      credentials,
+      scopes: GSC_SCOPES,
+    });
+  }
+
+  throw new Error(
+    'GSC niet gekoppeld. Ga naar /admin/seo/setup om je Google account te koppelen.'
+  );
 }
 
 function dateString(daysAgo: number): string {
