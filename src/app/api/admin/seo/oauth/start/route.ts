@@ -1,28 +1,31 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { google } from 'googleapis';
 
 export const dynamic = 'force-dynamic';
 
 const SCOPES = ['https://www.googleapis.com/auth/webmasters.readonly'];
 
-function getOAuth2Client() {
-  const clientId = process.env.GOOGLE_CLIENT_ID;
-  const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
-  if (!clientId || !clientSecret) {
-    throw new Error('GOOGLE_CLIENT_ID en GOOGLE_CLIENT_SECRET zijn niet geconfigureerd');
-  }
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
-  const redirectUri = `${siteUrl}/api/admin/seo/oauth/callback`;
-  return new google.auth.OAuth2(clientId, clientSecret, redirectUri);
+function getRedirectUri(req: NextRequest): string {
+  // Use the actual request origin so www vs non-www is always consistent
+  const forwardedHost = req.headers.get('x-forwarded-host');
+  const host = forwardedHost || req.headers.get('host') || 'localhost:3000';
+  const proto = req.headers.get('x-forwarded-proto') || 'https';
+  return `${proto}://${host}/api/admin/seo/oauth/callback`;
 }
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   try {
-    const oauth2Client = getOAuth2Client();
+    const clientId = process.env.GOOGLE_CLIENT_ID;
+    const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
+    if (!clientId || !clientSecret) {
+      throw new Error('GOOGLE_CLIENT_ID en GOOGLE_CLIENT_SECRET zijn niet geconfigureerd');
+    }
+    const redirectUri = getRedirectUri(req);
+    const oauth2Client = new google.auth.OAuth2(clientId, clientSecret, redirectUri);
     const authUrl = oauth2Client.generateAuthUrl({
       access_type: 'offline',
       scope: SCOPES,
-      prompt: 'consent', // force refresh token on every auth
+      prompt: 'consent',
     });
     return NextResponse.redirect(authUrl);
   } catch (error) {
