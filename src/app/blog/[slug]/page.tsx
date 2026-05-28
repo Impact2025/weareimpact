@@ -292,16 +292,17 @@ export default async function BlogPostPage({ params }: Props) {
               </h2>
             </div>
           </div>
-        ) : post.cover_image && (
+        ) : (
           <div className="mb-12 -mx-6 md:mx-0">
             <div className="relative w-full aspect-[2/1] md:rounded-2xl overflow-hidden">
               <Image
-                src={post.cover_image}
+                src={post.cover_image || `/blog/${post.slug}/opengraph-image`}
                 alt={post.cover_image_alt || `Cover afbeelding voor ${post.title}`}
                 fill
                 priority
                 className="object-cover"
                 sizes="(max-width: 768px) 100vw, 800px"
+                unoptimized
               />
             </div>
           </div>

@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import {
   ArrowLeft, RefreshCw, Loader2, AlertTriangle,
-  CheckCircle2, AlertCircle, ExternalLink, FileText, BookOpen,
+  CheckCircle2, AlertCircle, ExternalLink, FileText, BookOpen, ImagePlus,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -33,6 +33,27 @@ export default function ContentAuditPage() {
   const [error, setError] = useState<string | null>(null);
   const [filter, setFilter] = useState<Filter>('all');
   const [expanded, setExpanded] = useState<string | null>(null);
+  const [generating, setGenerating] = useState(false);
+  const [generateResult, setGenerateResult] = useState<string | null>(null);
+
+  async function generateImages() {
+    setGenerating(true);
+    setGenerateResult(null);
+    try {
+      const res = await fetch('/api/admin/seo/bulk-featured-images', { method: 'POST' });
+      const data = await res.json();
+      if (data.error) {
+        setGenerateResult(`Fout: ${data.error}`);
+      } else {
+        setGenerateResult(`✓ ${data.total} afbeeldingen gegenereerd (${data.kb} kennisbank, ${data.blog} blog)`);
+        await load();
+      }
+    } catch {
+      setGenerateResult('Verbindingsfout');
+    } finally {
+      setGenerating(false);
+    }
+  }
 
   async function load() {
     setLoading(true);
@@ -76,10 +97,24 @@ export default function ContentAuditPage() {
             </p>
           </div>
         </div>
-        <Button variant="outline" size="sm" onClick={load} disabled={loading}>
-          <RefreshCw size={14} className={`mr-1.5 ${loading ? 'animate-spin' : ''}`} />
-          Vernieuwen
-        </Button>
+        <div className="flex items-center gap-2">
+          {generateResult && (
+            <span className="text-xs text-green-700 bg-green-50 border border-green-200 px-3 py-1.5 rounded-lg">
+              {generateResult}
+            </span>
+          )}
+          <Button variant="outline" size="sm" onClick={generateImages} disabled={generating || loading}>
+            {generating
+              ? <Loader2 size={14} className="mr-1.5 animate-spin" />
+              : <ImagePlus size={14} className="mr-1.5" />
+            }
+            {generating ? 'Genereren…' : 'Genereer afbeeldingen'}
+          </Button>
+          <Button variant="outline" size="sm" onClick={load} disabled={loading}>
+            <RefreshCw size={14} className={`mr-1.5 ${loading ? 'animate-spin' : ''}`} />
+            Vernieuwen
+          </Button>
+        </div>
       </div>
 
       {/* Summary cards */}

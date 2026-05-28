@@ -454,35 +454,36 @@ export default async function KennisbankArticlePage({ params }: Props) {
         </Link>
 
         {/* Featured Header Image or Color Banner */}
-        {(article.header_type === 'color' || article.featured_image) && (
-          <div className="mb-8 -mx-6 md:mx-0">
-            {article.header_type === 'color' ? (
-              // Color background with title
-              <div
-                className="w-full h-48 md:h-64 rounded-none md:rounded-2xl flex items-center justify-center px-6"
-                style={{
-                  backgroundColor: article.header_color === 'slate' ? '#0f172a' : '#fb923c',
-                }}
-              >
-                <h2 className="text-2xl md:text-4xl font-bold text-white text-center leading-tight">
-                  {article.header_title || article.title}
-                </h2>
-              </div>
-            ) : article.featured_image ? (
-              // Featured image
-              <div className="relative w-full h-48 md:h-64 rounded-none md:rounded-2xl overflow-hidden">
-                <Image
-                  src={article.featured_image}
-                  alt={article.featured_image_alt || article.title}
-                  fill
-                  className="object-cover"
-                  priority
-                  unoptimized={article.featured_image.includes('blob.vercel-storage.com')}
-                />
-              </div>
-            ) : null}
-          </div>
-        )}
+        {(() => {
+          const imgSrc = article.featured_image || `/kennisbank/${article.slug}/opengraph-image`;
+          return (
+            <div className="mb-8 -mx-6 md:mx-0">
+              {article.header_type === 'color' ? (
+                <div
+                  className="w-full h-48 md:h-64 rounded-none md:rounded-2xl flex items-center justify-center px-6"
+                  style={{
+                    backgroundColor: article.header_color === 'slate' ? '#0f172a' : '#fb923c',
+                  }}
+                >
+                  <h2 className="text-2xl md:text-4xl font-bold text-white text-center leading-tight">
+                    {article.header_title || article.title}
+                  </h2>
+                </div>
+              ) : (
+                <div className="relative w-full h-48 md:h-64 rounded-none md:rounded-2xl overflow-hidden">
+                  <Image
+                    src={imgSrc}
+                    alt={article.featured_image_alt || article.title}
+                    fill
+                    className="object-cover"
+                    priority
+                    unoptimized
+                  />
+                </div>
+              )}
+            </div>
+          );
+        })()}
 
         {/* Header */}
         <header className="mb-8 md:mb-12">
