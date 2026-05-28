@@ -578,8 +578,15 @@ function SavedLeads() {
 // ── Setup card ────────────────────────────────────────────────────────────────
 
 function SetupCard() {
-  const [done, setDone] = useState(false);
+  const [done, setDone] = useState<boolean | null>(null);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    fetch('/api/admin/lead-machine/setup')
+      .then((r) => r.json())
+      .then((d) => setDone(d.initialized === true))
+      .catch(() => setDone(false));
+  }, []);
 
   const setup = async () => {
     setLoading(true);
@@ -596,7 +603,7 @@ function SetupCard() {
     }
   };
 
-  if (done) return null;
+  if (done === null || done === true) return null;
 
   return (
     <Card className="border-amber-200 bg-amber-50">

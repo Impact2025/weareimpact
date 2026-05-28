@@ -9,6 +9,23 @@ async function isAuthenticated() {
   return !!store.get('admin_session')?.value;
 }
 
+export async function GET() {
+  if (!await isAuthenticated()) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+  try {
+    const result = await sql`
+      SELECT COUNT(*) as count FROM information_schema.tables
+      WHERE table_schema = 'public'
+      AND table_name IN ('lead_lists', 'prospect_leads')
+    `;
+    const count = Number(result[0]?.count ?? 0);
+    return NextResponse.json({ initialized: count === 2 });
+  } catch {
+    return NextResponse.json({ initialized: false });
+  }
+}
+
 export async function POST() {
   if (!await isAuthenticated()) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
