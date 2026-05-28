@@ -55,7 +55,7 @@ export const metadata: Metadata = {
       'AI consultant voor welzijnsorganisaties, gemeenten en sociaal ondernemers. 15+ jaar in het sociaal domein. Geen rapport en wegwezen — iemand die naast je staat totdat het werkt.',
     images: [
       {
-        url: '/Vincent van Munster WeAreImpact.png',
+        url: '/og-homepage.png',
         width: 1200,
         height: 630,
         alt: 'Vincent van Munster — AI Consultant WeAreImpact',
@@ -67,7 +67,7 @@ export const metadata: Metadata = {
     title: 'AI Consultant Sociaal Domein | Vincent van Munster — WeAreImpact',
     description:
       'AI consultant voor welzijnsorganisaties, gemeenten en sociaal ondernemers. 15+ jaar in het sociaal domein. Gratis kennismakingsgesprek.',
-    images: ['/Vincent van Munster WeAreImpact.png'],
+    images: ['/og-homepage.png'],
   },
   icons: {
     icon: [

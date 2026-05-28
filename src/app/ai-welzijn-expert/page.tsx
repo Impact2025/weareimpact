@@ -37,7 +37,7 @@ export const metadata = {
       'AI-implementatie met een sociaal hart. Voor welzijnsorganisaties, gemeenten en non-profit die AI willen inzetten zonder de menselijke maat te verliezen.',
     images: [
       {
-        url: '/Vincent van Munster WeAreImpact.png',
+        url: '/og-ai-welzijn-expert.png',
         width: 1200,
         height: 630,
         alt: 'AI Welzijn Expert Vincent van Munster — WeAreImpact',
@@ -49,7 +49,7 @@ export const metadata = {
     title: 'AI Welzijn Expert | AI-implementatie voor Welzijn & Gemeenten',
     description:
       'AI-implementatie met een sociaal hart. Voor welzijnsorganisaties en gemeenten die AI willen inzetten zonder de menselijke maat te verliezen.',
-    images: ['/Vincent van Munster WeAreImpact.png'],
+    images: ['/og-ai-welzijn-expert.png'],
   },
 };
 

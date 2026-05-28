@@ -31,7 +31,7 @@ export const metadata: Metadata = {
       'Is jouw organisatie AI-Proof in 2026? Download de gratis checklist met 15 praktische stappen. Voor zorg, welzijn en non-profit. Klaar vóór de EU AI Act deadline.',
     images: [
       {
-        url: '/Vincent van Munster WeAreImpact.png',
+        url: '/og-ai-proof-checklist.png',
         width: 1200,
         height: 630,
         alt: 'AI-Proof Checklist 2026 — WeAreImpact',
@@ -43,7 +43,7 @@ export const metadata: Metadata = {
     title: 'Gratis AI-Proof Checklist 2026 | Sociale Organisaties',
     description:
       'Is jouw organisatie AI-Proof in 2026? Download de gratis checklist met 15 praktische stappen voor zorg, welzijn en non-profit.',
-    images: ['/Vincent van Munster WeAreImpact.png'],
+    images: ['/og-ai-proof-checklist.png'],
   },
 };
 

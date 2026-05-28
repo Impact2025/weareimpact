@@ -31,7 +31,7 @@ export const metadata: Metadata = {
       'Hoeveel waarde laat jouw organisatie liggen? Bereken in 2 minuten hoeveel uur, budget en burn-out AI kan besparen voor jouw welzijns- of zorgteam.',
     images: [
       {
-        url: '/Vincent van Munster WeAreImpact.png',
+        url: '/og-impact-calculator.png',
         width: 1200,
         height: 630,
         alt: 'AI Impact Calculator Welzijn & Zorg — WeAreImpact',
@@ -43,7 +43,7 @@ export const metadata: Metadata = {
     title: 'Gratis AI Impact Calculator voor Welzijn & Zorg',
     description:
       'Hoeveel waarde laat jouw organisatie liggen? Bereken in 2 minuten hoeveel uur en budget AI kan besparen.',
-    images: ['/Vincent van Munster WeAreImpact.png'],
+    images: ['/og-impact-calculator.png'],
   },
 };
 
