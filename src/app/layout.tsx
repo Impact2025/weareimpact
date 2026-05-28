@@ -18,43 +18,56 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://weareimpact.nl'),
+  metadataBase: new URL('https://www.weareimpact.nl'),
   title: {
-    default: 'Strategic Innovation Partner & AI Welzijn Expert | Vincent van Munster',
+    default: 'AI Consultant Sociaal Domein | Vincent van Munster — WeAreImpact',
     template: '%s | WeAreImpact',
   },
   description:
-    'Zoek je innovatie die écht werkt? Als strateeg en sociaal ondernemer maak ik organisaties in zorg & welzijn AI-ready. Van post-it tot prototype. Start hier de impact-motor.',
+    'AI consultant voor welzijnsorganisaties, gemeenten en sociaal ondernemers. ✓ Geen rapport en wegwezen ✓ 15+ jaar sociaal domein ✓ LEGO® Serious Play facilitator. Gratis kennismakingsgesprek.',
   alternates: {
-    canonical: '/',
+    canonical: 'https://www.weareimpact.nl',
   },
   keywords: [
-    'AI',
-    'Welzijn',
-    'Technologie',
+    'AI consultant sociaal domein',
+    'AI consultant welzijn',
+    'AI consultant gemeente',
+    'digitale transformatie sociaal domein',
+    'AI implementatie welzijn',
+    'AI strategie gemeente',
+    'LEGO Serious Play facilitator',
     'Vincent van Munster',
     'WeAreImpact',
-    'LEGO Serious Play',
-    'Sociale innovatie',
-    'Vrijwilligerswerk',
-    'Digital transformation',
+    'AI non-profit',
+    'AI zorg implementatie',
+    'sociaal ondernemer AI',
   ],
-  authors: [{ name: 'Vincent van Munster' }],
-  creator: 'WeAreImpact',
+  authors: [{ name: 'Vincent van Munster', url: 'https://www.weareimpact.nl' }],
+  creator: 'Vincent van Munster',
+  publisher: 'WeAreImpact',
   openGraph: {
     type: 'website',
     locale: 'nl_NL',
-    url: 'https://weareimpact.nl',
+    url: 'https://www.weareimpact.nl',
     siteName: 'WeAreImpact',
-    title: 'Strategic Innovation Partner & AI Welzijn Expert | Vincent van Munster',
+    title: 'AI Consultant Sociaal Domein | Vincent van Munster — WeAreImpact',
     description:
-      'Zoek je innovatie die écht werkt? Als strateeg en sociaal ondernemer maak ik organisaties in zorg & welzijn AI-ready. Van post-it tot prototype. Start hier de impact-motor.',
+      'AI consultant voor welzijnsorganisaties, gemeenten en sociaal ondernemers. 15+ jaar in het sociaal domein. Geen rapport en wegwezen — iemand die naast je staat totdat het werkt.',
+    images: [
+      {
+        url: '/Vincent van Munster WeAreImpact.png',
+        width: 1200,
+        height: 630,
+        alt: 'Vincent van Munster — AI Consultant WeAreImpact',
+      },
+    ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Strategic Innovation Partner & AI Welzijn Expert | Vincent van Munster',
+    title: 'AI Consultant Sociaal Domein | Vincent van Munster — WeAreImpact',
     description:
-      'Zoek je innovatie die écht werkt? Als strateeg en sociaal ondernemer maak ik organisaties in zorg & welzijn AI-ready. Van post-it tot prototype. Start hier de impact-motor.',
+      'AI consultant voor welzijnsorganisaties, gemeenten en sociaal ondernemers. 15+ jaar in het sociaal domein. Gratis kennismakingsgesprek.',
+    images: ['/Vincent van Munster WeAreImpact.png'],
   },
   icons: {
     icon: [
@@ -87,32 +100,42 @@ export default function RootLayout({
     '@context': 'https://schema.org',
     '@type': 'Person',
     name: 'Vincent van Munster',
-    jobTitle: 'Strategic Innovation Partner',
+    jobTitle: 'AI Consultant & Digitale Transformatie Specialist',
     description:
-      'Als strateeg en sociaal ondernemer maak ik organisaties in zorg & welzijn AI-ready',
-    url: 'https://weareimpact.nl',
+      'AI consultant voor welzijnsorganisaties, gemeenten en sociaal ondernemers. 15+ jaar ervaring in het sociaal domein. Gecertificeerd LEGO® Serious Play facilitator.',
+    url: 'https://www.weareimpact.nl',
+    image: 'https://www.weareimpact.nl/vincent-van-munster.png',
     sameAs: [
       'https://www.linkedin.com/in/vincent-van-m%C3%BCnster/',
-      'https://weareimpact.nl',
+      'https://www.weareimpact.nl',
     ],
     worksFor: {
       '@type': 'Organization',
       name: 'WeAreImpact',
-      url: 'https://weareimpact.nl',
+      url: 'https://www.weareimpact.nl',
     },
     foundingDate: '2014',
     knowsAbout: [
-      'Social Entrepreneurship',
-      'Artificial Intelligence',
+      'AI Strategie',
+      'Digitale Transformatie',
+      'Change Management',
       'AI Welzijn',
+      'AI Gemeente',
       'LEGO Serious Play',
-      'Strategic Innovation',
-      'Digital Transformation',
-      'Social Innovation',
+      'Sociaal Domein',
+      'Non-profit Digitalisering',
+      'AI Governance',
+      'EU AI Act',
     ],
-    alumniOf: {
-      '@type': 'EducationalOrganization',
-      name: 'Saxion Hogeschool',
+    hasOfferCatalog: {
+      '@type': 'OfferCatalog',
+      name: 'Diensten WeAreImpact',
+      itemListElement: [
+        { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'AI Strategie Consulting' } },
+        { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Change Management Digitale Transformatie' } },
+        { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'LEGO® Serious Play Facilitatie' } },
+        { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'AI Readiness Assessment' } },
+      ],
     },
   };
 
