@@ -26,6 +26,8 @@ import {
   Search,
   Magnet,
   ListChecks,
+  AlertTriangle,
+  ClipboardList,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import IrisVoiceButton from '@/components/admin/IrisVoiceButton';
@@ -64,6 +66,8 @@ const sidebarItems: SidebarItem[] = [
       { label: 'Prestaties', href: '/admin/seo', icon: BarChart2 },
       { label: 'CTR Booster', href: '/admin/seo?tab=ctr-booster', icon: Zap },
       { label: 'Keywords', href: '/admin/seo?tab=keywords', icon: Search },
+      { label: 'Content audit', href: '/admin/seo/content-audit', icon: ClipboardList },
+      { label: '404-log', href: '/admin/seo/404-logs', icon: AlertTriangle },
     ],
   },
   {
