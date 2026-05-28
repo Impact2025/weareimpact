@@ -107,8 +107,9 @@ function dateString(daysAgo: number): string {
 }
 
 export async function listGSCSites(): Promise<GSCSite[]> {
+  const auth = await getAuth();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const sc = google.searchconsole({ version: 'v1', auth: getAuth() as any });
+  const sc = google.searchconsole({ version: 'v1', auth: auth as any });
   const res = await sc.sites.list();
   return (res.data.siteEntry || []).map((s) => ({
     siteUrl: s.siteUrl!,

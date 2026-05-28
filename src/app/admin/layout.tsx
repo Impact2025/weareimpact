@@ -24,6 +24,8 @@ import {
   BarChart2,
   Zap,
   Search,
+  Magnet,
+  ListChecks,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import IrisVoiceButton from '@/components/admin/IrisVoiceButton';
@@ -64,6 +66,15 @@ const sidebarItems: SidebarItem[] = [
       { label: 'Keywords', href: '/admin/seo?tab=keywords', icon: Search },
     ],
   },
+  {
+    label: 'Lead Machine',
+    href: '/admin/lead-machine',
+    icon: Magnet,
+    subItems: [
+      { label: 'Zoeken', href: '/admin/lead-machine', icon: Search },
+      { label: 'Opgeslagen', href: '/admin/lead-machine?tab=saved', icon: ListChecks },
+    ],
+  },
   { label: 'Blog Posts', href: '/admin/blog', icon: FileText },
   { label: 'Kennisbank', href: '/admin/kennisbank', icon: BookOpen },
   { label: 'AI Scanner Leads', href: '/admin/leads', icon: Brain },
@@ -91,6 +102,9 @@ export default function AdminLayout({
     }
     if (pathname.startsWith('/admin/seo') && !expandedMenus.includes('/admin/seo')) {
       toExpand.push('/admin/seo');
+    }
+    if (pathname.startsWith('/admin/lead-machine') && !expandedMenus.includes('/admin/lead-machine')) {
+      toExpand.push('/admin/lead-machine');
     }
     if (toExpand.length > 0) {
       setExpandedMenus(prev => [...prev, ...toExpand]);
