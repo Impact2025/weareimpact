@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import type { AuditRow } from '@/app/api/admin/seo/content-audit/route';
 
-type Summary = { total: number; critical: number; warning: number; good: number };
+type Summary = { total: number; critical: number; warning: number; good: number; markdown_only: number };
 
 type Filter = 'all' | 'critical' | 'warning' | 'good';
 
@@ -156,6 +156,9 @@ export default function ContentAuditPage() {
             { label: 'Kritiek (<40)', value: summary.critical, color: 'text-red-600', bg: 'bg-red-50', f: 'critical' },
             { label: 'Matig (40–69)', value: summary.warning, color: 'text-yellow-600', bg: 'bg-yellow-50', f: 'warning' },
             { label: 'Goed (≥70)', value: summary.good, color: 'text-green-600', bg: 'bg-green-50', f: 'good' },
+            ...(summary.markdown_only > 0
+              ? [{ label: 'Alleen markdown', value: summary.markdown_only, color: 'text-orange-600', bg: 'bg-orange-50', f: 'all' }]
+              : []),
           ].map(({ label, value, color, bg, f }) => (
             <button
               key={label}
@@ -225,6 +228,11 @@ export default function ContentAuditPage() {
                             : <FileText size={14} className="text-purple-400 flex-shrink-0" />
                           }
                           <span className="font-medium text-slate-800 line-clamp-1">{row.title}</span>
+                          {row.markdown_only && (
+                            <span className="text-xs bg-orange-100 text-orange-700 border border-orange-200 px-1.5 py-0.5 rounded font-medium flex-shrink-0">
+                              MD
+                            </span>
+                          )}
                         </div>
                         <span className="text-xs text-slate-400 ml-6">/{row.source}/{row.slug}</span>
                       </td>
