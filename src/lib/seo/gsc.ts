@@ -122,7 +122,7 @@ export async function getPagePerformance(
   days = 90
 ): Promise<GSCPageRow[]> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const sc = google.searchconsole({ version: 'v1', auth: getAuth() as any });
+  const sc = google.searchconsole({ version: 'v1', auth: (await getAuth()) as any });
 
   const res = await sc.searchanalytics.query({
     siteUrl,
@@ -149,7 +149,7 @@ export async function getQueryPerformance(
   days = 90
 ): Promise<GSCQueryRow[]> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const sc = google.searchconsole({ version: 'v1', auth: getAuth() as any });
+  const sc = google.searchconsole({ version: 'v1', auth: (await getAuth()) as any });
 
   const res = await sc.searchanalytics.query({
     siteUrl,
@@ -178,7 +178,7 @@ export async function getTopQueriesForPage(
   days = 90
 ): Promise<{ query: string; impressions: number; position: number }[]> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const sc = google.searchconsole({ version: 'v1', auth: getAuth() as any });
+  const sc = google.searchconsole({ version: 'v1', auth: (await getAuth()) as any });
 
   const res = await sc.searchanalytics.query({
     siteUrl,
