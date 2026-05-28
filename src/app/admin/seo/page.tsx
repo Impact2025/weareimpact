@@ -581,7 +581,7 @@ function SeoPageInner() {
                   <div className="flex items-center gap-2 text-sm text-slate-500 bg-slate-50 rounded-lg px-3 py-2">
                     <TrendingDown size={16} className="text-red-500" />
                     <span>
-                      {lowCtrPages.length} pagina{lowCtrPages.length !== 1 ? "&apos;s" : ''} met ≥20 impressies en CTR onder het gemiddelde ({(Math.max(avgCtr, 0.02) * 100).toFixed(1)}%)
+                      {lowCtrPages.length} pagina{lowCtrPages.length !== 1 ? "'s" : ''} met ≥20 impressies en CTR onder het gemiddelde ({(Math.max(avgCtr, 0.02) * 100).toFixed(1)}%)
                     </span>
                   </div>
                   {lowCtrPages
