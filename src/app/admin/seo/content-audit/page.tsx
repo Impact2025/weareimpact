@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import {
   ArrowLeft, RefreshCw, Loader2, AlertTriangle,
-  CheckCircle2, AlertCircle, ExternalLink, FileText, BookOpen, ImagePlus,
+  CheckCircle2, AlertCircle, ExternalLink, FileText, BookOpen, ImagePlus, Send,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -35,6 +35,8 @@ export default function ContentAuditPage() {
   const [expanded, setExpanded] = useState<string | null>(null);
   const [generating, setGenerating] = useState(false);
   const [generateResult, setGenerateResult] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitResult, setSubmitResult] = useState<string | null>(null);
 
   async function generateImages() {
     setGenerating(true);
@@ -52,6 +54,23 @@ export default function ContentAuditPage() {
       setGenerateResult('Verbindingsfout');
     } finally {
       setGenerating(false);
+    }
+  }
+
+  async function submitAll() {
+    setSubmitting(true);
+    setSubmitResult(null);
+    try {
+      const res = await fetch('/api/admin/seo/submit-all', { method: 'POST' });
+      const data = await res.json();
+      const parts = [`${data.submitted} URLs ingediend`];
+      if (data.google) parts.push('Google ✓');
+      if (data.bing) parts.push('Bing ✓');
+      setSubmitResult(parts.join(' · '));
+    } catch {
+      setSubmitResult('Verbindingsfout');
+    } finally {
+      setSubmitting(false);
     }
   }
 
@@ -98,11 +117,23 @@ export default function ContentAuditPage() {
           </div>
         </div>
         <div className="flex items-center gap-2">
+          {submitResult && (
+            <span className="text-xs text-blue-700 bg-blue-50 border border-blue-200 px-3 py-1.5 rounded-lg">
+              {submitResult}
+            </span>
+          )}
           {generateResult && (
             <span className="text-xs text-green-700 bg-green-50 border border-green-200 px-3 py-1.5 rounded-lg">
               {generateResult}
             </span>
           )}
+          <Button variant="outline" size="sm" onClick={submitAll} disabled={submitting || loading}>
+            {submitting
+              ? <Loader2 size={14} className="mr-1.5 animate-spin" />
+              : <Send size={14} className="mr-1.5" />
+            }
+            {submitting ? 'Indienen…' : 'Submit IndexNow'}
+          </Button>
           <Button variant="outline" size="sm" onClick={generateImages} disabled={generating || loading}>
             {generating
               ? <Loader2 size={14} className="mr-1.5 animate-spin" />
