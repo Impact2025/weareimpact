@@ -153,6 +153,8 @@ function SeoPageInner() {
     if (!selectedSite) return;
     setDataError(null);
     setCacheInfo(null);
+    setPageData([]);
+    setQueryData([]);
     setLoadingPages(true);
     setLoadingQueries(true);
 
