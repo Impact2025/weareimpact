@@ -198,8 +198,8 @@ function SeoPageInner() {
     : 0;
 
   const filteredPages = pageData.filter((r) => {
-    if (filter === 'low-ctr') return r.impressions >= 200 && r.ctr < Math.max(avgCtr, 0.02);
-    if (filter === 'quick-wins') return r.impressions >= 50 && r.position >= 5 && r.position <= 20;
+    if (filter === 'low-ctr') return r.impressions >= 20 && r.ctr < Math.max(avgCtr, 0.02);
+    if (filter === 'quick-wins') return r.impressions >= 10 && r.position >= 5 && r.position <= 20;
     return true;
   });
 
@@ -209,7 +209,7 @@ function SeoPageInner() {
   });
 
   const quickWinQueries = queryData.filter(
-    (r) => r.impressions >= 50 && r.position >= 5 && r.position <= 20
+    (r) => r.impressions >= 10 && r.position >= 5 && r.position <= 20
   );
 
   const sortedQueries = [...quickWinQueries].sort((a, b) => {
@@ -218,7 +218,7 @@ function SeoPageInner() {
   });
 
   const lowCtrPages = pageData.filter(
-    (r) => r.impressions >= 200 && r.ctr < Math.max(avgCtr, 0.02)
+    (r) => r.impressions >= 20 && r.ctr < Math.max(avgCtr, 0.02)
   );
 
   const handleOptimize = async (page: PageRow) => {
@@ -574,14 +574,14 @@ function SeoPageInner() {
                 <div className="text-center py-12 text-slate-400">
                   {pageData.length === 0
                     ? 'Selecteer een website om te beginnen.'
-                    : 'Geen pagina\'s gevonden met lage CTR en voldoende impressies (min. 200).'}
+                    : 'Geen pagina\'s gevonden met lage CTR en voldoende impressies (min. 20).'}
                 </div>
               ) : (
                 <div className="space-y-4">
                   <div className="flex items-center gap-2 text-sm text-slate-500 bg-slate-50 rounded-lg px-3 py-2">
                     <TrendingDown size={16} className="text-red-500" />
                     <span>
-                      {lowCtrPages.length} pagina{lowCtrPages.length !== 1 ? "&apos;s" : ''} met ≥200 impressies en CTR onder het gemiddelde ({(Math.max(avgCtr, 0.02) * 100).toFixed(1)}%)
+                      {lowCtrPages.length} pagina{lowCtrPages.length !== 1 ? "&apos;s" : ''} met ≥20 impressies en CTR onder het gemiddelde ({(Math.max(avgCtr, 0.02) * 100).toFixed(1)}%)
                     </span>
                   </div>
                   {lowCtrPages
@@ -723,7 +723,7 @@ function SeoPageInner() {
                 Keyword Opportunities
               </CardTitle>
               <CardDescription>
-                Zoekwoorden op positie 5–20 met minimaal 50 impressies — laaghangend fruit dat direct op te pakken is.
+                Zoekwoorden op positie 5–20 met minimaal 10 impressies — laaghangend fruit dat direct op te pakken is.
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -740,7 +740,7 @@ function SeoPageInner() {
                   <div className="flex items-center gap-2 text-sm text-slate-500 bg-blue-50 rounded-lg px-3 py-2 mb-4">
                     <TrendingUp size={16} className="text-blue-500" />
                     <span>
-                      {sortedQueries.length} keyword{sortedQueries.length !== 1 ? 's' : ''} op positie 5–20 met ≥50 impressies
+                      {sortedQueries.length} keyword{sortedQueries.length !== 1 ? 's' : ''} op positie 5–20 met ≥10 impressies
                     </span>
                   </div>
                   <div className="overflow-x-auto">
