@@ -266,6 +266,21 @@ CREATE INDEX IF NOT EXISTS idx_prospect_leads_score ON prospect_leads(ai_score D
 CREATE INDEX IF NOT EXISTS idx_prospect_leads_created ON prospect_leads(created_at DESC);
 CREATE UNIQUE INDEX IF NOT EXISTS idx_prospect_leads_kvk ON prospect_leads(kvk_number) WHERE kvk_number IS NOT NULL;
 
+-- =============================================
+-- SEO: 404 ERROR LOG
+-- =============================================
+
+CREATE TABLE IF NOT EXISTS error_404_log (
+  id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  url         VARCHAR(1000) NOT NULL,
+  referrer    VARCHAR(1000),
+  user_agent  VARCHAR(500),
+  hit_at      TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_404_url    ON error_404_log(url);
+CREATE INDEX IF NOT EXISTS idx_404_hit_at ON error_404_log(hit_at DESC);
+
 -- CRM Indexes
 CREATE INDEX IF NOT EXISTS idx_companies_name ON companies(name);
 CREATE INDEX IF NOT EXISTS idx_companies_created ON companies(created_at DESC);

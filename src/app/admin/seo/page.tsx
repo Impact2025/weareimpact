@@ -302,6 +302,12 @@ function SeoPageInner() {
           <p className="text-slate-500 mt-1">Google Search Console data + AI-optimalisatie</p>
         </div>
         <div className="flex items-center gap-2">
+          <Link href="/admin/seo/404-logs">
+            <Button variant="outline" size="sm">
+              <AlertTriangle size={14} className="mr-1.5" />
+              404-log
+            </Button>
+          </Link>
           <Link href="/admin/seo/setup">
             <Button variant="outline" size="sm">
               <Settings size={14} className="mr-1.5" />
