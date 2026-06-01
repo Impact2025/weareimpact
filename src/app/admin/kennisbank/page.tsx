@@ -19,6 +19,7 @@ import {
   Users,
   Blocks,
   DollarSign,
+  RefreshCw,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -79,6 +80,8 @@ export default function AdminKennisbankPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isDeleting, setIsDeleting] = useState<string | null>(null);
   const [isToggling, setIsToggling] = useState<string | null>(null);
+  const [isSyncing, setIsSyncing] = useState(false);
+  const [syncResult, setSyncResult] = useState<string | null>(null);
 
   useEffect(() => {
     loadArticles();
@@ -119,6 +122,25 @@ export default function AdminKennisbankPage() {
       alert('Fout bij het verwijderen van het artikel');
     } finally {
       setIsDeleting(null);
+    }
+  };
+
+  const handleSyncMarkdown = async () => {
+    setIsSyncing(true);
+    setSyncResult(null);
+    try {
+      const response = await fetch('/api/admin/kennisbank/sync-markdown', { method: 'POST' });
+      const data = await response.json();
+      if (data.success) {
+        setSyncResult(`Gesynchroniseerd: ${data.inserted} nieuw, ${data.skipped} al aanwezig${data.errors > 0 ? `, ${data.errors} fouten` : ''}`);
+        await loadArticles();
+      } else {
+        setSyncResult('Fout bij synchroniseren');
+      }
+    } catch {
+      setSyncResult('Fout bij synchroniseren');
+    } finally {
+      setIsSyncing(false);
     }
   };
 
@@ -170,12 +192,29 @@ export default function AdminKennisbankPage() {
             Beheer kennisartikelen, gidsen en stappenplannen
           </p>
         </div>
-        <Button asChild className="bg-orange-600 hover:bg-orange-700">
-          <Link href="/admin/kennisbank/new">
-            <Plus size={18} className="mr-2" />
-            Nieuw Artikel
-          </Link>
-        </Button>
+        <div className="flex items-center gap-2">
+          {syncResult && (
+            <span className="text-sm text-slate-600">{syncResult}</span>
+          )}
+          <Button
+            variant="outline"
+            onClick={handleSyncMarkdown}
+            disabled={isSyncing}
+          >
+            {isSyncing ? (
+              <Loader2 size={18} className="mr-2 animate-spin" />
+            ) : (
+              <RefreshCw size={18} className="mr-2" />
+            )}
+            Sync markdown
+          </Button>
+          <Button asChild className="bg-orange-600 hover:bg-orange-700">
+            <Link href="/admin/kennisbank/new">
+              <Plus size={18} className="mr-2" />
+              Nieuw Artikel
+            </Link>
+          </Button>
+        </div>
       </div>
 
       {/* Stats */}
