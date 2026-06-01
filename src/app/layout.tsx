@@ -6,6 +6,7 @@ import { Footer } from '@/components/layout/Footer';
 import { DigitalTwin } from '@/components/features/DigitalTwin';
 import { Toaster } from '@/components/ui/sonner';
 import { GoogleAnalytics, PageViewTracker } from '@/components/analytics';
+import { CookieConsentProvider, CookieBanner } from '@/components/cookie-consent';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -151,13 +152,16 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <GoogleAnalytics />
-        <PageViewTracker />
-        <Navbar />
-        <main>{children}</main>
-        <Footer />
-        <DigitalTwin />
-<Toaster />
+        <CookieConsentProvider>
+          <GoogleAnalytics />
+          <PageViewTracker />
+          <Navbar />
+          <main>{children}</main>
+          <Footer />
+          <DigitalTwin />
+          <Toaster />
+          <CookieBanner />
+        </CookieConsentProvider>
       </body>
     </html>
   );
