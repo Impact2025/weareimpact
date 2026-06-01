@@ -43,47 +43,47 @@ export function Footer() {
             <ul className="space-y-2">
               <li>
                 <Link
+                  href="/ai-consultant-sociaal-domein"
+                  className="text-sm hover:text-orange-400 transition-colors"
+                >
+                  AI Consultant Sociaal Domein
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/ai-strategie-consultant"
+                  className="text-sm hover:text-orange-400 transition-colors"
+                >
+                  AI Strategie Consultant
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/programmamanager-digitale-transformatie"
+                  className="text-sm hover:text-orange-400 transition-colors"
+                >
+                  Programmamanager Digitale Transformatie
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/change-management-digitale-transformatie"
+                  className="text-sm hover:text-orange-400 transition-colors"
+                >
+                  Change Management
+                </Link>
+              </li>
+              <li>
+                <Link
                   href="/ai-scan"
                   className="text-sm hover:text-orange-400 transition-colors"
                 >
-                  AI Readiness Scan
+                  Gratis AI-scan
                 </Link>
               </li>
               <li>
                 <Link
-                  href="/#diensten"
-                  className="text-sm hover:text-orange-400 transition-colors"
-                >
-                  LEGO Serious Play
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/#diensten"
-                  className="text-sm hover:text-orange-400 transition-colors"
-                >
-                  Interim Management
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/#diensten"
-                  className="text-sm hover:text-orange-400 transition-colors"
-                >
-                  Strategisch Advies
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/blog"
-                  className="text-sm hover:text-orange-400 transition-colors"
-                >
-                  Blog
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="https://www.weareimpact.nl/kennisbank"
+                  href="/kennisbank"
                   className="text-sm hover:text-orange-400 transition-colors"
                 >
                   Kennisbank

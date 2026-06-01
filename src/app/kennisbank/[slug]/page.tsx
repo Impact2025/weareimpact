@@ -388,7 +388,7 @@ export default async function KennisbankArticlePage({ params }: Props) {
   const isHowTo = article.title.toLowerCase().includes('stappenplan') ||
     article.title.toLowerCase().includes('checklist') ||
     article.title.toLowerCase().includes('gids') ||
-    article.tags?.some(tag => ['stappenplan', 'checklist', 'how-to', 'handleiding'].includes(tag.toLowerCase()));
+    article.tags?.some(tag => ['stappenplan', 'checklist', 'how-to', 'handleiding'].includes(String(tag).toLowerCase()));
 
   // Extract steps for HowTo schema
   const howToSteps = isHowTo ? extractStepsFromContent(article.content) : [];
