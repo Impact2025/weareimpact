@@ -94,6 +94,12 @@ export function Navbar() {
             )}
           </Link>
 
+          {/* Status badge — desktop only */}
+          <div className="hidden lg:flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-green-50 border border-green-100 text-xs font-semibold text-green-800 whitespace-nowrap shrink-0">
+            <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse shrink-0" />
+            Interim beschikbaar · 16–24 uur/week · Amsterdam / Haarlem / Leiden
+          </div>
+
           {/* Desktop Menu */}
           <div className="hidden md:flex space-x-10 text-sm font-medium tracking-wide text-slate-600">
             {navItems.map((item) =>

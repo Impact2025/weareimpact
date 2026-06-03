@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { useState } from 'react';
-import { ArrowRight, ChevronDown, Heart, Brain, Quote, Linkedin, ArrowUpRight, CheckCircle, Cpu, Clock, TrendingUp, BarChart3, Activity, Plus, Minus, ExternalLink } from 'lucide-react';
+import { ArrowRight, ChevronDown, Heart, Brain, Quote, Linkedin, ArrowUpRight, CheckCircle, Cpu, Clock, TrendingUp, BarChart3, Activity, Plus, Minus, ExternalLink, Briefcase } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   Accordion,
@@ -188,9 +188,22 @@ export default function Home() {
             AI consultant voor welzijnsorganisaties, gemeenten en sociaal ondernemers.
           </p>
 
-          <p className="text-lg md:text-xl text-slate-500 mb-12 max-w-2xl mx-auto font-light leading-relaxed animate-fade-in-up delay-200">
+          <p className="text-lg md:text-xl text-slate-500 mb-6 max-w-2xl mx-auto font-light leading-relaxed animate-fade-in-up delay-200">
             Geen rapport en wegwezen. Maar iemand die naast je staat en het ook echt laat werken.
           </p>
+
+          <div className="flex flex-wrap justify-center gap-x-3 gap-y-1 mb-12 animate-fade-in-up delay-200">
+            {[
+              'Interim Projectleider Welzijn & Sociaal Domein',
+              'Kwartiermaker Innovatie & AI',
+              'Verandermanager Digitale Transformatie',
+            ].map((title, i, arr) => (
+              <span key={title} className="flex items-center gap-3 text-[0.8rem] text-slate-400 font-medium">
+                {title}
+                {i < arr.length - 1 && <span className="text-slate-200">|</span>}
+              </span>
+            ))}
+          </div>
 
           <div className="flex flex-col md:flex-row gap-4 justify-center items-center animate-fade-in-up delay-300 flex-wrap">
             <Button
@@ -218,9 +231,9 @@ export default function Home() {
               size="lg"
               className="px-8 py-4 bg-white text-slate-900 border border-slate-200 rounded-full font-medium hover:bg-slate-50 transition-all shadow-sm"
             >
-              <Link href="/impact-calculator" className="flex items-center gap-2">
-                <BarChart3 size={18} />
-                Bereken mijn impact
+              <Link href="#interim" className="flex items-center gap-2">
+                <Briefcase size={18} />
+                Interim Profiel &amp; CV
               </Link>
             </Button>
           </div>
