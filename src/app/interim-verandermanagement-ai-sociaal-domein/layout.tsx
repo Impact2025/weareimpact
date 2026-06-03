@@ -30,21 +30,12 @@ export const metadata: Metadata = {
     title: 'Interim Verandermanagement AI & Innovatie in het Sociaal Domein | WeAreImpact',
     description:
       'IT-consultants leveren systemen, maar de werkvloer weigert ze. Vincent van Munster — uit de welzijnshoek, 25 jaar ervaring — zorgt dat AI-innovatie ook echt landt in uw organisatie.',
-    images: [
-      {
-        url: '/og-interim-verandermanagement.png',
-        width: 1200,
-        height: 630,
-        alt: 'Interim Verandermanagement AI Sociaal Domein — Vincent van Munster WeAreImpact',
-      },
-    ],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Interim Verandermanagement AI & Innovatie in het Sociaal Domein',
     description:
       'AI-projecten in de zorg mislukken op mensen, niet op technologie. Vincent van Munster begeleidt adoptie vanuit 25 jaar welzijnsachtergrond.',
-    images: ['/og-interim-verandermanagement.png'],
   },
 };
 
