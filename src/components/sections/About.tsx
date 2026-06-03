@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import Link from 'next/link';
 import { Linkedin, ArrowUpRight } from 'lucide-react';
 
 const stats = [
@@ -21,8 +22,8 @@ export function About() {
 
         <div className="flex flex-col items-center text-center">
           {/* Profile photo */}
-          <div className="relative mb-8">
-            <div className="w-28 h-28 rounded-full overflow-hidden ring-4 ring-slate-600 ring-offset-4 ring-offset-[#1e293b]">
+          <Link href="/vincent-van-munster" className="relative mb-8 block">
+            <div className="w-28 h-28 rounded-full overflow-hidden ring-4 ring-slate-600 ring-offset-4 ring-offset-[#1e293b] hover:ring-orange-500/60 transition-all duration-200">
               <Image
                 src="/vincent-van-munster.png"
                 alt="Vincent van Munster"
@@ -32,7 +33,7 @@ export function About() {
               />
             </div>
             <span className="absolute bottom-1 right-1 w-4 h-4 bg-green-400 rounded-full border-2 border-[#1e293b]" />
-          </div>
+          </Link>
 
           {/* Quote */}
           <h2 className="text-3xl md:text-4xl font-bold mb-6 leading-snug">
@@ -73,16 +74,22 @@ export function About() {
           </div>
 
           {/* LinkedIn */}
-          <a
-            href="https://www.linkedin.com/in/vincentvanmunster"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-white text-sm font-semibold rounded-full transition-colors duration-200"
-          >
-            <Linkedin size={15} />
-            Verbind op LinkedIn
-            <ArrowUpRight size={13} className="opacity-60" />
-          </a>
+          <div className="flex flex-wrap gap-3 justify-center">
+            <a
+              href="https://www.linkedin.com/in/vincentvanmunster"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-white text-sm font-semibold rounded-full transition-colors duration-200"
+            >
+              <Linkedin size={15} />
+              Verbind op LinkedIn
+              <ArrowUpRight size={13} className="opacity-60" />
+            </a>
+            <Link href="/vincent-van-munster" className="inline-flex items-center gap-2 px-5 py-2.5 bg-slate-700 hover:bg-slate-600 text-white text-sm font-semibold rounded-full transition-colors duration-200">
+              Profiel Vincent van Munster
+              <ArrowUpRight size={13} className="opacity-60" />
+            </Link>
+          </div>
         </div>
 
       </div>

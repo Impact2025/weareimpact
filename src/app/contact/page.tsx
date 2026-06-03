@@ -144,7 +144,7 @@ export default function ContactPage() {
                         <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-green-500 rounded-full border-2 border-white" />
                       </div>
                       <div>
-                        <h2 className="text-2xl font-bold text-slate-900">Vincent van Munster</h2>
+                        <h2 className="text-2xl font-bold text-slate-900"><Link href="/vincent-van-munster" className="hover:text-orange-600 transition-colors">Vincent van Munster</Link></h2>
                         <p className="text-slate-600">Strategic Innovation Partner</p>
                         <div className="flex items-center gap-2 mt-2 text-sm text-green-600">
                           <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />

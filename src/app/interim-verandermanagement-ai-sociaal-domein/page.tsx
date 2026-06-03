@@ -493,12 +493,12 @@ export default function InterimVerandermanagement() {
       <section className="py-24 bg-[#1e293b] text-white">
         <div className="container mx-auto px-6 max-w-4xl">
           <div className="flex flex-col items-center text-center">
-            <div className="relative mb-8">
-              <div className="w-28 h-28 rounded-full overflow-hidden ring-4 ring-slate-600 ring-offset-4 ring-offset-[#1e293b]">
+            <Link href="/vincent-van-munster" className="relative mb-8 block">
+              <div className="w-28 h-28 rounded-full overflow-hidden ring-4 ring-slate-600 ring-offset-4 ring-offset-[#1e293b] hover:ring-orange-500/60 transition-all duration-200">
                 <Image src="/vincent-van-munster.png" alt="Vincent van Munster" width={112} height={112} className="w-full h-full object-cover" />
               </div>
               <span className="absolute bottom-1 right-1 w-4 h-4 bg-green-400 rounded-full border-2 border-[#1e293b]" />
-            </div>
+            </Link>
             <div className="inline-block px-3 py-1 bg-orange-500/20 text-orange-400 rounded-full text-xs font-bold uppercase tracking-widest mb-6">Over Vincent</div>
             <h2 className="text-3xl md:text-4xl font-bold mb-6 leading-snug">Wie is Vincent?</h2>
             <p className="text-slate-300 text-lg mb-6 leading-relaxed max-w-2xl">
@@ -514,11 +514,17 @@ export default function InterimVerandermanagement() {
             <div className="p-6 bg-slate-800 rounded-2xl border-l-4 border-orange-500 italic text-slate-300 mb-10 max-w-2xl text-left">
               &ldquo;Ik ben geen snelle jongen met een mooi deck. Ik ben iemand die begrijpt waar jij voor staat, de taal van je werkvloer spreekt én technologie kan bouwen die past. En die naast je staat totdat het werkt.&rdquo;
             </div>
-            <a href="https://www.linkedin.com/in/vincentvanmunster" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-white text-sm font-semibold rounded-full transition-colors duration-200">
-              <Linkedin size={15} />
-              Verbind op LinkedIn
-              <ArrowUpRight size={13} className="opacity-60" />
-            </a>
+            <div className="flex flex-wrap gap-3 justify-center">
+              <a href="https://www.linkedin.com/in/vincentvanmunster" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-white text-sm font-semibold rounded-full transition-colors duration-200">
+                <Linkedin size={15} />
+                Verbind op LinkedIn
+                <ArrowUpRight size={13} className="opacity-60" />
+              </a>
+              <Link href="/vincent-van-munster" className="inline-flex items-center gap-2 px-5 py-2.5 bg-slate-700 hover:bg-slate-600 text-white text-sm font-semibold rounded-full transition-colors duration-200">
+                Profiel Vincent van Munster
+                <ArrowUpRight size={13} className="opacity-60" />
+              </Link>
+            </div>
           </div>
         </div>
       </section>
