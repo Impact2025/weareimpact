@@ -76,38 +76,59 @@ const rollen = [
 
 const trackrecord = [
   {
-    periode: '2020 – okt. 2025',
+    periode: '2023 – 2025',
     rol: 'Directeur',
     org: 'Stichting De Baan',
     locatie: 'Haarlem',
     resultaten: [
-      '700+ deelnemers en 180 vrijwilligers aangestuurd',
-      'Processen gedigitaliseerd — administratieve druk significant verlaagd',
-      'DAAR-platform (VrijwilligersCheck + Impact Reserve) gelanceerd',
-      '70.000+ geluksmomenten gecreëerd voor mensen in kwetsbare posities',
+      '700+ deelnemers en 180 vrijwilligers — strategische en operationele leiding',
+      'Succesvol uitgebouwd naar 70.000+ geluksmomenten per jaar',
+      'Strategische subsidies verwierf voor grootschalige renovatie & verduurzaming',
+      'Eigen AI-assistent ontwikkeld voor efficiëntere rapportages en fondsenwerving',
     ],
   },
   {
-    periode: '2019 – heden',
+    periode: '2022',
+    rol: 'Manager Strategie & Innovatie',
+    org: 'MeerWaarde',
+    locatie: 'Nederland',
+    resultaten: [
+      'Ontwikkeling en implementatie van strategische verander- en innovatietrajecten',
+    ],
+  },
+  {
+    periode: '2013 – 2022',
+    rol: 'Voorzitter / Directeur (t/m 2018)',
+    org: 'Stichting Philia',
+    locatie: 'Landelijk',
+    resultaten: [
+      'OogvoorLiefde.nl: grootste datingsite voor mensen met een beperking in Nederland',
+      'DatingAssistent.nl: AI-platform bekend van tv (o.a. SynDROOM)',
+      'Strategisch meerjarenbeleid, Theory of Change en fondsenwerving',
+      '9 jaar leidinggeven aan vrijwilligers, projectmedewerkers en landelijke partners',
+    ],
+  },
+  {
+    periode: '2018 – heden',
     rol: 'Oprichter & Strategic Innovation Partner',
     org: 'WeAreImpact',
-    locatie: 'Amsterdam',
+    locatie: 'Hoofddorp',
     resultaten: [
-      'Bijeen.app gebouwd: AI-gestuurde eventmanagement voor welzijn & gemeenten',
-      'DatingAssistent: landelijk AI proof-of-concept platform',
+      'Bijeen.app: AI-gestuurde community tool voor welzijn & gemeenten',
       'Iris: eigen AI-assistent voor professionals in het sociaal domein',
+      'De Impact Box (2021–2025): sociaal cadeauconcept, inclusief werkgeverschap',
       'AI-strategie & verandermanagement voor welzijnsorganisaties en gemeenten',
     ],
   },
   {
-    periode: 'Lopend',
+    periode: '2025 – heden',
     rol: 'Gecertificeerd facilitator',
-    org: 'LEGO® Serious Play — SteentjeBijSteentje',
+    org: 'LEGO® Serious Play',
     locatie: 'Landelijk (max. 10 sessies/jaar)',
     resultaten: [
       'Teams AI-ready in één dag — meer draagvlak dan maanden vergaderen',
+      'Gecertificeerd LEGO® Serious Play facilitator/coach (2025)',
       'Bewezen bij directies, MT\'s en werkvloer in het sociaal domein',
-      'Gecertificeerd LEGO® Serious Play facilitator',
     ],
   },
 ];
@@ -121,6 +142,14 @@ const competenties = [
   { label: 'Projectleiding (Agile/Prince2-minded)', niveau: 85 },
   { label: 'AI Governance & AVG', niveau: 82 },
   { label: 'Softwareontwikkeling (Next.js / AI-stack)', niveau: 80 },
+];
+
+const opleidingen = [
+  { jaar: '2025', titel: 'Facilitator / Coach LEGO® Serious Play', inst: 'Gecertificeerd' },
+  { jaar: '2018', titel: 'Grow Impact programma', inst: 'Social Enterprise NL' },
+  { jaar: '2017', titel: 'Sociaal Ondernemen', inst: 'Nyenrode Business Universiteit' },
+  { jaar: '2016', titel: 'Groeiprogramma', inst: 'Oranje Fonds' },
+  { jaar: '1998–2001', titel: 'International Management', inst: 'HES Amsterdam' },
 ];
 
 const spelregels = [
@@ -453,6 +482,56 @@ export default function InterimProfiel() {
         </div>
       </section>
 
+      {/* OPLEIDINGEN */}
+      <section className="py-20 bg-slate-50">
+        <div className="container mx-auto px-6 max-w-5xl">
+          <div className="grid md:grid-cols-2 gap-16">
+            <div>
+              <div className="inline-block px-3 py-1 bg-orange-100 text-orange-600 rounded-full text-xs font-bold uppercase tracking-widest mb-6">
+                Opleiding
+              </div>
+              <div className="flex flex-col gap-4">
+                {opleidingen.map((o) => (
+                  <div key={o.jaar} className="flex items-start gap-4 p-4 bg-white rounded-xl border border-slate-100">
+                    <div className="text-xs font-black text-orange-500 uppercase tracking-wider w-20 shrink-0 pt-0.5">{o.jaar}</div>
+                    <div>
+                      <p className="font-bold text-slate-900 text-sm">{o.titel}</p>
+                      <p className="text-slate-500 text-xs mt-0.5">{o.inst}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <div className="inline-block px-3 py-1 bg-slate-100 text-slate-600 rounded-full text-xs font-bold uppercase tracking-widest mb-6">
+                Tools & talen
+              </div>
+              <div className="flex flex-wrap gap-2 mb-8">
+                {['Claude AI', 'ChatGPT', 'Gemini', 'Perplexity', 'GROK', 'Zapier', 'Midjourney', 'HeyGen', 'Next.js', 'SEO & SEA', 'Analytics', 'Photoshop'].map((tool) => (
+                  <span key={tool} className="px-3 py-1.5 bg-white border border-slate-200 rounded-full text-xs font-semibold text-slate-600">
+                    {tool}
+                  </span>
+                ))}
+              </div>
+              <div className="inline-block px-3 py-1 bg-slate-100 text-slate-600 rounded-full text-xs font-bold uppercase tracking-widest mb-4">
+                Talen
+              </div>
+              <div className="flex gap-4">
+                <div className="px-4 py-2 bg-white border border-slate-200 rounded-xl text-sm">
+                  <span className="font-bold text-slate-900">Nederlands</span>
+                  <span className="text-slate-400 ml-2 text-xs">Moedertaal</span>
+                </div>
+                <div className="px-4 py-2 bg-white border border-slate-200 rounded-xl text-sm">
+                  <span className="font-bold text-slate-900">Engels</span>
+                  <span className="text-slate-400 ml-2 text-xs">Goed in woord en geschrift</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* OVER VINCENT — KORT */}
       <section className="py-24 bg-[#1e293b] text-white">
         <div className="container mx-auto px-6 max-w-4xl">
@@ -530,10 +609,17 @@ export default function InterimProfiel() {
                 </Button>
                 <a
                   href="mailto:v.munster@weareimpact.nl"
-                  className="flex items-center gap-2 px-8 py-4 bg-white text-slate-800 border border-slate-200 rounded-full font-bold hover:bg-slate-50 transition-all text-sm"
+                  className="flex items-center gap-2 px-6 py-4 bg-white text-slate-800 border border-slate-200 rounded-full font-bold hover:bg-slate-50 transition-all text-sm"
                 >
                   <Mail size={16} />
                   v.munster@weareimpact.nl
+                </a>
+                <a
+                  href="tel:+31614470977"
+                  className="flex items-center gap-2 px-6 py-4 bg-white text-slate-800 border border-slate-200 rounded-full font-bold hover:bg-slate-50 transition-all text-sm"
+                >
+                  <Phone size={16} />
+                  06 – 144 709 77
                 </a>
               </div>
 
