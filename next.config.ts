@@ -14,6 +14,9 @@ const nextConfig: NextConfig = {
       { source: '/diensten', destination: '/', permanent: true },
       { source: '/diensten/:path*', destination: '/', permanent: true },
 
+      // Persoonlijk profiel — naam in URL is primair rankingsignaal
+      { source: '/interim', destination: '/vincent-van-munster', permanent: true },
+
       // Varianten van bestaande landingspagina's
       { source: '/ai-readiness-scan', destination: '/ai-scan', permanent: true },
       { source: '/ai-scan-organisatie', destination: '/ai-scan', permanent: true },
