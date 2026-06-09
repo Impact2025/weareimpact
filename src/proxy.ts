@@ -22,8 +22,16 @@ const publicAdminPaths = ['/admin/login'];
 
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
+  const host = request.headers.get('host') ?? '';
   const country = request.headers.get('x-vercel-ip-country') ?? '';
   const userAgent = request.headers.get('user-agent')?.toLowerCase() ?? '';
+
+  // Redirect www → non-www (canonical enforcement)
+  if (host.startsWith('www.')) {
+    const url = request.nextUrl.clone();
+    url.host = host.slice(4);
+    return NextResponse.redirect(url, { status: 301 });
+  }
 
   // Always allow search engine bots
   const isBot = BOT_USER_AGENTS.some((bot) => userAgent.includes(bot));
