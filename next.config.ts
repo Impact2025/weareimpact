@@ -31,6 +31,25 @@ const nextConfig: NextConfig = {
       // Veelgemaakte typfouten / URL-varianten
       { source: '/kennisbank/categorie', destination: '/kennisbank', permanent: true },
       { source: '/blog/page/:num', destination: '/blog', permanent: true },
+
+      // Oude WordPress-URL's (verspillen crawl budget)
+      { source: '/over-vincent-van-munster', destination: '/vincent-van-munster', permanent: true },
+      { source: '/over-vincent-van-munster/', destination: '/vincent-van-munster', permanent: true },
+      { source: '/algemene-voorwaarden-van', destination: '/', permanent: true },
+      { source: '/algemene-voorwaarden-van/', destination: '/', permanent: true },
+      { source: '/social-return-on-investment-de-basis-voor-beginners', destination: '/kennisbank', permanent: true },
+      { source: '/social-return-on-investment-de-basis-voor-beginners/', destination: '/kennisbank', permanent: true },
+      { source: '/wishlist-2', destination: '/', permanent: true },
+      { source: '/wishlist-2/', destination: '/', permanent: true },
+      { source: '/category/:path*', destination: '/kennisbank', permanent: true },
+      { source: '/tag/:path*', destination: '/kennisbank', permanent: true },
+      { source: '/portfolio-tag/:path*', destination: '/kennisbank', permanent: true },
+      { source: '/maatschappelijke-impact/:path*', destination: '/', permanent: true },
+      { source: '/:year(\\d{4})/:month(\\d{2})', destination: '/blog', permanent: true },
+      { source: '/:year(\\d{4})/:month(\\d{2})/', destination: '/blog', permanent: true },
+
+      // Oude HTML-extensie URL's
+      { source: '/ai-voor-welzijnsorganisaties.html', destination: '/ai-welzijn-expert', permanent: true },
     ];
   },
 

@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+﻿import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Vincent van Munster | Interim Manager & AI Consultant Sociaal Domein | WeAreImpact',
@@ -18,12 +18,12 @@ export const metadata: Metadata = {
     'LEGO Serious Play facilitator',
   ],
   alternates: {
-    canonical: 'https://www.weareimpact.nl/vincent-van-munster',
+    canonical: 'https://weareimpact.nl/vincent-van-munster',
   },
   openGraph: {
     type: 'profile',
     locale: 'nl_NL',
-    url: 'https://www.weareimpact.nl/vincent-van-munster',
+    url: 'https://weareimpact.nl/vincent-van-munster',
     siteName: 'WeAreImpact',
     title: 'Vincent van Munster | Interim Manager & AI Consultant',
     description:
@@ -44,7 +44,7 @@ export const metadata: Metadata = {
 const personSchema = {
   '@context': 'https://schema.org',
   '@type': 'Person',
-  '@id': 'https://www.weareimpact.nl/vincent-van-munster#person',
+  '@id': 'https://weareimpact.nl/vincent-van-munster#person',
   name: 'Vincent van Munster',
   alternateName: 'Vincent van Münster',
   givenName: 'Vincent',
@@ -57,10 +57,10 @@ const personSchema = {
   ],
   description:
     'Vincent van Munster is een Strategic Innovation Partner en interim manager met 25+ jaar directie- en managementervaring in het sociaal domein. Oprichter van WeAreImpact. Gecertificeerd LEGO® Serious Play facilitator. Beschikbaar als interim projectleider welzijn & sociaal domein, kwartiermaker innovatie & AI of verandermanager digitale transformatie.',
-  url: 'https://www.weareimpact.nl/vincent-van-munster',
+  url: 'https://weareimpact.nl/vincent-van-munster',
   image: {
     '@type': 'ImageObject',
-    url: 'https://www.weareimpact.nl/vincent-van-munster.png',
+    url: 'https://weareimpact.nl/vincent-van-munster.png',
     width: 400,
     height: 400,
   },
@@ -84,15 +84,15 @@ const personSchema = {
   email: 'v.munster@weareimpact.nl',
   sameAs: [
     'https://www.linkedin.com/in/vincent-van-m%C3%BCnster/',
-    'https://www.weareimpact.nl',
+    'https://weareimpact.nl',
     'https://bijeen.app',
     'https://brickme.nl',
   ],
   worksFor: {
     '@type': 'Organization',
-    '@id': 'https://www.weareimpact.nl/#organization',
+    '@id': 'https://weareimpact.nl/#organization',
     name: 'WeAreImpact',
-    url: 'https://www.weareimpact.nl',
+    url: 'https://weareimpact.nl',
   },
   knowsAbout: [
     'Sociaal domein',
@@ -135,7 +135,7 @@ const personSchema = {
         itemOffered: {
           '@type': 'Service',
           name: 'Interim Projectleider Welzijn & Sociaal Domein',
-          provider: { '@id': 'https://www.weareimpact.nl/vincent-van-munster#person' },
+          provider: { '@id': 'https://weareimpact.nl/vincent-van-munster#person' },
         },
       },
       {
@@ -143,7 +143,7 @@ const personSchema = {
         itemOffered: {
           '@type': 'Service',
           name: 'Kwartiermaker Innovatie & AI',
-          provider: { '@id': 'https://www.weareimpact.nl/vincent-van-munster#person' },
+          provider: { '@id': 'https://weareimpact.nl/vincent-van-munster#person' },
         },
       },
       {
@@ -151,7 +151,7 @@ const personSchema = {
         itemOffered: {
           '@type': 'Service',
           name: 'Verandermanager Digitale Transformatie',
-          provider: { '@id': 'https://www.weareimpact.nl/vincent-van-munster#person' },
+          provider: { '@id': 'https://weareimpact.nl/vincent-van-munster#person' },
         },
       },
     ],
@@ -162,8 +162,8 @@ const breadcrumbSchema = {
   '@context': 'https://schema.org',
   '@type': 'BreadcrumbList',
   itemListElement: [
-    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.weareimpact.nl' },
-    { '@type': 'ListItem', position: 2, name: 'Vincent van Munster', item: 'https://www.weareimpact.nl/vincent-van-munster' },
+    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://weareimpact.nl' },
+    { '@type': 'ListItem', position: 2, name: 'Vincent van Munster', item: 'https://weareimpact.nl/vincent-van-munster' },
   ],
 };
 

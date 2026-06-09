@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+﻿import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Interim Verandermanagement AI & Innovatie in het Sociaal Domein | WeAreImpact',
@@ -20,12 +20,12 @@ export const metadata: Metadata = {
     'WeAreImpact',
   ],
   alternates: {
-    canonical: 'https://www.weareimpact.nl/interim-verandermanagement-ai-sociaal-domein',
+    canonical: 'https://weareimpact.nl/interim-verandermanagement-ai-sociaal-domein',
   },
   openGraph: {
     type: 'website',
     locale: 'nl_NL',
-    url: 'https://www.weareimpact.nl/interim-verandermanagement-ai-sociaal-domein',
+    url: 'https://weareimpact.nl/interim-verandermanagement-ai-sociaal-domein',
     siteName: 'WeAreImpact',
     title: 'Interim Verandermanagement AI & Innovatie in het Sociaal Domein | WeAreImpact',
     description:
@@ -48,7 +48,7 @@ const serviceSchema = {
   provider: {
     '@type': 'Person',
     name: 'Vincent van Munster',
-    url: 'https://www.weareimpact.nl',
+    url: 'https://weareimpact.nl',
     jobTitle: 'Strategic Innovation Partner & Interim Verandermanager',
   },
   areaServed: { '@type': 'Country', name: 'Netherlands' },
@@ -116,12 +116,12 @@ const breadcrumbSchema = {
   '@context': 'https://schema.org',
   '@type': 'BreadcrumbList',
   itemListElement: [
-    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.weareimpact.nl' },
+    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://weareimpact.nl' },
     {
       '@type': 'ListItem',
       position: 2,
       name: 'Interim Verandermanagement AI',
-      item: 'https://www.weareimpact.nl/interim-verandermanagement-ai-sociaal-domein',
+      item: 'https://weareimpact.nl/interim-verandermanagement-ai-sociaal-domein',
     },
   ],
 };

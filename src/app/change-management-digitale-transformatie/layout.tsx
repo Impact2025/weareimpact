@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+﻿import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Change Management Digitale Transformatie | Gemeenten & Welzijn | WeAreImpact',
@@ -19,12 +19,12 @@ export const metadata: Metadata = {
     'WeAreImpact',
   ],
   alternates: {
-    canonical: 'https://www.weareimpact.nl/change-management-digitale-transformatie',
+    canonical: 'https://weareimpact.nl/change-management-digitale-transformatie',
   },
   openGraph: {
     type: 'website',
     locale: 'nl_NL',
-    url: 'https://www.weareimpact.nl/change-management-digitale-transformatie',
+    url: 'https://weareimpact.nl/change-management-digitale-transformatie',
     siteName: 'WeAreImpact',
     title: 'Change Management Digitale Transformatie | WeAreImpact',
     description:
@@ -56,7 +56,7 @@ const serviceSchema = {
   provider: {
     '@type': 'Person',
     name: 'Vincent van Munster',
-    url: 'https://www.weareimpact.nl',
+    url: 'https://weareimpact.nl',
     jobTitle: 'Change Management Consultant',
   },
   areaServed: { '@type': 'Country', name: 'Netherlands' },
@@ -124,8 +124,8 @@ const breadcrumbSchema = {
   '@context': 'https://schema.org',
   '@type': 'BreadcrumbList',
   itemListElement: [
-    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.weareimpact.nl' },
-    { '@type': 'ListItem', position: 2, name: 'Change Management Digitale Transformatie', item: 'https://www.weareimpact.nl/change-management-digitale-transformatie' },
+    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://weareimpact.nl' },
+    { '@type': 'ListItem', position: 2, name: 'Change Management Digitale Transformatie', item: 'https://weareimpact.nl/change-management-digitale-transformatie' },
   ],
 };
 

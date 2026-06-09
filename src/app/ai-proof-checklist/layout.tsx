@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+﻿import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Gratis AI-Proof Checklist 2026 | 15 Stappen voor Sociale Organisaties | WeAreImpact',
@@ -19,12 +19,12 @@ export const metadata: Metadata = {
     'WeAreImpact',
   ],
   alternates: {
-    canonical: 'https://www.weareimpact.nl/ai-proof-checklist',
+    canonical: 'https://weareimpact.nl/ai-proof-checklist',
   },
   openGraph: {
     type: 'website',
     locale: 'nl_NL',
-    url: 'https://www.weareimpact.nl/ai-proof-checklist',
+    url: 'https://weareimpact.nl/ai-proof-checklist',
     siteName: 'WeAreImpact',
     title: 'Gratis AI-Proof Checklist 2026 | 15 Stappen voor Sociale Organisaties',
     description:
@@ -53,11 +53,11 @@ const webPageSchema = {
   name: 'AI-Proof Checklist 2026',
   description:
     '15 praktische stappen om jouw organisatie klaar te maken voor de EU AI Act. Voor zorg, welzijn en non-profit organisaties.',
-  url: 'https://www.weareimpact.nl/ai-proof-checklist',
+  url: 'https://weareimpact.nl/ai-proof-checklist',
   author: {
     '@type': 'Person',
     name: 'Vincent van Munster',
-    url: 'https://www.weareimpact.nl',
+    url: 'https://weareimpact.nl',
   },
   mainContentOfPage: {
     '@type': 'WebPageElement',
@@ -100,8 +100,8 @@ const breadcrumbSchema = {
   '@context': 'https://schema.org',
   '@type': 'BreadcrumbList',
   itemListElement: [
-    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.weareimpact.nl' },
-    { '@type': 'ListItem', position: 2, name: 'AI-Proof Checklist', item: 'https://www.weareimpact.nl/ai-proof-checklist' },
+    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://weareimpact.nl' },
+    { '@type': 'ListItem', position: 2, name: 'AI-Proof Checklist', item: 'https://weareimpact.nl/ai-proof-checklist' },
   ],
 };
 

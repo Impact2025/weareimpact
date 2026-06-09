@@ -1,4 +1,4 @@
-import { Hero } from '@/components/sections/Hero';
+﻿import { Hero } from '@/components/sections/Hero';
 import { Vision } from '@/components/sections/Vision';
 import { ScannerSection } from '@/components/sections/ScannerSection';
 import { Pillars } from '@/components/sections/Pillars';
@@ -25,12 +25,12 @@ export const metadata = {
     'WeAreImpact',
   ],
   alternates: {
-    canonical: 'https://www.weareimpact.nl/ai-welzijn-expert',
+    canonical: 'https://weareimpact.nl/ai-welzijn-expert',
   },
   openGraph: {
     type: 'website',
     locale: 'nl_NL',
-    url: 'https://www.weareimpact.nl/ai-welzijn-expert',
+    url: 'https://weareimpact.nl/ai-welzijn-expert',
     siteName: 'WeAreImpact',
     title: 'AI Welzijn Expert | AI-implementatie voor Welzijn & Gemeenten',
     description:

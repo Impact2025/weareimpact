@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+﻿import { NextRequest, NextResponse } from 'next/server';
 import { Resend } from 'resend';
 import { sql } from '@/lib/db/neon';
 import fs from 'fs';
@@ -102,7 +102,7 @@ export async function POST(request: NextRequest) {
       <div style="color:#64748b;font-size:14px;line-height:2">
         📞 06 – 144 709 77<br>
         ✉️ v.munster@weareimpact.nl<br>
-        🔗 <a href="https://www.weareimpact.nl/interim" style="color:#f97316;text-decoration:none">weareimpact.nl/interim</a>
+        🔗 <a href="https://weareimpact.nl/interim" style="color:#f97316;text-decoration:none">weareimpact.nl/interim</a>
       </div>
     </div>
     <div style="background:#fff7ed;border-radius:10px;padding:16px 20px;margin-bottom:32px">

@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+﻿import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Gratis AI Impact Calculator voor Welzijn & Zorg | WeAreImpact',
@@ -19,12 +19,12 @@ export const metadata: Metadata = {
     'Vincent van Munster',
   ],
   alternates: {
-    canonical: 'https://www.weareimpact.nl/impact-calculator',
+    canonical: 'https://weareimpact.nl/impact-calculator',
   },
   openGraph: {
     type: 'website',
     locale: 'nl_NL',
-    url: 'https://www.weareimpact.nl/impact-calculator',
+    url: 'https://weareimpact.nl/impact-calculator',
     siteName: 'WeAreImpact',
     title: 'Gratis AI Impact Calculator voor Welzijn & Zorg | WeAreImpact',
     description:
@@ -53,7 +53,7 @@ const webAppSchema = {
   name: 'AI Impact Calculator — WeAreImpact',
   description:
     'Bereken in 2 minuten hoeveel uren, cliëntgesprekken en budget AI kan vrijmaken voor jouw welzijns- of zorgteam. Gebaseerd op Movisie-benchmarkdata.',
-  url: 'https://www.weareimpact.nl/impact-calculator',
+  url: 'https://weareimpact.nl/impact-calculator',
   applicationCategory: 'BusinessApplication',
   operatingSystem: 'Web',
   offers: {
@@ -64,7 +64,7 @@ const webAppSchema = {
   author: {
     '@type': 'Person',
     name: 'Vincent van Munster',
-    url: 'https://www.weareimpact.nl',
+    url: 'https://weareimpact.nl',
   },
 };
 
@@ -103,8 +103,8 @@ const breadcrumbSchema = {
   '@context': 'https://schema.org',
   '@type': 'BreadcrumbList',
   itemListElement: [
-    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.weareimpact.nl' },
-    { '@type': 'ListItem', position: 2, name: 'Impact Calculator', item: 'https://www.weareimpact.nl/impact-calculator' },
+    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://weareimpact.nl' },
+    { '@type': 'ListItem', position: 2, name: 'Impact Calculator', item: 'https://weareimpact.nl/impact-calculator' },
   ],
 };
 

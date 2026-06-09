@@ -19,7 +19,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://www.weareimpact.nl'),
+  metadataBase: new URL('https://weareimpact.nl'),
   title: {
     default: 'AI Consultant Sociaal Domein | Vincent van Munster — WeAreImpact',
     template: '%s | WeAreImpact',
@@ -27,7 +27,7 @@ export const metadata: Metadata = {
   description:
     'AI consultant voor welzijnsorganisaties, gemeenten en sociaal ondernemers. ✓ Geen rapport en wegwezen ✓ 15+ jaar sociaal domein ✓ LEGO® Serious Play facilitator. Gratis kennismakingsgesprek.',
   alternates: {
-    canonical: 'https://www.weareimpact.nl',
+    canonical: 'https://weareimpact.nl',
   },
   keywords: [
     'AI consultant sociaal domein',
@@ -43,13 +43,13 @@ export const metadata: Metadata = {
     'AI zorg implementatie',
     'sociaal ondernemer AI',
   ],
-  authors: [{ name: 'Vincent van Munster', url: 'https://www.weareimpact.nl' }],
+  authors: [{ name: 'Vincent van Munster', url: 'https://weareimpact.nl' }],
   creator: 'Vincent van Munster',
   publisher: 'WeAreImpact',
   openGraph: {
     type: 'website',
     locale: 'nl_NL',
-    url: 'https://www.weareimpact.nl',
+    url: 'https://weareimpact.nl',
     siteName: 'WeAreImpact',
     title: 'AI Consultant Sociaal Domein | Vincent van Munster — WeAreImpact',
     description:
@@ -104,16 +104,16 @@ export default function RootLayout({
     jobTitle: 'AI Consultant & Digitale Transformatie Specialist',
     description:
       'AI consultant voor welzijnsorganisaties, gemeenten en sociaal ondernemers. 15+ jaar ervaring in het sociaal domein. Gecertificeerd LEGO® Serious Play facilitator.',
-    url: 'https://www.weareimpact.nl',
-    image: 'https://www.weareimpact.nl/vincent-van-munster.png',
+    url: 'https://weareimpact.nl',
+    image: 'https://weareimpact.nl/vincent-van-munster.png',
     sameAs: [
       'https://www.linkedin.com/in/vincent-van-m%C3%BCnster/',
-      'https://www.weareimpact.nl',
+      'https://weareimpact.nl',
     ],
     worksFor: {
       '@type': 'Organization',
       name: 'WeAreImpact',
-      url: 'https://www.weareimpact.nl',
+      url: 'https://weareimpact.nl',
     },
     foundingDate: '2014',
     knowsAbout: [

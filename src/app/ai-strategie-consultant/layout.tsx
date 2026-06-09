@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+﻿import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'AI Strategie Consultant voor Gemeenten & Welzijn | WeAreImpact',
@@ -19,12 +19,12 @@ export const metadata: Metadata = {
     'WeAreImpact',
   ],
   alternates: {
-    canonical: 'https://www.weareimpact.nl/ai-strategie-consultant',
+    canonical: 'https://weareimpact.nl/ai-strategie-consultant',
   },
   openGraph: {
     type: 'website',
     locale: 'nl_NL',
-    url: 'https://www.weareimpact.nl/ai-strategie-consultant',
+    url: 'https://weareimpact.nl/ai-strategie-consultant',
     siteName: 'WeAreImpact',
     title: 'AI Strategie Consultant voor Gemeenten & Welzijn | WeAreImpact',
     description:
@@ -56,7 +56,7 @@ const serviceSchema = {
   provider: {
     '@type': 'Person',
     name: 'Vincent van Munster',
-    url: 'https://www.weareimpact.nl',
+    url: 'https://weareimpact.nl',
     jobTitle: 'AI Strategie Consultant',
   },
   areaServed: { '@type': 'Country', name: 'Netherlands' },
@@ -124,8 +124,8 @@ const breadcrumbSchema = {
   '@context': 'https://schema.org',
   '@type': 'BreadcrumbList',
   itemListElement: [
-    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.weareimpact.nl' },
-    { '@type': 'ListItem', position: 2, name: 'AI Strategie Consultant', item: 'https://www.weareimpact.nl/ai-strategie-consultant' },
+    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://weareimpact.nl' },
+    { '@type': 'ListItem', position: 2, name: 'AI Strategie Consultant', item: 'https://weareimpact.nl/ai-strategie-consultant' },
   ],
 };
 

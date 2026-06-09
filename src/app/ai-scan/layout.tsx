@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+﻿import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Gratis AI Readiness Scan voor Zorg, Welzijn & Non-Profit | WeAreImpact',
@@ -18,12 +18,12 @@ export const metadata: Metadata = {
     'WeAreImpact',
   ],
   alternates: {
-    canonical: 'https://www.weareimpact.nl/ai-scan',
+    canonical: 'https://weareimpact.nl/ai-scan',
   },
   openGraph: {
     type: 'website',
     locale: 'nl_NL',
-    url: 'https://www.weareimpact.nl/ai-scan',
+    url: 'https://weareimpact.nl/ai-scan',
     siteName: 'WeAreImpact',
     title: 'Gratis AI Readiness Scan | WeAreImpact',
     description:
@@ -52,7 +52,7 @@ const toolSchema = {
   name: 'AI Readiness Scan',
   description:
     'Gratis interactieve scan die in 5 minuten inzicht geeft in de AI-kansen voor jouw organisatie. Sector-specifiek advies voor zorg, welzijn, gemeenten en non-profit.',
-  url: 'https://www.weareimpact.nl/ai-scan',
+  url: 'https://weareimpact.nl/ai-scan',
   applicationCategory: 'BusinessApplication',
   operatingSystem: 'Web',
   offers: {
@@ -63,7 +63,7 @@ const toolSchema = {
   author: {
     '@type': 'Person',
     name: 'Vincent van Munster',
-    url: 'https://www.weareimpact.nl',
+    url: 'https://weareimpact.nl',
   },
 };
 
@@ -110,8 +110,8 @@ const breadcrumbSchema = {
   '@context': 'https://schema.org',
   '@type': 'BreadcrumbList',
   itemListElement: [
-    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.weareimpact.nl' },
-    { '@type': 'ListItem', position: 2, name: 'AI Readiness Scan', item: 'https://www.weareimpact.nl/ai-scan' },
+    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://weareimpact.nl' },
+    { '@type': 'ListItem', position: 2, name: 'AI Readiness Scan', item: 'https://weareimpact.nl/ai-scan' },
   ],
 };
 

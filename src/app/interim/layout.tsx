@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+﻿import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Interim Profiel Vincent van Munster | Strategic Innovation Partner | WeAreImpact',
@@ -17,12 +17,12 @@ export const metadata: Metadata = {
     'WeAreImpact interim',
   ],
   alternates: {
-    canonical: 'https://www.weareimpact.nl/interim',
+    canonical: 'https://weareimpact.nl/interim',
   },
   openGraph: {
     type: 'profile',
     locale: 'nl_NL',
-    url: 'https://www.weareimpact.nl/interim',
+    url: 'https://weareimpact.nl/interim',
     siteName: 'WeAreImpact',
     title: 'Interim Profiel Vincent van Munster | Strategic Innovation Partner',
     description:
@@ -43,16 +43,16 @@ const personSchema = {
   jobTitle: 'Strategic Innovation Partner & Interim Manager',
   description:
     'Interim Strategic Innovation Partner met 25+ jaar directie- en managementervaring in het sociaal domein. Beschikbaar voor 16–24 uur per week in de regio Amsterdam / Haarlem / Leiden.',
-  url: 'https://www.weareimpact.nl/interim',
-  image: 'https://www.weareimpact.nl/vincent-van-munster.png',
+  url: 'https://weareimpact.nl/interim',
+  image: 'https://weareimpact.nl/vincent-van-munster.png',
   sameAs: [
     'https://www.linkedin.com/in/vincent-van-m%C3%BCnster/',
-    'https://www.weareimpact.nl',
+    'https://weareimpact.nl',
   ],
   worksFor: {
     '@type': 'Organization',
     name: 'WeAreImpact',
-    url: 'https://www.weareimpact.nl',
+    url: 'https://weareimpact.nl',
   },
   hasOfferCatalog: {
     '@type': 'OfferCatalog',
@@ -69,8 +69,8 @@ const breadcrumbSchema = {
   '@context': 'https://schema.org',
   '@type': 'BreadcrumbList',
   itemListElement: [
-    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.weareimpact.nl' },
-    { '@type': 'ListItem', position: 2, name: 'Interim Profiel', item: 'https://www.weareimpact.nl/interim' },
+    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://weareimpact.nl' },
+    { '@type': 'ListItem', position: 2, name: 'Interim Profiel', item: 'https://weareimpact.nl/interim' },
   ],
 };
 

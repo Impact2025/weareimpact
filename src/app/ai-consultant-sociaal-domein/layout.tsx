@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+﻿import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'AI Consultant Sociaal Domein | Vincent van Munster | WeAreImpact',
@@ -21,12 +21,12 @@ export const metadata: Metadata = {
     'WeAreImpact',
   ],
   alternates: {
-    canonical: 'https://www.weareimpact.nl/ai-consultant-sociaal-domein',
+    canonical: 'https://weareimpact.nl/ai-consultant-sociaal-domein',
   },
   openGraph: {
     type: 'website',
     locale: 'nl_NL',
-    url: 'https://www.weareimpact.nl/ai-consultant-sociaal-domein',
+    url: 'https://weareimpact.nl/ai-consultant-sociaal-domein',
     siteName: 'WeAreImpact',
     title: 'AI Consultant Sociaal Domein | WeAreImpact',
     description:
@@ -58,7 +58,7 @@ const serviceSchema = {
   provider: {
     '@type': 'Person',
     name: 'Vincent van Munster',
-    url: 'https://www.weareimpact.nl',
+    url: 'https://weareimpact.nl',
     jobTitle: 'AI Consultant Sociaal Domein',
     sameAs: 'https://www.linkedin.com/in/vincentvanmunster',
   },
@@ -127,12 +127,12 @@ const breadcrumbSchema = {
   '@context': 'https://schema.org',
   '@type': 'BreadcrumbList',
   itemListElement: [
-    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.weareimpact.nl' },
+    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://weareimpact.nl' },
     {
       '@type': 'ListItem',
       position: 2,
       name: 'AI Consultant Sociaal Domein',
-      item: 'https://www.weareimpact.nl/ai-consultant-sociaal-domein',
+      item: 'https://weareimpact.nl/ai-consultant-sociaal-domein',
     },
   ],
 };
