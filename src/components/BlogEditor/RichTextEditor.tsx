@@ -3,6 +3,7 @@
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Image from '@tiptap/extension-image';
+import Youtube from '@tiptap/extension-youtube';
 import Link from '@tiptap/extension-link';
 import Placeholder from '@tiptap/extension-placeholder';
 import Underline from '@tiptap/extension-underline';
@@ -30,7 +31,8 @@ import {
   AlignLeft,
   AlignCenter,
   AlignRight,
-  Highlighter
+  Highlighter,
+  Youtube as YoutubeIcon
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -50,6 +52,16 @@ export function RichTextEditor({ content, onChange, placeholder = 'Start met sch
         },
       }),
       Image,
+      Youtube.configure({
+        controls: true,
+        nocookie: true,
+        modestBranding: true,
+        width: 640,
+        height: 360,
+        HTMLAttributes: {
+          class: 'rounded-xl overflow-hidden mx-auto my-6 w-full aspect-video h-auto',
+        },
+      }),
       Link.configure({
         openOnClick: false,
         HTMLAttributes: {
@@ -106,6 +118,12 @@ export function RichTextEditor({ content, onChange, placeholder = 'Start met sch
     if (url) {
       editor.chain().focus().setLink({ href: url }).run();
     }
+  };
+
+  const addYoutube = () => {
+    const url = window.prompt('YouTube URL (bijv. https://www.youtube.com/watch?v=...):');
+    if (!url) return;
+    editor.commands.setYoutubeVideo({ src: url });
   };
 
   const ToolbarButton = ({
@@ -250,6 +268,11 @@ export function RichTextEditor({ content, onChange, placeholder = 'Start met sch
             onClick={addImage}
             icon={ImageIcon}
             title="Add Image"
+          />
+          <ToolbarButton
+            onClick={addYoutube}
+            icon={YoutubeIcon}
+            title="YouTube video invoegen"
           />
           <ToolbarButton
             onClick={() => editor.chain().focus().toggleHighlight().run()}
