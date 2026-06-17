@@ -5,6 +5,7 @@ import {
   Search, Star, StarOff, Download, ExternalLink, Mail, Phone,
   MapPin, Zap, Loader2, Trash2, CheckCircle2, RefreshCw,
   Database, TrendingUp, Settings2, ChevronDown, ChevronUp, Clock,
+  ArrowRight, Building2,
 } from 'lucide-react';
 import OutreachTab from '@/components/lead-machine/OutreachTab';
 import SearchProfilesTab from '@/components/lead-machine/SearchProfilesTab';
@@ -403,6 +404,8 @@ function SavedLeads() {
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [pushingIds, setPushingIds] = useState<Set<string>>(new Set());
+  const [pushingAll, setPushingAll] = useState(false);
 
   const fetchLeads = useCallback(async () => {
     setLoading(true);
@@ -450,6 +453,50 @@ function SavedLeads() {
     toast.success('Lead verwijderd');
   };
 
+  const pushToCrm = async (lead: ProspectLead) => {
+    setPushingIds((s) => new Set(s).add(lead.id));
+    try {
+      const res = await fetch('/api/admin/lead-machine/push-to-crm', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ leadId: lead.id }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+      const companyId = data.results?.[0]?.companyId;
+      setLeads((prev) => prev.map((l) => l.id === lead.id ? { ...l, crmCompanyId: companyId } : l));
+      toast.success(`${lead.name} staat nu in het CRM`);
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Push mislukt');
+    } finally {
+      setPushingIds((s) => { const n = new Set(s); n.delete(lead.id); return n; });
+    }
+  };
+
+  const pushAllToCrm = async () => {
+    const unpushed = leads.filter((l) => !l.crmCompanyId);
+    if (unpushed.length === 0) { toast.info('Alle leads staan al in het CRM'); return; }
+    setPushingAll(true);
+    try {
+      const res = await fetch('/api/admin/lead-machine/push-to-crm', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ leadIds: unpushed.map((l) => l.id) }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+      // Refresh to pick up new crm_company_ids
+      await fetchLeads();
+      toast.success(`${data.pushed} bedrijven toegevoegd aan CRM`);
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Push mislukt');
+    } finally {
+      setPushingAll(false);
+    }
+  };
+
+  const unpushedCount = leads.filter((l) => !l.crmCompanyId).length;
+
   return (
     <div className="space-y-4">
       <div className="flex gap-3 flex-wrap">
@@ -465,6 +512,20 @@ function SavedLeads() {
           </SelectContent>
         </Select>
         <Button variant="outline" size="icon" onClick={fetchLeads}><RefreshCw size={15} /></Button>
+        {unpushedCount > 0 && (
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={pushAllToCrm}
+            disabled={pushingAll}
+            className="border-orange-300 text-orange-700 hover:bg-orange-50"
+          >
+            {pushingAll
+              ? <Loader2 size={14} className="mr-1.5 animate-spin" />
+              : <ArrowRight size={14} className="mr-1.5" />}
+            {pushingAll ? 'Bezig…' : `${unpushedCount} → CRM`}
+          </Button>
+        )}
         <Button variant="outline" size="sm" asChild>
           <a href={`/api/admin/lead-machine/export${statusFilter !== 'all' ? `?status=${statusFilter}` : ''}`} download>
             <Download size={14} className="mr-1.5" />CSV
@@ -492,6 +553,7 @@ function SavedLeads() {
                 <TableHead>Organisatie</TableHead>
                 <TableHead className="hidden md:table-cell">Contact</TableHead>
                 <TableHead className="w-40">Status</TableHead>
+                <TableHead className="w-24 text-right">CRM</TableHead>
                 <TableHead className="w-10"></TableHead>
               </TableRow>
             </TableHeader>
@@ -548,6 +610,28 @@ function SavedLeads() {
                         ))}
                       </SelectContent>
                     </Select>
+                  </TableCell>
+                  <TableCell className="text-right">
+                    {lead.crmCompanyId ? (
+                      <a
+                        href={`/admin/crm/bedrijven/${lead.crmCompanyId}`}
+                        className="inline-flex items-center gap-1 text-xs text-emerald-600 hover:text-emerald-700 font-medium"
+                      >
+                        <Building2 size={12} />
+                        In CRM
+                      </a>
+                    ) : (
+                      <button
+                        onClick={() => pushToCrm(lead)}
+                        disabled={pushingIds.has(lead.id)}
+                        className="inline-flex items-center gap-1 text-xs text-orange-600 hover:text-orange-700 font-medium disabled:opacity-40"
+                      >
+                        {pushingIds.has(lead.id)
+                          ? <Loader2 size={12} className="animate-spin" />
+                          : <ArrowRight size={12} />}
+                        → CRM
+                      </button>
+                    )}
                   </TableCell>
                   <TableCell>
                     <button onClick={() => setDeleteId(lead.id)} className="text-slate-300 hover:text-red-500 transition-colors">

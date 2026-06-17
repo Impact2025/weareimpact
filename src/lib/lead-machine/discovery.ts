@@ -1,5 +1,5 @@
-// Generic organization discovery via DuckDuckGo HTML (no API key required).
-// Works for any search query, any country, any sector.
+// Generic organization discovery — uses Brave Search API when available,
+// falls back to DuckDuckGo HTML scraping (works locally, often blocked on cloud).
 
 export interface DiscoveryResult {
   name: string;
@@ -8,76 +8,107 @@ export interface DiscoveryResult {
   snippet?: string;
 }
 
+const SKIP_DOMAINS = [
+  'wikipedia.', 'facebook.com', 'linkedin.com', 'twitter.com', 'x.com',
+  'instagram.com', 'youtube.com', 'nos.nl', 'ad.nl', 'nu.nl', 'rtl.nl',
+];
+
+function isOrgUrl(domain: string) {
+  return !SKIP_DOMAINS.some((s) => domain.includes(s));
+}
+
+// ── Brave Search API ─────────────────────────────────────────────────────────
+
+async function discoverViaBrave(query: string, maxResults: number): Promise<DiscoveryResult[]> {
+  const apiKey = process.env.BRAVE_SEARCH_API_KEY;
+  if (!apiKey) return [];
+
+  const results: DiscoveryResult[] = [];
+  const seen = new Set<string>();
+  const perPage = Math.min(maxResults, 20);
+
+  try {
+    const qs = new URLSearchParams({
+      q: query,
+      count: String(perPage),
+      country: 'nl',
+      search_lang: 'nl',
+      text_decorations: '0',
+    });
+
+    const res = await fetch(`https://api.search.brave.com/res/v1/web/search?${qs}`, {
+      headers: {
+        'Accept': 'application/json',
+        'Accept-Encoding': 'gzip',
+        'X-Subscription-Token': apiKey,
+      },
+      signal: AbortSignal.timeout(10_000),
+    });
+
+    if (!res.ok) return [];
+
+    const data = await res.json() as {
+      web?: { results?: Array<{ title: string; url: string; description?: string }> };
+    };
+
+    for (const item of data.web?.results ?? []) {
+      let domain: string;
+      try { domain = new URL(item.url).hostname.replace(/^www\./, ''); } catch { continue; }
+      if (!isOrgUrl(domain) || seen.has(domain)) continue;
+      seen.add(domain);
+      results.push({
+        name: item.title,
+        url: item.url,
+        domain,
+        snippet: item.description?.slice(0, 300),
+      });
+      if (results.length >= maxResults) break;
+    }
+  } catch {
+    // fall through to DDG
+  }
+
+  return results;
+}
+
+// ── DuckDuckGo HTML fallback ─────────────────────────────────────────────────
+
 const DDG_HTML = 'https://html.duckduckgo.com/html/';
 
 function decodeHtmlEntities(s: string): string {
   return s
-    .replace(/&amp;/g, '&')
-    .replace(/&lt;/g, '<')
-    .replace(/&gt;/g, '>')
-    .replace(/&quot;/g, '"')
-    .replace(/&#039;/g, "'")
-    .replace(/&middot;/g, '·')
-    .replace(/&nbsp;/g, ' ')
-    .replace(/<[^>]+>/g, '') // strip remaining HTML tags
-    .trim();
+    .replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"').replace(/&#039;/g, "'")
+    .replace(/&middot;/g, '·').replace(/&nbsp;/g, ' ')
+    .replace(/<[^>]+>/g, '').trim();
 }
 
 function parseDdgHtml(html: string): DiscoveryResult[] {
   const results: DiscoveryResult[] = [];
   const seen = new Set<string>();
-
-  // Each web result is wrapped in a div with class containing "result__body"
-  // Split on the reliable separator between results
   const blocks = html.split(/(?=<div class="result(?:\s[^"]*)?"\s)/);
 
   for (const block of blocks) {
-    // Extract real URL from the uddg query param in DDG redirect links
     const uddgMatch = block.match(/uddg=([^&"'\s]+)/);
     if (!uddgMatch) continue;
-
     let url: string;
-    try {
-      url = decodeURIComponent(uddgMatch[1]);
-    } catch {
-      continue;
-    }
-
+    try { url = decodeURIComponent(uddgMatch[1]); } catch { continue; }
     if (!url.startsWith('http')) continue;
-
     let domain: string;
-    try {
-      domain = new URL(url).hostname.replace(/^www\./, '');
-    } catch {
-      continue;
-    }
-
-    // Deduplicate by domain
-    if (seen.has(domain)) continue;
+    try { domain = new URL(url).hostname.replace(/^www\./, ''); } catch { continue; }
+    if (!isOrgUrl(domain) || seen.has(domain)) continue;
     seen.add(domain);
-
-    // Extract title — text inside result__a anchor
     const titleMatch = block.match(/class="result__a"[^>]*>([\s\S]*?)<\/a>/);
     const name = titleMatch ? decodeHtmlEntities(titleMatch[1]) : domain;
-
-    // Extract snippet — first non-empty text after result__snippet
     const snippetMatch = block.match(/class="result__snippet"[^>]*>([\s\S]*?)<\/a>/);
     const snippet = snippetMatch ? decodeHtmlEntities(snippetMatch[1]).slice(0, 300) : undefined;
-
-    // Skip obviously non-organizational results (social platforms, wikis, news)
-    const skipDomains = ['wikipedia.', 'facebook.com', 'linkedin.com', 'twitter.com', 'instagram.com', 'youtube.com', 'nieuws.', 'nos.nl', 'ad.nl'];
-    if (skipDomains.some((s) => domain.includes(s))) continue;
-
     results.push({ name, url, domain, snippet });
   }
 
   return results;
 }
 
-export async function discoverOrganizations(
-  query: string,
-  maxResults = 10,
-): Promise<DiscoveryResult[]> {
+async function discoverViaDDG(query: string, maxResults: number): Promise<DiscoveryResult[]> {
   const pages = Math.ceil(Math.min(maxResults, 30) / 10);
   const allResults: DiscoveryResult[] = [];
   const seen = new Set<string>();
@@ -85,7 +116,6 @@ export async function discoverOrganizations(
   for (let page = 0; page < pages; page++) {
     try {
       const qs = new URLSearchParams({ q: query });
-      // DDG pagination: s=0 (first), s=25 (second), s=50 (third)
       if (page > 0) qs.set('s', String(page * 25));
 
       const res = await fetch(`${DDG_HTML}?${qs}`, {
@@ -98,18 +128,12 @@ export async function discoverOrganizations(
       });
 
       if (!res.ok) break;
-
       const html = await res.text();
       const pageResults = parseDdgHtml(html);
 
       for (const r of pageResults) {
-        if (!seen.has(r.domain)) {
-          seen.add(r.domain);
-          allResults.push(r);
-        }
+        if (!seen.has(r.domain)) { seen.add(r.domain); allResults.push(r); }
       }
-
-      // No point fetching more pages if this one returned fewer results than expected
       if (pageResults.length < 5) break;
     } catch {
       break;
@@ -117,4 +141,19 @@ export async function discoverOrganizations(
   }
 
   return allResults.slice(0, maxResults);
+}
+
+// ── Public entry point ───────────────────────────────────────────────────────
+
+export async function discoverOrganizations(
+  query: string,
+  maxResults = 10,
+): Promise<DiscoveryResult[]> {
+  // Prefer Brave when key is configured (reliable from cloud/Vercel)
+  if (process.env.BRAVE_SEARCH_API_KEY) {
+    const results = await discoverViaBrave(query, maxResults);
+    if (results.length > 0) return results;
+  }
+  // Fallback: DDG HTML (works locally, often blocked from cloud IPs)
+  return discoverViaDDG(query, maxResults);
 }
