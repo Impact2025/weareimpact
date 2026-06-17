@@ -16,6 +16,7 @@ import {
   addCompanyNote,
   createFollowupTask,
   getMorningBriefing,
+  findNewLeads,
 } from '@/lib/crm/iris-actions';
 
 export const dynamic = 'force-dynamic';
@@ -117,7 +118,7 @@ type RecurringBlock = {
 type Intent = {
   type: 'block_time' | 'block_time_recurring' | 'search_events' | 'get_upcoming' | 'get_date_events' | 'general'
     | 'pipeline_summary' | 'overdue_followups' | 'today_tasks' | 'company_info'
-    | 'add_note' | 'create_task' | 'morning_briefing';
+    | 'add_note' | 'create_task' | 'morning_briefing' | 'find_leads';
   date?: Date;
   query?: string;
   isFullDay?: boolean;
@@ -267,6 +268,13 @@ function detectIntent(message: string): Intent {
   if (briefingKeywords.some(k => lowered.includes(k)) ||
       (lowered.includes('geef') && lowered.includes('overzicht'))) {
     return { type: 'morning_briefing' };
+  }
+
+  // Find new leads (trigger Lead Machine search): needs a search verb + a lead noun
+  const leadVerbs = ['zoek', 'vind', 'genereer', 'speur', 'scout', 'haal'];
+  const leadNouns = ['lead', 'leads', 'prospect', 'prospects', 'nieuwe klanten'];
+  if (leadVerbs.some((v) => lowered.includes(v)) && leadNouns.some((n) => lowered.includes(n))) {
+    return { type: 'find_leads' };
   }
 
   // Pipeline summary
@@ -485,6 +493,7 @@ async function executeCrmAction(intent: Intent, originalMessage: string): Promis
   switch (intent.type) {
     case 'morning_briefing':
       return await getMorningBriefing();
+    // 'find_leads' is handled earlier with a streamed acknowledgement (it's slow).
 
     case 'pipeline_summary':
       return await getPipelineSummary();
@@ -551,6 +560,7 @@ CRM & SALES:
 - Briefing: "Geef me mijn briefing" → dagelijks overzicht
 - Notitie toevoegen: "Voeg notitie toe bij [klant]: [notitie]"
 - Taak aanmaken: "Plan follow-up met [klant]"
+- Nieuwe leads zoeken: "Zoek nieuwe leads voor mij" → draait een Lead Machine-zoekprofiel en slaat nieuwe prospects op
 
 STIJL:
 - Informeel Nederlands, je mag Vincent tutoyeren
@@ -579,6 +589,27 @@ export async function POST(request: NextRequest) {
 
     // Detect intent and execute calendar action
     const intent = detectIntent(lastUserMessage);
+
+    // Lead search is slow (live website visits, ~15-40s). Stream an immediate
+    // acknowledgement first, then the result — instead of leaving Vincent waiting.
+    if (intent.type === 'find_leads') {
+      const encoder = new TextEncoder();
+      const stream = new ReadableStream({
+        async start(controller) {
+          controller.enqueue(encoder.encode('Even kijken — ik ga voor je op zoek naar nieuwe leads. Dit duurt ongeveer een halve minuut, momentje…\n\n'));
+          try {
+            const result = await findNewLeads();
+            controller.enqueue(encoder.encode(result));
+          } catch {
+            controller.enqueue(encoder.encode('Het zoeken lukte helaas niet. Probeer het zo nog een keer.'));
+          }
+          controller.close();
+        },
+      });
+      return new Response(stream, {
+        headers: { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'no-cache' },
+      });
+    }
 
     // Execute both calendar and CRM actions in parallel
     const [calendarResult, crmResult] = await Promise.all([

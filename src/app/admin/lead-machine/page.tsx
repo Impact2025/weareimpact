@@ -4,8 +4,10 @@ import { useState, useEffect, useCallback } from 'react';
 import {
   Search, Star, StarOff, Download, ExternalLink, Mail, Phone,
   MapPin, Zap, Loader2, Trash2, CheckCircle2, RefreshCw,
-  Database, TrendingUp, Settings2, ChevronDown, ChevronUp,
+  Database, TrendingUp, Settings2, ChevronDown, ChevronUp, Clock,
 } from 'lucide-react';
+import OutreachTab from '@/components/lead-machine/OutreachTab';
+import SearchProfilesTab from '@/components/lead-machine/SearchProfilesTab';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -660,6 +662,14 @@ export default function LeadMachinePage() {
               </span>
             )}
           </TabsTrigger>
+          <TabsTrigger value="outreach">
+            <Mail size={14} className="mr-1.5" />
+            Outreach
+          </TabsTrigger>
+          <TabsTrigger value="profiles">
+            <Clock size={14} className="mr-1.5" />
+            Automatisch zoeken
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="search" className="mt-6">
@@ -681,6 +691,14 @@ export default function LeadMachinePage() {
 
         <TabsContent value="saved" className="mt-6">
           <SavedLeads key={savedCount} />
+        </TabsContent>
+
+        <TabsContent value="outreach" className="mt-6">
+          <OutreachTab />
+        </TabsContent>
+
+        <TabsContent value="profiles" className="mt-6">
+          <SearchProfilesTab />
         </TabsContent>
       </Tabs>
     </div>

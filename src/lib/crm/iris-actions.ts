@@ -1,6 +1,7 @@
 // Iris CRM Actions - Functions that Iris can execute for CRM operations
 import { sql } from '@/lib/db/neon';
 import { formatCurrency, dealStageLabels, taskPriorityLabels, getContactFullName } from './labels';
+import { runDueProfiles } from '@/lib/lead-machine/runProfiles';
 
 export interface CrmContext {
   pipelineSummary: string;
@@ -389,6 +390,28 @@ function getGreeting(): string {
   if (hour < 12) return 'Goedemorgen';
   if (hour < 17) return 'Goedemiddag';
   return 'Goedenavond';
+}
+
+// Run lead-search profiles on demand (Iris: "zoek nieuwe leads voor mij").
+// Capped to 1 profile to keep the chat responsive — the daily cron handles the rest.
+export async function findNewLeads(): Promise<string> {
+  try {
+    const result = await runDueProfiles({ force: true, maxProfiles: 1 });
+
+    if (result.ran === 0) {
+      return 'Je hebt nog geen actieve zoekprofielen. Maak er één aan onder Lead Machine → Automatisch zoeken, dan ga ik voor je op zoek.';
+    }
+
+    const r = result.report[0];
+    if (result.totalSaved === 0) {
+      return `Ik heb "${r.profile}" doorzocht (${r.found} organisaties bekeken), maar geen nieuwe leads gevonden die boven je drempel scoren. Probeer eventueel een ander zoekprofiel.`;
+    }
+
+    return `Ik heb "${r.profile}" doorzocht en **${result.totalSaved} nieuwe lead${result.totalSaved !== 1 ? 's' : ''}** opgeslagen. Je vindt ze onder Lead Machine → Opgeslagen. Wil je dat ik er meteen conceptmails voor klaarzet?`;
+  } catch (error) {
+    console.error('Error finding new leads:', error);
+    return 'Ik kon de leadzoektocht niet uitvoeren. Controleer of de Lead Machine is ingesteld.';
+  }
 }
 
 // Get CRM context for system prompt
