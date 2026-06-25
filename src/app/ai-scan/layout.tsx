@@ -1,7 +1,7 @@
 ﻿import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Gratis AI Readiness Scan voor Zorg, Welzijn & Non-Profit | WeAreImpact',
+  title: 'Gratis AI Readiness Scan voor Zorg, Welzijn & Non-Profit',
   description:
     'Doe de gratis AI Readiness Scan en ontdek in 5 minuten wat AI jouw organisatie concreet oplevert. ✓ Sector-specifiek advies ✓ Direct resultaat ✓ Geen verplichtingen. Voor gemeenten, welzijn & zorg.',
   keywords: [

@@ -1,7 +1,7 @@
 ﻿import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Programmamanager Digitale Transformatie | Sociaal Domein | WeAreImpact',
+  title: 'Programmamanager Digitale Transformatie | Sociaal Domein',
   description:
     'Digitale transformatie die écht landt. ✓ Strategie naar werkende roadmap ✓ AI als versneller ✓ LEGO® Serious Play draagvlak. Voor programmamanagers in gemeenten, zorg en welzijn.',
   keywords: [

@@ -1,7 +1,7 @@
 ﻿import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Change Management Digitale Transformatie | Gemeenten & Welzijn | WeAreImpact',
+  title: 'Change Management Digitale Transformatie | Gemeenten & Welzijn',
   description:
     'Digitale transformatie mislukt op mensen, niet op technologie. ✓ Draagvlak van binnenuit ✓ LEGO® Serious Play ✓ 90-dagenplan cultuurverandering. Specialist sociaal domein.',
   keywords: [

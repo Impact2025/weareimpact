@@ -1,7 +1,7 @@
 ﻿import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Vincent van Munster | Interim Manager & AI Consultant Sociaal Domein | WeAreImpact',
+  title: 'Vincent van Munster | Interim Manager & AI Consultant Sociaal Domein',
   description:
     'Vincent van Munster — Strategic Innovation Partner en interim manager met 25+ jaar directie-ervaring in het sociaal domein. Beschikbaar als interim projectleider, kwartiermaker innovatie & AI of verandermanager. 16–24 uur/week · Regio Amsterdam / Haarlem / Leiden · €125–€140/u.',
   keywords: [

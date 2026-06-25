@@ -1,7 +1,7 @@
 ﻿import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Interim Verandermanagement AI & Innovatie in het Sociaal Domein | WeAreImpact',
+  title: 'Interim Verandermanagement AI & Innovatie in het Sociaal Domein',
   description:
     'Waarom mislukken AI-projecten in de zorg? Omdat IT-consultants de werkvloer niet kennen. Vincent van Munster — 25 jaar directie & welzijnsachtergrond — zorgt wél dat het landt. Gratis strategische verkenning.',
   keywords: [

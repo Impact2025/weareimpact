@@ -1,7 +1,7 @@
 ﻿import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'AI Consultant Sociaal Domein | Vincent van Munster | WeAreImpact',
+  title: 'AI Consultant Sociaal Domein | Vincent van Munster',
   description:
     'AI consultant voor het sociaal domein. ✓ 15+ jaar sectorervaring ✓ Concrete implementatie ✓ AVG-proof ✓ LEGO® Serious Play draagvlak. Voor welzijnsorganisaties, gemeenten en sociaal ondernemers.',
   keywords: [

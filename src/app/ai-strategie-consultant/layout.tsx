@@ -1,7 +1,7 @@
 ﻿import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'AI Strategie Consultant voor Gemeenten & Welzijn | WeAreImpact',
+  title: 'AI Strategie Consultant voor Gemeenten & Welzijn',
   description:
     'Concrete AI-strategie voor gemeenten, welzijnsorganisaties en non-profit. ✓ Roadmap op 1 A4 ✓ AI Governance Framework ✓ 15+ jaar sociaal domein. Gratis kennismakingsgesprek.',
   keywords: [

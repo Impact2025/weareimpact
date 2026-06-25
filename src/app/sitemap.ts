@@ -128,6 +128,42 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: 'monthly',
       priority: 0.6,
     },
+    {
+      url: `${BASE_URL}/vincent-van-munster`,
+      lastModified: new Date('2026-06-01'),
+      changeFrequency: 'weekly',
+      priority: 0.9,
+    },
+    {
+      url: `${BASE_URL}/interim-verandermanagement-ai-sociaal-domein`,
+      lastModified: new Date('2026-06-01'),
+      changeFrequency: 'monthly',
+      priority: 0.8,
+    },
+    {
+      url: `${BASE_URL}/interim`,
+      lastModified: new Date('2026-06-01'),
+      changeFrequency: 'monthly',
+      priority: 0.7,
+    },
+    {
+      url: `${BASE_URL}/privacy`,
+      lastModified: new Date('2025-10-01'),
+      changeFrequency: 'yearly',
+      priority: 0.3,
+    },
+    {
+      url: `${BASE_URL}/voorwaarden`,
+      lastModified: new Date('2025-10-01'),
+      changeFrequency: 'yearly',
+      priority: 0.3,
+    },
+    {
+      url: `${BASE_URL}/cookies`,
+      lastModified: new Date('2025-10-01'),
+      changeFrequency: 'yearly',
+      priority: 0.3,
+    },
   ];
 
   // === KENNISBANK CATEGORY PILLAR PAGES ===

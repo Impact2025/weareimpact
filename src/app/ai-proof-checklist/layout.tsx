@@ -1,7 +1,7 @@
 ﻿import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Gratis AI-Proof Checklist 2026 | 15 Stappen voor Sociale Organisaties | WeAreImpact',
+  title: 'Gratis AI-Proof Checklist 2026 | 15 Stappen voor Sociale Organisaties',
   description:
     'Download gratis: 15 praktische stappen om jouw organisatie AI-Proof te maken vóór de EU AI Act deadline. ✓ Voor zorg, welzijn & non-profit ✓ Direct toepasbaar ✓ Inclusief AI-readiness gesprek.',
   keywords: [

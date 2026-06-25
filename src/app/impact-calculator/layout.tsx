@@ -1,7 +1,7 @@
 ﻿import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Gratis AI Impact Calculator voor Welzijn & Zorg | WeAreImpact',
+  title: 'Gratis AI Impact Calculator voor Welzijn & Zorg',
   description:
     'Bereken in 2 minuten hoeveel uur, geld en burn-out AI bespaart voor jouw team. ✓ Gratis ✓ Gebaseerd op Movisie-data ✓ Voor welzijn, zorg & gemeenten. Inclusief persoonlijk adviesgesprek.',
   keywords: [
