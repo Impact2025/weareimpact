@@ -30,7 +30,7 @@ export const metadata: Metadata = {
       'Doe de gratis AI Readiness Scan en ontdek in 5 minuten wat AI jouw organisatie concreet oplevert. Sector-specifiek advies voor zorg, welzijn en gemeenten.',
     images: [
       {
-        url: '/og-ai-scan.png',
+        url: '/og-ai-proof-checklist.webp',
         width: 1200,
         height: 630,
         alt: 'Gratis AI Readiness Scan — WeAreImpact',
@@ -42,7 +42,7 @@ export const metadata: Metadata = {
     title: 'Gratis AI Readiness Scan | WeAreImpact',
     description:
       'Ontdek in 5 minuten wat AI jouw organisatie concreet oplevert. Sector-specifiek advies voor zorg, welzijn en gemeenten.',
-    images: ['/og-ai-scan.png'],
+    images: ['/og-ai-proof-checklist.webp'],
   },
 };
 

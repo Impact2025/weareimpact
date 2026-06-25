@@ -35,6 +35,7 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion';
 import { ScannerSection } from '@/components/sections/ScannerSection';
+import { RelevantReading } from '@/components/seo/RelevantReading';
 
 const diensten = [
   {
@@ -458,7 +459,7 @@ export default function ProgrammamanagerDigitaleTransformatie() {
           <div className="flex flex-col items-center text-center">
             <Link href="/vincent-van-munster" className="relative mb-8 block">
               <div className="w-28 h-28 rounded-full overflow-hidden ring-4 ring-slate-600 ring-offset-4 ring-offset-[#1e293b] hover:ring-orange-500/60 transition-all duration-200">
-                <Image src="/vincent-van-munster.png" alt="Vincent van Munster" width={112} height={112} className="w-full h-full object-cover" />
+                <Image src="/vincent-van-munster.webp" alt="Vincent van Munster" width={112} height={112} className="w-full h-full object-cover" />
               </div>
               <span className="absolute bottom-1 right-1 w-4 h-4 bg-green-400 rounded-full border-2 border-[#1e293b]" />
             </Link>
@@ -562,6 +563,25 @@ export default function ProgrammamanagerDigitaleTransformatie() {
           </div>
         </div>
       </section>
+      <RelevantReading
+        items={[
+          {
+            title: 'AVG-proof AI in de zorg: compleet stappenplan',
+            href: '/kennisbank/avg-ai-zorg-stappenplan',
+            description: 'Hoe implementeer je AI zonder de AVG te schenden? Stappenplan voor zorg en welzijn.',
+          },
+          {
+            title: 'Impact van AI meten in zorg en welzijn',
+            href: '/kennisbank/impact-ai-meten-zorg-welzijn',
+            description: 'Hoe meet je de echte impact van AI in zorg en welzijn? Met concrete KPI\'s en rekenmodellen.',
+          },
+          {
+            title: 'Subsidie voor AI-implementatie in welzijn 2026',
+            href: '/kennisbank/subsidie-ai-implementatie-welzijn-2026',
+            description: 'Welke subsidies zijn beschikbaar voor AI in welzijn en hoe vraag je ze aan?',
+          },
+        ]}
+      />
     </>
   );
 }

@@ -31,10 +31,10 @@ export const metadata: Metadata = {
       'Is jouw organisatie AI-Proof in 2026? Download de gratis checklist met 15 praktische stappen. Voor zorg, welzijn en non-profit. Klaar vóór de EU AI Act deadline.',
     images: [
       {
-        url: '/og-ai-proof-checklist.png',
+        url: '/og-ai-proof-checklist.webp',
         width: 1200,
         height: 630,
-        alt: 'AI-Proof Checklist 2026 — WeAreImpact',
+        alt: 'AI Proof Checklist — WeAreImpact',
       },
     ],
   },
@@ -43,7 +43,7 @@ export const metadata: Metadata = {
     title: 'Gratis AI-Proof Checklist 2026 | Sociale Organisaties',
     description:
       'Is jouw organisatie AI-Proof in 2026? Download de gratis checklist met 15 praktische stappen voor zorg, welzijn en non-profit.',
-    images: ['/og-ai-proof-checklist.png'],
+    images: ['/og-ai-proof-checklist.webp'],
   },
 };
 

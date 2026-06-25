@@ -56,7 +56,7 @@ export const metadata: Metadata = {
       'AI consultant voor welzijnsorganisaties, gemeenten en sociaal ondernemers. 15+ jaar in het sociaal domein. Geen rapport en wegwezen — iemand die naast je staat totdat het werkt.',
     images: [
       {
-        url: '/og-homepage.png',
+        url: '/og-homepage.webp',
         width: 1200,
         height: 630,
         alt: 'Vincent van Munster — AI Consultant WeAreImpact',
@@ -68,7 +68,7 @@ export const metadata: Metadata = {
     title: 'AI Consultant Sociaal Domein | Vincent van Munster — WeAreImpact',
     description:
       'AI consultant voor welzijnsorganisaties, gemeenten en sociaal ondernemers. 15+ jaar in het sociaal domein. Gratis kennismakingsgesprek.',
-    images: ['/og-homepage.png'],
+    images: ['/og-homepage.webp'],
   },
   icons: {
     icon: [
@@ -105,7 +105,7 @@ export default function RootLayout({
     description:
       'AI consultant voor welzijnsorganisaties, gemeenten en sociaal ondernemers. 15+ jaar ervaring in het sociaal domein. Gecertificeerd LEGO® Serious Play facilitator.',
     url: 'https://weareimpact.nl',
-    image: 'https://weareimpact.nl/vincent-van-munster.png',
+    image: 'https://weareimpact.nl/vincent-van-munster.webp',
     sameAs: [
       'https://www.linkedin.com/in/vincent-van-m%C3%BCnster/',
       'https://weareimpact.nl',

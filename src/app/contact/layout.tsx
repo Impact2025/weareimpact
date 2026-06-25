@@ -17,7 +17,7 @@ export const metadata: Metadata = {
       'Bel, mail of plan direct een gratis koffiemoment. Vincent van Munster — Strategic Innovation Partner voor het sociaal domein.',
     images: [
       {
-        url: '/og-homepage.png',
+        url: '/og-homepage.webp',
         width: 1200,
         height: 630,
         alt: 'Contact — WeAreImpact',
@@ -29,7 +29,7 @@ export const metadata: Metadata = {
     title: 'Contact | WeAreImpact',
     description:
       'Bel, mail of plan een gratis koffiemoment met Vincent van Munster — AI-consultant sociaal domein.',
-    images: ['/og-homepage.png'],
+    images: ['/og-homepage.webp'],
   },
 };
 

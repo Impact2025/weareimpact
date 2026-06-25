@@ -36,6 +36,7 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion';
 import { ScannerSection } from '@/components/sections/ScannerSection';
+import { RelevantReading } from '@/components/seo/RelevantReading';
 
 const toepassingen = [
   {
@@ -545,7 +546,7 @@ export default function AiConsultantSociaalDomein() {
           <div className="flex flex-col items-center text-center">
             <Link href="/vincent-van-munster" className="relative mb-8 block">
               <div className="w-28 h-28 rounded-full overflow-hidden ring-4 ring-slate-600 ring-offset-4 ring-offset-[#1e293b] hover:ring-orange-500/60 transition-all duration-200">
-                <Image src="/vincent-van-munster.png" alt="Vincent van Munster — AI Consultant Sociaal Domein" width={112} height={112} className="w-full h-full object-cover" />
+                <Image src="/vincent-van-munster.webp" alt="Vincent van Munster — AI Consultant Sociaal Domein" width={112} height={112} className="w-full h-full object-cover" />
               </div>
               <span className="absolute bottom-1 right-1 w-4 h-4 bg-green-400 rounded-full border-2 border-[#1e293b]" />
             </Link>
@@ -649,6 +650,25 @@ export default function AiConsultantSociaalDomein() {
           </div>
         </div>
       </section>
+      <RelevantReading
+        items={[
+          {
+            title: 'Hoe je een AI-consultant kiest voor jouw welzijnsorganisatie',
+            href: '/kennisbank/ai-consultant-welzijn-kiezen',
+            description: '7 vragen die je moet stellen voordat je een AI-consultant inhuurt voor het sociaal domein.',
+          },
+          {
+            title: 'AVG-proof AI in de zorg: compleet stappenplan',
+            href: '/kennisbank/avg-ai-zorg-stappenplan',
+            description: 'Hoe implementeer je AI in de zorg zonder de AVG te schenden? Praktisch stappenplan.',
+          },
+          {
+            title: 'Subsidie voor AI-implementatie in welzijn 2026',
+            href: '/kennisbank/subsidie-ai-implementatie-welzijn-2026',
+            description: 'Welke subsidies zijn beschikbaar voor AI in welzijn en hoe vraag je ze aan?',
+          },
+        ]}
+      />
     </>
   );
 }

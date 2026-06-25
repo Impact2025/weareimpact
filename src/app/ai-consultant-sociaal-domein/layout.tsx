@@ -33,7 +33,7 @@ export const metadata: Metadata = {
       'AI consultant met 15+ jaar sectorervaring. Van AI-scan tot werkende implementatie. AVG-proof en met aandacht voor de menselijke maat. Voor welzijnsorganisaties, gemeenten en sociaal ondernemers.',
     images: [
       {
-        url: '/og-ai-consultant-sociaal-domein.png',
+        url: '/og-ai-consultant-sociaal-domein.webp',
         width: 1200,
         height: 630,
         alt: 'AI Consultant Sociaal Domein — Vincent van Munster | WeAreImpact',
@@ -45,7 +45,7 @@ export const metadata: Metadata = {
     title: 'AI Consultant Sociaal Domein | WeAreImpact',
     description:
       'AI consultant met 15+ jaar sectorervaring. Van AI-scan tot werkende implementatie. AVG-proof, menselijk, resultaatgericht.',
-    images: ['/og-ai-consultant-sociaal-domein.png'],
+    images: ['/og-ai-consultant-sociaal-domein.webp'],
   },
 };
 

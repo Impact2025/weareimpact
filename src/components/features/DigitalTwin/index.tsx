@@ -58,7 +58,7 @@ type BookingStep = 'none' | 'select_type' | 'select_time' | 'fill_form' | 'confi
 
 // Constants
 const VINCENT_AVATAR = '/vincent-avatar.jpg'; // Add Vincent's photo to public folder
-const IRIS_AVATAR = '/iris-avatar.png'; // Iris face photo
+const IRIS_AVATAR = '/iris-avatar.webp'; // Iris face photo
 
 const BOOKING_TYPES: BookingType[] = [
   {
@@ -157,7 +157,7 @@ function IrisAvatarSmall({ size = 'md', showStatus = false }: { size?: 'sm' | 'm
           sizeClasses[size]
         )}>
           <Image
-            src="/WeAreImpact_hart.png"
+            src="/weareimpact-hart.webp"
             alt="Iris"
             width={size === 'sm' ? 20 : size === 'md' ? 28 : 40}
             height={size === 'sm' ? 20 : size === 'md' ? 28 : 40}

@@ -74,7 +74,7 @@ export function Navbar() {
           <Link href="/" className="cursor-pointer">
             {!logoError ? (
               <Image
-                src="/WeAreImpact_hart.png"
+                src="/weareimpact-hart.webp"
                 alt="WeAreImpact Logo"
                 width={48}
                 height={48}

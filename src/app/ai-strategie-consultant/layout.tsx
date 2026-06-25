@@ -31,10 +31,10 @@ export const metadata: Metadata = {
       'Van losse AI-experimenten naar een strategie die beklijft. Roadmap op 1 A4, AI Governance Framework en begeleiding door specialist met 15+ jaar sociaal domein.',
     images: [
       {
-        url: '/og-ai-strategie-consultant.png',
+        url: '/og-ai-strategie-consultant.webp',
         width: 1200,
         height: 630,
-        alt: 'AI Strategie Consultant Vincent van Munster — WeAreImpact',
+        alt: 'AI Strategie Consultant Sociaal Domein — WeAreImpact',
       },
     ],
   },
@@ -43,7 +43,7 @@ export const metadata: Metadata = {
     title: 'AI Strategie Consultant voor Gemeenten & Welzijn',
     description:
       'Van losse AI-experimenten naar een strategie die beklijft. Roadmap op 1 A4, AI Governance Framework. Gratis kennismakingsgesprek.',
-    images: ['/og-ai-strategie-consultant.png'],
+    images: ['/og-ai-strategie-consultant.webp'],
   },
 };
 

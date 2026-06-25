@@ -31,7 +31,7 @@ export const metadata: Metadata = {
       'Digitale transformatie die écht landt. Van strategie naar werkende AI-toepassingen en duurzaam draagvlak. Voor programmamanagers in gemeenten, zorg en welzijn.',
     images: [
       {
-        url: '/og-programmamanager-digitale-transformatie.png',
+        url: '/og-programmamanager-digitale-transformatie.webp',
         width: 1200,
         height: 630,
         alt: 'Programmamanager Digitale Transformatie — WeAreImpact',
@@ -43,7 +43,7 @@ export const metadata: Metadata = {
     title: 'Programmamanager Digitale Transformatie | Sociaal Domein',
     description:
       'Digitale transformatie die écht landt. Van strategie naar werkende AI-toepassingen en duurzaam draagvlak.',
-    images: ['/og-programmamanager-digitale-transformatie.png'],
+    images: ['/og-programmamanager-digitale-transformatie.webp'],
   },
 };
 

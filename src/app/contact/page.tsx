@@ -134,7 +134,7 @@ export default function ContactPage() {
                       <div className="relative">
                         <div className="w-20 h-20 rounded-2xl overflow-hidden shadow-lg">
                           <Image
-                            src="/vincent-van-munster.png"
+                            src="/vincent-van-munster.webp"
                             alt="Vincent van Munster"
                             width={80}
                             height={80}

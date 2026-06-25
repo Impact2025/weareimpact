@@ -21,7 +21,7 @@ interface KennisbankChatProps {
   suggestedQuestions?: string[];
 }
 
-const IRIS_AVATAR = '/iris-avatar.png';
+const IRIS_AVATAR = '/iris-avatar.webp';
 
 const DEFAULT_QUESTIONS = [
   'Leg dit in eenvoudige taal uit',

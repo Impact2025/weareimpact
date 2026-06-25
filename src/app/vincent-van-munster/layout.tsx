@@ -60,7 +60,7 @@ const personSchema = {
   url: 'https://weareimpact.nl/vincent-van-munster',
   image: {
     '@type': 'ImageObject',
-    url: 'https://weareimpact.nl/vincent-van-munster.png',
+    url: 'https://weareimpact.nl/vincent-van-munster.webp',
     width: 400,
     height: 400,
   },

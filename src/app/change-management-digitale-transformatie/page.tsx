@@ -24,6 +24,7 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion';
 import { ScannerSection } from '@/components/sections/ScannerSection';
+import { RelevantReading } from '@/components/seo/RelevantReading';
 
 const diensten = [
   {
@@ -360,7 +361,7 @@ export default function ChangeManagementDigitaleTransformatie() {
           <div className="flex flex-col items-center text-center">
             <Link href="/vincent-van-munster" className="relative mb-8 block">
               <div className="w-28 h-28 rounded-full overflow-hidden ring-4 ring-slate-600 ring-offset-4 ring-offset-[#1e293b] hover:ring-orange-500/60 transition-all duration-200">
-                <Image src="/vincent-van-munster.png" alt="Vincent van Munster" width={112} height={112} className="w-full h-full object-cover" />
+                <Image src="/vincent-van-munster.webp" alt="Vincent van Munster" width={112} height={112} className="w-full h-full object-cover" />
               </div>
               <span className="absolute bottom-1 right-1 w-4 h-4 bg-green-400 rounded-full border-2 border-[#1e293b]" />
             </Link>
@@ -435,6 +436,25 @@ export default function ChangeManagementDigitaleTransformatie() {
           </div>
         </div>
       </section>
+      <RelevantReading
+        items={[
+          {
+            title: 'LEGO Serious Play voor gemeenten: draagvlak in één dag',
+            href: '/kennisbank/lego-serious-play-gemeenten-draagvlak',
+            description: 'Hoe gemeenten met LEGO Serious Play in één dag draagvlak creëren voor digitale transformatie.',
+          },
+          {
+            title: 'Team AI-ready maken: praktische gids',
+            href: '/kennisbank/team-ai-ready-maken',
+            description: 'Hoe bereid je een team voor op AI in het sociaal domein? Stappenplan van draagvlak naar adoptie.',
+          },
+          {
+            title: 'Cultuurverandering: top-down of inside-out?',
+            href: '/kennisbank/cultuurverandering-top-down-inside-out',
+            description: 'Waarom 85% van digitale transformaties mislukt door mensen, niet door technologie.',
+          },
+        ]}
+      />
     </>
   );
 }

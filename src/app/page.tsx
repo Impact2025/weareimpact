@@ -429,7 +429,7 @@ export default function Home() {
           <div className="flex flex-col items-center text-center">
             <div className="relative mb-8">
               <div className="w-28 h-28 rounded-full overflow-hidden ring-4 ring-slate-600 ring-offset-4 ring-offset-[#1e293b]">
-                <Image src="/vincent-van-munster.png" alt="Vincent van Munster" width={112} height={112} className="w-full h-full object-cover" />
+                <Image src="/vincent-van-munster.webp" alt="Vincent van Munster" width={112} height={112} className="w-full h-full object-cover" />
               </div>
               <span className="absolute bottom-1 right-1 w-4 h-4 bg-green-400 rounded-full border-2 border-[#1e293b]" />
             </div>

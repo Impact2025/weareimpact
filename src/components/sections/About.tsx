@@ -25,7 +25,7 @@ export function About() {
           <Link href="/vincent-van-munster" className="relative mb-8 block">
             <div className="w-28 h-28 rounded-full overflow-hidden ring-4 ring-slate-600 ring-offset-4 ring-offset-[#1e293b] hover:ring-orange-500/60 transition-all duration-200">
               <Image
-                src="/vincent-van-munster.png"
+                src="/vincent-van-munster.webp"
                 alt="Vincent van Munster"
                 width={112}
                 height={112}

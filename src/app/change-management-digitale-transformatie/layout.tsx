@@ -31,7 +31,7 @@ export const metadata: Metadata = {
       '85% van digitale transformaties mislukt door mensen, niet technologie. Van weerstand naar eigenaarschap — in 90 dagen. Specialist in sociaal domein met LEGO® Serious Play.',
     images: [
       {
-        url: '/og-change-management-digitale-transformatie.png',
+        url: '/og-change-management-digitale-transformatie.webp',
         width: 1200,
         height: 630,
         alt: 'Change Management Digitale Transformatie — WeAreImpact',
@@ -43,7 +43,7 @@ export const metadata: Metadata = {
     title: 'Change Management Digitale Transformatie | Gemeenten & Welzijn',
     description:
       '85% van digitale transformaties mislukt door mensen, niet technologie. Van weerstand naar eigenaarschap in 90 dagen.',
-    images: ['/og-change-management-digitale-transformatie.png'],
+    images: ['/og-change-management-digitale-transformatie.webp'],
   },
 };
 
