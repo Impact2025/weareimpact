@@ -10,15 +10,16 @@ tags:
   - samenwerking
   - teamdynamiek
   - workshops
-seo_title: "LEGO Serious Play voor Teams | 5 Praktische Toepassingen"
-seo_description: "Ontdek 5 krachtige LEGO Serious Play toepassingen voor teamontwikkeling. Praktische voorbeelden om teamdynamiek zichtbaar te maken en te verbeteren."
+seo_title: "LEGO Serious Play voor Teamontwikkeling | 5 Praktische Toepassingen | WeAreImpact"
+seo_description: "Ontdek 5 krachtige LEGO Serious Play toepassingen voor teamontwikkeling. Praktijkvoorbeelden van teamdynamiek, samenwerking en verandering — met concrete resultaten. Voor teams in welzijn, zorg en gemeenten."
 seo_keywords:
   - lego serious play team
   - teamontwikkeling workshop
   - teamdynamiek verbeteren
   - lego methode teams
   - samenwerking workshop
-reading_time: 8
+  - lego serious play facilitator
+reading_time: 9
 published_at: "2024-12-24"
 difficulty: intermediate
 lead_magnet_title: "Teamworkshop Checklist"
@@ -216,7 +217,7 @@ Bij een gemeente kwam een nieuwe afdelingshoofd binnen. Na 3 maanden liep het st
 
 ### Het werkt minder goed bij:
 
-- **Acute conflicten** tussen individuen (eerst mediation)
+- **Acute conflicten** tussen individuen (eerst mediation of een [verandertraject](/change-management-digitale-transformatie))
 - **Teams onder extreme druk** (eerst rust creëren)
 - **Gedwongen deelname** (vrijwilligheid is essentieel)
 - **Teams die een quick fix zoeken** (dit kost tijd)
@@ -241,6 +242,12 @@ Een mooie sessie zonder vervolg is zinloos. Ik eindig altijd met concrete afspra
 
 ---
 
+## Wat neem je mee
+
+> - **Maak onzichtbare dynamiek zichtbaar.** Met LEGO Serious Play bouwen teams hun ongeschreven regels en frustraties — letterlijk op tafel. Dat versnelt verandering weken.
+> - **Praat over modellen, niet over mensen.** De veiligheid van het bouwwerk maakt dat teams durven zeggen wat ze anders niet uitspreken.
+> - **Een sessie zonder vervolg is zinloos.** Een goede workshop eindigt altijd met concrete, meetbare afspraken — niet met een goed gevoel alleen.
+
 ## Aan de slag
 
 Herken je een van deze situaties in jouw team?
@@ -252,9 +259,11 @@ Herken je een van deze situaties in jouw team?
 
 Dan kan een LEGO Serious Play sessie verhelderend zijn.
 
-Via SteentjeBijSteentje begeleid ik teams door deze processen. Niet als trucje, maar als serieuze interventie die leidt tot concrete verbetering.
+Via [SteentjeBijSteentje](https://steentjebijsteentje.nl) begeleid ik teams door deze processen. Niet als trucje, maar als serieuze interventie die leidt tot concrete verbetering.
 
-Neem contact op om te verkennen wat een sessie voor jouw team kan betekenen.
+Ik werk als gecertificeerd LEGO Serious Play facilitator met een vast tarief van **€125–€140 per uur**, maximaal **16–24 uur per week**. Ik verkoop impact en resultaat, geen uren. Plan een vrijblijvend gesprek om te verkennen wat een sessie voor jouw team kan betekenen — in 30 minuten weet je of het klikt.
+
+Ook interessant: lees hoe ik [LEGO Serious Play inzet voor AI-implementatie in welzijn](/kennisbank/hoe-iris-lego-serious-play-ai-implementatie-welzijn-angst-eigenaarschap) — een praktijkcase waarin een team in één dag van angst naar eigenaarschap ging.
 
 
 ---

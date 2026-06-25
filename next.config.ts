@@ -28,6 +28,10 @@ const nextConfig: NextConfig = {
       { source: '/ai-consultant', destination: '/ai-strategie-consultant', permanent: true },
       { source: '/change-management', destination: '/change-management-digitale-transformatie', permanent: true },
 
+      // Nieuwe AI consulent pagina (Nederlandse term)
+      { source: '/ai-consulent', destination: '/kennisbank/ai-consulent-sociaal-domein', permanent: true },
+      { source: '/ai-consulent-sociaal-domein', destination: '/kennisbank/ai-consulent-sociaal-domein', permanent: true },
+
       // Veelgemaakte typfouten / URL-varianten
       { source: '/kennisbank/categorie', destination: '/kennisbank', permanent: true },
       { source: '/blog/page/:num', destination: '/blog', permanent: true },

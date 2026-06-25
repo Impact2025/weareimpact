@@ -31,8 +31,11 @@ export const metadata: Metadata = {
   },
   keywords: [
     'AI consultant sociaal domein',
+    'AI consulent sociaal domein',
     'AI consultant welzijn',
+    'AI consulent welzijn',
     'AI consultant gemeente',
+    'AI consulent gemeente',
     'digitale transformatie sociaal domein',
     'AI implementatie welzijn',
     'AI strategie gemeente',
