@@ -16,6 +16,9 @@ const STATIC_URLS = [
   '/programmamanager-digitale-transformatie',
   '/impact-calculator',
   '/contact',
+  '/vincent-van-munster',
+  '/interim-verandermanagement-ai-sociaal-domein',
+  '/interim',
 ];
 
 const KENNISBANK_CATEGORIES = [
