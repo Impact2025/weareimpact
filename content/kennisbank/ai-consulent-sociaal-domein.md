@@ -85,6 +85,10 @@ Een AI consulent die dit niet begrijpt, levert dure rapporten die in de la verdw
 
 **Het bewijs:** Uit onderzoek van McKinsey blijkt dat 85% van digitale transformaties mislukt door gebrek aan draagvlak bij medewerkers, niet door de technologie ([McKinsey, 2023](https://www.mckinsey.com/capabilities/people-and-organizational-performance/our-insights/)). Daarom begin ik nooit met een systeem — ik begin met een team en een bak LEGO.
 
+En de urgentie is groter dan je denkt. Uit een TNO-rapport in opdracht van de Nederlandse AI Coalitie (2024) blijkt dat **in het sociaal domein géén nieuwe AI-toepassingen zijn gevonden** ([VNG, 2024](https://vng.nl/nieuws/gemeenten-lopen-voorop-bij-publieke-inzet-ai)). Terwijl gemeenten wél vooroplopen in AI bij andere domeinen. Het sociaal domein is letterlijk een witte vlek op de AI-kaart.
+
+Precies daarom ben ik AI consulent geworden: niet om wielen opnieuw uit te vinden, maar om die witte vlek in te vullen — met aandacht voor de menselijke maat.
+
 ---
 
 ## Praktische resultaten: wat ik de afgelopen jaren heb gerealiseerd
