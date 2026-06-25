@@ -15,7 +15,7 @@ export async function POST() {
   }
 
   const files = fs.readdirSync(kennisbankDir).filter((f) => f.endsWith('.md'));
-  const results: { slug: string; status: 'inserted' | 'skipped' | 'error'; error?: string }[] = [];
+  const results: { slug: string; status: 'inserted' | 'updated' | 'skipped' | 'error'; error?: string }[] = [];
 
   for (const file of files) {
     try {
@@ -25,10 +25,42 @@ export async function POST() {
 
       const slug = data.slug || file.replace('.md', '');
 
-      // Skip if slug already exists
+      // Update if slug already exists
       const existing = await sql`SELECT id FROM kb_articles WHERE slug = ${slug} LIMIT 1`;
       if (existing.length > 0) {
-        results.push({ slug, status: 'skipped' });
+        const title = data.title || slug;
+        const subtitle = data.subtitle || null;
+        const seo_title_new = data.seo_title || null;
+        const seo_description_new = data.seo_description || null;
+        const seo_keywords_new: string[] = data.seo_keywords || [];
+        const difficulty = data.difficulty || 'beginner';
+        const reading_time = data.reading_time || Math.ceil(content.split(/\s+/).length / 200);
+        const author_name = data.author_name || 'Vincent van Munster';
+        const author_title = data.author_title || 'Strategic Innovation Partner, WeAreImpact';
+        const lead_magnet_title = data.lead_magnet_title || null;
+        const lead_magnet_description = data.lead_magnet_description || null;
+        const lead_magnet_type = data.lead_magnet_type || null;
+        const faq_items = data.faq_items ? JSON.stringify(data.faq_items) : '[]';
+        const tags: string[] = data.tags || [];
+        const excerpt = data.excerpt || '';
+        const published_at = data.published_at ? new Date(data.published_at).toISOString() : new Date().toISOString();
+        const search_content = `${title} ${subtitle || ''} ${excerpt} ${content}`;
+
+        await sql`
+          UPDATE kb_articles SET
+            title = ${title}, subtitle = ${subtitle}, excerpt = ${excerpt},
+            content = ${content}, category_slug = ${data.category_slug || 'algemeen'},
+            tags = ${tags}, seo_title = ${seo_title_new}, seo_description = ${seo_description_new},
+            seo_keywords = ${seo_keywords_new}, difficulty = ${difficulty},
+            reading_time = ${reading_time}, author_name = ${author_name},
+            author_title = ${author_title}, lead_magnet_title = ${lead_magnet_title},
+            lead_magnet_description = ${lead_magnet_description},
+            lead_magnet_type = ${lead_magnet_type}, faq_items = ${faq_items},
+            search_content = ${search_content}, published_at = ${published_at},
+            updated_at = NOW()
+          WHERE slug = ${slug}
+        `;
+        results.push({ slug, status: 'updated' });
         continue;
       }
 
@@ -74,10 +106,11 @@ export async function POST() {
   }
 
   const inserted = results.filter((r) => r.status === 'inserted').length;
+  const updated = results.filter((r) => r.status === 'updated').length;
   const skipped = results.filter((r) => r.status === 'skipped').length;
   const errors = results.filter((r) => r.status === 'error').length;
 
-  return NextResponse.json({ success: true, inserted, skipped, errors, results });
+  return NextResponse.json({ success: true, inserted, updated, skipped, errors, results });
 }
 
 // GET - Preview which markdown files are not yet in the database
