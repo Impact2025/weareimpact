@@ -34,9 +34,7 @@ faq_items:
   - question: "Kan ik als welzijnsorganisatie subsidie krijgen voor AI?"
     answer: "Ja. Zowel zorg- als welzijnsorganisaties kunnen aanspraak maken op verschillende subsidies. De sleutel is om je aanvraag te formuleren in termen van maatschappelijke impact — niet in technische specificaties. Noem meetbare uitkomsten zoals verminderde administratieve lasten, betere cliënttoeleiding of verhoogde vrijwilligersretentie. Heb je hulp nodig bij het formuleren? Dan is een [AI-scan](/ai-scan) of een gesprek met een [AI-consultant](/ai-consultant-sociaal-domein) een goed startpunt."
   - question: "Wat is de EU AI Act subsidie en waarom is die relevant voor welzijn?"
-    answer: "De EU AI Act subsidie is een onderdeel van het Digitaal Europa-programma, specifiek gericht op het compliant implementeren van AI-systemen onder de nieuwe AI-verordening. Voor welzijnsorganisaties is dit relevant omdat veel AI-toepassingen in de zorg en het sociaal domein onder de categorie 'hoog risico' vallen. De subsidie dekt onder meer AI-audits, documentatie, risicobeoordelingen en implementatiebegeleiding. Aanvragen kan via de Rijksdienst voor Ondernemend Nederland (RVO), vaak in co-financiering met een partnerschap."
-author_name: Vincent van Munster
-author_title: "Strategic Innovation Partner, WeAreImpact"
+    answer: "De EU AI Act subsidie is een onderdeel van het Digitaal Europa-programma, specifiek gericht op het compliant implementeren van AI-systemen onder de nieuwe AI-verordening. Voor welzijnsorganisaties is dit relevant omdat veel AI-toepassingen in de zorg en het sociaal domein onder de categorie 'hoog risico' vallen. De subsidie dekt onder meer AI-audits, documentatie, risicobeoordelingen en implementatiebegeleiding."
 ---
 
 "AI moet, maar wie betaalt?"
