@@ -4,9 +4,11 @@ import { useEffect, useRef } from 'react';
 
 interface ViewTrackerProps {
   articleId: string;
+  endpoint?: string;
 }
 
-export function ViewTracker({ articleId }: ViewTrackerProps) {
+export function ViewTracker({ articleId, endpoint }: ViewTrackerProps) {
+  const endpointUrl = endpoint || '/api/kennisbank/view';
   const tracked = useRef(false);
 
   useEffect(() => {
@@ -18,7 +20,7 @@ export function ViewTracker({ articleId }: ViewTrackerProps) {
     const timer = setTimeout(() => {
       const visitorId = typeof window !== 'undefined' ? localStorage.getItem('visitorId') : null;
 
-      fetch('/api/kennisbank/view', {
+      fetch(endpointUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ articleId, visitorId }),

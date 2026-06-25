@@ -9,6 +9,7 @@ import { ArrowLeft, Calendar, Clock, Linkedin, Twitter, ChevronRight, BookOpen }
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ArticleJsonLd, BreadcrumbJsonLd } from '@/components/seo/JsonLd';
+import { ViewTracker } from '@/components/features/ViewTracker';
 import type { Metadata } from 'next';
 import parse from 'html-react-parser';
 import { marked } from 'marked';
@@ -32,7 +33,7 @@ function contentToHtml(content: string): string {
   return marked.parse(content, { async: false }) as string;
 }
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 3600;
 
 interface Post {
   id: string;
@@ -138,9 +139,6 @@ async function getPost(slug: string): Promise<Post | null> {
       return null;
     }
 
-    // Increment view count
-    await sql`UPDATE posts SET views = views + 1 WHERE slug = ${slug}`;
-
     return posts[0] as Post;
   } catch (error) {
     console.error('Error fetching post:', error);
@@ -215,6 +213,7 @@ export default async function BlogPostPage({ params }: Props) {
         }}
       />
       <BreadcrumbJsonLd items={breadcrumbItems} />
+      <ViewTracker articleId={post.id} endpoint="/api/blog/view" />
 
       <div className="container mx-auto px-6 max-w-3xl">
         {/* Breadcrumb Navigation */}

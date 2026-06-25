@@ -144,6 +144,7 @@ export default function RootLayout({
     <html lang="nl" className="scroll-smooth">
       <head>
         <link rel="manifest" href="/manifest.json" />
+        <link rel="alternate" type="application/rss+xml" title="WeAreImpact — AI in het Sociaal Domein" href="/feed.xml" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(personSchema) }}
