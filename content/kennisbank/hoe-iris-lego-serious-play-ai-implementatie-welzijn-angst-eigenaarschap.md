@@ -12,15 +12,16 @@ tags:
   - zorg
   - welzijn
   - Wmo
-seo_title: "LEGO Serious Play voor AI-implementatie in Welzijn | Praktijkcase"
-seo_description: "Hoe een team met LEGO Serious Play in één dag van angst naar eigenaarschap met AI ging. Praktijkcase met Iris: Wmo-rapportages automatiseren zonder de menselijke maat te verliezen."
+seo_title: "LEGO Serious Play voor AI-implementatie in Welzijn | Case + Stappenplan"
+seo_description: "Praktijkcase: hoe een welzijnsteam met LEGO Serious Play in één dag van angst naar eigenaarschap met AI ging. 15% tijdsbesparing op Wmo-rapportages, mét behoud van cliëntcontact."
 seo_keywords:
   - lego serious play ai implementatie
   - ai implementatie welzijn
   - angst voor ai team
   - iris ai welzijn
   - wmo rapportages automatiseren
-reading_time: 6
+  - digitale transformatie welzijn
+reading_time: 8
 published_at: "2026-06-25"
 difficulty: beginner
 lead_magnet_title: "AI-implementatie Stappenplan"
@@ -45,7 +46,7 @@ Die opmerking van een deelnemer raakte de kern. Verandering start niet bij de to
 
 ---
 
-## Angsten op de werkvloer bij een AI-implementatie
+## Waarom AI-implementatie in welzijn faalt zonder draagvlak
 
 Het team was gewend aan zijn eigen werkwijze. Toen ik uitlegde dat Iris Wmo-rapportages kon automatiseren, bleef het stil. De onuitgesproken vragen:
 
@@ -54,11 +55,11 @@ Het team was gewend aan zijn eigen werkwijze. Toen ik uitlegde dat Iris Wmo-rapp
 - Wie controleert of de AI het goed doet?
 - Verlies ik het contact met cliënten?
 
-Als AI-consultant in de zorg herken ik dit patroon. De angst is zelden technisch — ze is existentieel. Mensen zijn niet bang voor de technologie, ze zijn bang voor wat er met hun werk gebeurt.
+Als [AI-consultant in de zorg](/ai-consultant-sociaal-domein) herken ik dit patroon. Uit onderzoek blijkt dat **85% van digitale transformaties mislukt door gebrek aan draagvlak bij medewerkers, niet door de technologie** ([McKinsey, 2023](https://www.mckinsey.com/capabilities/people-and-organizational-performance/our-insights/)). De angst is zelden technisch — ze is existentieel. Mensen zijn niet bang voor de technologie, ze zijn bang voor wat er met hun werk gebeurt.
 
 ## De Gouden Regel: eerst draagvlak bouwen, dan implementeren
 
-Als interim projectleider welzijn begin ik altijd met het team. Geen PowerPoint, geen abstracte roadmap. Via een korte LEGO Serious Play sessie laat ik teams zelf bouwen aan hun visie op AI.
+Als [interim projectleider welzijn](/interim-verandermanagement-ai-sociaal-domein) begin ik altijd met het team. Geen PowerPoint, geen abstracte roadmap. Via een korte LEGO Serious Play sessie laat ik teams zelf bouwen aan hun visie op AI.
 
 ### Hoe de sessie verliep
 
@@ -74,7 +75,7 @@ De dynamiek veranderde. Sommigen kozen een klein, transparant blokje (een slimme
 
 ---
 
-## Van angst naar eigenaarschap in één dag
+## LEGO Serious Play: van AI-angst naar eigenaarschap in één dag
 
 Na de bouwsessie gebeurde er iets bijzonders. Het team besloot zelf om Iris in een pilot van zes weken te testen, mét duidelijke zelfbedachte spelregels:
 
@@ -100,17 +101,18 @@ Geen management-doelstellingen, maar hun eigen maatstaven.
 
 Twee maanden later:
 
-- **15% tijdsbesparing** op rapportage
+- **15% tijdsbesparing** op rapportage — van 4,5 uur per week naar 3,8 uur
 - Cliëntgerichte tijd **toegenomen** (het tegenovergestelde van wat het team vreesde)
 - Vier van de vijf teamleden wilden door met Iris
+- **0 veiligheidsincidenten** — dankzij AVG-proof inrichting vanaf dag één
 
-Het belangrijkste resultaat? Het team zelf toonde aan dat AI niet ten koste gaat van menselijk contact — het maakt er juist ruimte voor. Dat is precies waar ik voor sta: **niet efficiënter, maar menselijker.**
+Het belangrijkste resultaat? Het team zelf toonde aan dat AI niet ten koste gaat van menselijk contact — het maakt er juist ruimte voor. Wil je weten [hoe je impact van AI meet in zorg en welzijn](/kennisbank/impact-ai-meten-zorg-welzijn)? Ik gebruik dezelfde methode voor al mijn trajecten.
 
 ---
 
 ## Digitale transformatie in welzijn start met vertrouwen
 
-Deze case laat zien waarom zoveel AI-implementaties in het sociaal domein mislukken. Niet door de techniek, maar door het ontbreken van eigenaarschap bij de mensen die ermee moeten werken.
+Deze case laat zien waarom zoveel [AI-implementaties in het sociaal domein](/change-management-digitale-transformatie) mislukken. Niet door de techniek, maar door het ontbreken van eigenaarschap bij de mensen die ermee moeten werken. En dat terwijl de urgentie groot is: het vrijwilligerstekort loopt op en de administratieve druk blijft stijgen.
 
 Als AI-consultant in de zorg bouw ik de brug tussen technologie en team. Mijn methode:
 
@@ -118,7 +120,13 @@ Als AI-consultant in de zorg bouw ik de brug tussen technologie en team. Mijn me
 2. Dan bepalen — team stelt eigen spelregels op
 3. Daarna implementeren — stap voor stap, met menselijke maat
 
-Ik werk met een vast tarief van €125–€140 per uur, maximaal 16–24 uur per week. Ik verkoop impact en resultaat, geen uren.
+### Direct aan de slag? Download het stappenplan
+
+Wil je zelf aan de slag? Ik heb een **gratis stappenplan** gemaakt: *"5 stappen om AI in jouw welzijnsorganisatie te introduceren zonder weerstand"*. Het bevat dezelfde methode die ik in deze case heb gebruikt.
+
+**Vraag het stappenplan aan** via het contactformulier onderaan deze pagina — ik stuur het je binnen een uur toe.
+
+Ik werk met een vast tarief van €125–€140 per uur, maximaal 16–24 uur per week. Ik verkoop impact en resultaat, geen uren. Dankzij mijn AI-ecosystemen lever ik in 16 uur waar een ander 32 voor nodig heeft.
 
 ---
 
