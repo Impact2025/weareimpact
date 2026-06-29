@@ -3,7 +3,7 @@
 export const metadata: Metadata = {
   title: 'AI Consultant Sociaal Domein | Vincent van Munster',
   description:
-    'AI consultant voor het sociaal domein. ✓ 15+ jaar sectorervaring ✓ Concrete implementatie ✓ AVG-proof ✓ LEGO® Serious Play draagvlak. Voor welzijnsorganisaties, gemeenten en sociaal ondernemers.',
+    'AI consultant sociaal domein met 15+ jaar ervaring. ✓ Werkende AI-implementatie ✓ AVG-proof ✓ LEGO® Serious Play. Voor welzijn, gemeenten en sociaal ondernemers. Gratis gesprek.',
   keywords: [
     'AI consultant sociaal domein',
     'AI welzijnsorganisaties',

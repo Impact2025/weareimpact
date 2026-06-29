@@ -3,7 +3,7 @@
 export const metadata: Metadata = {
   title: 'AI Strategie Consultant voor Gemeenten & Welzijn',
   description:
-    'Concrete AI-strategie voor gemeenten, welzijnsorganisaties en non-profit. ✓ Roadmap op 1 A4 ✓ AI Governance Framework ✓ 15+ jaar sociaal domein. Gratis kennismakingsgesprek.',
+    'Concrete AI-strategie voor gemeenten, welzijn en non-profit. ✓ Roadmap op 1 A4 ✓ AI Governance ✓ 15+ jaar sociaal domein. Praktisch, geen jargon. Gratis kennismaking.',
   keywords: [
     'AI strategie consultant',
     'AI strategie gemeente',

@@ -3,7 +3,7 @@
 export const metadata: Metadata = {
   title: 'Programmamanager Digitale Transformatie | Sociaal Domein',
   description:
-    'Digitale transformatie die écht landt. ✓ Strategie naar werkende roadmap ✓ AI als versneller ✓ LEGO® Serious Play draagvlak. Voor programmamanagers in gemeenten, zorg en welzijn.',
+    'Programmamanager digitale transformatie voor het sociaal domein. ✓ Strategie naar werkende roadmap ✓ AI-implementatie ✓ LEGO® Serious Play. Voor gemeenten, zorg en welzijn. Gratis verkenning.',
   keywords: [
     'programmamanager digitale transformatie',
     'digitale transformatie gemeente',

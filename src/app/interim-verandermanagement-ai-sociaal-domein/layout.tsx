@@ -3,7 +3,7 @@
 export const metadata: Metadata = {
   title: 'Interim Verandermanagement AI & Innovatie in het Sociaal Domein',
   description:
-    'Waarom mislukken AI-projecten in de zorg? Omdat IT-consultants de werkvloer niet kennen. Vincent van Munster — 25 jaar directie & welzijnsachtergrond — zorgt wél dat het landt. Gratis strategische verkenning.',
+    'Interim verandermanagement AI in het sociaal domein. ✓ 25 jaar directie-ervaring ✓ AI-adoptie die wél landt ✓ Menselijke maat. Voor zorg, welzijn en gemeenten. Gratis verkenning.',
   keywords: [
     'interim verandermanagement AI',
     'interim manager sociaal domein',

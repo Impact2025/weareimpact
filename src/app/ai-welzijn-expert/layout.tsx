@@ -3,7 +3,7 @@ import type { Metadata } from 'next';
 export const metadata: Metadata = {
   title: 'AI Welzijn Expert | Vincent van Munster - WeAreImpact',
   description:
-    'AI expert voor de welzijnssector. ✓ 15+ jaar ervaring in het sociaal domein ✓ Praktische AI-implementatie ✓ LEGO® Serious Play ✓ AVG-proof. Voor organisaties die AI willen laten werken voor mens en organisatie.',
+    'AI expert voor de welzijnssector. ✓ 15+ jaar ervaring ✓ Praktische AI-implementatie ✓ LEGO® Serious Play ✓ AVG-proof. Voor organisaties die AI willen laten werken.',
   keywords: [
     'AI welzijn expert',
     'AI welzijnsorganisaties',

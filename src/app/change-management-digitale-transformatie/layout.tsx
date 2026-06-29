@@ -3,7 +3,7 @@
 export const metadata: Metadata = {
   title: 'Change Management Digitale Transformatie | Gemeenten & Welzijn',
   description:
-    'Digitale transformatie mislukt op mensen, niet op technologie. ✓ Draagvlak van binnenuit ✓ LEGO® Serious Play ✓ 90-dagenplan cultuurverandering. Specialist sociaal domein.',
+    'Digitale transformatie mislukt op mensen, niet op tech. ✓ Draagvlak van binnenuit ✓ LEGO® Serious Play ✓ 90-dagenplan. Specialist sociaal domein. Lees de aanpak.',
   keywords: [
     'change management digitale transformatie',
     'cultuurverandering AI implementatie',
