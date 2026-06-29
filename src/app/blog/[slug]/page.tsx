@@ -162,7 +162,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   const siteUrl = 'https://weareimpact.nl';
   const ogImageUrl = post.cover_image
-    ? `${siteUrl}${post.cover_image.startsWith('/') ? '' : '/'}${post.cover_image}`
+    ? (post.cover_image.startsWith('http')
+        ? post.cover_image
+        : `${siteUrl}${post.cover_image.startsWith('/') ? '' : '/'}${post.cover_image}`)
     : undefined;
 
   return {
