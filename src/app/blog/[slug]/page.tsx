@@ -160,6 +160,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     };
   }
 
+  const siteUrl = 'https://weareimpact.nl';
+  const ogImageUrl = post.cover_image
+    ? `${siteUrl}${post.cover_image.startsWith('/') ? '' : '/'}${post.cover_image}`
+    : undefined;
+
   return {
     title: post.title,
     description: post.excerpt,
@@ -173,11 +178,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       url: `https://weareimpact.nl/blog/${slug}`,
       publishedTime: post.published_at,
       authors: [post.author_name || 'Vincent van Munster'],
+      images: ogImageUrl ? [{ url: ogImageUrl, width: 1200, height: 630, alt: post.title }] : [],
     },
     twitter: {
       card: 'summary_large_image',
       title: post.title,
       description: post.excerpt,
+      images: ogImageUrl ? [ogImageUrl] : [],
     },
   };
 }

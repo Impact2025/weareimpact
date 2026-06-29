@@ -1,23 +1,28 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
+import { createHmac } from 'crypto';
 
-// In production, use environment variables and proper hashing
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'admin@weareimpact.nl';
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'WeAreImpact2024!';
-const AUTH_SECRET = process.env.AUTH_SECRET || 'weareimpact-admin-secret-key-change-in-production';
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL ?? '';
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD ?? '';
+const AUTH_SECRET = process.env.AUTH_SECRET ?? '';
 
-// Simple token generation (in production, use proper JWT)
-function generateToken(): string {
+function generateToken(secret: string): string {
   const timestamp = Date.now();
   const random = Math.random().toString(36).substring(2);
-  return Buffer.from(`${timestamp}:${random}:${AUTH_SECRET}`).toString('base64');
+  const payload = `${timestamp}:${random}`;
+  const sig = createHmac('sha256', secret).update(payload).digest('hex');
+  return Buffer.from(`${payload}:${sig}`).toString('base64');
 }
 
 export async function POST(request: NextRequest) {
+  if (!ADMIN_EMAIL || !ADMIN_PASSWORD || !AUTH_SECRET) {
+    console.error('Missing required auth environment variables');
+    return NextResponse.json({ error: 'Server niet geconfigureerd' }, { status: 500 });
+  }
+
   try {
     const { email, password } = await request.json();
 
-    // Validate credentials
     if (email !== ADMIN_EMAIL || password !== ADMIN_PASSWORD) {
       return NextResponse.json(
         { error: 'Ongeldige inloggegevens' },
@@ -25,16 +30,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Generate session token
-    const token = generateToken();
+    const token = generateToken(AUTH_SECRET);
 
-    // Set HTTP-only cookie
     const cookieStore = await cookies();
     cookieStore.set('admin_session', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
-      maxAge: 60 * 60 * 24, // 24 hours
+      maxAge: 60 * 60 * 24,
       path: '/',
     });
 

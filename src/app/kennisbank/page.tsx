@@ -28,6 +28,21 @@ export const metadata: Metadata = {
 
 export const revalidate = 3600; // ISR: revalidate every hour
 
+const kennisbankJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: 'Kennisbank - Praktische Gidsen voor Sociale Organisaties',
+  description: 'Ontdek praktische gidsen, stappenplannen en handleidingen over AI, vrijwilligers, subsidies en sociale innovatie.',
+  url: 'https://weareimpact.nl/kennisbank',
+  breadcrumb: {
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://weareimpact.nl' },
+      { '@type': 'ListItem', position: 2, name: 'Kennisbank', item: 'https://weareimpact.nl/kennisbank' },
+    ],
+  },
+};
+
 interface Article {
   id: string;
   title: string;
@@ -219,7 +234,12 @@ export default async function KennisbankPage() {
   const featuredArticles = allArticles.slice(0, 3);
 
   return (
-    <div className="min-h-screen bg-[#FDFBF7] pt-24 md:pt-32 pb-16 md:pb-24">
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(kennisbankJsonLd) }}
+      />
+      <div className="min-h-screen bg-[#FDFBF7] pt-24 md:pt-32 pb-16 md:pb-24">
       <div className="container mx-auto px-4 md:px-6 max-w-6xl">
         {/* Header */}
         <div className="text-center mb-12 md:mb-16">
@@ -486,5 +506,6 @@ export default async function KennisbankPage() {
         </div>
       </div>
     </div>
+    </>
   );
 }

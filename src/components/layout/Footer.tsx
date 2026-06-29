@@ -89,6 +89,16 @@ export function Footer() {
                   Kennisbank
                 </Link>
               </li>
+              <li>
+                <a
+                  href="https://bewaardvoorjou.nl"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm hover:text-orange-400 transition-colors"
+                >
+                  BewaardVoorJou.nl — Levensverhaal vastleggen
+                </a>
+              </li>
             </ul>
           </div>
 
