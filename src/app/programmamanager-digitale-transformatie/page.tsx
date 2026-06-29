@@ -580,6 +580,11 @@ export default function ProgrammamanagerDigitaleTransformatie() {
             href: '/kennisbank/subsidie-ai-implementatie-welzijn-2026',
             description: 'Welke subsidies zijn beschikbaar voor AI in welzijn en hoe vraag je ze aan?',
           },
+          {
+            title: 'Programmamanager worden in het sociaal domein? Lees de blog',
+            href: '/blog/interim-ai-consultant-voor-welzijnsorganisaties-wat-kost-het-en-wat-levert-het-op',
+            description: 'Wat kost een interim AI consultant in welzijn? Praktijkvoorbeeld met cijfers.',
+          },
         ]}
       />
     </>

@@ -30,6 +30,7 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion';
 import { ScannerSection } from '@/components/sections/ScannerSection';
+import { RelevantReading } from '@/components/seo/RelevantReading';
 
 const diensten = [
   {
@@ -608,6 +609,25 @@ export default function InterimVerandermanagement() {
           </div>
         </div>
       </section>
+      <RelevantReading
+        items={[
+          {
+            title: 'AI-agents voor welzijnsorganisaties 2026',
+            href: '/blog/ai-agents-voor-welzijnsorganisaties-in-2026-van-handige-tool-naar-onmisbare-digitale-collega',
+            description: 'Hoe AI-agents de administratiedruk in welzijn verlagen en tijd vrijmaken voor cliënten.',
+          },
+          {
+            title: 'Hoeveel tijd verspilt jouw organisatie aan administratie?',
+            href: '/blog/hoeveel-waarde-laat-jouw-welzijnsorganisatie-liggen-ik-heb-het-uitgerekend',
+            description: '40% van de werkdag gaat aan administratie. Reken uit wat dat kost.',
+          },
+          {
+            title: 'AI implementeren in je non-profit: stappenplan',
+            href: '/kennisbank/ai-implementeren-non-profit-stappenplan',
+            description: 'Van weerstand naar adoptie in 8 weken. Praktisch stappenplan voor welzijnsorganisaties.',
+          },
+        ]}
+      />
     </>
   );
 }

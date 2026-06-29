@@ -667,6 +667,11 @@ export default function AiConsultantSociaalDomein() {
             href: '/kennisbank/subsidie-ai-implementatie-welzijn-2026',
             description: 'Welke subsidies zijn beschikbaar voor AI in welzijn en hoe vraag je ze aan?',
           },
+          {
+            title: 'AI-agents voor welzijnsorganisaties: eerlijk verhaal',
+            href: '/blog/eerlijke-taakverdeling-mens-machine-virtuele-collega-iris',
+            description: 'Hoe Iris mij 11+ uur per week bespaart. Het eerlijke verhaal over AI-samenwerking.',
+          },
         ]}
       />
     </>

@@ -453,6 +453,11 @@ export default function ChangeManagementDigitaleTransformatie() {
             href: '/kennisbank/cultuurverandering-top-down-inside-out',
             description: 'Waarom 85% van digitale transformaties mislukt door mensen, niet door technologie.',
           },
+          {
+            title: 'Van angst naar eigenaarschap: hoe creëer je AI-draagvlak?',
+            href: '/blog/van-angst-naar-eigenaarschap-ai-draagvlak-cre-ren-in-je-team',
+            description: 'Met LEGO Serious Play zet je angst om in eigenaarschap. Praktijkcase uit het sociaal domein.',
+          },
         ]}
       />
     </>
