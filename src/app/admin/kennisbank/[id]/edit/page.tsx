@@ -243,7 +243,7 @@ export default function EditKennisbankArticlePage({
 
     setIsFormatting(true);
     try {
-      const response = await fetch('/api/admin/blog/format', {
+      const response = await fetch('/api/admin/kennisbank/format', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
