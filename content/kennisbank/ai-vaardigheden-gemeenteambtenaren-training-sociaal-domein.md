@@ -41,7 +41,7 @@ Deze zin hoor ik van directeuren, beleidsmedewerkers en uitvoerende professional
 
 Uit onderzoek van Divosa (2024) blijkt dat **69% van de organisaties in het sociaal domein aangeeft dat gebrek aan kennis en vaardigheden een obstakel is** voor AI-implementatie ([Divosa, 2024](https://www.divosa.nl/sites/default/files/2024-12/Resultaten%20AI%20in%20het%20sociaal%20domein.pdf)). Dat is het één-na-grootste obstakel, na privacy (78%). Maar — en dit is belangrijk — slechts 19% twijfelt aan de toegevoegde waarde van AI. De wil is er, de kennis ontbreekt.
 
-Ik ben Vincent van Munster, AI consulent sociaal domein. In dit artikel deel ik wat een ambtenaar in het sociaal domein écht moet weten over AI. Geen tech-termnen, geen ingewikkelde modellen — gewoon wat werkt.
+Ik ben Vincent van Munster, AI consulent sociaal domein. In dit artikel deel ik wat een ambtenaar in het sociaal domein écht moet weten over AI. Geen tech-termen, geen ingewikkelde modellen — gewoon wat werkt.
 
 ---
 
@@ -155,4 +155,4 @@ Plan een vrijblijvend gesprek om te verkennen wat een training voor jouw team ka
 
 ---
 
-*Dit artikel is geschreven door Vincent van Munster, AI consulent sociaal domein. Hij traint teams en organisaties in verantwoord AI-gebruik, zonder tech-termnen, met focus op de praktijk van alledag.*
+*Dit artikel is geschreven door Vincent van Munster, AI consulent sociaal domein. Hij traint teams en organisaties in verantwoord AI-gebruik, zonder tech-termen, met focus op de praktijk van alledag.*
