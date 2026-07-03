@@ -68,7 +68,7 @@ Op basis van tientallen aanvragen — zowel als directeur als adviseur — deel 
 
 ## Gerelateerde artikelen
 
-- [AI implementeren in de welzijnssector: 5-stappenplan](/kennisbank/ai-implementeren-welzijn-stappenplan)
+- [AI implementeren in je non-profit: stappenplan van 8 weken](/kennisbank/ai-implementeren-non-profit-stappenplan)
 - [De business case voor AI in het sociaal domein](/kennisbank/business-case-ai-sociaal-domein)
 - [Van subsidie naar structurele financiering](/kennisbank/subsidie-naar-structurele-financiering)
 - [Subsidie aanvragen zonder bureaucratie](/kennisbank/subsidie-aanvragen-zonder-bureaucratie-stappenplan)

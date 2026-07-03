@@ -170,7 +170,7 @@ Ik help gemeenten bij het inventariseren, classificeren en registreren van AI-to
 - [AI en privacy in het sociaal domein](/kennisbank/ai-privacy-sociaal-domein-avg-stappenplan-gemeente)
 - [AI Consulent Sociaal Domein](/kennisbank/ai-consulent-sociaal-domein)
 - [AI-vaardigheden voor gemeenteambtenaren](/kennisbank/ai-vaardigheden-gemeenteambtenaren-training-sociaal-domein)
-- [AVG-proof AI in de zorg: compleet stappenplan](/kennisbank/avg-ai-zorg-stappenplan)
+- [Privacy en AI in de zorg: wat mag wel en wat niet?](/kennisbank/privacy-ai-zorg-avg-checklist)
 
 ---
 

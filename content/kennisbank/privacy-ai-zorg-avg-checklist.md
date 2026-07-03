@@ -48,16 +48,23 @@ In dit artikel leg ik uit wat wel en niet mag volgens de AVG, met een praktische
 
 ## Inhoudsopgave
 
-1. [De kern van het probleem](#probleem)
-2. [Wat zegt de AVG over AI?](#avg)
-3. [De drie risicocategorieën](#categorieen)
-4. [Praktische checklist](#checklist)
-5. [Per tool: wat mag wel/niet](#tools)
-6. [Veilig AI-gebruik: 7 principes](#principes)
-7. [Verwerkersovereenkomst: wanneer nodig?](#verwerkersovereenkomst)
-8. [Bronnen en actuele richtlijnen](#bronnen)
+1. [Begin met een schaduw-AI inventarisatie](#schaduw-ai)
+2. [De kern van het probleem](#probleem)
+3. [Wat zegt de AVG over AI?](#avg)
+4. [De drie risicocategorieën](#categorieen)
+5. [Praktische checklist](#checklist)
+6. [Per tool: wat mag wel/niet](#tools)
+7. [Veilig AI-gebruik: 7 principes](#principes)
+8. [Verwerkersovereenkomst: wanneer nodig?](#verwerkersovereenkomst)
+9. [Bronnen en actuele richtlijnen](#bronnen)
 
 ---
+
+## Begin met een schaduw-AI inventarisatie {#schaduw-ai}
+
+Voordat je een privacybeleid opstelt, is de eerste stap: kijk wat er al gebeurt. Medewerkers in de zorg en het welzijn gebruiken vaak al massaal gratis consumentenversies van ChatGPT en Claude, met de beste bedoelingen maar zonder dat het bewust is afgestemd op de AVG. Toen ik dit zelf bij Stichting de Baan onderzocht, ontdekte ik dat bijna elk teamlid weleens een tekstje had geanonimiseerd en in een gratis chat had geplakt — zonder te weten dat dit een risico is.
+
+Vraag je team simpelweg: wie gebruikt welke AI-tools, waarvoor? Maak het bespreekbaar zonder verwijt — het gaat om bewustwording, niet om straf. Deze inventarisatie is de meest waardevolle 30 minuten die je aan AI-privacy kunt besteden, want pas als je weet wat er al gebeurt, weet je waar je beleid op moet aansluiten.
 
 ## De kern van het probleem {#probleem}
 
@@ -408,4 +415,4 @@ Neem contact op via [WeAreImpact.nl](https://weareimpact.nl) voor advies.
 
 ---
 
-*Dit artikel is geschreven door Vincent van Munster en wordt regelmatig bijgewerkt. Laatste update: januari 2025. Dit is geen juridisch advies.*
+*Dit artikel is geschreven door Vincent van Munster en wordt regelmatig bijgewerkt. Laatste update: juli 2026. Dit is geen juridisch advies.*

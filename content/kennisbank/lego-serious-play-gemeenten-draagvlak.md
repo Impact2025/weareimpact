@@ -15,6 +15,14 @@ author_title: Gecertificeerd LEGO Serious Play Facilitator
 published_at: 2026-06-25
 header_type: color
 header_color: orange
+status: published
+faq_items:
+  - question: "Is LEGO Serious Play niet te speels voor serieuze gemeentelijke vraagstukken?"
+    answer: "Integendeel. Juist omdat het spelen is, durven ambtenaren hun echte zorgen en ideeën te delen. De methodiek is wetenschappelijk onderbouwd (Johan Roos en Bart Victor, IMD Business School) en wordt wereldwijd gebruikt door organisaties als NASA, Google en de Verenigde Naties."
+  - question: "Hoeveel tijd kost een LSP-traject voor een gemeente?"
+    answer: "Een volledige sessie duurt doorgaans één dag, soms is een halve dag voldoende. De grootste tijdwinst zit in wat je niet meer hoeft te doen: overleggen, bijsturen, weerstand wegnemen, extra sessies inplannen."
+  - question: "Werkt LSP ook voor een heterogene groep (beleidsmedewerkers, directie, uitvoerend personeel)?"
+    answer: "Ja — doordat iedereen eerst in stilte bouwt en pas daarna deelt, heeft de stilste beleidsmedewerker evenveel invloed als de luidruchtigste directeur. LSP neutraliseert hiërarchie."
 ---
 
 Ik was pas op een woensdagochtend bij een middelgrote gemeente in het oosten van het land. De opdracht: draagvlak creëren voor een nieuwe digitale infrastructuur. De directie had al drie maanden vergaderd, vier memo's laten rondgaan en twee externe consultancytrajecten opgestart. Resultaat: nul komma nul beweging. De weerstand was voelbaar zodra je de vergaderkamer binnenliep. Ambtenaren voelden zich overvallen, onvoldoende gehoord en vooral: moe van weer een praatplaat.
@@ -87,6 +95,15 @@ We startten de dag met de vraag: "Bouw wat er gebeurt als we niets veranderen." 
 Vervolgens bouwden ze de ideale situatie. In bijna elk model stond een mens centraal die werd ondersteund door technologie — niet vervangen. Na het delen riep één van de felste tegenstanders: "Oh, dus we willen eigenlijk allemaal hetzelfde?"
 
 Precies. Het draagvlak was er al onder de oppervlakte. Het kostte alleen een dag met LEGO om het boven tafel te krijgen.
+
+## Kort stappenplan voor een LSP-sessie over AI-draagvlak
+
+Wil je dit zelf structureren? De kern komt neer op vier stappen:
+
+1. **Bouw de huidige realiteit** — hoe ziet het werk er nu uit?
+2. **Bouw de ideale toekomst** — hoe ziet het werk eruit met AI?
+3. **Identificeer de obstakels** — wat staat er in de weg?
+4. **Maak een actieplan** — wat gaan we doen en wie doet wat?
 
 ## Veelgestelde vragen over LEGO Serious Play voor gemeenten
 

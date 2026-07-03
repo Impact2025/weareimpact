@@ -147,7 +147,7 @@ Wil je weten of jouw organisatie klaar is voor AI? Ik doe een gratis verkennend 
 ## Gerelateerde artikelen
 
 - [AI Consulent Sociaal Domein](/kennisbank/ai-consulent-sociaal-domein) — waarom het sociaal domein een eigen aanpak verdient
-- [AVG-proof AI in de zorg: compleet stappenplan](/kennisbank/avg-ai-zorg-stappenplan) — voor zorginstellingen
+- [Privacy en AI in de zorg: wat mag wel en wat niet?](/kennisbank/privacy-ai-zorg-avg-checklist) — voor zorginstellingen
 - [Impact van AI meten in zorg en welzijn](/kennisbank/impact-ai-meten-zorg-welzijn) — meet wat het oplevert
 - [AI-implementeren in non-profits: stappenplan](/kennisbank/ai-implementeren-non-profit-stappenplan)
 

@@ -151,7 +151,7 @@ Plan een vrijblijvend gesprek om te verkennen wat een training voor jouw team ka
 - [AI Consulent Sociaal Domein](/kennisbank/ai-consulent-sociaal-domein)
 - [AI en privacy in het sociaal domein](/kennisbank/ai-privacy-sociaal-domein-avg-stappenplan-gemeente)
 - [Weerstand tegen AI overwinnen](/kennisbank/weerstand-ai-overwinnen-sociaal-domein-legio-serious-play)
-- [AVG-proof AI in de zorg: compleet stappenplan](/kennisbank/avg-ai-zorg-stappenplan)
+- [Privacy en AI in de zorg: wat mag wel en wat niet?](/kennisbank/privacy-ai-zorg-avg-checklist)
 
 ---
 

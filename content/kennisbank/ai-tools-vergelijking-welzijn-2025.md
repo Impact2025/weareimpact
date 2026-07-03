@@ -1,6 +1,6 @@
 ---
 slug: ai-tools-vergelijking-welzijn-2025
-title: "Welke AI-tools zijn geschikt voor welzijnsorganisaties? Vergelijking 2025"
+title: "Welke AI-tools zijn geschikt voor welzijnsorganisaties? Vergelijking 2026"
 subtitle: "ChatGPT vs Claude vs Perplexity vs Gemini: wat werkt echt in de praktijk"
 excerpt: "Er zijn tientallen AI-tools, maar welke zijn echt bruikbaar voor non-profits? In dit artikel vergelijk ik de belangrijkste tools op prijs, privacy, functionaliteit en geschiktheid voor de welzijnssector."
 category_slug: ai-tech
@@ -10,14 +10,14 @@ tags:
   - Claude
   - Perplexity
   - vergelijking
-seo_title: "AI Tools Vergelijking 2025 | Beste AI voor Non-Profits en Welzijn"
-seo_description: "Vergelijking van AI-tools voor welzijnsorganisaties: ChatGPT, Claude, Perplexity, Gemini. Prijs, privacy, functies en praktische aanbevelingen."
+seo_title: "AI Tools Vergelijking 2026 | Beste AI voor Non-Profits en Welzijn"
+seo_description: "Vergelijking van AI-tools voor welzijnsorganisaties: ChatGPT, Claude, Perplexity, Gemini. Prijs, privacy, functies en praktische aanbevelingen, bijgewerkt voor 2026."
 seo_keywords:
   - ai tools vergelijking
   - chatgpt vs claude
   - beste ai non-profit
   - ai welzijnssector
-  - ai tools 2025
+  - ai tools 2026
 reading_time: 12
 published_at: "2024-10-22"
 difficulty: beginner
@@ -41,7 +41,7 @@ Deze vraag krijg ik wekelijks. Het AI-landschap is overweldigend en verandert sn
 
 In dit artikel vergelijk ik de belangrijkste AI-tools specifiek vanuit het perspectief van non-profits en welzijnsorganisaties. Geen algemene reviews, maar praktische inzichten.
 
-**Laatst bijgewerkt:** Januari 2025
+**Laatst bijgewerkt:** juli 2026
 
 ---
 
@@ -88,8 +88,8 @@ ChatGPT van [OpenAI](https://openai.com) is de bekendste AI-assistent. Het kan t
 
 | Versie | Prijs | Functies |
 |--------|-------|----------|
-| Gratis | €0 | GPT-3.5, beperkte GPT-4o |
-| Plus | €20/mnd | GPT-4o, DALL-E, GPTs, 80 msgs/3u |
+| Gratis | €0 | Beperkte toegang tot gpt-5.3-instant |
+| Plus | €20/mnd | gpt-5.3-instant, gpt-5.5-thinking, DALL-E, GPTs |
 | Team | €25/mnd/user | Plus + workspace + admin |
 | Enterprise | Op aanvraag | Alles + SSO + audit |
 
@@ -128,8 +128,8 @@ Claude is gemaakt door [Anthropic](https://anthropic.com), opgericht door ex-Ope
 
 | Versie | Prijs | Functies |
 |--------|-------|----------|
-| Gratis | €0 | Claude 3.5 Sonnet, beperkt |
-| Pro | €18/mnd | Meer capaciteit, Claude 3.5 Opus |
+| Gratis | €0 | Claude Sonnet, beperkte capaciteit |
+| Pro | €18/mnd | Claude Sonnet, Opus en Haiku, meer capaciteit |
 | Team | €25/mnd/user | Pro + workspace |
 | Enterprise | Op aanvraag | Alles + integraties |
 
@@ -345,7 +345,7 @@ Geen van de gratis tools is geschikt voor cliëntgegevens. Gebruik enterprise-ve
 
 ### Hoe snel verandert dit?
 
-Snel. Dit artikel is januari 2025 geschreven. Check [TechCrunch AI](https://techcrunch.com/category/artificial-intelligence/) of [The Verge AI](https://www.theverge.com/ai-artificial-intelligence) voor updates.
+Snel. Dit artikel is voor het laatst bijgewerkt in juli 2026. Check [TechCrunch AI](https://techcrunch.com/category/artificial-intelligence/) of [The Verge AI](https://www.theverge.com/ai-artificial-intelligence) voor updates.
 
 ### Is er korting voor non-profits?
 
@@ -376,4 +376,4 @@ Mijn advies: start simpel, met één tool, voor één doel. Breid uit als je wee
 
 ---
 
-*Dit artikel is geschreven door Vincent van Munster en wordt regelmatig bijgewerkt. Laatste update: januari 2025.*
+*Dit artikel is geschreven door Vincent van Munster en wordt regelmatig bijgewerkt. Laatste update: juli 2026.*

@@ -658,8 +658,8 @@ export default function AiConsultantSociaalDomein() {
             description: '7 vragen die je moet stellen voordat je een AI-consultant inhuurt voor het sociaal domein.',
           },
           {
-            title: 'AVG-proof AI in de zorg: compleet stappenplan',
-            href: '/kennisbank/avg-ai-zorg-stappenplan',
+            title: 'Privacy en AI in de zorg: wat mag wel en wat niet?',
+            href: '/kennisbank/privacy-ai-zorg-avg-checklist',
             description: 'Hoe implementeer je AI in de zorg zonder de AVG te schenden? Praktisch stappenplan.',
           },
           {

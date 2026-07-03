@@ -54,6 +54,12 @@ const nextConfig: NextConfig = {
 
       // Oude HTML-extensie URL's
       { source: '/ai-voor-welzijnsorganisaties.html', destination: '/ai-welzijn-expert', permanent: true },
+
+      // Kennisbank-consolidatie: keyword-kannibalisatie opgelost door duplicaten samen te voegen (2026-07-03)
+      { source: '/kennisbank/interim-manager-kiezen-sociaal-domein', destination: '/kennisbank/interim-manager-kiezen-welzijn', permanent: true },
+      { source: '/kennisbank/ai-implementeren-welzijn-stappenplan', destination: '/kennisbank/ai-implementeren-non-profit-stappenplan', permanent: true },
+      { source: '/kennisbank/avg-ai-zorg-stappenplan', destination: '/kennisbank/privacy-ai-zorg-avg-checklist', permanent: true },
+      { source: '/kennisbank/lego-serious-play-draagvlak-ai', destination: '/kennisbank/lego-serious-play-gemeenten-draagvlak', permanent: true },
     ];
   },
 

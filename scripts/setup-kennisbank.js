@@ -208,7 +208,7 @@ async function setupKennisbank() {
               ${data.author_title || 'Sociaal Ondernemer & AI Expert'},
               ${reading_time},
               ${data.difficulty || 'beginner'},
-              'published',
+              ${data.status || 'published'},
               ${search_content},
               ${new Date().toISOString()}
             )

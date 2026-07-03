@@ -566,8 +566,8 @@ export default function ProgrammamanagerDigitaleTransformatie() {
       <RelevantReading
         items={[
           {
-            title: 'AVG-proof AI in de zorg: compleet stappenplan',
-            href: '/kennisbank/avg-ai-zorg-stappenplan',
+            title: 'Privacy en AI in de zorg: wat mag wel en wat niet?',
+            href: '/kennisbank/privacy-ai-zorg-avg-checklist',
             description: 'Hoe implementeer je AI zonder de AVG te schenden? Stappenplan voor zorg en welzijn.',
           },
           {

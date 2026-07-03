@@ -167,7 +167,7 @@ Ik ben beperkt beschikbaar: maximaal 16-24 uur per week, tarief €125-€140 pe
 - [AI Consultant Sociaal Domein](/ai-consultant-sociaal-domein) — uitgebreide dienstenpagina
 - [Interim Projectleider Welzijn & Digitale Transformatie](/interim-verandermanagement-ai-sociaal-domein) — als je een tijdelijke kracht zoekt
 - [Hoe je een AI-consultant kiest voor jouw welzijnsorganisatie](/kennisbank/ai-consultant-welzijn-kiezen) — 7 vragen die je moet stellen
-- [AVG-proof AI in de zorg: compleet stappenplan](/kennisbank/avg-ai-zorg-stappenplan) — privacy als vertrekpunt
+- [Privacy en AI in de zorg: wat mag wel en wat niet?](/kennisbank/privacy-ai-zorg-avg-checklist) — privacy als vertrekpunt
 
 ---
 

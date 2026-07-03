@@ -16,19 +16,32 @@ published_at: 2026-06-25
 header_type: color
 header_color: orange
 header_title: "Hoe kies je een AI-consultant?"
+faq_items:
+  - question: "Wat is het verschil tussen een AI-consultant en een IT-consultant?"
+    answer: "Een AI-consultant richt zich specifiek op kunstmatige intelligentie: welke toepassingen passen bij jouw organisatie, hoe implementeer je ze, en hoe zorg je dat medewerkers ze omarmen. Een IT-consultant is breder en richt zich op technologie-infrastructuur. Voor AI in het sociaal domein heb je iemand nodig die beide werelden begrijpt."
+  - question: "Hoe lang duurt een AI-implementatietraject in een welzijnsorganisatie?"
+    answer: "Een eerste werkende AI-toepassing staat er gemiddeld binnen 4 tot 6 weken. Een volledig traject voor een middelgrote organisatie loopt over 3 tot 6 maanden. De snelheid hangt af van de kwaliteit van data, de betrokkenheid van medewerkers en de complexiteit van de processen."
+  - question: "Kan een kleine welzijnsorganisatie met beperkt budget ook AI inzetten?"
+    answer: "Ja, absoluut. AI hoeft niet duur te zijn. Er zijn laagdrempelige toepassingen die direct tijd besparen — zoals automatische notulering, geautomatiseerde rapportages of een slimme vrijwilligersmatch. De gratis AI-scan geeft direct inzicht in de kansen die bij jouw organisatie passen, ongeacht het budget."
 ---
 
 Ik zie het te vaak gebeuren: een welzijnsorganisatie neemt een dure IT-consultant in de arm, krijgt een mooi rapport, en een jaar later staat de cloudserver er nog steeds stof te verzamelen. De tool werkt technisch, maar niemand gebruikt hem.
 
 AI in het sociaal domein is geen IT-project. Het is een mens-project. En dat betekent dat je een andere soort consultant nodig hebt dan degene die je belt voor je serverpark.
 
-## Waarom een gewone AI-consultant vaak niet werkt in welzijn
+## Inhoudsopgave
+
+1. [Waarom een gewone AI-consultant vaak niet werkt in welzijn](#waarom-niet-werkt)
+2. [7 vragen die je moet stellen](#7-vragen)
+3. [Veelgestelde vragen](#faq)
+
+## Waarom een gewone AI-consultant vaak niet werkt in welzijn {#waarom-niet-werkt}
 
 De meeste AI-consultants komen uit de techwereld. Ze denken in API's, modellen en datapipelines. Dat is prima voor een logistiek bedrijf of een webwinkel. Maar in het sociaal domein draait het om vertrouwen, privacy en menselijke relaties. Een consultant die de taal van de werkvloer niet spreekt, krijgt geen draagvlak — en zonder draagvlak wordt geen enkele AI-tool gebruikt.
 
 Uit mijn eigen ervaring als directeur van Stichting de Baan weet ik hoe groot de kloof kan zijn tussen wat technologie belooft en wat er op de werkvloer landt. Medewerkers die al overbelast zijn, hebben geen behoefte aan nóg een systeem waarvan ze niet begrijpen waarom het er is.
 
-## Vraag 1: Ken je het sociaal domein van binnenuit?
+## Vraag 1: Ken je het sociaal domein van binnenuit? {#7-vragen}
 
 Een consultant die uit de IT-hoek komt, kan prima een technische analyse maken. Maar begrijpt hij of zij ook wat een Wmo-rapportage inhoudt? Weet hij wat er gebeurt als een cliënt 's ochtends niet uit bed wil? Snapt hij de dynamiek tussen een coördinator en een vrijwilliger?
 
@@ -83,10 +96,16 @@ Wat neem je mee
 
 Wil je een vrijblijvend gesprek over AI in jouw organisatie? <a href="/contact">Plan een koffiemoment</a> — 30 minuten, geen verplichtingen.
 
-## Veelgestelde vragen
+## Veelgestelde vragen {#faq}
 
 **Wat is het verschil tussen een AI-consultant en een IT-consultant?** Een AI-consultant richt zich specifiek op kunstmatige intelligentie: welke toepassingen passen bij jouw organisatie, hoe implementeer je ze, en hoe zorg je dat medewerkers ze omarmen. Een IT-consultant is breder en richt zich op technologie-infrastructuur. Voor AI in het sociaal domein heb je iemand nodig die beide werelden begrijpt.
 
 **Hoe lang duurt een AI-implementatietraject in een welzijnsorganisatie?** Een eerste werkende AI-toepassing staat er gemiddeld binnen 4 tot 6 weken. Een volledig traject voor een middelgrote organisatie loopt over 3 tot 6 maanden. De snelheid hangt af van de kwaliteit van data, de betrokkenheid van medewerkers en de complexiteit van de processen.
 
 **Kan een kleine welzijnsorganisatie met beperkt budget ook AI inzetten?** Ja, absoluut. AI hoeft niet duur te zijn. Er zijn laagdrempelige toepassingen die direct tijd besparen — zoals automatische notulering, geautomatiseerde rapportages of een slimme vrijwilligersmatch. De <a href="/ai-scan">gratis AI-scan</a> geeft direct inzicht in de kansen die bij jouw organisatie passen, ongeacht het budget.
+
+## Gerelateerde artikelen
+
+- [AI-proof organisatie worden in 90 dagen](/kennisbank/ai-proof-organisatie-90-dagen)
+- [Privacy en AI in de zorg: wat mag wel en wat niet?](/kennisbank/privacy-ai-zorg-avg-checklist)
+- [Interim AI-consultant voor welzijnsorganisaties: wat kost het?](/blog/interim-ai-consultant-voor-welzijnsorganisaties-wat-kost-het-en-wat-levert-het-op)

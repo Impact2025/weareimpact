@@ -10,7 +10,7 @@ tags:
   - digitale transformatie
   - non-profit
   - verandermanagement
-seo_title: "AI Implementeren in Non-Profit | 8 Weken Stappenplan 2025"
+seo_title: "AI Implementeren in Non-Profit | 8 Weken Stappenplan 2026"
 seo_description: "Praktisch stappenplan om AI te implementeren in je non-profit organisatie. Van pilot naar adoptie in 8 weken, inclusief valkuilen en succesfactoren."
 seo_keywords:
   - ai implementeren non-profit
@@ -295,6 +295,12 @@ Definieer:
 - **Wat mag niet:** Cliëntgegevens, medische informatie, financiële data
 - **Welke tools:** Goedgekeurde tools met verwerkersovereenkomst
 
+| Doe dit wel | Doe dit niet |
+|---|---|
+| Zakelijke enterprise-licentie of API-koppeling | Gratis consumentenversie van ChatGPT/Claude voor cliëntdata |
+| Anonimiseer namen en BSN's voordat tekst naar AI gaat | Cliëntgegevens onbewerkt invoeren |
+| Mens controleert en accordeert elke AI-output | AI laten beslissen zonder menselijke check |
+
 Verwijs naar de [Autoriteit Persoonsgegevens](https://www.autoriteitpersoonsgegevens.nl/themas/algoritmes-en-ai) voor actuele richtlijnen.
 
 ### Evalueren
@@ -433,7 +439,8 @@ Neem contact op via [WeAreImpact.nl](https://weareimpact.nl) voor een vrijblijve
 
 - [Administratieve druk verlagen met AI: 7 processen die je vandaag kunt automatiseren](/kennisbank/administratieve-druk-verlagen-ai)
 - [25 AI-prompts die ik dagelijks gebruik voor mijn werk](/kennisbank/ai-prompts-voor-non-profits)
-- [Welke AI-tools zijn geschikt voor welzijnsorganisaties? Vergelijking 2025](/kennisbank/ai-tools-vergelijking-welzijn-2025)
+- [Welke AI-tools zijn geschikt voor welzijnsorganisaties? Vergelijking 2026](/kennisbank/ai-tools-vergelijking-welzijn-2025)
+- [Weerstand tegen AI overwinnen in het sociaal domein](/kennisbank/weerstand-ai-overwinnen-sociaal-domein-legio-serious-play)
 
 ---
 

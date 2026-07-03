@@ -145,7 +145,7 @@ Wil je ook starten met een pilot zoals deze? Plan een vrijblijvend koffiemoment.
 - [LEGO Serious Play voor teamontwikkeling: 5 krachtige toepassingen](/kennisbank/lego-serious-play-voor-teamontwikkeling)
 - [Impact van AI meten in zorg en welzijn](/kennisbank/impact-ai-meten-zorg-welzijn)
 - [Hoe je een AI-consultant kiest voor jouw welzijnsorganisatie](/kennisbank/ai-consultant-welzijn-kiezen)
-- [AVG-proof AI in de zorg: compleet stappenplan](/kennisbank/avg-ai-zorg-stappenplan)
+- [Privacy en AI in de zorg: wat mag wel en wat niet?](/kennisbank/privacy-ai-zorg-avg-checklist)
 
 ---
 
