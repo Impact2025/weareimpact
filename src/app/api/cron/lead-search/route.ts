@@ -1,13 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
+import { isAdminAuthenticated } from '@/lib/admin-auth';
 import { runDueProfiles } from '@/lib/lead-machine/runProfiles';
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 60;
 
-// Process at most this many profiles per invocation (each search is slow). Frequent
-// cron + cadence filtering means overdue profiles get picked up on subsequent runs.
-const MAX_PROFILES_PER_RUN = 2;
+// The cron fires once a day, so anything not processed in this run waits until
+// tomorrow. Profiles are picked oldest-first and only stamped when attempted,
+// so a skipped profile is first in line on the next run. The time budget keeps
+// us safely inside maxDuration.
+const MAX_PROFILES_PER_RUN = 4;
+const TIME_BUDGET_MS = 45_000;
 
 async function authorize(request: NextRequest): Promise<boolean> {
   // Vercel Cron sends: Authorization: Bearer <CRON_SECRET>
@@ -16,8 +19,7 @@ async function authorize(request: NextRequest): Promise<boolean> {
   if (secret && auth === `Bearer ${secret}`) return true;
 
   // Allow an authenticated admin to trigger a run manually from the UI
-  const store = await cookies();
-  return !!store.get('admin_session')?.value;
+  return isAdminAuthenticated();
 }
 
 export async function GET(request: NextRequest) {
@@ -34,7 +36,7 @@ async function run(request: NextRequest) {
   }
 
   try {
-    const result = await runDueProfiles({ maxProfiles: MAX_PROFILES_PER_RUN });
+    const result = await runDueProfiles({ maxProfiles: MAX_PROFILES_PER_RUN, timeBudgetMs: TIME_BUDGET_MS });
     if (result.ran === 0) {
       return NextResponse.json({ ...result, message: 'Geen profielen die nu aan de beurt zijn.' });
     }

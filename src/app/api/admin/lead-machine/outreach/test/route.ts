@@ -1,15 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
+import { isAdminAuthenticated as isAuthenticated } from '@/lib/admin-auth';
 import { sql } from '@/lib/db/neon';
 import { sendEmail } from '@/lib/email/send';
 import { renderOutreachHtml, renderOutreachText } from '@/lib/lead-machine/outreach';
 
 export const dynamic = 'force-dynamic';
-
-async function isAuthenticated() {
-  const store = await cookies();
-  return !!store.get('admin_session')?.value;
-}
 
 // POST { id } — send a single draft to the owner's own inbox as a preview.
 // Does NOT change the outreach/lead status, and uses a throwaway unsubscribe token

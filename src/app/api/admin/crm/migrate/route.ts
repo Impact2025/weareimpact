@@ -1,15 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { sql } from '@/lib/db/neon';
-import { cookies } from 'next/headers';
+import { isAdminAuthenticated as isAuthenticated } from '@/lib/admin-auth';
 
 export const dynamic = 'force-dynamic';
-
-// Verify admin authentication
-async function isAuthenticated(): Promise<boolean> {
-  const cookieStore = await cookies();
-  const sessionCookie = cookieStore.get('admin_session');
-  return !!sessionCookie?.value;
-}
 
 // Map ai_scan_leads status to deal stage
 function statusToStage(status: string): string {

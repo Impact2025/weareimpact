@@ -142,6 +142,16 @@ Geen interesse? Afmelden: ${unsubscribeUrl(token)}`;
 }
 
 export function makeUnsubscribeToken(): string {
-  // 32 hex chars — unguessable, fits VARCHAR(64)
-  return Array.from({ length: 32 }, () => Math.floor(Math.random() * 16).toString(16)).join('');
+  // 32 hex chars uit CSPRNG — onvoorspelbaar, past in VARCHAR(64)
+  const bytes = crypto.getRandomValues(new Uint8Array(16));
+  return Array.from(bytes).map((b) => b.toString(16).padStart(2, '0')).join('');
+}
+
+// RFC 8058 one-click unsubscribe headers — vereist door Gmail/Yahoo voor
+// bulkverzenders en goed voor deliverability.
+export function unsubscribeHeaders(token: string): Record<string, string> {
+  return {
+    'List-Unsubscribe': `<${unsubscribeUrl(token)}>`,
+    'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+  };
 }

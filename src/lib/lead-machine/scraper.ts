@@ -21,6 +21,24 @@ export interface ContactInfo {
   phone?: string;
 }
 
+const GENERIC_EMAIL_RE = /^(info|contact|administratie|secretariaat|welzijn|receptie|aanmelden|hallo|hello)@/i;
+
+function emailMatchesSite(email: string, siteHost: string): boolean {
+  const domain = email.split('@')[1]?.toLowerCase();
+  if (!domain || !siteHost) return false;
+  // zorg.nl ↔ @zorg.nl, jeugd.zorg.nl ↔ @zorg.nl, zorg.nl ↔ @mail.zorg.nl
+  return domain === siteHost || siteHost.endsWith(`.${domain}`) || domain.endsWith(`.${siteHost}`);
+}
+
+// Voorkeursvolgorde: generiek adres op eigen domein > eigen domein > generiek
+// elders > rest. Voorkomt dat we het mailadres van de webbouwer in de footer
+// aanschrijven in plaats van de organisatie zelf.
+function pickBestEmail(candidates: string[], siteHost: string): string | undefined {
+  const rank = (e: string) =>
+    (emailMatchesSite(e, siteHost) ? 0 : 2) + (GENERIC_EMAIL_RE.test(e) ? 0 : 1);
+  return [...candidates].sort((a, b) => rank(a) - rank(b))[0];
+}
+
 export async function scrapeContactInfo(websiteUrl: string): Promise<ContactInfo> {
   if (!websiteUrl) return {};
 
@@ -37,18 +55,16 @@ export async function scrapeContactInfo(websiteUrl: string): Promise<ContactInfo
 
     const html = await res.text();
 
-    // Prefer mailto: links — most reliable
-    const mailtoMatch = html.match(/mailto:([a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,6})/);
-    let email: string | undefined;
-    if (mailtoMatch && isValidEmail(mailtoMatch[1])) {
-      email = mailtoMatch[1];
-    } else {
-      const candidates = [...(html.match(EMAIL_RE) ?? [])].filter(isValidEmail);
-      // Prefer info@ / contact@ / administratie@ over random matches
-      email =
-        candidates.find((e) => /^(info|contact|administratie|secretariaat|welzijn)@/i.test(e)) ??
-        candidates[0];
-    }
+    let siteHost = '';
+    try {
+      siteHost = new URL(res.url || url).hostname.replace(/^www\./, '').toLowerCase();
+    } catch { /* siteHost blijft leeg — ranking valt terug op generiek-eerst */ }
+
+    // mailto: links zijn het betrouwbaarst — die kandidaten eerst verzamelen
+    const mailtos = [...html.matchAll(/mailto:([a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,6})/g)]
+      .map((m) => m[1]);
+    const candidates = [...new Set([...mailtos, ...(html.match(EMAIL_RE) ?? [])])].filter(isValidEmail);
+    const email = pickBestEmail(candidates, siteHost);
 
     let phone: string | undefined;
     const phoneMatches = html.match(PHONE_RE);

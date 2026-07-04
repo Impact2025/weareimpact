@@ -1,15 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
+import { isAdminAuthenticated as isAuthenticated } from '@/lib/admin-auth';
 import { DEFAULT_SCORING_CONTEXT } from '@/lib/lead-machine/scorer';
 import { runLeadSearch } from '@/lib/lead-machine/pipeline';
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 55;
-
-async function isAuthenticated() {
-  const store = await cookies();
-  return !!store.get('admin_session')?.value;
-}
 
 export async function POST(request: NextRequest) {
   if (!await isAuthenticated()) {

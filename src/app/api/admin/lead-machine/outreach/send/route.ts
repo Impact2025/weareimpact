@@ -1,16 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
+import { isAdminAuthenticated as isAuthenticated } from '@/lib/admin-auth';
 import { sql } from '@/lib/db/neon';
 import { sendEmail } from '@/lib/email/send';
-import { renderOutreachHtml, renderOutreachText } from '@/lib/lead-machine/outreach';
+import { renderOutreachHtml, renderOutreachText, unsubscribeHeaders } from '@/lib/lead-machine/outreach';
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 60;
-
-async function isAuthenticated() {
-  const store = await cookies();
-  return !!store.get('admin_session')?.value;
-}
 
 // POST — send approved outreach. Body: { ids?: string[] } (default: all 'approved').
 // Human-in-the-loop: only items the user explicitly approved are sent.
@@ -55,18 +50,28 @@ export async function POST(request: NextRequest) {
         continue;
       }
 
+      // Claim vóór verzending: approved → sent is atomair, zodat twee
+      // gelijktijdige requests (dubbelklik op "Versturen") nooit dubbel mailen.
+      const claimed = await sql`
+        UPDATE lead_outreach SET status = 'sent', updated_at = NOW()
+        WHERE id = ${item.id} AND status = 'approved'
+        RETURNING id
+      `;
+      if (claimed.length === 0) continue; // al geclaimd door een parallelle request
+
       const token = item.unsubscribe_token as string;
       const result = await sendEmail({
         to: item.to_email as string,
         subject: item.subject as string,
         html: renderOutreachHtml(item.body_text as string, token),
         text: renderOutreachText(item.body_text as string, token),
+        headers: unsubscribeHeaders(token),
       });
 
       if (result.success) {
         await sql`
           UPDATE lead_outreach
-          SET status = 'sent', message_id = ${result.messageId ?? null}, sent_at = NOW(), error = NULL, updated_at = NOW()
+          SET message_id = ${result.messageId ?? null}, sent_at = NOW(), error = NULL, updated_at = NOW()
           WHERE id = ${item.id}
         `;
         // Advance the lead and stamp last contact

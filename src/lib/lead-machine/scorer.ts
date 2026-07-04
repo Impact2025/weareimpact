@@ -8,7 +8,8 @@ export interface ScoreInput {
 }
 
 export interface ScoreResult {
-  score: number;
+  // null = scoren mislukt; nooit een verzonnen middenscore teruggeven
+  score: number | null;
   rationale: string;
 }
 
@@ -49,12 +50,13 @@ export async function scoreProspect(
 
     const raw = res.choices[0]?.message?.content ?? '{}';
     const parsed = JSON.parse(raw);
+    const n = Number(parsed.score);
     return {
-      score: Math.max(0, Math.min(10, Math.round(Number(parsed.score) || 5))),
+      score: Number.isFinite(n) ? Math.max(0, Math.min(10, Math.round(n))) : null,
       rationale: String(parsed.rationale ?? 'Score niet beschikbaar').slice(0, 120),
     };
   } catch {
-    return { score: 5, rationale: 'Score niet beschikbaar' };
+    return { score: null, rationale: 'Scoren mislukt — handmatig beoordelen' };
   }
 }
 

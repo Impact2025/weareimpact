@@ -1,15 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
+import { isAdminAuthenticated as isAuthenticated } from '@/lib/admin-auth';
 import { sql } from '@/lib/db/neon';
 import { generateOutreachEmail, makeUnsubscribeToken } from '@/lib/lead-machine/outreach';
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 60;
-
-async function isAuthenticated() {
-  const store = await cookies();
-  return !!store.get('admin_session')?.value;
-}
 
 function mapOutreach(r: Record<string, unknown>) {
   return {
@@ -60,7 +55,8 @@ export async function GET(request: NextRequest) {
         COUNT(*) FILTER (WHERE status = 'draft') as draft,
         COUNT(*) FILTER (WHERE status = 'approved') as approved,
         COUNT(*) FILTER (WHERE status = 'sent') as sent,
-        COUNT(*) FILTER (WHERE status = 'failed') as failed
+        COUNT(*) FILTER (WHERE status = 'failed') as failed,
+        COUNT(*) FILTER (WHERE status = 'skipped') as skipped
       FROM lead_outreach WHERE tenant_id = 'weareimpact'
     `;
 
@@ -71,6 +67,7 @@ export async function GET(request: NextRequest) {
         approved: Number(counts[0]?.approved ?? 0),
         sent: Number(counts[0]?.sent ?? 0),
         failed: Number(counts[0]?.failed ?? 0),
+        skipped: Number(counts[0]?.skipped ?? 0),
       },
     });
   } catch (error) {

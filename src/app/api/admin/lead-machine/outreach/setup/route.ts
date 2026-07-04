@@ -1,13 +1,8 @@
 import { NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
+import { isAdminAuthenticated as isAuthenticated } from '@/lib/admin-auth';
 import { sql } from '@/lib/db/neon';
 
 export const dynamic = 'force-dynamic';
-
-async function isAuthenticated() {
-  const store = await cookies();
-  return !!store.get('admin_session')?.value;
-}
 
 // GET — report whether outreach/automation tables exist
 export async function GET() {

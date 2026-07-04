@@ -1,13 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
+import { isAdminAuthenticated as isAuthenticated } from '@/lib/admin-auth';
 import { sql } from '@/lib/db/neon';
 
 export const dynamic = 'force-dynamic';
-
-async function isAuthenticated() {
-  const store = await cookies();
-  return !!store.get('admin_session')?.value;
-}
 
 function mapLead(r: Record<string, unknown>) {
   return {
@@ -52,33 +47,23 @@ export async function GET(request: NextRequest) {
     const limit = parseInt(searchParams.get('limit') || '50');
     const offset = parseInt(searchParams.get('offset') || '0');
 
-    let rows;
-    if (search) {
-      rows = await sql`
-        SELECT * FROM prospect_leads
-        WHERE tenant_id = 'weareimpact'
-          AND (name ILIKE ${'%' + search + '%'} OR city ILIKE ${'%' + search + '%'} OR email ILIKE ${'%' + search + '%'})
-          ${status && status !== 'all' ? sql`AND status = ${status}` : sql``}
-        ORDER BY starred DESC, ai_score DESC NULLS LAST, created_at DESC
-        LIMIT ${limit} OFFSET ${offset}
-      `;
-    } else if (status && status !== 'all') {
-      rows = await sql`
-        SELECT * FROM prospect_leads
-        WHERE tenant_id = 'weareimpact' AND status = ${status}
-        ORDER BY starred DESC, ai_score DESC NULLS LAST, created_at DESC
-        LIMIT ${limit} OFFSET ${offset}
-      `;
-    } else {
-      rows = await sql`
-        SELECT * FROM prospect_leads
-        WHERE tenant_id = 'weareimpact'
-        ORDER BY starred DESC, ai_score DESC NULLS LAST, created_at DESC
-        LIMIT ${limit} OFFSET ${offset}
-      `;
-    }
+    // Gedeelde filterfragmenten zodat lijst én totaal dezelfde selectie zien
+    const searchFrag = search
+      ? sql`AND (name ILIKE ${'%' + search + '%'} OR city ILIKE ${'%' + search + '%'} OR email ILIKE ${'%' + search + '%'})`
+      : sql``;
+    const statusFrag = status && status !== 'all' ? sql`AND status = ${status}` : sql``;
 
-    const countRow = await sql`SELECT COUNT(*) as total FROM prospect_leads WHERE tenant_id = 'weareimpact'`;
+    const rows = await sql`
+      SELECT * FROM prospect_leads
+      WHERE tenant_id = 'weareimpact' ${searchFrag} ${statusFrag}
+      ORDER BY starred DESC, ai_score DESC NULLS LAST, created_at DESC
+      LIMIT ${limit} OFFSET ${offset}
+    `;
+
+    const countRow = await sql`
+      SELECT COUNT(*) as total FROM prospect_leads
+      WHERE tenant_id = 'weareimpact' ${searchFrag} ${statusFrag}
+    `;
     const total = Number(countRow[0]?.total ?? 0);
 
     return NextResponse.json({

@@ -19,6 +19,7 @@ export interface SendEmailOptions {
   html: string;
   text?: string;
   replyTo?: string;
+  headers?: Record<string, string>;
 }
 
 export async function sendEmail(options: SendEmailOptions): Promise<{
@@ -47,6 +48,7 @@ export async function sendEmail(options: SendEmailOptions): Promise<{
       html: options.html,
       text: options.text,
       replyTo: options.replyTo || 'v.munster@weareimpact.nl',
+      headers: options.headers,
     });
 
     if (result.error) {

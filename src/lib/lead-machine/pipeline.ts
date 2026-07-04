@@ -13,6 +13,16 @@ export interface RunSearchOptions {
   scoringContext?: string;
 }
 
+// Kaal hostname (zonder www) — dé identiteit van een web-discovered lead.
+function hostnameOf(url: string): string | null {
+  try {
+    return new URL(url.startsWith('http') ? url : `https://${url}`)
+      .hostname.replace(/^www\./, '').toLowerCase();
+  } catch {
+    return null;
+  }
+}
+
 export async function runLeadSearch({
   query,
   maxResults = 10,
@@ -45,10 +55,7 @@ export async function runLeadSearch({
       AND website ILIKE ANY(${domains.map((d) => `%${d}%`)})
   `.catch(() => [] as Array<{ website: string }>);
   const savedDomains = new Set(
-    saved.map((r: Record<string, unknown>) => {
-      const w = String(r.website ?? '');
-      try { return new URL(w).hostname.replace(/^www\./, ''); } catch { return w; }
-    }),
+    saved.map((r: Record<string, unknown>) => hostnameOf(String(r.website ?? '')) ?? String(r.website ?? '')),
   );
 
   // 5 — Assemble + sort by score desc
@@ -61,7 +68,7 @@ export async function runLeadSearch({
       website: d.url,
       email: contact.email,
       phone: contact.phone,
-      aiScore: score.score,
+      aiScore: score.score ?? undefined,
       aiRationale: score.rationale,
       alreadySaved: savedDomains.has(d.domain),
       sbiDescription: d.snippet?.slice(0, 150),
@@ -79,23 +86,29 @@ export async function saveSearchResult(r: SearchResult): Promise<string | null> 
   const now = new Date().toISOString();
 
   try {
-    // Dedup on website (domain) since web-discovered leads have no KVK number
-    const existing = r.website
+    // Dedup op genormaliseerd domein: web-discovered leads hebben geen KVK-nummer
+    // en dezelfde organisatie kan via verschillende URL's (met/zonder www, deeplink)
+    // gevonden worden. SQL prefiltert breed, JS vergelijkt exact op hostname.
+    const domain = r.website ? hostnameOf(r.website) : null;
+    const candidates = domain
       ? await sql`
-          SELECT id FROM prospect_leads
-          WHERE tenant_id = 'weareimpact' AND website = ${r.website}
-          LIMIT 1
+          SELECT id, website FROM prospect_leads
+          WHERE tenant_id = 'weareimpact' AND website ILIKE ${'%' + domain + '%'}
         `
       : [];
+    const existing = candidates.find(
+      (row: Record<string, unknown>) => hostnameOf(String(row.website ?? '')) === domain,
+    );
 
-    if (existing.length > 0) {
-      const id = existing[0].id as string;
+    if (existing) {
+      const id = existing.id as string;
       await sql`
         UPDATE prospect_leads SET
           email = COALESCE(${r.email ?? null}, email),
           phone = COALESCE(${r.phone ?? null}, phone),
           ai_score = COALESCE(${r.aiScore ?? null}, ai_score),
           ai_rationale = COALESCE(${r.aiRationale ?? null}, ai_rationale),
+          sbi_description = COALESCE(${r.sbiDescription ?? null}, sbi_description),
           updated_at = NOW()
         WHERE id = ${id}
       `;

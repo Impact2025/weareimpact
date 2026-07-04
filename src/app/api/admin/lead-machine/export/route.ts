@@ -1,17 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
+import { isAdminAuthenticated as isAuthenticated } from '@/lib/admin-auth';
 import { sql } from '@/lib/db/neon';
 
 export const dynamic = 'force-dynamic';
 
-async function isAuthenticated() {
-  const store = await cookies();
-  return !!store.get('admin_session')?.value;
-}
-
 function escape(val: unknown): string {
   if (val == null) return '';
-  const s = String(val);
+  let s = String(val);
+  // Formule-injectie-guard: namen/snippets komen van gescrapete webpagina's;
+  // een cel die met = + - @ begint zou in Excel als formule uitgevoerd worden.
+  if (/^[=+\-@\t\r]/.test(s)) s = `'${s}`;
   if (s.includes(',') || s.includes('"') || s.includes('\n')) {
     return `"${s.replace(/"/g, '""')}"`;
   }

@@ -16,12 +16,17 @@ export interface RunDueProfilesOptions {
   force?: boolean;
   // cap profiles processed per call (each search is slow → bound latency/timeout)
   maxProfiles?: number;
+  // stop met nieuwe profielen starten zodra dit budget op is (serverless timeout).
+  // Niet-gestarte profielen worden niet gestampt en zijn volgende run als eerste aan de beurt.
+  timeBudgetMs?: number;
 }
 
 export async function runDueProfiles({
   force = false,
   maxProfiles = 2,
+  timeBudgetMs,
 }: RunDueProfilesOptions = {}): Promise<ProfileRunReport> {
+  const startedAt = Date.now();
   const profiles = force
     ? await sql`
         SELECT * FROM lead_search_profiles
@@ -45,6 +50,7 @@ export async function runDueProfiles({
   const report: ProfileRunReport['report'] = [];
 
   for (const profile of profiles) {
+    if (timeBudgetMs && Date.now() - startedAt > timeBudgetMs) break;
     let saved = 0;
     try {
       const results = await runLeadSearch({
@@ -70,7 +76,7 @@ export async function runDueProfiles({
   }
 
   return {
-    ran: profiles.length,
+    ran: report.length,
     totalSaved: report.reduce((s, r) => s + r.saved, 0),
     report,
   };

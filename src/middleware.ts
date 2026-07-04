@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import { isValidAdminSessionToken } from '@/lib/admin-session';
 
 const BLOCKED_COUNTRIES = ['CN', 'SG', 'IR', 'RU', 'VN', 'IN'];
 
@@ -16,38 +17,11 @@ const BOT_USER_AGENTS = [
 
 const protectedPaths = ['/admin'];
 const publicAdminPaths = ['/admin/login'];
+// API-routes onder /api/admin vereisen ook een geldige sessie; alleen de
+// login/logout-route zelf is publiek.
+const protectedApiPrefix = '/api/admin';
+const publicApiPaths = ['/api/admin/auth'];
 const ALLOWED_BARE_HOSTS = ['weareimpact.nl'];
-
-async function isValidSession(value: string): Promise<boolean> {
-  const secret = process.env.AUTH_SECRET;
-  if (!secret) return false;
-  try {
-    const decoded = atob(value);
-    const lastColon = decoded.lastIndexOf(':');
-    if (lastColon === -1) return false;
-    const payload = decoded.slice(0, lastColon);
-    const sig = decoded.slice(lastColon + 1);
-
-    const [tsStr] = payload.split(':');
-    const timestamp = parseInt(tsStr, 10);
-    if (isNaN(timestamp) || Date.now() - timestamp > 24 * 60 * 60 * 1000) return false;
-
-    const encoder = new TextEncoder();
-    const key = await crypto.subtle.importKey(
-      'raw',
-      encoder.encode(secret),
-      { name: 'HMAC', hash: 'SHA-256' },
-      false,
-      ['verify']
-    );
-    const sigBytes = Uint8Array.from(
-      (sig.match(/.{1,2}/g) ?? []).map((b) => parseInt(b, 16))
-    );
-    return await crypto.subtle.verify('HMAC', key, sigBytes, encoder.encode(payload));
-  } catch {
-    return false;
-  }
-}
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -71,9 +45,12 @@ export async function middleware(request: NextRequest) {
     return new NextResponse('Access denied', { status: 403 });
   }
 
-  const isProtectedPath = protectedPaths.some(
+  const isProtectedPage = protectedPaths.some(
     (path) => pathname.startsWith(path) && !publicAdminPaths.includes(pathname)
   );
+  const isProtectedApi =
+    pathname.startsWith(protectedApiPrefix) && !publicApiPaths.includes(pathname);
+  const isProtectedPath = isProtectedPage || isProtectedApi;
 
   // Allow bots only on non-protected paths
   const isBot = BOT_USER_AGENTS.some((bot) => userAgent.includes(bot));
@@ -85,22 +62,23 @@ export async function middleware(request: NextRequest) {
 
   // Validate admin session
   const sessionCookie = request.cookies.get('admin_session');
+  const valid = await isValidAdminSessionToken(sessionCookie?.value);
 
+  if (valid) return NextResponse.next();
+
+  // API calls get a 401 (redirecting JSON clients to a login page is useless)
+  if (isProtectedApi) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  const loginUrl = new URL('/admin/login', request.url);
   if (!sessionCookie?.value) {
-    const loginUrl = new URL('/admin/login', request.url);
     loginUrl.searchParams.set('redirect', pathname);
     return NextResponse.redirect(loginUrl);
   }
-
-  const valid = await isValidSession(sessionCookie.value);
-  if (!valid) {
-    const loginUrl = new URL('/admin/login', request.url);
-    const response = NextResponse.redirect(loginUrl);
-    response.cookies.delete('admin_session');
-    return response;
-  }
-
-  return NextResponse.next();
+  const response = NextResponse.redirect(loginUrl);
+  response.cookies.delete('admin_session');
+  return response;
 }
 
 export const config = {

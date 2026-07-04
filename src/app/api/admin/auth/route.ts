@@ -1,18 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
-import { createHmac } from 'crypto';
+import { createAdminSessionToken, SESSION_MAX_AGE_SECONDS } from '@/lib/admin-session';
 
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL ?? '';
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD ?? '';
 const AUTH_SECRET = process.env.AUTH_SECRET ?? '';
-
-function generateToken(secret: string): string {
-  const timestamp = Date.now();
-  const random = Math.random().toString(36).substring(2);
-  const payload = `${timestamp}:${random}`;
-  const sig = createHmac('sha256', secret).update(payload).digest('hex');
-  return Buffer.from(`${payload}:${sig}`).toString('base64');
-}
 
 export async function POST(request: NextRequest) {
   if (!ADMIN_EMAIL || !ADMIN_PASSWORD || !AUTH_SECRET) {
@@ -30,14 +22,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const token = generateToken(AUTH_SECRET);
+    const token = await createAdminSessionToken();
 
     const cookieStore = await cookies();
     cookieStore.set('admin_session', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
-      maxAge: 60 * 60 * 24,
+      maxAge: SESSION_MAX_AGE_SECONDS,
       path: '/',
     });
 

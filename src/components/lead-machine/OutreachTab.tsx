@@ -34,7 +34,7 @@ const STATUS_META: Record<string, { label: string; cls: string }> = {
 export default function OutreachTab() {
   const [setupDone, setSetupDone] = useState<boolean | null>(null);
   const [items, setItems] = useState<OutreachItem[]>([]);
-  const [counts, setCounts] = useState({ draft: 0, approved: 0, sent: 0, failed: 0 });
+  const [counts, setCounts] = useState({ draft: 0, approved: 0, sent: 0, failed: 0, skipped: 0 });
   const [loading, setLoading] = useState(true);
   const [generating, setGenerating] = useState(false);
   const [sending, setSending] = useState(false);
@@ -230,6 +230,7 @@ export default function OutreachTab() {
         <span>{counts.approved} goedgekeurd</span>
         <span>{counts.sent} verzonden</span>
         {counts.failed > 0 && <span className="text-red-600">{counts.failed} mislukt</span>}
+        {counts.skipped > 0 && <span>{counts.skipped} afgemeld</span>}
       </div>
 
       {loading ? (

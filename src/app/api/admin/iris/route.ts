@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
+import { isAdminAuthenticated } from '@/lib/admin-auth';
 import { getOpenRouter, DEFAULT_MODELS } from '@/lib/ai/openrouter';
 import {
   blockTime,
@@ -21,12 +21,9 @@ import {
 
 export const dynamic = 'force-dynamic';
 
-// Verify admin authentication
+// Verify admin authentication (HMAC-validated, shared with middleware)
 async function isAuthenticated(): Promise<boolean> {
-  const cookieStore = await cookies();
-  const sessionCookie = cookieStore.get('admin_session');
-  // Check if session cookie exists and has a value
-  return !!sessionCookie?.value;
+  return isAdminAuthenticated();
 }
 
 // Parse date from natural language

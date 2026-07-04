@@ -1,13 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
+import { isAdminAuthenticated as isAuthenticated } from '@/lib/admin-auth';
 import { sql } from '@/lib/db/neon';
 
 export const dynamic = 'force-dynamic';
-
-async function isAuthenticated() {
-  const store = await cookies();
-  return !!store.get('admin_session')?.value;
-}
 
 // POST — push one or more prospect_leads into the CRM companies table
 // Body: { leadId: string } or { leadIds: string[] }
@@ -46,11 +41,14 @@ export async function POST(request: NextRequest) {
         `Bron: Lead Machine`,
       ].filter(Boolean).join('\n');
 
-      // Upsert company by name + city to avoid duplicates
+      // Upsert company by name + city to avoid duplicates.
+      // Escape ILIKE-wildcards: namen komen van gescrapete pagina's en kunnen
+      // % of _ bevatten ("100% Zorg") — anders matcht dat als patroon.
+      const escapeLike = (s: string) => s.replace(/[\\%_]/g, '\\$&');
       const existing = await sql`
         SELECT id FROM companies
-        WHERE name ILIKE ${lead.name as string}
-          AND (city ILIKE ${(lead.city as string) ?? ''} OR city IS NULL)
+        WHERE name ILIKE ${escapeLike(lead.name as string)}
+          AND (city ILIKE ${escapeLike((lead.city as string) ?? '')} OR city IS NULL)
         LIMIT 1
       `;
 

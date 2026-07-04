@@ -1,13 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
+import { isAdminAuthenticated as isAuthenticated } from '@/lib/admin-auth';
 import { sql } from '@/lib/db/neon';
 
 export const dynamic = 'force-dynamic';
-
-async function isAuthenticated() {
-  const store = await cookies();
-  return !!store.get('admin_session')?.value;
-}
 
 function mapProfile(r: Record<string, unknown>) {
   return {
@@ -74,13 +69,18 @@ export async function PUT(request: NextRequest) {
   try {
     const { id, active, name, query, minScore, cadence } = await request.json();
     if (!id) return NextResponse.json({ error: 'ID ontbreekt' }, { status: 400 });
+    if (cadence != null && !['daily', 'weekly'].includes(cadence)) {
+      return NextResponse.json({ error: 'Ongeldige cadence' }, { status: 400 });
+    }
+    const clampedMinScore =
+      minScore != null ? Math.min(Math.max(Number(minScore) || 0, 0), 10) : null;
 
     const result = await sql`
       UPDATE lead_search_profiles SET
         active = COALESCE(${active ?? null}, active),
         name = COALESCE(${name ?? null}, name),
         query = COALESCE(${query ?? null}, query),
-        min_score = COALESCE(${minScore ?? null}, min_score),
+        min_score = COALESCE(${clampedMinScore}, min_score),
         cadence = COALESCE(${cadence ?? null}, cadence),
         updated_at = NOW()
       WHERE id = ${id} AND tenant_id = 'weareimpact'
