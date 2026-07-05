@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { sql } from '@/lib/db/neon';
 import { generateEmbedding } from '../admin/kennisbank/embeddings/route';
+import { isAdminAuthenticated } from '@/lib/admin-auth';
 
 export const dynamic = 'force-dynamic';
 
@@ -49,6 +50,9 @@ export async function GET(request: NextRequest) {
 
 // POST - Create new kennisbank article (admin only)
 export async function POST(request: NextRequest) {
+  if (!await isAdminAuthenticated()) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
   try {
     const body = await request.json();
     const {

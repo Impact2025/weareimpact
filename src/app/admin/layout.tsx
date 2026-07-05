@@ -34,7 +34,7 @@ import IrisVoiceButton from '@/components/admin/IrisVoiceButton';
 import MobileNav from '@/components/admin/MobileNav';
 import PWAProvider from '@/components/admin/PWAProvider';
 
-import { Calendar } from 'lucide-react';
+import { Calendar, Share2 } from 'lucide-react';
 
 interface SidebarItem {
   label: string;
@@ -81,6 +81,7 @@ const sidebarItems: SidebarItem[] = [
   },
   { label: 'Blog Posts', href: '/admin/blog', icon: FileText },
   { label: 'Kennisbank', href: '/admin/kennisbank', icon: BookOpen },
+  { label: 'Social', href: '/admin/social', icon: Share2 },
   { label: 'AI Scanner Leads', href: '/admin/leads', icon: Brain },
   { label: 'Contact Berichten', href: '/admin/contact', icon: Mail },
   { label: 'Chat Logs', href: '/admin/chats', icon: MessageSquare },
