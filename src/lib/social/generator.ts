@@ -60,7 +60,15 @@ export async function generateSocialDrafts(article: ArticleInput): Promise<Socia
     response_format: { type: 'json_object' },
   });
 
-  const raw = res.choices[0]?.message?.content ?? '{}';
+  // Sommige modellen negeren response_format en wikkelen de JSON in ```json-fences —
+  // strip die en pak het buitenste object, anders faalt elke social-run op JSON.parse.
+  let raw = (res.choices[0]?.message?.content ?? '{}').trim();
+  if (raw.startsWith('```')) {
+    raw = raw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '');
+  }
+  const start = raw.indexOf('{');
+  const end = raw.lastIndexOf('}');
+  if (start !== -1 && end > start) raw = raw.slice(start, end + 1);
   const parsed = JSON.parse(raw) as Partial<Record<SocialPlatform, unknown>>;
 
   const drafts = {} as SocialDrafts;
