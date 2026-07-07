@@ -314,15 +314,18 @@ function ResultsTable({ results, onSaved }: ResultsTableProps) {
             {results.map((r) => (
               <>
                 <TableRow
-                  key={r.kvkNumber}
+                  key={r.domain || r.website}
                   className="cursor-pointer hover:bg-slate-50"
-                  onClick={() => setExpanded(expanded === r.kvkNumber ? null : r.kvkNumber)}
+                  onClick={() => setExpanded(expanded === (r.domain || r.website) ? null : ((r.domain || r.website) ?? ''))}
                 >
                   <TableCell><ScoreBadge score={r.aiScore} /></TableCell>
                   <TableCell>
                     <div className="font-medium text-slate-900 leading-tight">{r.name}</div>
                     {r.sbiDescription && (
                       <div className="text-xs text-slate-400 mt-0.5 line-clamp-1">{r.sbiDescription}</div>
+                    )}
+                    {r.contactPerson && (
+                      <div className="text-[11px] text-slate-500 mt-0.5">👤 {r.contactPerson}</div>
                     )}
                   </TableCell>
                   <TableCell className="hidden lg:table-cell">
@@ -368,8 +371,8 @@ function ResultsTable({ results, onSaved }: ResultsTableProps) {
                     )}
                   </TableCell>
                 </TableRow>
-                {expanded === r.kvkNumber && (
-                  <TableRow key={`${r.kvkNumber}-exp`} className="bg-orange-50">
+                {expanded === (r.domain || r.website) && (
+                  <TableRow key={`${(r.domain || r.website)}-exp`} className="bg-orange-50">
                     <TableCell colSpan={5} className="py-3 px-4">
                       <div className="space-y-2 text-sm">
                         {r.aiRationale && (

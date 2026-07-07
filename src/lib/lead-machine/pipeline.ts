@@ -6,11 +6,15 @@ import { scrapeMany } from './scraper';
 import { scoreMany, DEFAULT_SCORING_CONTEXT } from './scorer';
 import { sql } from '@/lib/db/neon';
 import type { SearchResult } from './types';
+import type { ContactInfo } from './scraper';
 
 export interface RunSearchOptions {
   query: string;
   maxResults?: number;
   scoringContext?: string;
+  // Hard deadline for the whole run (ms). Once exceeded, scraping stops starting
+  // new sites and we return whatever we have so far (graceful partial result).
+  timeBudgetMs?: number;
 }
 
 // Kaal hostname (zonder www) — dé identiteit van een web-discovered lead.
@@ -27,24 +31,27 @@ export async function runLeadSearch({
   query,
   maxResults = 10,
   scoringContext = DEFAULT_SCORING_CONTEXT,
+  timeBudgetMs,
 }: RunSearchOptions): Promise<SearchResult[]> {
+  const startedAt = Date.now();
   const limit = Math.min(Math.max(Number(maxResults) || 10, 1), 30);
 
-  // 1 — Discover organizations via DuckDuckGo
+  // 1 — Discover organizations via Brave / DuckDuckGo
   const discovered = await discoverOrganizations(query.trim(), limit);
   if (discovered.length === 0) return [];
 
-  // 2 — Scrape contact info from each website
+  // 2 — Scrape contact info from each website (polite, rate-limited, retried)
   const contactMap = await scrapeMany(
-    discovered.map((d) => ({ kvkNumber: d.domain, website: d.url })),
-    5,
+    discovered.map((d) => ({ key: d.domain, website: d.url })),
+    2,        // max 2 concurrent — don't hammer discovered sites
+    350,      // ≥350ms between starts
   );
 
-  // 3 — AI score all organizations
+  // 3 — AI score all organizations (polite, rate-limited, retried)
   const scores = await scoreMany(
     discovered.map((d) => ({ name: d.name, domain: d.domain, snippet: d.snippet })),
     scoringContext,
-    5,
+    timeBudgetMs ? Math.max(0, timeBudgetMs - (Date.now() - startedAt)) : undefined,
   );
 
   // 4 — Check which domains are already saved
@@ -60,14 +67,17 @@ export async function runLeadSearch({
 
   // 5 — Assemble + sort by score desc
   const results: SearchResult[] = discovered.map((d, i) => {
-    const contact = contactMap.get(d.domain) ?? {};
+    const contact = (contactMap.get(d.domain) ?? {}) as ContactInfo;
     const score = scores[i];
     return {
-      kvkNumber: d.domain, // reuse kvkNumber field as unique key
+      kvkNumber: d.domain, // reuse kvkNumber field as unique key (legacy)
+      domain: d.domain,
       name: d.name,
       website: d.url,
       email: contact.email,
       phone: contact.phone,
+      scrapedKvk: contact.kvkNumber,
+      contactPerson: contact.contactPerson,
       aiScore: score.score ?? undefined,
       aiRationale: score.rationale,
       alreadySaved: savedDomains.has(d.domain),
@@ -86,6 +96,33 @@ export async function saveSearchResult(r: SearchResult): Promise<string | null> 
   const now = new Date().toISOString();
 
   try {
+    // When a KVK was scraped, prefer it as the dedupe key — it's the real Dutch
+    // business identity, so two branches of the same org won't collide on hostname.
+    if (r.scrapedKvk) {
+      const existing = await sql`
+        SELECT id FROM prospect_leads
+        WHERE tenant_id = 'weareimpact' AND kvk_number = ${r.scrapedKvk}
+        LIMIT 1
+      `;
+      if (existing.length > 0) {
+        const id = existing[0].id as string;
+        await sql`
+          UPDATE prospect_leads SET
+            name = COALESCE(${r.name}, name),
+            email = COALESCE(${r.email ?? null}, email),
+            phone = COALESCE(${r.phone ?? null}, phone),
+            contact_person = COALESCE(${r.contactPerson ?? null}, contact_person),
+            ai_score = COALESCE(${r.aiScore ?? null}, ai_score),
+            ai_rationale = COALESCE(${r.aiRationale ?? null}, ai_rationale),
+            sbi_description = COALESCE(${r.sbiDescription ?? null}, sbi_description),
+            website = COALESCE(${r.website ?? null}, website),
+            updated_at = NOW()
+          WHERE id = ${id}
+        `;
+        return id;
+      }
+    }
+
     // Dedup op genormaliseerd domein: web-discovered leads hebben geen KVK-nummer
     // en dezelfde organisatie kan via verschillende URL's (met/zonder www, deeplink)
     // gevonden worden. SQL prefiltert breed, JS vergelijkt exact op hostname.
@@ -106,6 +143,7 @@ export async function saveSearchResult(r: SearchResult): Promise<string | null> 
         UPDATE prospect_leads SET
           email = COALESCE(${r.email ?? null}, email),
           phone = COALESCE(${r.phone ?? null}, phone),
+          contact_person = COALESCE(${r.contactPerson ?? null}, contact_person),
           ai_score = COALESCE(${r.aiScore ?? null}, ai_score),
           ai_rationale = COALESCE(${r.aiRationale ?? null}, ai_rationale),
           sbi_description = COALESCE(${r.sbiDescription ?? null}, sbi_description),
@@ -117,11 +155,12 @@ export async function saveSearchResult(r: SearchResult): Promise<string | null> 
 
     const inserted = await sql`
       INSERT INTO prospect_leads (
-        name, website, email, phone, ai_score, ai_rationale, sbi_description,
-        scraped_at, scored_at
+        name, website, email, phone, contact_person, kvk_number,
+        ai_score, ai_rationale, sbi_description, scraped_at, scored_at
       )
       VALUES (
         ${r.name}, ${r.website ?? null}, ${r.email ?? null}, ${r.phone ?? null},
+        ${r.contactPerson ?? null}, ${r.scrapedKvk ?? null},
         ${r.aiScore ?? null}, ${r.aiRationale ?? null}, ${r.sbiDescription ?? null},
         ${r.email || r.phone ? now : null}, ${r.aiScore != null ? now : null}
       )

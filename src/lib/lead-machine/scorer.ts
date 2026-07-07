@@ -1,4 +1,5 @@
 import { getOpenRouter, MODELS } from '@/lib/ai/openrouter';
+import { mapPool } from './mapPool';
 
 export interface ScoreInput {
   name: string;
@@ -20,6 +21,12 @@ Ideale klanten (score 8-10): welzijnsorganisaties, maatschappelijke dienstverlen
 Minder relevant (score 0-4): commercieel zonder maatschappelijke doelstelling, eenmanszaak, niet-Nederlands.`;
 
 const BASE_PROMPT = `Geef ALLEEN geldige JSON: {"score": <0-10>, "rationale": "<max 12 woorden in het Nederlands>"}`;
+
+// Scoring is politely rate-limited: OpenRouter/Haiku is cheap but a batch of 30
+// leads would otherwise fire 30 near-simultaneous calls. We cap concurrency and
+// enforce a minimum delay between starts, plus retry transient failures.
+const SCORE_CONCURRENCY = 3;
+const SCORE_MIN_DELAY_MS = 250;
 
 export async function scoreProspect(
   input: ScoreInput,
@@ -63,18 +70,23 @@ export async function scoreProspect(
 export async function scoreMany(
   inputs: ScoreInput[],
   scoringContext = DEFAULT_SCORING_CONTEXT,
-  concurrency = 5,
+  timeBudgetMs?: number,
 ): Promise<ScoreResult[]> {
-  const results: ScoreResult[] = new Array(inputs.length);
-  const queue = inputs.map((input, i) => ({ input, i }));
-
-  async function worker() {
-    while (queue.length > 0) {
-      const item = queue.shift()!;
-      results[item.i] = await scoreProspect(item.input, scoringContext);
-    }
-  }
-
-  await Promise.all(Array.from({ length: Math.min(concurrency, inputs.length) }, worker));
-  return results;
+  // mapPool runs the workers with bounded concurrency + rate limiting + retries.
+  // A failing call still returns a null-score result (lossless), so a single bad
+  // item never blocks the batch.
+  const results = await mapPool(
+    inputs,
+    (input) => scoreProspect(input, scoringContext),
+    {
+      concurrency: SCORE_CONCURRENCY,
+      minDelayMs: SCORE_MIN_DELAY_MS,
+      retries: 2,
+      backoffMs: 500,
+      maxBackoffMs: 3000,
+      timeBudgetMs,
+    },
+  );
+  // Fill any undefined (exhausted retries) with a safe null-score fallback.
+  return results.map((r) => r ?? { score: null, rationale: 'Scoren mislukt — handmatig beoordelen' });
 }

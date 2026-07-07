@@ -102,7 +102,7 @@ export async function POST(request: NextRequest) {
           WHERE tenant_id = 'weareimpact'
             AND email IS NOT NULL
             AND COALESCE(unsubscribed, FALSE) = FALSE
-            AND status = 'new'
+            AND status IN ('new', 'contacted')
             AND COALESCE(ai_score, 0) >= ${minScore}
             AND id NOT IN (SELECT lead_id FROM lead_outreach WHERE lead_id IS NOT NULL AND status IN ('draft','approved','sent'))
           ORDER BY ai_score DESC NULLS LAST
@@ -124,11 +124,18 @@ export async function POST(request: NextRequest) {
           aiRationale: lead.ai_rationale as string | null,
         });
 
+        // ON CONFLICT DO NOTHING leverages the partial unique index
+        // (idx_lead_outreach_one_pending): if a pending draft already exists for
+        // this lead, the insert is a no-op instead of a duplicate. Atomic — no
+        // SELECT-then-INSERT race, so double-clicking "Genereer" is safe.
         await sql`
           INSERT INTO lead_outreach (lead_id, to_email, subject, body_text, unsubscribe_token)
           VALUES (${lead.id}, ${lead.email}, ${draft.subject}, ${draft.body}, ${makeUnsubscribeToken()})
+          ON CONFLICT (lead_id) WHERE status IN ('draft', 'approved') DO NOTHING
         `;
-        created++;
+        // Only count it as created if our row actually landed (not skipped by conflict).
+        const check = await sql`SELECT 1 FROM lead_outreach WHERE lead_id = ${lead.id} AND status IN ('draft','approved') LIMIT 1`;
+        if (check.length > 0) created++;
       } catch (err) {
         console.error(`Draft generation failed for lead ${lead.id}:`, err);
       }

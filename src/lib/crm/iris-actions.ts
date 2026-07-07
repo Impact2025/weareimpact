@@ -396,7 +396,7 @@ function getGreeting(): string {
 // Capped to 1 profile to keep the chat responsive — the daily cron handles the rest.
 export async function findNewLeads(): Promise<string> {
   try {
-    const result = await runDueProfiles({ force: true, maxProfiles: 1 });
+    const result = await runDueProfiles({ force: true, maxProfiles: 1, trigger: 'iris' });
 
     if (result.ran === 0) {
       return 'Je hebt nog geen actieve zoekprofielen. Maak er één aan onder Lead Machine → Automatisch zoeken, dan ga ik voor je op zoek.';

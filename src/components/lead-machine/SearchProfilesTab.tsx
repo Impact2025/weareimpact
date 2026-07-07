@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { Loader2, Plus, Trash2, Play, Clock, RefreshCw } from 'lucide-react';
+import { Loader2, Plus, Trash2, Play, Clock, RefreshCw, History } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -20,9 +20,22 @@ interface Profile {
   lastRunAt?: string;
 }
 
+interface SearchRun {
+  id: string;
+  trigger: 'cron' | 'manual' | 'iris';
+  profilesRun: number;
+  totalFound: number;
+  totalSaved: number;
+  status: 'ok' | 'partial' | 'error';
+  error?: string | null;
+  createdAt: string;
+}
+
 export default function SearchProfilesTab() {
   const [profiles, setProfiles] = useState<Profile[]>([]);
+  const [runs, setRuns] = useState<SearchRun[]>([]);
   const [loading, setLoading] = useState(true);
+  const [runsLoading, setRunsLoading] = useState(false);
   const [running, setRunning] = useState(false);
   const [form, setForm] = useState({ name: '', query: '', maxResults: '10', minScore: '6', cadence: 'weekly' });
   const [saving, setSaving] = useState(false);
@@ -40,7 +53,29 @@ export default function SearchProfilesTab() {
     }
   }, []);
 
-  useEffect(() => { fetchProfiles(); }, [fetchProfiles]);
+  const fetchRuns = useCallback(async () => {
+    setRunsLoading(true);
+    try {
+      const r = await fetch('/api/admin/lead-machine/profiles/runs');
+      const d = await r.json();
+      setRuns((d.runs ?? []).map((x: Record<string, unknown>) => ({
+        id: x.id as string,
+        trigger: x.trigger as SearchRun['trigger'],
+        profilesRun: Number(x.profiles_run ?? 0),
+        totalFound: Number(x.total_found ?? 0),
+        totalSaved: Number(x.total_saved ?? 0),
+        status: x.status as SearchRun['status'],
+        error: (x.error as string) ?? null,
+        createdAt: x.created_at as string,
+      })));
+    } catch {
+      /* stil — runs-audit is non-critic */
+    } finally {
+      setRunsLoading(false);
+    }
+  }, []);
+
+  useEffect(() => { fetchProfiles(); fetchRuns(); }, [fetchProfiles, fetchRuns]);
 
   const add = async () => {
     if (!form.name.trim() || !form.query.trim()) { toast.error('Naam en zoekopdracht zijn verplicht'); return; }
@@ -91,12 +126,21 @@ export default function SearchProfilesTab() {
       if (!res.ok) throw new Error(d.error);
       toast.success(d.ran ? `${d.ran} profiel(en) gedraaid, ${d.totalSaved ?? 0} nieuwe leads` : (d.message ?? 'Klaar'));
       await fetchProfiles();
+      await fetchRuns();
     } catch (e) {
       toast.error(e instanceof Error ? e.message : 'Draaien mislukt');
+      await fetchRuns();
     } finally {
       setRunning(false);
     }
   };
+
+  const statusBadge = (s: SearchRun['status']) =>
+    s === 'ok'
+      ? 'bg-emerald-100 text-emerald-700'
+      : s === 'partial'
+        ? 'bg-amber-100 text-amber-700'
+        : 'bg-red-100 text-red-700';
 
   return (
     <div className="space-y-5">
@@ -146,7 +190,9 @@ export default function SearchProfilesTab() {
             {running ? <Loader2 size={14} className="mr-1.5 animate-spin" /> : <Play size={14} className="mr-1.5" />}
             Nu draaien
           </Button>
-          <Button variant="outline" size="icon" onClick={fetchProfiles}><RefreshCw size={15} /></Button>
+          <Button variant="outline" size="icon" onClick={() => { fetchProfiles(); fetchRuns(); }}>
+            <RefreshCw size={15} className={runsLoading ? 'animate-spin' : ''} />
+          </Button>
         </div>
       </div>
 
@@ -184,6 +230,38 @@ export default function SearchProfilesTab() {
           ))}
         </div>
       )}
+
+      {/* Run audit log — maakt een stille nachtelijke cron-fout zichtbaar */}
+      <div className="rounded-lg border bg-white p-4 space-y-3">
+        <div className="flex items-center gap-2">
+          <History size={15} className="text-slate-500" />
+          <p className="font-medium text-slate-800 text-sm">Zoek-geschiedenis</p>
+        </div>
+        {runsLoading ? (
+          <div className="flex justify-center py-6"><Loader2 size={18} className="animate-spin text-slate-400" /></div>
+        ) : runs.length === 0 ? (
+          <p className="text-xs text-slate-400">Nog geen runs gelogd.</p>
+        ) : (
+          <div className="divide-y divide-slate-100">
+            {runs.map((run) => (
+              <div key={run.id} className="py-2 flex items-center justify-between gap-2 text-xs">
+                <div className="flex items-center gap-2 min-w-0">
+                  <span className={`px-2 py-0.5 rounded-full text-[11px] ${statusBadge(run.status)}`}>
+                    {run.status === 'ok' ? 'OK' : run.status === 'partial' ? 'Deels' : 'Fout'}
+                  </span>
+                  <span className="text-slate-500 uppercase">{run.trigger}</span>
+                  <span className="text-slate-400">
+                    {new Date(run.createdAt).toLocaleString('nl-NL', { dateStyle: 'short', timeStyle: 'short' })}
+                  </span>
+                </div>
+                <div className="text-slate-500 shrink-0">
+                  {run.profilesRun} prof · {run.totalFound} gevonden · {run.totalSaved} nieuw
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

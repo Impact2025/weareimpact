@@ -4,7 +4,12 @@ import { DEFAULT_SCORING_CONTEXT } from '@/lib/lead-machine/scorer';
 import { runLeadSearch } from '@/lib/lead-machine/pipeline';
 
 export const dynamic = 'force-dynamic';
-export const maxDuration = 55;
+export const maxDuration = 60;
+
+// Total budget for the run: leave headroom under maxDuration for the SQL/post
+// work. 30 results × (scrape 2-concurrent + score 3-concurrent) can approach the
+// limit, so we cap scraping+scoring at ~50s and return a partial result gracefully.
+const SEARCH_TIME_BUDGET_MS = 50_000;
 
 export async function POST(request: NextRequest) {
   if (!await isAuthenticated()) {
@@ -26,7 +31,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Zoekopdracht is verplicht' }, { status: 400 });
     }
 
-    const results = await runLeadSearch({ query, maxResults, scoringContext });
+    const results = await runLeadSearch({ query, maxResults, scoringContext, timeBudgetMs: SEARCH_TIME_BUDGET_MS });
     return NextResponse.json({ results, total: results.length });
   } catch (error) {
     console.error('Lead Machine search error:', error);

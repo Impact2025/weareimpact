@@ -53,6 +53,9 @@ export interface LeadList {
 export interface SearchResult extends KvkOrganization {
   email?: string;
   phone?: string;
+  domain?: string;        // canonical hostname (www-stripped) — the stable key
+  scrapedKvk?: string;    // KVK extracted from the org's own footer during scrape
+  contactPerson?: string; // best-effort human contact (see scraper)
   aiScore?: number;
   aiRationale?: string;
   alreadySaved?: boolean;
