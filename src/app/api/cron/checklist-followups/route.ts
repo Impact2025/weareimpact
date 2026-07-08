@@ -23,8 +23,6 @@ async function authorize(request: NextRequest): Promise<boolean> {
   const secret = process.env.CRON_SECRET;
   const auth = request.headers.get('authorization');
   if (secret && auth === `Bearer ${secret}`) return true;
-  // TEMP TEST ONLY — verwijderen na validatie
-  if (request.nextUrl.searchParams.get('__test') === 'waiprotocol') return true;
   return isAdminAuthenticated();
 }
 
