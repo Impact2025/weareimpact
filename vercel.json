@@ -4,5 +4,12 @@
       "path": "/api/cron/lead-search",
       "schedule": "0 7 * * *"
     }
+  ],
+  "redirects": [
+    {
+      "source": "/downloads/ai-proof-checklist.pdf",
+      "destination": "/downloads/AI-Proof_Checklist_WeAreImpact.pdf",
+      "permanent": true
+    }
   ]
 }
