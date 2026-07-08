@@ -27,6 +27,7 @@ export function generateChecklistDownloadEmail(data: ChecklistDownloadData): {
           <!-- Header -->
           <tr>
             <td style="background: linear-gradient(135deg, #f97316 0%, #ea580c 100%); padding: 40px 40px 30px; text-align: center;">
+              <img src="https://weareimpact.nl/weareimpact-hart.webp" alt="WeAreImpact" width="60" height="60" style="display: block; margin: 0 auto 20px; width: 60px; height: 60px;" />
               <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: 600; letter-spacing: -0.5px;">
                 AI-Proof Checklist
               </h1>
@@ -50,7 +51,7 @@ export function generateChecklistDownloadEmail(data: ChecklistDownloadData): {
               <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom: 32px;">
                 <tr>
                   <td align="center">
-                    <a href="https://weareimpact.nl/downloads/ai-proof-checklist.pdf" style="display: inline-block; background: linear-gradient(135deg, #f97316 0%, #ea580c 100%); color: #ffffff; text-decoration: none; padding: 16px 40px; border-radius: 8px; font-weight: 600; font-size: 16px; box-shadow: 0 4px 6px rgba(249, 115, 22, 0.3);">
+                    <a href="https://weareimpact.nl/downloads/AI-Proof_Checklist_WeAreImpact.pdf" style="display: inline-block; background: linear-gradient(135deg, #f97316 0%, #ea580c 100%); color: #ffffff; text-decoration: none; padding: 16px 40px; border-radius: 8px; font-weight: 600; font-size: 16px; box-shadow: 0 4px 6px rgba(249, 115, 22, 0.3);">
                       Download PDF Checklist
                     </a>
                   </td>
@@ -147,7 +148,7 @@ Hoi${data.organisatie ? ` (${data.organisatie})` : ''},
 Bedankt voor je download!
 
 Download de checklist hier:
-https://weareimpact.nl/downloads/ai-proof-checklist.pdf
+https://weareimpact.nl/downloads/AI-Proof_Checklist_WeAreImpact.pdf
 
 MIJN ADVIES: BEGIN MET DE QUICK WINS
 ------------------------------------
