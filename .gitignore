@@ -49,3 +49,8 @@ next-env.d.ts
 .vercel
 
 .vercel
+Onderzoeken/
+docs/
+scripts/export-linkfix.mjs
+scripts/read-post-content.mjs
+scripts/republish-linkfix.mjs
