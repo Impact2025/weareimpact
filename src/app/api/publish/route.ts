@@ -68,6 +68,7 @@ export async function POST(request: NextRequest) {
       title,
       content,
       slug: requestedSlug,
+      renameFrom,
       excerpt,
       category = 'ai',
       tags = [],
@@ -77,7 +78,7 @@ export async function POST(request: NextRequest) {
       socials = true,
       source = 'api',
     } = body as {
-      title?: string; content?: string; slug?: string; excerpt?: string;
+      title?: string; content?: string; slug?: string; renameFrom?: string; excerpt?: string;
       category?: string; tags?: string[]; seoTitle?: string; seoDescription?: string;
       coverImage?: string; socials?: boolean; source?: string;
     };
@@ -93,30 +94,65 @@ export async function POST(request: NextRequest) {
     const plainText = stripHtml(cleanContent);
     const finalExcerpt = (excerpt?.trim() || seoDescription?.trim() || plainText.slice(0, 200)).slice(0, 300);
 
-    const slug = await uniqueSlug(slugify(requestedSlug?.trim() || title));
+    const baseSlug = slugify(requestedSlug?.trim() || title);
+    // Upsert-op-slug: bestaat de slug al → UPDATE (geen duplicaat bij herpublicatie),
+    // anders → INSERT met een unieke slug. `renameFrom` (optioneel) matcht op de
+    // OUDE slug i.p.v. de nieuwe — voor het herstellen van kapotte/lelijke slugs
+    // zonder een dubbele rij achter te laten.
+    const lookupSlug = renameFrom?.trim() || baseSlug;
+    const existing = await sql`SELECT id FROM posts WHERE slug = ${lookupSlug} LIMIT 1`;
+    const isUpdate = existing.length > 0;
+    const slug = isUpdate ? baseSlug : await uniqueSlug(baseSlug);
     const readingTime = Math.max(1, Math.ceil(plainText.split(/\s+/).length / 200));
 
-    const inserted = await sql`
-      INSERT INTO posts (
-        title, slug, excerpt, content, cover_image, category, tags,
-        status, reading_time, seo_title, seo_description, published_at,
-        header_type, header_color
-      ) VALUES (
-        ${title.trim()}, ${slug}, ${finalExcerpt}, ${cleanContent}, ${coverImage ?? null},
-        ${safeCategory}, ${Array.isArray(tags) ? tags : []},
-        'published', ${readingTime}, ${seoTitle?.trim() || title.trim()},
-        ${seoDescription?.trim() || finalExcerpt}, NOW(),
-        ${coverImage ? 'image' : 'color'}, 'orange'
-      )
-      RETURNING id, slug
-    `;
-    const postId = inserted[0].id as string;
-    const url = `${SITE_URL}/blog/${slug}`;
+    let postId: string;
+    let url: string;
+    if (isUpdate) {
+      const updated = await sql`
+        UPDATE posts SET
+          title = ${title.trim()},
+          slug = ${slug},
+          excerpt = ${finalExcerpt},
+          content = ${cleanContent},
+          cover_image = COALESCE(${coverImage ?? null}, cover_image),
+          category = ${safeCategory},
+          tags = ${Array.isArray(tags) ? tags : []},
+          reading_time = ${readingTime},
+          seo_title = ${seoTitle?.trim() || title.trim()},
+          seo_description = ${seoDescription?.trim() || finalExcerpt},
+          status = 'published',
+          published_at = COALESCE(published_at, NOW())
+        WHERE slug = ${lookupSlug}
+        RETURNING id, slug
+      `;
+      postId = updated[0].id as string;
+      url = `${SITE_URL}/blog/${slug}`;
+    } else {
+      const inserted = await sql`
+        INSERT INTO posts (
+          title, slug, excerpt, content, cover_image, category, tags,
+          status, reading_time, seo_title, seo_description, published_at,
+          header_type, header_color
+        ) VALUES (
+          ${title.trim()}, ${slug}, ${finalExcerpt}, ${cleanContent}, ${coverImage ?? null},
+          ${safeCategory}, ${Array.isArray(tags) ? tags : []},
+          'published', ${readingTime}, ${seoTitle?.trim() || title.trim()},
+          ${seoDescription?.trim() || finalExcerpt}, NOW(),
+          ${coverImage ? 'image' : 'color'}, 'orange'
+        )
+        RETURNING id, slug
+      `;
+      postId = inserted[0].id as string;
+      url = `${SITE_URL}/blog/${slug}`;
+    }
 
     // Direct live — niet wachten op de ISR-window van een uur
     revalidatePath('/blog');
     revalidatePath(`/blog/${slug}`);
     revalidatePath('/sitemap.xml');
+    if (renameFrom?.trim() && renameFrom.trim() !== slug) {
+      revalidatePath(`/blog/${renameFrom.trim()}`);
+    }
 
     // Zoekmachines pingen (parallel, fouten loggen maar blokkeren niet)
     const [indexNowResult, googleResult] = await Promise.allSettled([

@@ -60,6 +60,16 @@ const nextConfig: NextConfig = {
       { source: '/kennisbank/ai-implementeren-welzijn-stappenplan', destination: '/kennisbank/ai-implementeren-non-profit-stappenplan', permanent: true },
       { source: '/kennisbank/avg-ai-zorg-stappenplan', destination: '/kennisbank/privacy-ai-zorg-avg-checklist', permanent: true },
       { source: '/kennisbank/lego-serious-play-draagvlak-ai', destination: '/kennisbank/lego-serious-play-gemeenten-draagvlak', permanent: true },
+
+      // Blogslug-opschoning: 6 posts (2026-07-08) kregen via de AgentOS
+      // single-shot-fallback-schrijver onleesbare slugs (afgeknipte analysezinnen
+      // i.p.v. de titel) — zie scripts/fix-6-posts-links-slugs.mjs
+      { source: '/blog/waar-forbes-de-nadruk-legt-op-leiderschapsvaardigheden-om-pr', destination: '/blog/verandermanagement-in-welzijn-waarom-prestaties-beginnen-bij-mentale-veerkracht', permanent: true },
+      { source: '/blog/waar-wtw-focust-op-employee-impact-als-vervanging-van-enga', destination: '/blog/ai-strategie-en-change-management-van-efficientie-naar-purpose-driven-impact', permanent: true },
+      { source: '/blog/waar-de-originele-blog-focust-op-ai-als-oplossing-voor-het-t', destination: '/blog/ai-in-de-zorg-en-welzijn-van-werkdruk-naar-welzijn', permanent: true },
+      { source: '/blog/terwijl-de-discussie-op-reddit-zich-richt-op-de-noodzaak-van', destination: '/blog/waarom-een-lego-serious-play-facilitator-meer-is-dan-een-doos-met-blokjes', permanent: true },
+      { source: '/blog/waar-meta-een-platform-voor-ai-agents-koopt-om-commerciele-d', destination: '/blog/ai-innovatie-sociaal-domein-agents-samenwerking-preventie', permanent: true },
+      { source: '/blog/waar-strategy-nieuwe-partners-promoveert-laat-dat-zien-dat', destination: '/blog/ai-strategie-consultancy-definitie-voor-en-nadelen-en-hoe-je-zelf-stuurt', permanent: true },
     ];
   },
 
