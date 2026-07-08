@@ -26,12 +26,12 @@ export function generateChecklistDownloadEmail(data: ChecklistDownloadData): {
 
           <!-- Header -->
           <tr>
-            <td style="background: linear-gradient(135deg, #f97316 0%, #ea580c 100%); padding: 40px 40px 30px; text-align: center;">
-              <img src="https://weareimpact.nl/weareimpact-hart.webp" alt="WeAreImpact" width="60" height="60" style="display: block; margin: 0 auto 20px; width: 60px; height: 60px;" />
+            <td style="background-color: #ea580c; background: linear-gradient(135deg, #f97316 0%, #ea580c 100%); padding: 40px 40px 30px; text-align: center;">
+              <img src="https://weareimpact.nl/WeAreImpact_hart.png" alt="WeAreImpact" width="60" height="60" style="display: block; margin: 0 auto 20px; width: 60px; height: 60px;" />
               <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: 600; letter-spacing: -0.5px;">
                 AI-Proof Checklist
               </h1>
-              <p style="margin: 12px 0 0; color: rgba(255,255,255,0.9); font-size: 16px;">
+              <p style="margin: 12px 0 0; color: #ffffff; font-size: 16px;">
                 15 praktische stappen voor sociale organisaties
               </p>
             </td>
@@ -51,9 +51,15 @@ export function generateChecklistDownloadEmail(data: ChecklistDownloadData): {
               <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom: 32px;">
                 <tr>
                   <td align="center">
-                    <a href="https://weareimpact.nl/downloads/AI-Proof_Checklist_WeAreImpact.pdf" style="display: inline-block; background: linear-gradient(135deg, #f97316 0%, #ea580c 100%); color: #ffffff; text-decoration: none; padding: 16px 40px; border-radius: 8px; font-weight: 600; font-size: 16px; box-shadow: 0 4px 6px rgba(249, 115, 22, 0.3);">
-                      Download PDF Checklist
-                    </a>
+                    <table cellpadding="0" cellspacing="0" style="border-radius: 8px; background-color: #f97316; background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);">
+                      <tr>
+                        <td align="center" style="padding: 16px 40px;">
+                          <a href="https://weareimpact.nl/downloads/AI-Proof_Checklist_WeAreImpact.pdf" style="color: #ffffff; text-decoration: none; font-weight: 600; font-size: 16px; display: inline-block;">
+                            Download PDF Checklist
+                          </a>
+                        </td>
+                      </tr>
+                    </table>
                   </td>
                 </tr>
               </table>
