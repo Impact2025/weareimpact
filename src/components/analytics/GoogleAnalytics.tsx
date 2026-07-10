@@ -60,6 +60,7 @@ export const trackEvents = {
   newsletterSubscribe: (source: string) => event({ action: 'subscribe', category: 'Newsletter', label: source }),
   aiScanStart: () => event({ action: 'scan_start', category: 'AI_Scan' }),
   aiScanComplete: (score: number) => event({ action: 'scan_complete', category: 'AI_Scan', value: score }),
+  aiScanLeadCapture: (sector: string) => event({ action: 'scan_lead_capture', category: 'AI_Scan', label: sector }),
   chatbotOpen: () => event({ action: 'chatbot_open', category: 'Iris_Assistant' }),
   chatbotMessage: () => event({ action: 'message_sent', category: 'Iris_Assistant' }),
   kennisbankChatOpen: (article: string) => event({ action: 'chat_open', category: 'Kennisbank_Chat', label: article }),

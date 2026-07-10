@@ -1,9 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Sparkles, ArrowRight, RefreshCw, CheckCircle, Calendar, ArrowLeft,
-  Heart, Landmark, Briefcase, Users, Cpu,
+  Heart, Landmark, Briefcase, Users, Cpu, Mail, Loader2, ShieldCheck,
   // Challenge icons
   ClipboardList, Coins, Flame, UserCheck,
   MessageSquare, PieChart, Layers, GraduationCap,
@@ -214,6 +214,75 @@ const AI_MATURITY: ScanOption[] = [
   },
 ];
 
+// Renders the AI advice markdown (## headers, numbered lists, **bold**)
+// into styled JSX — no external markdown dependency.
+function AdviceMarkdown({ text }: { text: string }) {
+  const lines = text.split('\n');
+  const blocks: React.ReactNode[] = [];
+  let listItems: React.ReactNode[] = [];
+  let key = 0;
+
+  const inline = (s: string): React.ReactNode[] =>
+    s.split(/(\*\*.+?\*\*)/g).map((part, i) =>
+      part.startsWith('**') && part.endsWith('**') ? (
+        <strong key={i} className="text-white font-semibold">
+          {part.slice(2, -2)}
+        </strong>
+      ) : (
+        <span key={i}>{part}</span>
+      )
+    );
+
+  const flushList = () => {
+    if (listItems.length) {
+      blocks.push(
+        <ol key={`ol-${key++}`} className="space-y-2.5 mb-4">
+          {listItems}
+        </ol>
+      );
+      listItems = [];
+    }
+  };
+
+  for (const raw of lines) {
+    const line = raw.trim();
+    if (!line) {
+      flushList();
+      continue;
+    }
+    if (line.startsWith('## ')) {
+      flushList();
+      blocks.push(
+        <p
+          key={`h-${key++}`}
+          className="text-orange-400 text-xs font-bold uppercase tracking-widest mt-5 mb-2 first:mt-0"
+        >
+          {line.slice(3)}
+        </p>
+      );
+      continue;
+    }
+    const num = line.match(/^(\d+)\.\s+(.*)$/);
+    if (num) {
+      listItems.push(
+        <li key={`li-${key++}`} className="flex gap-2.5 text-slate-200 text-sm leading-relaxed">
+          <span className="text-orange-500 font-bold flex-shrink-0">{num[1]}.</span>
+          <span>{inline(num[2])}</span>
+        </li>
+      );
+      continue;
+    }
+    flushList();
+    blocks.push(
+      <p key={`p-${key++}`} className="text-slate-200 text-sm leading-relaxed mb-3">
+        {inline(line)}
+      </p>
+    );
+  }
+  flushList();
+  return <div>{blocks}</div>;
+}
+
 export function AIScanner() {
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<Record<number, string>>({});
@@ -222,6 +291,59 @@ export function AIScanner() {
   const [streamingText, setStreamingText] = useState('');
   const [selectedSector, setSelectedSector] = useState<string | null>(null);
   const [hoveredOption, setHoveredOption] = useState<string | null>(null);
+
+  // E-mailcapture (lead) state
+  const [scanCount, setScanCount] = useState<number | null>(null);
+  const [email, setEmail] = useState('');
+  const [naam, setNaam] = useState('');
+  const [organisatie, setOrganisatie] = useState('');
+  const [emailStatus, setEmailStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
+  const [emailError, setEmailError] = useState('');
+
+  // Dynamische social-proof teller ophalen
+  useEffect(() => {
+    let active = true;
+    fetch('/api/ai-scan/count')
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => {
+        if (active && d?.count) setScanCount(d.count);
+      })
+      .catch(() => {});
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  const submitLeadCapture = async () => {
+    const trimmed = email.trim();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)) {
+      setEmailError('Vul een geldig e-mailadres in.');
+      return;
+    }
+    setEmailError('');
+    setEmailStatus('sending');
+    try {
+      const res = await fetch('/api/ai-scan/report', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: trimmed,
+          naam: naam.trim() || undefined,
+          organisatie: organisatie.trim() || undefined,
+          sector: selectedSector,
+          challenge: answers[2],
+          aiUsage: answers[3],
+          advies: result,
+        }),
+      });
+      if (!res.ok) throw new Error('request failed');
+      setEmailStatus('sent');
+      if (selectedSector) trackEvents.aiScanLeadCapture(selectedSector);
+    } catch {
+      setEmailStatus('error');
+      setEmailError('Er ging iets mis. Probeer het zo nog eens.');
+    }
+  };
 
   // Get current sector config
   const sectorConfig = selectedSector ? SECTOR_CONFIG[selectedSector] : null;
@@ -349,6 +471,11 @@ export function AIScanner() {
     setStreamingText('');
     setSelectedSector(null);
     setHoveredOption(null);
+    setEmail('');
+    setNaam('');
+    setOrganisatie('');
+    setEmailStatus('idle');
+    setEmailError('');
   };
 
   // Progress percentage
@@ -370,7 +497,7 @@ export function AIScanner() {
             <span className="font-bold text-white tracking-wide block">
               AI IMPACT SCAN
             </span>
-            <span className="text-xs text-slate-500">Persoonlijk advies in 60 seconden</span>
+            <span className="text-xs text-slate-500">Persoonlijk advies in 1 minuut</span>
           </div>
         </div>
         <div className="flex items-center gap-2">
@@ -485,10 +612,8 @@ export function AIScanner() {
             {/* Live streaming preview */}
             {streamingText && (
               <div className="text-left bg-slate-900/80 rounded-xl p-5 max-h-48 overflow-y-auto border border-slate-700/50">
-                <p className="text-slate-300 text-sm whitespace-pre-wrap leading-relaxed">
-                  {streamingText}
-                  <span className="inline-block w-2 h-5 bg-orange-500 ml-1 animate-pulse rounded-sm" />
-                </p>
+                <AdviceMarkdown text={streamingText} />
+                <span className="inline-block w-2 h-5 bg-orange-500 ml-1 animate-pulse rounded-sm align-middle" />
               </div>
             )}
 
@@ -526,29 +651,84 @@ export function AIScanner() {
               )}
             </div>
 
-            <div className="bg-slate-900/80 rounded-xl p-6 mb-6 max-h-56 overflow-y-auto border border-slate-700/50">
-              <p className="text-slate-200 leading-relaxed whitespace-pre-wrap">
-                {result}
-              </p>
+            <div className="bg-slate-900/80 rounded-xl p-6 mb-6 max-h-72 overflow-y-auto border border-slate-700/50">
+              <AdviceMarkdown text={result} />
             </div>
 
-            {/* Enhanced CTA Section */}
-            <div className="bg-gradient-to-r from-orange-500/10 to-orange-600/5 border border-orange-500/30 rounded-xl p-5 mb-6">
-              <div className="flex items-start gap-3">
-                <div className="bg-orange-500/20 p-2 rounded-lg flex-shrink-0">
-                  <Cpu className="text-orange-400" size={20} />
+            {/* E-mailcapture: stuur rapport + maak lead bruikbaar */}
+            {emailStatus !== 'sent' ? (
+              <div className="bg-gradient-to-r from-orange-500/10 to-orange-600/5 border border-orange-500/30 rounded-xl p-5 mb-6">
+                <div className="flex items-start gap-3 mb-4">
+                  <div className="bg-orange-500/20 p-2 rounded-lg flex-shrink-0">
+                    <Mail className="text-orange-400" size={20} />
+                  </div>
+                  <div>
+                    <p className="text-orange-200 font-semibold mb-0.5">
+                      Ontvang je resultaat + 3 kansen per mail
+                    </p>
+                    <p className="text-slate-400 text-sm">
+                      Dan heb je het advies zwart-op-wit — handig om intern te delen.
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-orange-200 font-medium mb-1">
-                    3 concrete AI-kansen voor jouw situatie
-                  </p>
-                  <p className="text-slate-400 text-sm">
-                    In een vrijblijvend gesprek van 15 minuten laat ik je zien hoe deze kansen
-                    direct tijd of geld besparen in jouw {sectorConfig?.name.toLowerCase() || 'organisatie'}.
+
+                <div className="space-y-2.5">
+                  <div className="grid grid-cols-2 gap-2.5">
+                    <input
+                      type="text"
+                      value={naam}
+                      onChange={(e) => setNaam(e.target.value)}
+                      placeholder="Naam (optioneel)"
+                      className="bg-slate-800/80 border border-slate-700 rounded-lg px-3 py-2.5 text-sm text-slate-200 placeholder:text-slate-500 focus:outline-none focus:border-orange-500/60 transition-colors"
+                    />
+                    <input
+                      type="text"
+                      value={organisatie}
+                      onChange={(e) => setOrganisatie(e.target.value)}
+                      placeholder="Organisatie (optioneel)"
+                      className="bg-slate-800/80 border border-slate-700 rounded-lg px-3 py-2.5 text-sm text-slate-200 placeholder:text-slate-500 focus:outline-none focus:border-orange-500/60 transition-colors"
+                    />
+                  </div>
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    onKeyDown={(e) => e.key === 'Enter' && emailStatus !== 'sending' && submitLeadCapture()}
+                    placeholder="jouw@e-mailadres.nl"
+                    className="w-full bg-slate-800/80 border border-slate-700 rounded-lg px-3 py-2.5 text-sm text-slate-200 placeholder:text-slate-500 focus:outline-none focus:border-orange-500/60 transition-colors"
+                  />
+                  {emailError && (
+                    <p className="text-rose-400 text-xs">{emailError}</p>
+                  )}
+                  <Button
+                    onClick={submitLeadCapture}
+                    disabled={emailStatus === 'sending'}
+                    className="w-full bg-gradient-to-r from-orange-500 to-orange-600 text-white hover:from-orange-600 hover:to-orange-700 font-semibold shadow-lg shadow-orange-500/20 disabled:opacity-60"
+                  >
+                    {emailStatus === 'sending' ? (
+                      <><Loader2 size={16} className="animate-spin" /> Versturen...</>
+                    ) : (
+                      <><Mail size={16} /> Stuur mij het rapport</>
+                    )}
+                  </Button>
+                  <p className="flex items-center justify-center gap-1.5 text-xs text-slate-500 pt-1">
+                    <ShieldCheck size={12} /> Geen spam. Alleen jouw rapport + eventueel één follow-up.
                   </p>
                 </div>
               </div>
-            </div>
+            ) : (
+              <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-xl p-5 mb-6 flex items-start gap-3">
+                <div className="bg-emerald-500/20 p-2 rounded-lg flex-shrink-0">
+                  <CheckCircle className="text-emerald-400" size={20} />
+                </div>
+                <div>
+                  <p className="text-emerald-200 font-semibold mb-0.5">Check je inbox!</p>
+                  <p className="text-slate-400 text-sm">
+                    Je rapport is onderweg naar <span className="text-slate-200">{email}</span>. Wil je de kansen samen doornemen? Plan hieronder een gesprek.
+                  </p>
+                </div>
+              </div>
+            )}
 
             <div className="flex gap-3">
               <Button
@@ -556,10 +736,10 @@ export function AIScanner() {
                   // Open the chat widget with booking flow
                   window.dispatchEvent(new CustomEvent('openBooking'));
                 }}
-                className="flex-1 bg-gradient-to-r from-orange-500 to-orange-600 text-white hover:from-orange-600 hover:to-orange-700 font-semibold shadow-lg shadow-orange-500/20"
+                className="flex-1 bg-slate-800 border border-slate-600 text-white hover:bg-slate-700 font-semibold"
               >
                 <Calendar size={16} />
-                Plan een gesprek
+                Plan een gesprek (30 min)
               </Button>
               <Button
                 onClick={reset}
@@ -579,11 +759,11 @@ export function AIScanner() {
           <div className="flex items-center justify-center gap-6 text-xs text-slate-500">
             <span className="flex items-center gap-1.5">
               <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full" />
-              500+ scans uitgevoerd
+              {scanCount ? `${scanCount}+ scans uitgevoerd` : 'Sector-specifiek advies'}
             </span>
             <span className="flex items-center gap-1.5">
               <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full" />
-              100% privacy-first
+              Privacy-first
             </span>
           </div>
         </div>

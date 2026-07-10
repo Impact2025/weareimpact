@@ -1,10 +1,26 @@
 import { NextRequest } from 'next/server';
 import { getOpenRouter, DEFAULT_MODELS } from '@/lib/ai/openrouter';
 import { sql } from '@/lib/db/neon';
+import { rateLimit, getClientIp } from '@/lib/rate-limit';
+import {
+  VALID_SECTORS,
+  VALID_CHALLENGES,
+  VALID_AI_USAGE,
+  SECTOR_NAMES,
+  SECTOR_EXPERTISE,
+  CHALLENGE_SOLUTIONS,
+  CHALLENGE_LABELS,
+  AI_MATURITY_MAP,
+} from '@/lib/ai/scan-config';
 
 export const dynamic = 'force-dynamic';
 
-// Helper to save lead to database
+// Max 8 scans per IP per uur — genoeg voor echte gebruikers, remt bots/kosten.
+const RATE_LIMIT = 8;
+const RATE_WINDOW_MS = 60 * 60 * 1000;
+
+// Helper: sla anonieme scan-lead op, retourneer id zodat de UI later
+// contactgegevens kan koppelen via /api/ai-scan/report.
 async function saveScanLead(
   sector: string,
   challenge: string,
@@ -14,23 +30,20 @@ async function saveScanLead(
   try {
     const result = await sql`
       INSERT INTO ai_scan_leads (sector, challenge, ai_usage, ai_advice, source, status)
-      VALUES (${sector}, ${challenge}, ${aiUsage}, ${aiAdvice}, '/ai-scanner', 'new')
+      VALUES (${sector}, ${challenge}, ${aiUsage}, ${aiAdvice}, '/ai-scan', 'new')
       RETURNING id
     `;
+    const leadId = result[0]?.id ?? null;
 
-    const leadId = result[0]?.id;
-
-    // Log activity
     await sql`
       INSERT INTO activity_log (type, title, description, metadata)
       VALUES (
         'scan',
-        'Nieuwe AI scan afgerond',
-        ${`${sector} - ${challenge}`},
-        ${JSON.stringify({ leadId, sector, challenge })}
+        'Nieuwe AI-scan afgerond',
+        ${`${SECTOR_NAMES[sector] || sector} — ${CHALLENGE_LABELS[challenge] || challenge}`},
+        ${JSON.stringify({ leadId, sector, challenge, aiUsage })}
       )
     `;
-
     return leadId;
   } catch (error) {
     console.error('Failed to save scan lead:', error);
@@ -38,109 +51,76 @@ async function saveScanLead(
   }
 }
 
-// Sector-specific expertise that Vincent brings
-const SECTOR_EXPERTISE: Record<string, string> = {
-  zorg: `
-Vincent's expertise in Zorg & Welzijn:
-- Directeur van Stichting de Baan (sociale werkvoorziening)
-- Coördineert 180 vrijwilligers en 700 deelnemers
-- Heeft succesvol fondsen geworven voor vastgoed en verduurzaming
-- Begrijpt de spanning tussen administratiedruk en cliënttijd
-- Weet hoe je met beperkte middelen maximale impact creëert`,
+const BASE_SYSTEM_PROMPT = `Je bent de AI-adviseur van Vincent van Munster, expert in AI-strategie met een sociaal hart en 15+ jaar ervaring in het sociaal domein.
 
-  overheid: `
-Vincent's expertise in Onderwijs & Overheid:
-- Ervaring met complexe stakeholder-landschappen
-- Snapt de spanning tussen beleidscycli en innovatie
-- LEGO Serious Play facilitator voor strategische sessies
-- Weet hoe je draagvlak creëert voor verandering
-- Ervaring met publiek-private samenwerkingen`,
-
-  mkb: `
-Vincent's expertise voor MKB:
-- Zelf ondernemer met meerdere ventures (DAAR, DatingAssistent, Bewaardvoorjou)
-- Weet wat schaalbaarheid betekent met beperkte middelen
-- AI-implementatie specialist die praktisch denkt
-- Focus op ROI en directe tijdsbesparing
-- Snapt de balans tussen operatie en groei`,
-
-  nonprofit: `
-Vincent's expertise voor Non-profit/Stichtingen:
-- Zelf directeur van een stichting
-- Expert in vrijwilligersmanagement (180+ vrijwilligers)
-- Succesvol in fondsenwerving en subsidie-aanvragen
-- Weet hoe je met kleine teams grote impact maakt
-- Combineert sociaal hart met zakelijke daadkracht`,
-};
-
-// Challenge-specific AI opportunities
-const CHALLENGE_SOLUTIONS: Record<string, string> = {
-  // Zorg & Welzijn
-  administratie: 'AI kan 40-60% van rapportagetijd besparen door slimme templates, automatische samenvattingen en spraak-naar-tekst voor cliëntnotities.',
-  subsidies: 'AI kan subsidie-scanners inzetten, automatisch conceptaanvragen genereren en de kans op toekenning voorspellen op basis van historische data.',
-  roosters: 'AI kan roosters optimaliseren, no-shows voorspellen, en automatisch inspringen op acute situaties. Minder puzzelen, meer overzicht.',
-  personeel: 'AI kan de onboarding van vrijwilligers versnellen, matching verbeteren, en signalen van uitval vroeg detecteren.',
-
-  // Onderwijs & Overheid
-  bureaucratie: 'AI kan vergaderingen automatisch samenvatten, actiepunten extraheren, en besluitvorming versnellen door relevante informatie proactief aan te bieden.',
-  begroting: 'AI kan begrotingsscenario\'s doorrekenen, afwijkingen signaleren, en voorspellen waar budgetproblemen ontstaan.',
-  legacy: 'AI kan als "vertaallaag" tussen systemen fungeren, data integreren zonder grote IT-projecten, en kennissilo\'s doorbreken.',
-  vergrijzing: 'AI kan kennisbanken bouwen uit ervaring van vertrekkende medewerkers, interactieve overdracht faciliteren, en expertise doorzoekbaar maken.',
-
-  // MKB
-  brandjes: 'AI kan repetitieve taken automatiseren, prioriteiten voorstellen, en je agenda beschermen zodat je aan groei kunt werken.',
-  cashflow: 'AI kan cashflowprognoses maken, factuurherinneringen automatiseren, en betalingsgedrag voorspellen.',
-  handmatig: 'AI kan data-invoer automatiseren, documenten verwerken, en processen standaardiseren zonder dure maatwerksoftware.',
-
-  // Non-profit
-  capaciteit: 'AI kan als "extra teamlid" fungeren: e-mails beantwoorden, rapporten schrijven, social media beheren.',
-  drukte: 'AI kan processen analyseren en direct de grootste tijdwinsten identificeren — focus op wat écht impact heeft.',
-  vrijwilligers: 'AI kan matching verbeteren, communicatie personaliseren, en waardering automatisch inplannen op de juiste momenten.',
-};
-
-const BASE_SYSTEM_PROMPT = `Je bent de AI-adviseur van Vincent van Munster, expert in AI-strategie met een sociaal hart.
-
-BELANGRIJK: Je spreekt namens Vincent — niet als een generieke AI. Gebruik "ik" en "Vincent" waar passend.
+BELANGRIJK: Je spreekt namens Vincent — niet als een generieke AI. Gebruik "ik" en "Vincent" waar passend. Je bent concreet, warm en zonder jargon.
 
 Schrijfstijl:
-- Direct, geen wollige taal
-- Concreet met voorbeelden
-- Empathisch maar geen holle praatjes
-- Maximaal 180 woorden
-- Gebruik opsommingstekens voor actie-items
-- Sluit af met een uitnodiging voor een gesprek
+- Direct en menselijk, geen wollige consultanttaal of buzzwords
+- Concreet met voorbeelden uit de praktijk van de bezoeker
+- Empathisch, maar geen holle praatjes — toon dat je hun werkelijkheid snapt
+- Kwantificeer waar mogelijk (uren, procenten, euro's)
+- Maximaal 200 woorden
 
-Structuur:
-1. Erken de specifieke pijn (1-2 zinnen, toon dat je het snapt)
-2. Geef 2-3 concrete AI-kansen voor hun situatie
-3. Noem één quick win die ze morgen kunnen starten
-4. Uitnodiging: "Wil je zien hoe dit er voor jouw organisatie uitziet?"`;
+Geef je antwoord in EXACT deze markdown-structuur (gebruik de headers letterlijk):
+
+## Wat ik zie
+Erken de specifieke pijn in 1-2 zinnen. Laat merken dat je hun situatie snapt.
+
+## 3 concrete AI-kansen
+1. **Kans één** — één zin die de winst concreet maakt.
+2. **Kans twee** — één zin die de winst concreet maakt.
+3. **Kans drie** — één zin die de winst concreet maakt.
+
+## Jouw quick win voor deze week
+Eén concrete actie die ze binnen een week kunnen starten, zonder budget of IT-project.
+
+Sluit NIET af met een CTA of uitnodiging — dat doet de website zelf.`;
 
 export async function POST(request: NextRequest) {
+  // 1. Rate limiting (kostenremming + bot-afweer)
+  const ip = getClientIp(request);
+  const limit = rateLimit(`ai-scan:${ip}`, RATE_LIMIT, RATE_WINDOW_MS);
+  if (!limit.success) {
+    return new Response(
+      JSON.stringify({
+        error: 'Te veel scans in korte tijd. Probeer het over een uur opnieuw.',
+      }),
+      {
+        status: 429,
+        headers: {
+          'Content-Type': 'application/json',
+          'Retry-After': String(Math.ceil(limit.resetMs / 1000)),
+        },
+      }
+    );
+  }
+
   try {
     const { answers, sectorConfig } = await request.json();
 
-    // Extract answers
-    const sector = answers[1] || 'onbekend';
-    const challenge = answers[2] || 'onbekend';
-    const aiUsage = answers[3] || 'onbekend';
+    // 2. Validatie — geweigerde/gemanipuleerde input krijgt geen LLM-call
+    const sector = String(answers?.[1] ?? '');
+    const challenge = String(answers?.[2] ?? '');
+    const aiUsage = String(answers?.[3] ?? '');
 
-    // Get sector-specific expertise
+    if (
+      !VALID_SECTORS.includes(sector as never) ||
+      !VALID_CHALLENGES.includes(challenge as never) ||
+      !VALID_AI_USAGE.includes(aiUsage as never)
+    ) {
+      return new Response(
+        JSON.stringify({ error: 'Ongeldige of onvolledige antwoorden.' }),
+        { status: 400, headers: { 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // 3. Rijke, sector-specifieke context
     const sectorExpertise = SECTOR_EXPERTISE[sector] || '';
-
-    // Get challenge-specific solution hints
     const challengeSolution = CHALLENGE_SOLUTIONS[challenge] || '';
-
-    // Build rich context
-    const aiMap: Record<string, string> = {
-      nee: 'nog geen concrete AI-ervaring (beginnersniveau)',
-      beetje: 'experimenteert met tools zoals ChatGPT (verkennend)',
-      ja: 'actief bezig met AI-implementatie (gevorderd)',
-    };
-
-    // Use the rich sector config from the frontend
-    const sectorName = sectorConfig?.sectorName || sector;
-    const challengeLabel = sectorConfig?.challengeLabel || challenge;
+    const sectorName = sectorConfig?.sectorName || SECTOR_NAMES[sector] || sector;
+    const challengeLabel =
+      sectorConfig?.challengeLabel || CHALLENGE_LABELS[challenge] || challenge;
     const challengeContext = sectorConfig?.challengeContext || '';
 
     const userContext = `
@@ -149,11 +129,11 @@ PROFIEL VAN DEZE BEZOEKER:
 Sector: ${sectorName}
 Grootste energielek: ${challengeLabel}
 Context: "${challengeContext}"
-AI-niveau: ${aiMap[aiUsage] || aiUsage}
+AI-niveau: ${AI_MATURITY_MAP[aiUsage] || aiUsage}
 
 ${sectorExpertise}
 
-SPECIFIEKE KANS VOOR DIT PROBLEEM:
+SPECIFIEKE KANS VOOR DIT PROBLEEM (gebruik dit als basis, maak het concreet):
 ${challengeSolution}
 `;
 
@@ -163,15 +143,14 @@ ${challengeSolution}
         { role: 'system', content: BASE_SYSTEM_PROMPT },
         {
           role: 'user',
-          content: `Analyseer dit profiel en geef persoonlijk, sectorspecifiek advies:\n${userContext}`,
+          content: `Analyseer dit profiel en geef persoonlijk, sectorspecifiek advies volgens de vaste structuur:\n${userContext}`,
         },
       ],
       stream: true,
-      max_tokens: 600,
+      max_tokens: 700,
       temperature: 0.7,
     });
 
-    // Create a streaming response and collect the full advice
     const encoder = new TextEncoder();
     let fullAdvice = '';
 
@@ -185,13 +164,17 @@ ${challengeSolution}
               controller.enqueue(encoder.encode(content));
             }
           }
-
-          // Save the lead after streaming completes
+          // Lead opslaan NA de stream. leadId gaat via trailer niet werken bij
+          // streaming, dus de UI haalt 'm op via een aparte call in /report.
           await saveScanLead(sector, challenge, aiUsage, fullAdvice);
-
           controller.close();
         } catch (error) {
-          controller.error(error);
+          console.error('Streaming error:', error);
+          // Signaleer de fout duidelijk in de body zodat de client het merkt.
+          controller.enqueue(
+            encoder.encode('\n\n[FOUT] De analyse werd onderbroken. Probeer het opnieuw.')
+          );
+          controller.close();
         }
       },
     });
@@ -200,13 +183,14 @@ ${challengeSolution}
       headers: {
         'Content-Type': 'text/plain; charset=utf-8',
         'Cache-Control': 'no-cache',
+        'X-RateLimit-Remaining': String(limit.remaining),
       },
     });
   } catch (error) {
     console.error('AI Scan error:', error);
-    return new Response(
-      JSON.stringify({ error: 'Analysis failed' }),
-      { status: 500, headers: { 'Content-Type': 'application/json' } }
-    );
+    return new Response(JSON.stringify({ error: 'Analysis failed' }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' },
+    });
   }
 }

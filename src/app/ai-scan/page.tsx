@@ -34,7 +34,7 @@ const voordelen = [
     icon: Zap,
     title: 'Direct resultaat',
     description:
-      'Geen wachttijd. Na 5 vragen ontvang je meteen een gepersonaliseerde analyse met concrete kansen en aanbevolen eerste stappen.',
+      'Geen wachttijd. Na 3 korte vragen ontvang je meteen een gepersonaliseerde analyse met concrete kansen en aanbevolen eerste stappen.',
   },
   {
     icon: Shield,
