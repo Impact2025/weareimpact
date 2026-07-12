@@ -1,24 +1,54 @@
 ---
-title: "Weerstand tegen AI overwinnen in het sociaal domein"
-slug: "weerstand-ai-overwinnen-sociaal-domein-legio-serious-play"
-excerpt: "Weerstand tegen AI overwinnen in het sociaal domein. Praktische aanpak met LEGO Serious Play om draagvlak te creëren voor AI-implementatie."
-category_slug: "ai-tech"
-tags: [AI, weerstand, sociaal-domein, implementatie, LEGO-Serious-Play, draagvlak]
-seo_title: "Weerstand tegen AI overwinnen in het sociaal domein"
-seo_description: "Weerstand tegen AI overwinnen in het sociaal domein. Praktische aanpak met bewezen methoden voor draagvlak."
-seo_keywords: [weerstand ai overwinnen, ai draagvlak sociaal domein, ai angst medewerkers, lego serious play ai draagvlak]
-reading_time: 8
-difficulty: "beginner"
-header_color: "orange"
-status: "published"
-published_at: "2026-04-01T00:00:00Z"
+title: Weerstand tegen AI overwinnen in het sociaal domein
+slug: weerstand-ai-overwinnen-sociaal-domein-legio-serious-play
+excerpt: >-
+  Weerstand tegen AI overwinnen in het sociaal domein. Praktische aanpak met
+  LEGO Serious Play om draagvlak te creëren voor AI-implementatie.
+category_slug: ai-tech
+tags:
+  - AI
+  - weerstand
+  - sociaal-domein
+  - implementatie
+  - LEGO-Serious-Play
+  - draagvlak
+seo_title: Weerstand tegen AI overwinnen in het sociaal domein
+seo_description: >-
+  Weerstand tegen AI overwinnen in het sociaal domein. Praktische aanpak met
+  bewezen methoden voor draagvlak.
+seo_keywords:
+  - weerstand ai overwinnen
+  - ai draagvlak sociaal domein
+  - ai angst medewerkers
+  - lego serious play ai draagvlak
+reading_time: 4
+difficulty: beginner
+header_color: orange
+status: published
+published_at: '2026-04-01T00:00:00Z'
 faq_items:
-  - question: "Werkt LEGO Serious Play ook bij een sceptisch team dat er niets in ziet?"
-    answer: "Juist bij scepsis werkt het goed, omdat de methode niet vraagt om overtuigd te zijn voordat je meedoet. Deelnemers bouwen fysieke modellen in plaats van te discussiëren over standpunten, wat de discussie minder confronterend maakt. De scepsis verdwijnt meestal pas gedurende de sessie zelf, niet ervoor."
-  - question: "Hoeveel tijd kost het om weerstand om te buigen naar draagvlak?"
-    answer: "Een LEGO Serious Play-sessie van een dagdeel geeft vaak al een omslag in de kamer. Blijvend draagvlak — waarbij mensen de AI-tool ook drie maanden later nog gebruiken — vraagt daarna wel opvolging: korte check-ins, ruimte voor vragen, en zichtbaar maken van de eerste successen."
-  - question: "Is weerstand tegen AI in de zorg anders dan in andere sectoren?"
-    answer: "Ja, deels. In de zorg en het welzijn is de weerstand vaker gekoppeld aan de angst dat technologie ten koste gaat van menselijk contact met de cliënt, in plaats van pure angst voor baanverlies zoals in sommige andere sectoren. Een aanpak die expliciet laat zien dat AI tijd teruggeeft aan het cliëntcontact, landt daarom beter dan een aanpak die alleen over efficiëntie gaat."
+  - question: Werkt LEGO Serious Play ook bij een sceptisch team dat er niets in ziet?
+    answer: >-
+      Juist dan werkt het goed — deelnemers hoeven niet overtuigd te zijn
+      voordat ze meedoen, de scepsis verdwijnt vaak tijdens de sessie zelf.
+  - question: Hoeveel tijd kost het om weerstand om te buigen naar draagvlak?
+    answer: >-
+      Eén dagdeel geeft vaak al een omslag; blijvend draagvlak vraagt daarna
+      opvolging met check-ins.
+  - question: Is weerstand tegen AI in de zorg anders dan in andere sectoren?
+    answer: >-
+      Ja, de angst zit vaker in verlies van menselijk contact met de cliënt dan
+      in pure angst voor baanverlies.
+  - question: 'Moet iedereen meedoen aan zo’n sessie, ook de grootste tegenstanders?'
+    answer: >-
+      Juist de twijfelaars wil je erbij hebben. Wie zich gepasseerd voelt, wordt
+      later de luidste criticus. Meedoen betekent niet instemmen — het betekent
+      gehoord worden.
+  - question: Wat als de weerstand van het management komt en niet van de werkvloer?
+    answer: >-
+      Dan draai je de aanpak om: laat het management zelf de tijdwinst en
+      risicobeheersing ervaren, en onderbouw met een business case. Bij
+      bestuurders werkt een concrete rekensom vaak beter dan een bouwsessie.
 ---
 
 70% van AI-implementaties in het sociaal domein stuit op weerstand van medewerkers. Niet omdat ze tegen vooruitgang zijn, maar omdat ze zich bedreigd voelen in hun vakmanschap. AI voelt voor veel sociaal werkers als een bedreiging van hun professionele autonomie.
@@ -31,6 +61,7 @@ faq_items:
 2. [Hoe creëer je draagvlak?](#draagvlak)
 3. [LEGO Serious Play in de praktijk: één dag](#praktijk)
 4. [Na de sessie: draagvlak vasthouden](#vasthouden)
+5. [De drie meestgemaakte fouten](#fouten)
 5. [Veelgestelde vragen](#faq)
 
 ## Waarom weerstand ontstaat {#waarom-weerstand}
@@ -51,15 +82,22 @@ Dat "zelf ontdekken" is de kern. Een team dat zelf concludeert dat AI hen kan he
 
 Een goede sessie is het begin, niet het einde. Plan een korte check-in na 2-3 weken: wat is er van de plannen terechtgekomen, waar loopt het team tegenaan? Maak de eerste successen zichtbaar, hoe klein ook.
 
-<blockquote>
-Wat neem je mee
-- Weerstand tegen AI gaat zelden over technologie, maar over autonomie en vertrouwen
-- Laat teams zelf ontdekken waar AI kan helpen, in plaats van het te verkopen
-- LEGO Serious Play werkt omdat het bouwen minder confronterend is dan discussiëren
-- Draagvlak na de sessie vraagt opvolging, niet alleen een geslaagde dag
-</blockquote>
+> **Wat neem je mee**
+>
+> - Weerstand tegen AI gaat zelden over technologie, maar over autonomie en vertrouwen
+> - Laat teams zelf ontdekken waar AI kan helpen, in plaats van het te verkopen
+> - LEGO Serious Play werkt omdat het bouwen minder confronterend is dan discussiëren
+> - Draagvlak na de sessie vraagt opvolging, niet alleen een geslaagde dag
 
 **Wil je weerstand tegen AI overwinnen?** Neem contact op via [WeAreImpact.nl](https://weareimpact.nl/ai-strategie-consultant) voor een strategische verkenning.
+
+## De drie meestgemaakte fouten {#fouten}
+
+1. **De weerstand wegargumenteren.** Weerstand tegen AI is een gevoel, geen standpunt. Wie er met cijfers en logica overheen walst, versterkt de angst juist. Erken het gevoel eerst.
+2. **De technologie centraal stellen.** Zodra het gesprek over "de AI" gaat, gaat het over de bedreiging. Houd het gesprek bij het werk: welke taken zou je graag kwijtraken?
+3. **Stoppen na de sessie.** Eén enthousiaste middag zonder opvolging verdampt binnen een maand. Draagvlak is een proces, geen moment.
+
+Wie deze drie vermijdt, ontdekt dat de meeste weerstand oplosbaar is — niet door harder te duwen, maar door de mens serieus te nemen.
 
 ## Veelgestelde vragen {#faq}
 

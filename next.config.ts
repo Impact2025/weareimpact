@@ -70,6 +70,19 @@ const nextConfig: NextConfig = {
       { source: '/blog/terwijl-de-discussie-op-reddit-zich-richt-op-de-noodzaak-van', destination: '/blog/waarom-een-lego-serious-play-facilitator-meer-is-dan-een-doos-met-blokjes', permanent: true },
       { source: '/blog/waar-meta-een-platform-voor-ai-agents-koopt-om-commerciele-d', destination: '/blog/ai-innovatie-sociaal-domein-agents-samenwerking-preventie', permanent: true },
       { source: '/blog/waar-strategy-nieuwe-partners-promoveert-laat-dat-zien-dat', destination: '/blog/ai-strategie-consultancy-definitie-voor-en-nadelen-en-hoe-je-zelf-stuurt', permanent: true },
+
+      // Kannibalisatie-consolidatie ronde 2 (2026-07-11): een op 9 juli
+      // gepubliceerde batch dupliceerde exact de keywords die eerder al naar
+      // canonicals waren geconsolideerd. De 9-juli-duplicaten worden nu 301'd
+      // naar die canonicals (die de linkkracht al hebben) en op draft gezet.
+      { source: '/blog/ai-innovatie-sociaal-domein-van-commerciele-ai-agents-naar-m', destination: '/blog/ai-innovatie-sociaal-domein-agents-samenwerking-preventie', permanent: true },
+      { source: '/blog/ai-strategie-consultancy-bouw-zelf-je-wendbare-ai-strategie', destination: '/blog/ai-strategie-consultancy-definitie-voor-en-nadelen-en-hoe-je-zelf-stuurt', permanent: true },
+      { source: '/blog/lego-serious-play-facilitator-waarom-de-echte-waarde-in-de-b', destination: '/blog/waarom-een-lego-serious-play-facilitator-meer-is-dan-een-doos-met-blokjes', permanent: true },
+      { source: '/blog/verandermanagement-in-welzijn-waarom-medewerkerswelzijn-de-e', destination: '/blog/verandermanagement-in-welzijn-waarom-prestaties-beginnen-bij-mentale-veerkracht', permanent: true },
+
+      // Interne pipeline-artefacten die per abuis live stonden → deindex + relevante bestemming
+      { source: '/blog/eindredactionele-check-outreach-e-mails-en-gastblog-concepte', destination: '/blog', permanent: true },
+      { source: '/blog/seo-optimalisatie-structured-data-meta-amp-interne-links-vo', destination: '/kennisbank/ai-consulent-sociaal-domein', permanent: true },
     ];
   },
 

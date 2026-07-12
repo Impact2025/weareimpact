@@ -1,24 +1,59 @@
 ---
-title: "AI-proof organisatie worden in 90 dagen: stappenplan"
-slug: "ai-proof-organisatie-90-dagen"
-excerpt: "AI-proof organisatie worden in 90 dagen? Stappenplan met 3 fases: bewustwording, voorbereiding en implementatie. Geschreven door een AI consultant."
-category_slug: "ai-tech"
-tags: [AI, AI-proof, organisatie, implementatie, stappenplan, 90-dagen]
-seo_title: "AI-proof organisatie worden in 90 dagen | Stappenplan"
-seo_description: "AI-proof organisatie worden in 90 dagen? Stappenplan met 3 fases: bewustwording, voorbereiding en implementatie. Praktisch en resultaatgericht."
-seo_keywords: [ai-proof organisatie, ai stappenplan 90 dagen, ai-ready worden welzijn, ai implementatie voorbereiding]
-reading_time: 8
-difficulty: "beginner"
-header_color: "orange"
-status: "published"
-published_at: "2026-06-28T00:00:00Z"
+title: 'AI-proof organisatie worden in 90 dagen: stappenplan'
+slug: ai-proof-organisatie-90-dagen
+excerpt: >-
+  AI-proof organisatie worden in 90 dagen? Stappenplan met 3 fases:
+  bewustwording, voorbereiding en implementatie. Geschreven door een AI
+  consultant.
+category_slug: ai-tech
+tags:
+  - AI
+  - AI-proof
+  - organisatie
+  - implementatie
+  - stappenplan
+  - 90-dagen
+seo_title: AI-proof organisatie worden in 90 dagen | Stappenplan
+seo_description: >-
+  AI-proof organisatie worden in 90 dagen? Stappenplan met 3 fases:
+  bewustwording, voorbereiding en implementatie. Praktisch en resultaatgericht.
+seo_keywords:
+  - ai-proof organisatie
+  - ai stappenplan 90 dagen
+  - ai-ready worden welzijn
+  - ai implementatie voorbereiding
+reading_time: 5
+difficulty: beginner
+header_color: orange
+status: published
+published_at: '2026-06-28T00:00:00Z'
 faq_items:
-  - question: "Kan elke organisatie in 90 dagen AI-proof worden, ook een kleine stichting?"
-    answer: "Ja. De 90 dagen gaan niet over de omvang van je organisatie, maar over de volgorde van stappen. Een kleine stichting doorloopt dezelfde drie fases, alleen met minder mensen aan tafel — vaak gaat dat zelfs sneller dan bij een grote organisatie met veel lagen."
-  - question: "Wat als de pilot in fase 3 mislukt?"
-    answer: "Dan heb je nog steeds gewonnen. Een pilot van 4-6 weken is bewust klein gehouden zodat een mislukking goedkoop is. Je leert wat niet werkt, stelt bij, en start een tweede pilot. De organisaties die falen zijn niet degenen wiens pilot mislukt, maar degenen die nooit een pilot durfden starten."
-  - question: "Moet ik eerst mijn hele IT-infrastructuur op orde hebben voordat ik begin?"
-    answer: "Nee. Dat is precies de valkuil die dit stappenplan probeert te voorkomen. Je hoeft geen perfect datalandschap te hebben om te starten — je hebt alleen één concreet proces nodig dat pijn doet en zich leent voor automatisering. De rest bouw je gaandeweg."
+  - question: >-
+      Kan elke organisatie in 90 dagen AI-proof worden, ook een kleine
+      stichting?
+    answer: >-
+      Ja. De 90 dagen gaan niet over de omvang van je organisatie, maar over de
+      volgorde van stappen. Een kleine stichting doorloopt dezelfde drie fases,
+      alleen met minder mensen aan tafel.
+  - question: Wat als de pilot in fase 3 mislukt?
+    answer: >-
+      Dan heb je nog steeds gewonnen. Een pilot van 4-6 weken is bewust klein
+      gehouden zodat een mislukking goedkoop is. Je leert wat niet werkt, stelt
+      bij, en start een tweede pilot.
+  - question: Moet ik eerst mijn hele IT-infrastructuur op orde hebben voordat ik begin?
+    answer: >-
+      Nee. Je hebt alleen één concreet proces nodig dat pijn doet en zich leent
+      voor automatisering. De rest bouw je gaandeweg.
+  - question: Wie moet er binnen de organisatie eigenaar zijn van het AI-traject?
+    answer: >-
+      Eén enthousiaste trekker met mandaat, bij voorkeur iemand die zowel de
+      werkvloer als de leiding kan bereiken. Zonder interne eigenaar valt een
+      traject stil zodra de externe begeleider vertrekt.
+  - question: Wat kost het om AI-proof te worden?
+    answer: >-
+      Een gemiddeld traject in het sociaal domein kost tussen €5.000 en €15.000,
+      plus doorlopende licentiekosten. De bespaarde uren verdienen die
+      investering in de meeste gevallen binnen het eerste jaar terug.
 ---
 
 Organisaties die AI-ready zijn, hebben **3x minder implementatieproblemen**. Niet omdat ze betere technologie hebben, maar omdat ze de randvoorwaarden op orde hebben: draagvlak in het team, heldere doelen, en een realistisch budget. AI-proof worden is geen kwestie van geluk, maar van voorbereiding.
@@ -30,6 +65,7 @@ Organisaties die AI-ready zijn, hebben **3x minder implementatieproblemen**. Nie
 1. [Fase 1: bewustwording (dag 1-30)](#fase-1)
 2. [Fase 2: voorbereiding (dag 31-60)](#fase-2)
 3. [Fase 3: implementatie (dag 61-90)](#fase-3)
+4. [De grootste valkuil: tool vóór probleem](#valkuil)
 4. [Wat als je organisatie geen 90 dagen de tijd heeft?](#versnellen)
 5. [Veelgestelde vragen](#faq)
 
@@ -67,15 +103,18 @@ Meet vanaf dag 1 van de pilot: hoeveel tijd kostte het proces vroeger, hoeveel t
 
 Soms is er haast — een subsidiedeadline, een bestuur dat morgen resultaat wil zien. In dat geval comprimeer ik de drie fases naar 4-6 weken door fase 1 en 2 gelijktijdig te laten lopen: terwijl de bewustwordingsgesprekken plaatsvinden, wordt alvast het budget en de AVG-kant geregeld. Het risico is dat je minder grondig bent, maar met een ervaren begeleider is dat te ondervangen.
 
-<blockquote>
-Wat neem je mee
-- AI-proof worden gaat over randvoorwaarden, niet over technologie
-- Praat met de werkvloer voordat je een tool kiest
-- Regel AVG en budget vóór je gaat implementeren
-- Eén pilot van 4-6 weken zegt meer dan een jaar plannen maken
-</blockquote>
+> **Wat neem je mee**
+>
+> - AI-proof worden gaat over randvoorwaarden, niet over technologie
+> - Praat met de werkvloer voordat je een tool kiest
+> - Regel AVG en budget vóór je gaat implementeren
+> - Eén pilot van 4-6 weken zegt meer dan een jaar plannen maken
 
 **Wil je weten of jouw organisatie AI-proof is?** Start met een [gratis AI-scan](/ai-scan) of download de [AI-proof checklist](/ai-proof-checklist).
+
+## De grootste valkuil: tool vóór probleem {#valkuil}
+
+De meest voorkomende reden dat AI-trajecten stranden, is dat organisaties beginnen bij de tool in plaats van bij het probleem. Iemand ziet een indrukwekkende demo, koopt de licentie, en gaat pas daarna op zoek naar een toepassing. Dat is de omgekeerde volgorde. Begin altijd bij een concreet, pijnlijk proces — de rapportage die dubbel wordt ingevoerd, de intake die te lang duurt — en zoek dáár de tool bij. Een oplossing die een echt probleem wegneemt, verkoopt zichzelf; een tool op zoek naar een probleem kost alleen maar geld en goodwill.
 
 ## Veelgestelde vragen {#faq}
 

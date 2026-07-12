@@ -51,6 +51,20 @@ interface Post {
   author_name: string;
   reading_time: number;
   published_at: string;
+  seo_title: string | null;
+  seo_description: string | null;
+}
+
+// Decode common HTML entities so meta tags render clean text in the SERP
+function decodeEntities(input: string): string {
+  return (input || '')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#0?39;|&apos;/g, "'")
+    .replace(/&nbsp;/g, ' ')
+    .trim();
 }
 
 const categoryColors: Record<string, string> = {
@@ -124,7 +138,8 @@ async function getPost(slug: string): Promise<Post | null> {
     const posts = await sql`
       SELECT id, title, slug, excerpt, content, cover_image, cover_image_alt,
              header_type, header_color, header_title,
-             category, tags, author_name, reading_time, published_at
+             category, tags, author_name, reading_time, published_at,
+             seo_title, seo_description
       FROM posts
       WHERE slug = ${slug} AND status = 'published'
       LIMIT 1
@@ -167,15 +182,19 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         : `${siteUrl}${post.cover_image.startsWith('/') ? '' : '/'}${post.cover_image}`)
     : undefined;
 
+  // Prefer the curated SEO title/description; fall back to the on-page title/excerpt.
+  const metaTitle = decodeEntities(post.seo_title || post.title);
+  const metaDescription = decodeEntities(post.seo_description || post.excerpt);
+
   return {
-    title: post.title,
-    description: post.excerpt,
+    title: metaTitle,
+    description: metaDescription,
     alternates: {
       canonical: `/blog/${slug}`,
     },
     openGraph: {
-      title: post.title,
-      description: post.excerpt,
+      title: metaTitle,
+      description: metaDescription,
       type: 'article',
       url: `https://weareimpact.nl/blog/${slug}`,
       publishedTime: post.published_at,
@@ -184,8 +203,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     },
     twitter: {
       card: 'summary_large_image',
-      title: post.title,
-      description: post.excerpt,
+      title: metaTitle,
+      description: metaDescription,
       images: ogImageUrl ? [ogImageUrl] : [],
     },
   };

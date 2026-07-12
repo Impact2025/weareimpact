@@ -1,29 +1,59 @@
 ---
-title: "Subsidie voor AI in welzijn: welke potjes zijn er in 2026?"
-slug: "subsidie-ai-implementatie-welzijn-2026"
-excerpt: "AI implementeren kost geld, maar er zijn meer subsidiepotjes dan je denkt. Dit artikel geeft een actueel overzicht van subsidies voor AI in welzijn, zorg en het sociaal domein in 2026."
-category_slug: "subsidie-funding"
-tags: [subsidie, AI, welzijn, implementatie, funding, sociaal-domein]
-seo_title: "Subsidie AI Implementatie Welzijn 2026 | Welke Potjes Zijn Er?"
-seo_description: "Bekijk alle subsidies voor AI-implementatie in welzijn, zorg en sociaal domein in 2026. Van EU AI Act-gelden tot provinciale innovatiepotjes. Actueel en praktisch."
+title: 'Subsidie voor AI in welzijn: welke potjes zijn er in 2026?'
+slug: subsidie-ai-implementatie-welzijn-2026
+excerpt: >-
+  AI implementeren kost geld, maar er zijn meer subsidiepotjes dan je denkt. Dit
+  artikel geeft een actueel overzicht van subsidies voor AI in welzijn, zorg en
+  het sociaal domein in 2026.
+category_slug: subsidie-funding
+tags:
+  - subsidie
+  - AI
+  - welzijn
+  - implementatie
+  - funding
+  - sociaal-domein
+seo_title: Subsidie AI Implementatie Welzijn 2026 | Welke Potjes Zijn Er?
+seo_description: >-
+  Bekijk alle subsidies voor AI-implementatie in welzijn, zorg en sociaal domein
+  in 2026. Van EU AI Act-gelden tot provinciale innovatiepotjes. Actueel en
+  praktisch.
 seo_keywords:
   - subsidie ai implementatie welzijn
   - subsidie ai welzijnsorganisatie 2026
   - subsidie sociaal domein ai
-difficulty: "beginner"
-header_color: "slate"
-status: "published"
-reading_time: 5
-published_at: "2026-06-25T00:00:00Z"
+difficulty: beginner
+header_color: slate
+status: published
+reading_time: 6
+published_at: '2026-06-25T00:00:00Z'
 faq_items:
-  - question: "Welke subsidie is het meest kansrijk voor een kleine welzijnsorganisatie?"
-    answer: "Kijk eerst provinciaal en gemeentelijk — die potjes zijn laagdrempeliger en sneller rond dan Europese regelingen. Denk aan een gemeentelijk digitaliseringsbudget waar je met een plan van één A4'tje al aanspraak op kunt maken."
-  - question: "Kan ik als kleine stichting ook aanspraak maken op de EU AI Act-subsidie?"
-    answer: "Ja. De EU AI Act-implementatiesubsidie is niet alleen voor techbedrijven — ook zorginstellingen, welzijnsstichtingen en sociale ondernemingen komen in aanmerking voor AI-audits, implementatiebegeleiding en training."
-  - question: "Wat is de grootste valkuil bij een subsidieaanvraag voor AI?"
-    answer: "Schrijven in techniek in plaats van impact. Subsidiecommissies willen weten wat AI oplevert voor mensen — minder eenzaamheid, snellere hulp, effectievere vrijwilligers — niet welk algoritme je gebruikt."
+  - question: Welke subsidie is het meest kansrijk voor een kleine welzijnsorganisatie?
+    answer: >-
+      Kijk eerst provinciaal en gemeentelijk — die potjes zijn laagdrempeliger
+      en sneller rond dan Europese regelingen. Vaak kun je met een plan van één
+      A4tje al aanspraak maken op een gemeentelijk digitaliseringsbudget.
+  - question: Kan ik als kleine stichting ook aanspraak maken op de EU AI Act-subsidie?
+    answer: >-
+      Ja. De regeling is niet alleen voor techbedrijven — ook zorginstellingen,
+      welzijnsstichtingen en sociale ondernemingen komen in aanmerking voor
+      AI-audits, implementatiebegeleiding en training.
+  - question: Wat is de grootste valkuil bij een subsidieaanvraag voor AI?
+    answer: >-
+      Schrijven in techniek in plaats van impact. Subsidiecommissies willen
+      weten wat AI oplevert voor mensen — minder eenzaamheid, snellere hulp,
+      effectievere vrijwilligers — niet welk algoritme je gebruikt.
+  - question: Hoe lang duurt het voordat ik het geld heb?
+    answer: >-
+      Reken van oriëntatie tot toekenning al snel op twee tot vier maanden bij
+      grotere fondsen; lokale potjes zijn vaak sneller. Begin dus ruim op tijd.
+  - question: Financiert subsidie ook de structurele kosten?
+    answer: >-
+      Zelden. Subsidie dekt meestal een pilot of tijdelijk project. Regel daarom
+      vanaf het begin hoe je de werkwijze daarna in je reguliere begroting
+      borgt.
 author_name: Vincent van Munster
-author_title: "Strategic Innovation Partner, WeAreImpact"
+author_title: 'Strategic Innovation Partner, WeAreImpact'
 ---
 
 > "Impact maken met AI in het sociaal domein gaat niet over technologie. Het gaat over eenzaamheid verminderen, mensen sneller bij de juiste hulp brengen, en vrijwilligers effectiever inzetten. Subsidieverstrekkers willen dat horen — niet welke algoritme je gebruikt. Vertaal technologie naar menselijke impact."
@@ -60,11 +90,44 @@ Op basis van tientallen aanvragen — zowel als directeur als adviseur — deel 
 4. **Onderbouw met cijfers.** Gebruik de [impact calculator](/impact-calculator) om concrete ROI te laten zien.
 5. **Laat je coachen.** Organisaties die met een ervaren [interim-manager](/interim) of consultant werken, hebben een significant hoger slagingspercentage.
 
----
+## Het aanvraagproces stap voor stap
+
+Veel organisaties onderschatten hoeveel doorlooptijd een aanvraag kost. Reken op vier fasen:
+
+1. **Oriëntatie (1-2 weken)** — breng in kaart welke potjes bij jouw plan passen. Begin dichtbij: gemeentelijk en provinciaal geld is sneller rond dan Europees.
+2. **Onderbouwing (1-3 weken)** — vertaal je idee naar een meetbaar resultaat, een realistische begroting en een AVG-paragraaf. Dit is waar de meeste tijd in gaat zitten.
+3. **Indiening en beoordeling (4-12 weken)** — afhankelijk van het fonds. Houd rekening met vaste indiendata bij grotere regelingen.
+4. **Toekenning en start** — pas na de beschikking begint het echte werk.
+
+Begin dus ruim voor je het geld nodig hebt. Een aanvraag die je in de laatste week in elkaar zet, is aan alles te herkennen.
+
+## Na de toekenning: van pilot naar structureel
+
+De grootste valkuil komt ná de toekenning. Subsidiegeld financiert vrijwel altijd een pilot of een tijdelijk project — niet de structurele voortzetting. Wie de dag na de eindrapportage geen plan heeft voor structurele financiering, ziet de opgebouwde kennis verdampen. Denk dus vanaf dag één na over de vervolgvraag: hoe borg je deze werkwijze in je reguliere begroting, en welke besparing of opbrengst rechtvaardigt dat? Zo wordt een eenmalige subsidie een blijvende verandering in plaats van een kortstondig experiment.
+
+> **Wat neem je mee**
+>
+> - Het geld is er wel; het probleem is weten waar het zit en hoe je het aanvraagt
+> - Kijk verder dan Europese potjes: provinciaal en gemeentelijk geld is laagdrempeliger en sneller
+> - Schrijf in menselijke impact, toon dat het AVG-proof is en onderbouw met cijfers
+> - Reken op weken doorlooptijd — begin ruim voor je het geld nodig hebt
+> - Regel de structurele financiering al vóór de subsidie afloopt
 
 ## Hulp nodig?
 
 **Wil je hulp bij je subsidieaanvraag?** Neem contact op via [WeAreImpact.nl](https://weareimpact.nl) — we helpen je de juiste pot te vinden en je aanvraag waterdicht te maken. Of bereken eerst je impact met de [impact calculator](/impact-calculator).
+
+## Veelgestelde vragen
+
+**Welke subsidie is het meest kansrijk voor een kleine welzijnsorganisatie?** Kijk eerst provinciaal en gemeentelijk — die potjes zijn laagdrempeliger en sneller rond dan Europese regelingen. Vaak kun je met een plan van één A4'tje al aanspraak maken op een gemeentelijk digitaliseringsbudget.
+
+**Kan ik als kleine stichting ook aanspraak maken op de EU AI Act-subsidie?** Ja. De regeling is niet alleen voor techbedrijven — ook zorginstellingen, welzijnsstichtingen en sociale ondernemingen komen in aanmerking voor AI-audits, implementatiebegeleiding en training.
+
+**Wat is de grootste valkuil bij een subsidieaanvraag voor AI?** Schrijven in techniek in plaats van impact. Subsidiecommissies willen weten wat AI oplevert voor mensen — minder eenzaamheid, snellere hulp, effectievere vrijwilligers — niet welk algoritme je gebruikt.
+
+**Hoe lang duurt het voordat ik het geld heb?** Reken van oriëntatie tot toekenning al snel op twee tot vier maanden bij grotere fondsen; lokale potjes zijn vaak sneller. Begin dus ruim op tijd.
+
+**Financiert subsidie ook de structurele kosten?** Zelden. Subsidie dekt meestal een pilot of tijdelijk project. Regel daarom vanaf het begin hoe je de werkwijze daarna in je reguliere begroting borgt.
 
 ## Gerelateerde artikelen
 
@@ -72,7 +135,5 @@ Op basis van tientallen aanvragen — zowel als directeur als adviseur — deel 
 - [De business case voor AI in het sociaal domein](/kennisbank/business-case-ai-sociaal-domein)
 - [Van subsidie naar structurele financiering](/kennisbank/subsidie-naar-structurele-financiering)
 - [Subsidie aanvragen zonder bureaucratie](/kennisbank/subsidie-aanvragen-zonder-bureaucratie-stappenplan)
-
----
 
 *Dit artikel is geschreven door Vincent van Munster, Strategic Innovation Partner bij WeAreImpact. Oud-directeur van Stichting de Baan, nu AI-consulent voor welzijnsorganisaties en gemeenten in het sociaal domein.*

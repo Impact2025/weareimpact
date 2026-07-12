@@ -254,21 +254,44 @@ async function getArticle(slug: string): Promise<Article | null> {
 }
 
 async function getRelatedArticles(category: string, currentSlug: string): Promise<RelatedArticle[]> {
+  // DB-driven (was filesystem, which went stale vs. the DB). Ordered by views ASC
+  // so every article links to the LEAST-seen siblings in its category — this
+  // routes internal link equity from popular pages to orphan pages, instead of
+  // repeatedly promoting the same top articles everywhere.
+  try {
+    const rows = await sql`
+      SELECT id, title, slug, category_slug, reading_time, difficulty
+      FROM kb_articles
+      WHERE category_slug = ${category}
+        AND slug <> ${currentSlug}
+        AND status = 'published'
+      ORDER BY views ASC NULLS FIRST, published_at DESC
+      LIMIT 3
+    `;
+    if (rows.length > 0) {
+      return rows.map((r) => ({
+        id: r.id as string,
+        title: (r.title as string) || r.slug as string,
+        slug: r.slug as string,
+        category_slug: (r.category_slug as string) || 'algemeen',
+        reading_time: (r.reading_time as number) || 5,
+        difficulty: (r.difficulty as string) || 'beginner',
+      }));
+    }
+  } catch (error) {
+    console.error('Error fetching related articles from DB:', error);
+  }
+
+  // Fallback: markdown files (only reached if the DB is unavailable)
   try {
     const kennisbankDir = path.join(process.cwd(), 'content', 'kennisbank');
-
-    if (!fs.existsSync(kennisbankDir)) {
-      return [];
-    }
+    if (!fs.existsSync(kennisbankDir)) return [];
 
     const files = fs.readdirSync(kennisbankDir).filter(file => file.endsWith('.md'));
     const related: RelatedArticle[] = [];
 
     for (const file of files) {
-      const filePath = path.join(kennisbankDir, file);
-      const fileContents = fs.readFileSync(filePath, 'utf8');
-      const { data } = matter(fileContents);
-
+      const { data } = matter(fs.readFileSync(path.join(kennisbankDir, file), 'utf8'));
       if (data.category_slug === category && data.slug !== currentSlug) {
         related.push({
           id: `kb-${data.slug}`,
@@ -279,13 +302,11 @@ async function getRelatedArticles(category: string, currentSlug: string): Promis
           difficulty: data.difficulty || 'beginner',
         });
       }
-
       if (related.length >= 3) break;
     }
-
     return related;
   } catch (error) {
-    console.error('Error fetching related articles:', error);
+    console.error('Error fetching related articles from markdown:', error);
     return [];
   }
 }

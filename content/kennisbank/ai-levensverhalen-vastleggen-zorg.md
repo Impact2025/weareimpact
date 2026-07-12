@@ -1,24 +1,58 @@
 ---
-title: "Hoe AI helpt bij het vastleggen van levensverhalen in de zorg"
+title: Hoe AI helpt bij het vastleggen van levensverhalen in de zorg
 slug: ai-levensverhalen-vastleggen-zorg
-excerpt: "Ontdek hoe AI-interviews worden ingezet om levensverhalen van ouderen en zorgvragers vast te leggen. Persoonlijke aandacht op schaal, zonder dat het onpersoonlijk wordt."
-category_slug: "ai-tech"
-tags: ["AI", "levensverhalen", "zorg", "welzijn", "ouderen", "herinneringen"]
-seo_title: "AI voor levensverhalen in de zorg: persoonlijk blijven op schaal | WeAreImpact"
-seo_description: "Levensverhalen vastleggen met AI: hoe technologie zorgvragers helpt hun verhaal te delen, zonder dat het ten koste gaat van warmte en persoonlijke aandacht."
-seo_keywords: [ai levensverhalen vastleggen, ai zorg ouderen, reminiscentie ai, levensverhaal ouderen digitaal]
-reading_time: 7
-difficulty: "beginner"
-header_color: "orange"
-status: "published"
-published_at: "2026-06-27"
+excerpt: >-
+  Ontdek hoe AI-interviews worden ingezet om levensverhalen van ouderen en
+  zorgvragers vast te leggen. Persoonlijke aandacht op schaal, zonder dat het
+  onpersoonlijk wordt.
+category_slug: ai-tech
+tags:
+  - AI
+  - levensverhalen
+  - zorg
+  - welzijn
+  - ouderen
+  - herinneringen
+seo_title: 'AI voor levensverhalen in de zorg: persoonlijk blijven op schaal | WeAreImpact'
+seo_description: >-
+  Levensverhalen vastleggen met AI: hoe technologie zorgvragers helpt hun
+  verhaal te delen, zonder dat het ten koste gaat van warmte en persoonlijke
+  aandacht.
+seo_keywords:
+  - ai levensverhalen vastleggen
+  - ai zorg ouderen
+  - reminiscentie ai
+  - levensverhaal ouderen digitaal
+reading_time: 4
+difficulty: beginner
+header_color: orange
+status: published
+published_at: '2026-06-27'
 faq_items:
-  - question: "Vervangt een AI-interview het persoonlijke gesprek met een zorgverlener?"
-    answer: "Nee. Een AI-interview is een aanvulling, geen vervanging. Het legt vast wat er anders vaak nooit wordt vastgelegd door tijdgebrek. De zorgverlener gebruikt het resultaat juist om het persoonlijke gesprek te verdiepen, niet om het te vervangen."
-  - question: "Is het vastleggen van levensverhalen met AI veilig voor privacygevoelige informatie?"
-    answer: "Kies altijd een platform met Nederlandse of EU-servers en een duidelijke verwerkersovereenkomst, zeker als er gevoelige gezondheids- of familie-informatie in de verhalen voorkomt. Vraag expliciet na hoe lang data bewaard wordt en wie er toegang toe heeft."
-  - question: "Werkt dit ook voor mensen met beginnende dementie?"
-    answer: "Ja, vaak juist goed — reminiscentie (het ophalen van oude herinneringen) blijft bij beginnende dementie langer toegankelijk dan recent geheugen. Kies wel voor korte sessies en laat een naaste of begeleider aanwezig zijn om context te geven waar nodig."
+  - question: Vervangt een AI-interview het persoonlijke gesprek met een zorgverlener?
+    answer: >-
+      Nee, het is een aanvulling die de zorgverlener helpt het persoonlijke
+      gesprek te verdiepen.
+  - question: >-
+      Is het vastleggen van levensverhalen met AI veilig voor privacygevoelige
+      informatie?
+    answer: >-
+      Kies een platform met Nederlandse of EU-servers en een duidelijke
+      verwerkersovereenkomst.
+  - question: Werkt dit ook voor mensen met beginnende dementie?
+    answer: >-
+      Ja, vaak juist goed — reminiscentie blijft langer toegankelijk dan recent
+      geheugen, mits in korte sessies met begeleiding.
+  - question: Wat kost het om levensverhalen met AI vast te leggen?
+    answer: >-
+      Dat hangt af van het platform en de schaal. Veel oplossingen werken met
+      een abonnement per gebruiker of per verhaal; begin met een kleine pilot
+      zodat je de waarde kunt aantonen voordat je opschaalt.
+  - question: Wie is eigenaar van het vastgelegde verhaal?
+    answer: >-
+      Leg dat vooraf vast. In de regel is het verhaal eigendom van de cliënt en
+      de familie, niet van de zorgorganisatie of het platform. Controleer dit
+      expliciet in de verwerkersovereenkomst.
 ---
 
 In de welzijns- en zorgsector zie ik steeds vaker dat **levensverhalen centraal komen te staan** in de begeleiding van cliënten. Het vastleggen van iemands geschiedenis is niet alleen waardevol voor familie — het helpt zorgverleners om écht te begrijpen wie er tegenover hen zit.
@@ -65,15 +99,28 @@ Steeds meer organisaties helpen cliënten met het regelen van hun **digitale nal
 
 AI is geen vervanging van menselijk contact — het is een middel om **meer ruimte te maken voor persoonlijke aandacht**. Door het vastleggen van levensverhalen te automatiseren, houden zorgverleners tijd over voor wat er echt toe doet: er zijn voor de mens achter de cliënt.
 
-<blockquote>
-Wat neem je mee
-- Levensverhalen vastleggen versterkt het gevoel van eigenwaarde en vermindert eenzaamheid
-- AI kan geduldig en empathisch doorvragen, zonder haast of oordeel
-- Audio werkt vaak beter dan typen, zeker bij oudere cliënten
-- Kies altijd een AVG-proof platform met Nederlandse of EU-servers
-</blockquote>
+> **Wat neem je mee**
+>
+> - Levensverhalen vastleggen versterkt het gevoel van eigenwaarde en vermindert eenzaamheid
+> - AI kan geduldig en empathisch doorvragen, zonder haast of oordeel
+> - Audio werkt vaak beter dan typen, zeker bij oudere cliënten
+> - Kies altijd een AVG-proof platform met Nederlandse of EU-servers
 
 Wil je meer weten over hoe AI levensverhalen kan vastleggen in jouw organisatie? Neem contact op via [WeAreImpact.nl](https://weareimpact.nl/vincent-van-munster) voor een strategische verkenning.
+
+## De grenzen van AI: waar de mens onmisbaar blijft {#grenzen}
+
+AI kan geduldig doorvragen en verhalen vastleggen, maar het vervangt de mens niet. Een AI voelt geen emotie aan zoals een zorgverlener dat doet, herkent geen subtiel verdriet achter een luchtig antwoord, en weet niet wanneer het beter is om even te zwijgen. Gebruik AI daarom voor wat het goed kan — structureren, doorvragen, vastleggen — en laat de betekenisvolle momenten aan mensen. De mooiste resultaten ontstaan als de AI het voorwerk doet en de zorgverlener het gesprek verdiept.
+
+## Zo start je in je organisatie {#starten}
+
+Wil je hiermee beginnen, houd het dan klein en concreet:
+
+1. **Kies één doelgroep** — bijvoorbeeld bewoners van één afdeling of een groep mantelzorgers.
+2. **Kies een AVG-proof platform** met Nederlandse of EU-servers en een heldere verwerkersovereenkomst.
+3. **Begin met een korte pilot** van enkele weken en één vraag per week.
+4. **Betrek familie en begeleiders** — zij geven context en zorgen dat het verhaal klopt.
+5. **Evalueer op waarde, niet op volume** — één verhaal dat een familie raakt, zegt meer dan tien half afgemaakte.
 
 ## Veelgestelde vragen {#faq}
 
