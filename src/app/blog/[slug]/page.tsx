@@ -54,6 +54,7 @@ interface Post {
   published_at: string;
   seo_title: string | null;
   seo_description: string | null;
+  updated_at: string | null;
   audio_url: string | null;
   audio_title: string | null;
   audio_duration: number | null;
@@ -144,7 +145,7 @@ async function getPost(slug: string): Promise<Post | null> {
       SELECT id, title, slug, excerpt, content, cover_image, cover_image_alt,
              header_type, header_color, header_title,
              category, tags, author_name, reading_time, published_at,
-             seo_title, seo_description,
+             seo_title, seo_description, updated_at,
              audio_url, audio_title, audio_duration, transcript
       FROM posts
       WHERE slug = ${slug} AND status = 'published'
@@ -226,6 +227,15 @@ export default async function BlogPostPage({ params }: Props) {
 
   const relatedKennisbank = await getRelatedKennisbankArticles(post.category);
 
+  // Absolute image URL for the Article schema (falls back to the OG image endpoint
+  // for color-header posts that have no cover image).
+  const siteUrl = 'https://weareimpact.nl';
+  const articleImageUrl = post.cover_image
+    ? (post.cover_image.startsWith('http')
+        ? post.cover_image
+        : `${siteUrl}${post.cover_image.startsWith('/') ? '' : '/'}${post.cover_image}`)
+    : `${siteUrl}/blog/${post.slug}/opengraph-image`;
+
   const breadcrumbItems = [
     { name: 'Home', url: '/' },
     { name: 'Blog', url: '/blog' },
@@ -240,10 +250,12 @@ export default async function BlogPostPage({ params }: Props) {
           description: post.excerpt,
           slug: post.slug,
           publishedAt: post.published_at,
+          modifiedAt: post.updated_at || undefined,
           authorName: post.author_name || 'Vincent van Munster',
           category: post.category,
           tags: post.tags,
           readingTime: post.reading_time,
+          imageUrl: articleImageUrl,
           audioUrl: post.audio_url,
           audioDuration: post.audio_duration,
           hasTranscript: Boolean(post.transcript),

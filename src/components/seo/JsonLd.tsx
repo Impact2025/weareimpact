@@ -205,6 +205,7 @@ export function generateArticleSchema(article: {
   category?: string;
   tags?: string[];
   readingTime?: number;
+  imageUrl?: string | null;
   audioUrl?: string | null;
   audioDuration?: number | null;
   hasTranscript?: boolean;
@@ -239,6 +240,7 @@ export function generateArticleSchema(article: {
     url: `${BASE_URL}/blog/${article.slug}`,
     datePublished: article.publishedAt,
     dateModified: article.modifiedAt || article.publishedAt,
+    ...(article.imageUrl && { image: article.imageUrl }),
     author: {
       '@type': 'Person',
       '@id': `${BASE_URL}/#person`,
