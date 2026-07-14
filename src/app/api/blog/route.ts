@@ -24,6 +24,7 @@ export async function GET(request: NextRequest) {
         SELECT id, title, slug, excerpt, content, cover_image, cover_image_alt, category, tags,
                status, author_name, reading_time, views, seo_title, seo_description,
                header_type, header_color, header_title,
+               audio_url, audio_title, audio_duration, transcript,
                published_at, created_at, updated_at
         FROM posts
         WHERE id = ${id}
@@ -82,6 +83,10 @@ export async function GET(request: NextRequest) {
       headerType: post.header_type,
       headerColor: post.header_color,
       headerTitle: post.header_title,
+      audioUrl: post.audio_url,
+      audioTitle: post.audio_title,
+      audioDuration: post.audio_duration,
+      transcript: post.transcript,
       publishedAt: post.published_at,
       createdAt: post.created_at,
       updatedAt: post.updated_at,
@@ -118,6 +123,10 @@ export async function POST(request: NextRequest) {
       headerType,
       headerColor,
       headerTitle,
+      audioUrl,
+      audioTitle,
+      audioDuration,
+      transcript,
       published,
       publishedAt: customPublishedAt,
       seoTitle,
@@ -151,12 +160,14 @@ export async function POST(request: NextRequest) {
       INSERT INTO posts (
         title, slug, excerpt, content, cover_image, cover_image_alt, category, tags,
         status, reading_time, seo_title, seo_description, published_at,
-        header_type, header_color, header_title
+        header_type, header_color, header_title,
+        audio_url, audio_title, audio_duration, transcript
       ) VALUES (
         ${title}, ${slug}, ${excerpt || ''}, ${content}, ${coverImage || null}, ${coverImageAlt || null},
         ${category}, ${tagArray}, ${status}, ${readingTime},
         ${seoTitle || title}, ${seoDescription || excerpt || ''}, ${publishedAt},
-        ${headerType || 'image'}, ${headerColor || 'orange'}, ${headerTitle || null}
+        ${headerType || 'image'}, ${headerColor || 'orange'}, ${headerTitle || null},
+        ${audioUrl || null}, ${audioTitle || null}, ${audioDuration || null}, ${transcript || null}
       )
       RETURNING id, title, slug, category, status, reading_time
     `;
@@ -245,6 +256,10 @@ export async function PUT(request: NextRequest) {
         header_type = COALESCE(${updates.headerType}, header_type),
         header_color = COALESCE(${updates.headerColor}, header_color),
         header_title = COALESCE(${updates.headerTitle}, header_title),
+        audio_url = COALESCE(${updates.audioUrl}, audio_url),
+        audio_title = COALESCE(${updates.audioTitle}, audio_title),
+        audio_duration = COALESCE(${updates.audioDuration}, audio_duration),
+        transcript = COALESCE(${updates.transcript}, transcript),
         published_at = CASE
           WHEN ${publishedAtValue}::timestamp IS NOT NULL THEN ${publishedAtValue}::timestamp
           WHEN ${updates.status} = 'published' AND published_at IS NULL THEN NOW()

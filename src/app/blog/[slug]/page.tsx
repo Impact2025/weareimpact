@@ -10,6 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ArticleJsonLd, BreadcrumbJsonLd } from '@/components/seo/JsonLd';
 import { ViewTracker } from '@/components/features/ViewTracker';
+import { PodcastPlayer } from '@/components/blog/PodcastPlayer';
 import type { Metadata } from 'next';
 import parse from 'html-react-parser';
 import { marked } from 'marked';
@@ -53,6 +54,10 @@ interface Post {
   published_at: string;
   seo_title: string | null;
   seo_description: string | null;
+  audio_url: string | null;
+  audio_title: string | null;
+  audio_duration: number | null;
+  transcript: string | null;
 }
 
 // Decode common HTML entities so meta tags render clean text in the SERP
@@ -139,7 +144,8 @@ async function getPost(slug: string): Promise<Post | null> {
       SELECT id, title, slug, excerpt, content, cover_image, cover_image_alt,
              header_type, header_color, header_title,
              category, tags, author_name, reading_time, published_at,
-             seo_title, seo_description
+             seo_title, seo_description,
+             audio_url, audio_title, audio_duration, transcript
       FROM posts
       WHERE slug = ${slug} AND status = 'published'
       LIMIT 1
@@ -238,6 +244,9 @@ export default async function BlogPostPage({ params }: Props) {
           category: post.category,
           tags: post.tags,
           readingTime: post.reading_time,
+          audioUrl: post.audio_url,
+          audioDuration: post.audio_duration,
+          hasTranscript: Boolean(post.transcript),
         }}
       />
       <BreadcrumbJsonLd items={breadcrumbItems} />
@@ -333,6 +342,16 @@ export default async function BlogPostPage({ params }: Props) {
               />
             </div>
           </div>
+        )}
+
+        {/* Podcast player (if this article has an audio episode) */}
+        {post.audio_url && (
+          <PodcastPlayer
+            audioUrl={post.audio_url}
+            title={post.audio_title}
+            durationSeconds={post.audio_duration}
+            transcript={post.transcript}
+          />
         )}
 
         {/* Content */}

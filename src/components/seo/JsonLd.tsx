@@ -205,7 +205,31 @@ export function generateArticleSchema(article: {
   category?: string;
   tags?: string[];
   readingTime?: number;
+  audioUrl?: string | null;
+  audioDuration?: number | null;
+  hasTranscript?: boolean;
 }) {
+  // schema.org AudioObject for the podcast episode (if present).
+  const audioObject = article.audioUrl
+    ? {
+        associatedMedia: {
+          '@type': 'AudioObject',
+          contentUrl: article.audioUrl,
+          encodingFormat: 'audio/mp4',
+          name: article.title,
+          description: article.description,
+          ...(article.audioDuration
+            ? { duration: `PT${Math.round(article.audioDuration)}S` }
+            : {}),
+        },
+        // Lets voice assistants (Google Assistant) read the article aloud.
+        speakable: {
+          '@type': 'SpeakableSpecification',
+          cssSelector: ['h1', '.prose'],
+        },
+      }
+    : {};
+
   return {
     '@context': 'https://schema.org',
     '@type': 'Article',
@@ -236,6 +260,7 @@ export function generateArticleSchema(article: {
     ...(article.category && { articleSection: article.category }),
     ...(article.tags && { keywords: article.tags.join(', ') }),
     ...(article.readingTime && { timeRequired: `PT${article.readingTime}M` }),
+    ...audioObject,
   };
 }
 
