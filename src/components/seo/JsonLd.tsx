@@ -245,6 +245,7 @@ export function generateArticleSchema(article: {
       '@type': 'Person',
       '@id': `${BASE_URL}/#person`,
       name: article.authorName || 'Vincent van Munster',
+      url: BASE_URL,
     },
     publisher: {
       '@type': 'Organization',
