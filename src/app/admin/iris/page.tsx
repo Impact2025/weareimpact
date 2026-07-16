@@ -16,6 +16,7 @@ import {
   TrendingUp
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { speakAsIris } from '@/lib/speech';
 
 // Web Speech API types
 interface SpeechRecognitionEvent {
@@ -126,23 +127,10 @@ export default function IrisAdminPage() {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  // Text-to-speech for Iris responses
+  // Text-to-speech for Iris responses (shared helper forces a female Dutch voice)
   const speakText = useCallback((text: string) => {
-    if (!speakEnabled || !window.speechSynthesis) return;
-
-    window.speechSynthesis.cancel();
-
-    // Remove markdown formatting
-    const cleanText = text
-      .replace(/\*\*(.*?)\*\*/g, '$1')
-      .replace(/\n/g, '. ')
-      .replace(/- /g, '');
-
-    const utterance = new SpeechSynthesisUtterance(cleanText);
-    utterance.lang = 'nl-NL';
-    utterance.rate = 1.1;
-    utterance.pitch = 1.0;
-    window.speechSynthesis.speak(utterance);
+    if (!speakEnabled) return;
+    speakAsIris(text);
   }, [speakEnabled]);
 
   const toggleListening = () => {
