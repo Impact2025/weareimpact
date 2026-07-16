@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { Mic, MicOff, X, Send, Sparkles, Volume2, VolumeX } from 'lucide-react';
 import { haptic } from '@/hooks/useHaptic';
+import { speakAsIris } from '@/lib/speech';
 import { createPortal } from 'react-dom';
 
 interface SpeechRecognitionEvent {
@@ -115,22 +116,10 @@ export default function IrisVoiceButton() {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  // Text-to-speech
+  // Text-to-speech (uses shared helper that forces a female Dutch voice)
   const speakText = useCallback((text: string) => {
-    if (!speakEnabled || !window.speechSynthesis) return;
-
-    window.speechSynthesis.cancel();
-
-    const cleanText = text
-      .replace(/\*\*(.*?)\*\*/g, '$1')
-      .replace(/\n/g, '. ')
-      .replace(/- /g, '');
-
-    const utterance = new SpeechSynthesisUtterance(cleanText);
-    utterance.lang = 'nl-NL';
-    utterance.rate = 1.1;
-    utterance.pitch = 1.0;
-    window.speechSynthesis.speak(utterance);
+    if (!speakEnabled) return;
+    speakAsIris(text);
   }, [speakEnabled]);
 
   const toggleListening = () => {
