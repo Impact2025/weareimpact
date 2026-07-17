@@ -26,7 +26,7 @@ export function ScannerSection() {
               Wat levert AI jouw organisatie concreet op?
             </h2>
             <p className="text-slate-400 text-lg mb-8 leading-relaxed">
-              Doe de gratis scan en ontdek in vijf minuten waar AI bij jouw
+              Doe de gratis scan en ontdek in twee minuten waar AI bij jouw
               organisatie écht waarde toevoegt. Geen buzzwords, maar
               strategisch advies afgestemd op jouw sector.
             </p>

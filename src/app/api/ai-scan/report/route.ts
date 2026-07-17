@@ -4,10 +4,9 @@ import { sendEmail } from '@/lib/email/send';
 import { generateScanReportEmail } from '@/lib/email/templates/scan-report';
 import { rateLimit, getClientIp } from '@/lib/rate-limit';
 import {
-  VALID_SECTORS,
-  VALID_CHALLENGES,
+  VALID_AI_USAGE,
   SECTOR_NAMES,
-  CHALLENGE_LABELS,
+  getChallenge,
 } from '@/lib/ai/scan-config';
 
 export const dynamic = 'force-dynamic';
@@ -16,6 +15,14 @@ const RATE_LIMIT = 5;
 const RATE_WINDOW_MS = 60 * 60 * 1000;
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+const escapeHtml = (s: string) =>
+  s
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
 
 export async function POST(request: NextRequest) {
   const ip = getClientIp(request);
@@ -29,51 +36,54 @@ export async function POST(request: NextRequest) {
 
   try {
     const body = await request.json();
-    const {
-      email,
-      naam,
-      organisatie,
-      sector,
-      challenge,
-      aiUsage,
-      advies,
-    } = body ?? {};
 
-    // Validatie
-    if (!email || typeof email !== 'string' || !EMAIL_RE.test(email)) {
+    // Validatie + normalisatie (lengte-limieten tegen misbruik)
+    const email = typeof body?.email === 'string' ? body.email.trim().slice(0, 254) : '';
+    if (!email || !EMAIL_RE.test(email)) {
       return NextResponse.json({ error: 'Ongeldig e-mailadres' }, { status: 400 });
     }
-    if (!VALID_SECTORS.includes(sector) || !VALID_CHALLENGES.includes(challenge)) {
+
+    const naam = typeof body?.naam === 'string' ? body.naam.trim().slice(0, 200) : '';
+    const organisatie =
+      typeof body?.organisatie === 'string' ? body.organisatie.trim().slice(0, 200) : '';
+    const sector = String(body?.sector ?? '');
+    const challenge = String(body?.challenge ?? '');
+
+    const challengeInfo = getChallenge(sector, challenge);
+    if (!challengeInfo) {
       return NextResponse.json({ error: 'Ongeldige scangegevens' }, { status: 400 });
     }
-    const adviceText = typeof advies === 'string' ? advies.slice(0, 4000) : '';
+
+    const aiUsage = VALID_AI_USAGE.includes(body?.aiUsage) ? body.aiUsage : 'onbekend';
+    const adviceText = typeof body?.advies === 'string' ? body.advies.slice(0, 4000) : '';
+    const leadIdInput =
+      typeof body?.leadId === 'string' && UUID_RE.test(body.leadId) ? body.leadId : null;
 
     const sectorName = SECTOR_NAMES[sector] || sector;
-    const challengeLabel = CHALLENGE_LABELS[challenge] || challenge;
+    const challengeLabel = challengeInfo.label;
 
-    // Koppel contactgegevens aan de meest recente anonieme lead met dezelfde
-    // sector+challenge (binnen 30 min), anders maak een nieuwe rij.
+    // Koppel contactgegevens aan de lead die /api/ai-scan aanmaakte (via het
+    // leadId dat de client uit de X-Scan-Lead-Id header haalde). Alleen een
+    // nog-anonieme lead met dezelfde sector+challenge is koppelbaar — zo kan
+    // een geraden/gerecycled id nooit andermans lead overschrijven.
     let leadId: string | null = null;
     try {
-      const updated = await sql`
-        UPDATE ai_scan_leads
-        SET email = ${email},
-            name = ${naam || null},
-            organization = ${organisatie || null},
-            ai_advice = COALESCE(NULLIF(${adviceText}, ''), ai_advice),
-            updated_at = NOW()
-        WHERE id = (
-          SELECT id FROM ai_scan_leads
-          WHERE sector = ${sector}
-            AND challenge = ${challenge}
+      if (leadIdInput) {
+        const updated = await sql`
+          UPDATE ai_scan_leads
+          SET email = ${email},
+              name = ${naam || null},
+              organization = ${organisatie || null},
+              ai_advice = COALESCE(NULLIF(${adviceText}, ''), ai_advice),
+              updated_at = NOW()
+          WHERE id = ${leadIdInput}
             AND email IS NULL
-            AND created_at > NOW() - INTERVAL '30 minutes'
-          ORDER BY created_at DESC
-          LIMIT 1
-        )
-        RETURNING id
-      `;
-      leadId = updated[0]?.id ?? null;
+            AND sector = ${sector}
+            AND challenge = ${challenge}
+          RETURNING id
+        `;
+        leadId = updated[0]?.id ?? null;
+      }
 
       if (!leadId) {
         const inserted = await sql`
@@ -81,7 +91,7 @@ export async function POST(request: NextRequest) {
             (email, name, organization, sector, challenge, ai_usage, ai_advice, source, status)
           VALUES
             (${email}, ${naam || null}, ${organisatie || null}, ${sector}, ${challenge},
-             ${aiUsage || 'onbekend'}, ${adviceText}, '/ai-scan', 'new')
+             ${aiUsage}, ${adviceText}, '/ai-scan', 'new')
           RETURNING id
         `;
         leadId = inserted[0]?.id ?? null;
@@ -124,19 +134,19 @@ export async function POST(request: NextRequest) {
       console.error('Failed to send scan report email:', emailResult.error);
     }
 
-    // Notificatie naar Vincent
+    // Notificatie naar Vincent — bezoekersinput altijd escapen
     await sendEmail({
       to: 'v.munster@weareimpact.nl',
       subject: `Nieuwe AI-scan lead: ${organisatie || naam || email}`,
       html: `
         <p><strong>Nieuwe lead via de AI-scan</strong></p>
         <ul>
-          <li>Email: ${email}</li>
-          <li>Naam: ${naam || '—'}</li>
-          <li>Organisatie: ${organisatie || '—'}</li>
+          <li>Email: ${escapeHtml(email)}</li>
+          <li>Naam: ${escapeHtml(naam) || '—'}</li>
+          <li>Organisatie: ${escapeHtml(organisatie) || '—'}</li>
           <li>Sector: ${sectorName}</li>
           <li>Grootste energielek: ${challengeLabel}</li>
-          <li>AI-niveau: ${aiUsage || '—'}</li>
+          <li>AI-niveau: ${aiUsage}</li>
         </ul>
       `,
       text: `Nieuwe AI-scan lead: ${email} — ${sectorName} — ${challengeLabel}`,

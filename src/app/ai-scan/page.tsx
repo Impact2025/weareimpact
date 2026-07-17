@@ -59,7 +59,7 @@ const faqs = [
   {
     question: 'Hoe lang duurt de scan?',
     answer:
-      'De scan duurt ongeveer 5 minuten. Je beantwoordt een paar gerichte vragen over jouw sector, uitdagingen en huidige AI-gebruik. Direct daarna ontvang je een gepersonaliseerd rapport.',
+      'De scan duurt ongeveer 2 minuten. Je beantwoordt drie gerichte vragen over jouw sector, uitdagingen en huidige AI-gebruik. Direct daarna ontvang je een gepersonaliseerd advies.',
   },
   {
     question: 'Voor wie is de scan bedoeld?',
@@ -101,7 +101,7 @@ export default function AIScanPage() {
           </h1>
 
           <p className="text-xl md:text-2xl text-slate-600 mb-4 max-w-2xl mx-auto font-light leading-relaxed">
-            Doe de gratis scan en ontdek in 5 minuten waar AI bij jouw organisatie écht waarde toevoegt.
+            Doe de gratis scan en ontdek in 2 minuten waar AI bij jouw organisatie écht waarde toevoegt.
           </p>
 
           <p className="text-lg text-slate-500 mb-10 max-w-xl mx-auto leading-relaxed">
@@ -110,7 +110,7 @@ export default function AIScanPage() {
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-8">
             {[
-              { icon: Clock, text: '5 minuten' },
+              { icon: Clock, text: '2 minuten' },
               { icon: CheckCircle, text: 'Gratis & vrijblijvend' },
               { icon: Sparkles, text: 'Direct resultaat' },
             ].map(({ icon: Icon, text }) => (

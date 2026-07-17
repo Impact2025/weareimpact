@@ -1,9 +1,9 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import {
   Sparkles, ArrowRight, RefreshCw, CheckCircle, Calendar, ArrowLeft,
-  Heart, Landmark, Briefcase, Users, Cpu, Mail, Loader2, ShieldCheck,
+  Heart, Landmark, Briefcase, Users, Mail, Loader2, ShieldCheck,
   // Challenge icons
   ClipboardList, Coins, Flame, UserCheck,
   MessageSquare, PieChart, Layers, GraduationCap,
@@ -124,7 +124,7 @@ const SECTOR_CONFIG: Record<string, SectorConfig> = {
       },
       {
         label: 'Goed personeel vinden',
-        value: 'personeel',
+        value: 'talent',
         context: 'Het juiste talent aantrekken en behouden is een constante strijd.',
         icon: <Target size={20} className="text-emerald-400" />,
       },
@@ -288,31 +288,18 @@ export function AIScanner() {
   const [answers, setAnswers] = useState<Record<number, string>>({});
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [result, setResult] = useState<string | null>(null);
+  const [scanError, setScanError] = useState(false);
+  const [leadId, setLeadId] = useState<string | null>(null);
   const [streamingText, setStreamingText] = useState('');
   const [selectedSector, setSelectedSector] = useState<string | null>(null);
   const [hoveredOption, setHoveredOption] = useState<string | null>(null);
 
   // E-mailcapture (lead) state
-  const [scanCount, setScanCount] = useState<number | null>(null);
   const [email, setEmail] = useState('');
   const [naam, setNaam] = useState('');
   const [organisatie, setOrganisatie] = useState('');
   const [emailStatus, setEmailStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
   const [emailError, setEmailError] = useState('');
-
-  // Dynamische social-proof teller ophalen
-  useEffect(() => {
-    let active = true;
-    fetch('/api/ai-scan/count')
-      .then((r) => (r.ok ? r.json() : null))
-      .then((d) => {
-        if (active && d?.count) setScanCount(d.count);
-      })
-      .catch(() => {});
-    return () => {
-      active = false;
-    };
-  }, []);
 
   const submitLeadCapture = async () => {
     const trimmed = email.trim();
@@ -334,6 +321,7 @@ export function AIScanner() {
           challenge: answers[2],
           aiUsage: answers[3],
           advies: result,
+          leadId: leadId || undefined,
         }),
       });
       if (!res.ok) throw new Error('request failed');
@@ -411,28 +399,21 @@ export function AIScanner() {
 
   const startAnalysis = async (finalAnswers: Record<number, string>) => {
     setIsAnalyzing(true);
+    setScanError(false);
     setStreamingText('');
 
     try {
+      // De server bepaalt alle prompt-context zelf op basis van de antwoorden.
       const response = await fetch('/api/ai-scan', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          answers: finalAnswers,
-          sectorConfig: selectedSector ? {
-            sector: selectedSector,
-            sectorName: SECTOR_CONFIG[selectedSector].name,
-            challengeLabel: SECTOR_CONFIG[selectedSector].challenges.find(
-              c => c.value === finalAnswers[2]
-            )?.label,
-            challengeContext: SECTOR_CONFIG[selectedSector].challenges.find(
-              c => c.value === finalAnswers[2]
-            )?.context,
-          } : null,
-        }),
+        body: JSON.stringify({ answers: finalAnswers }),
       });
 
       if (!response.ok) throw new Error('Analysis failed');
+
+      // Lead-id waarmee /report de contactgegevens aan deze scan koppelt.
+      setLeadId(response.headers.get('X-Scan-Lead-Id'));
 
       // Handle streaming response
       const reader = response.body?.getReader();
@@ -451,10 +432,14 @@ export function AIScanner() {
         setStreamingText(fullText);
       }
 
+      // Sentinel van de server: stream is halverwege afgebroken.
+      if (fullText.includes('[FOUT]')) throw new Error('Stream interrupted');
+
       setResult(fullText);
       trackEvents.aiScanComplete(100); // 100 = completed successfully
     } catch (error) {
       console.error('Analysis error:', error);
+      setScanError(true);
       setResult(
         'Er is iets misgegaan bij de analyse. Probeer het later opnieuw of neem direct contact op.'
       );
@@ -468,6 +453,8 @@ export function AIScanner() {
     setStep(0);
     setAnswers({});
     setResult(null);
+    setScanError(false);
+    setLeadId(null);
     setStreamingText('');
     setSelectedSector(null);
     setHoveredOption(null);
@@ -497,7 +484,7 @@ export function AIScanner() {
             <span className="font-bold text-white tracking-wide block">
               AI IMPACT SCAN
             </span>
-            <span className="text-xs text-slate-500">Persoonlijk advies in 1 minuut</span>
+            <span className="text-xs text-slate-500">Persoonlijk advies in 2 minuten</span>
           </div>
         </div>
         <div className="flex items-center gap-2">
@@ -640,9 +627,15 @@ export function AIScanner() {
         {result && !isAnalyzing && (
           <div className="animate-fade-in-up text-left">
             <div className="flex items-center gap-3 mb-4">
-              <div className="bg-emerald-500/20 text-emerald-400 px-3 py-1.5 rounded-full text-xs font-bold uppercase flex items-center gap-1.5">
-                <CheckCircle size={14} /> Analyse Compleet
-              </div>
+              {scanError ? (
+                <div className="bg-amber-500/20 text-amber-400 px-3 py-1.5 rounded-full text-xs font-bold uppercase flex items-center gap-1.5">
+                  <AlertTriangle size={14} /> Analyse onderbroken
+                </div>
+              ) : (
+                <div className="bg-emerald-500/20 text-emerald-400 px-3 py-1.5 rounded-full text-xs font-bold uppercase flex items-center gap-1.5">
+                  <CheckCircle size={14} /> Analyse Compleet
+                </div>
+              )}
               {selectedSector && sectorConfig && (
                 <div className={cn("flex items-center gap-1.5 text-xs px-2 py-1 rounded-full bg-slate-800/80", sectorConfig.color)}>
                   {sectorConfig.icon}
@@ -655,8 +648,8 @@ export function AIScanner() {
               <AdviceMarkdown text={result} />
             </div>
 
-            {/* E-mailcapture: stuur rapport + maak lead bruikbaar */}
-            {emailStatus !== 'sent' ? (
+            {/* E-mailcapture: stuur rapport + maak lead bruikbaar (niet bij een mislukte analyse) */}
+            {scanError ? null : emailStatus !== 'sent' ? (
               <div className="bg-gradient-to-r from-orange-500/10 to-orange-600/5 border border-orange-500/30 rounded-xl p-5 mb-6">
                 <div className="flex items-start gap-3 mb-4">
                   <div className="bg-orange-500/20 p-2 rounded-lg flex-shrink-0">
@@ -759,7 +752,7 @@ export function AIScanner() {
           <div className="flex items-center justify-center gap-6 text-xs text-slate-500">
             <span className="flex items-center gap-1.5">
               <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full" />
-              {scanCount ? `${scanCount}+ scans uitgevoerd` : 'Sector-specifiek advies'}
+              Sector-specifiek advies
             </span>
             <span className="flex items-center gap-1.5">
               <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full" />

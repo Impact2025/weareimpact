@@ -51,7 +51,7 @@ const faqs = [
   {
     question: 'Hoe weet ik of mijn organisatie klaar is voor AI?',
     answer:
-      'Dat is precies wat de AI-scan uitwijst. In vijf minuten weet je waar AI bij jouw organisatie direct waarde toevoegt, en waar nog niet.',
+      'Dat is precies wat de AI-scan uitwijst. In twee minuten weet je waar AI bij jouw organisatie direct waarde toevoegt, en waar nog niet.',
   },
   {
     question: 'Wat als het toch niet werkt?',

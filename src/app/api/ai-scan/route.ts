@@ -4,13 +4,11 @@ import { sql } from '@/lib/db/neon';
 import { rateLimit, getClientIp } from '@/lib/rate-limit';
 import {
   VALID_SECTORS,
-  VALID_CHALLENGES,
   VALID_AI_USAGE,
   SECTOR_NAMES,
   SECTOR_EXPERTISE,
-  CHALLENGE_SOLUTIONS,
-  CHALLENGE_LABELS,
   AI_MATURITY_MAP,
+  getChallenge,
 } from '@/lib/ai/scan-config';
 
 export const dynamic = 'force-dynamic';
@@ -19,35 +17,54 @@ export const dynamic = 'force-dynamic';
 const RATE_LIMIT = 8;
 const RATE_WINDOW_MS = 60 * 60 * 1000;
 
-// Helper: sla anonieme scan-lead op, retourneer id zodat de UI later
-// contactgegevens kan koppelen via /api/ai-scan/report.
-async function saveScanLead(
+// Maak de anonieme scan-lead aan vóór het streamen, zodat het id via een
+// response-header naar de client kan. /api/ai-scan/report koppelt daar later
+// de contactgegevens aan — zonder gok-heuristiek op sector+challenge.
+async function createScanLead(
   sector: string,
   challenge: string,
-  aiUsage: string,
-  aiAdvice: string
+  aiUsage: string
 ): Promise<string | null> {
   try {
     const result = await sql`
       INSERT INTO ai_scan_leads (sector, challenge, ai_usage, ai_advice, source, status)
-      VALUES (${sector}, ${challenge}, ${aiUsage}, ${aiAdvice}, '/ai-scan', 'new')
+      VALUES (${sector}, ${challenge}, ${aiUsage}, '', '/ai-scan', 'new')
       RETURNING id
     `;
-    const leadId = result[0]?.id ?? null;
+    return result[0]?.id ?? null;
+  } catch (error) {
+    console.error('Failed to create scan lead:', error);
+    return null;
+  }
+}
 
+async function finishScanLead(
+  leadId: string | null,
+  sector: string,
+  challenge: string,
+  challengeLabel: string,
+  aiUsage: string,
+  aiAdvice: string
+) {
+  try {
+    if (leadId) {
+      await sql`
+        UPDATE ai_scan_leads
+        SET ai_advice = ${aiAdvice}, updated_at = NOW()
+        WHERE id = ${leadId}
+      `;
+    }
     await sql`
       INSERT INTO activity_log (type, title, description, metadata)
       VALUES (
         'scan',
         'Nieuwe AI-scan afgerond',
-        ${`${SECTOR_NAMES[sector] || sector} — ${CHALLENGE_LABELS[challenge] || challenge}`},
+        ${`${SECTOR_NAMES[sector] || sector} — ${challengeLabel}`},
         ${JSON.stringify({ leadId, sector, challenge, aiUsage })}
       )
     `;
-    return leadId;
   } catch (error) {
-    console.error('Failed to save scan lead:', error);
-    return null;
+    console.error('Failed to finish scan lead:', error);
   }
 }
 
@@ -97,16 +114,18 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const { answers, sectorConfig } = await request.json();
+    const { answers } = await request.json();
 
-    // 2. Validatie — geweigerde/gemanipuleerde input krijgt geen LLM-call
+    // 2. Validatie — sector+challenge als páár, plus AI-niveau. Alles wat de
+    // prompt in gaat komt uit de server-side config; client-tekst nooit.
     const sector = String(answers?.[1] ?? '');
     const challenge = String(answers?.[2] ?? '');
     const aiUsage = String(answers?.[3] ?? '');
 
+    const challengeInfo = getChallenge(sector, challenge);
     if (
+      !challengeInfo ||
       !VALID_SECTORS.includes(sector as never) ||
-      !VALID_CHALLENGES.includes(challenge as never) ||
       !VALID_AI_USAGE.includes(aiUsage as never)
     ) {
       return new Response(
@@ -115,26 +134,22 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 3. Rijke, sector-specifieke context
+    // 3. Rijke, sector-specifieke context — volledig server-side
     const sectorExpertise = SECTOR_EXPERTISE[sector] || '';
-    const challengeSolution = CHALLENGE_SOLUTIONS[challenge] || '';
-    const sectorName = sectorConfig?.sectorName || SECTOR_NAMES[sector] || sector;
-    const challengeLabel =
-      sectorConfig?.challengeLabel || CHALLENGE_LABELS[challenge] || challenge;
-    const challengeContext = sectorConfig?.challengeContext || '';
+    const sectorName = SECTOR_NAMES[sector] || sector;
 
     const userContext = `
 PROFIEL VAN DEZE BEZOEKER:
 
 Sector: ${sectorName}
-Grootste energielek: ${challengeLabel}
-Context: "${challengeContext}"
+Grootste energielek: ${challengeInfo.label}
+Context: "${challengeInfo.context}"
 AI-niveau: ${AI_MATURITY_MAP[aiUsage] || aiUsage}
 
 ${sectorExpertise}
 
 SPECIFIEKE KANS VOOR DIT PROBLEEM (gebruik dit als basis, maak het concreet):
-${challengeSolution}
+${challengeInfo.solution}
 `;
 
     const response = await getOpenRouter().chat.completions.create({
@@ -151,6 +166,9 @@ ${challengeSolution}
       temperature: 0.7,
     });
 
+    // Lead vóór het streamen aanmaken zodat het id in de headers mee kan.
+    const leadId = await createScanLead(sector, challenge, aiUsage);
+
     const encoder = new TextEncoder();
     let fullAdvice = '';
 
@@ -164,13 +182,11 @@ ${challengeSolution}
               controller.enqueue(encoder.encode(content));
             }
           }
-          // Lead opslaan NA de stream. leadId gaat via trailer niet werken bij
-          // streaming, dus de UI haalt 'm op via een aparte call in /report.
-          await saveScanLead(sector, challenge, aiUsage, fullAdvice);
+          await finishScanLead(leadId, sector, challenge, challengeInfo.label, aiUsage, fullAdvice);
           controller.close();
         } catch (error) {
           console.error('Streaming error:', error);
-          // Signaleer de fout duidelijk in de body zodat de client het merkt.
+          // Sentinel die de client herkent als afgebroken analyse.
           controller.enqueue(
             encoder.encode('\n\n[FOUT] De analyse werd onderbroken. Probeer het opnieuw.')
           );
@@ -184,6 +200,7 @@ ${challengeSolution}
         'Content-Type': 'text/plain; charset=utf-8',
         'Cache-Control': 'no-cache',
         'X-RateLimit-Remaining': String(limit.remaining),
+        ...(leadId ? { 'X-Scan-Lead-Id': leadId } : {}),
       },
     });
   } catch (error) {

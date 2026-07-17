@@ -3,7 +3,7 @@
 export const metadata: Metadata = {
   title: 'Gratis AI Readiness Scan voor Zorg, Welzijn & Non-Profit',
   description:
-    'Doe de gratis AI Readiness Scan en ontdek in 5 minuten wat AI jouw organisatie concreet oplevert. ✓ Sector-specifiek advies ✓ Direct resultaat ✓ Geen verplichtingen. Voor gemeenten, welzijn & zorg.',
+    'Doe de gratis AI Readiness Scan en ontdek in 2 minuten wat AI jouw organisatie concreet oplevert. ✓ Sector-specifiek advies ✓ Direct resultaat ✓ Geen verplichtingen. Voor gemeenten, welzijn & zorg.',
   keywords: [
     'AI readiness scan',
     'AI scan organisatie',
@@ -27,7 +27,7 @@ export const metadata: Metadata = {
     siteName: 'WeAreImpact',
     title: 'Gratis AI Readiness Scan | WeAreImpact',
     description:
-      'Doe de gratis AI Readiness Scan en ontdek in 5 minuten wat AI jouw organisatie concreet oplevert. Sector-specifiek advies voor zorg, welzijn en gemeenten.',
+      'Doe de gratis AI Readiness Scan en ontdek in 2 minuten wat AI jouw organisatie concreet oplevert. Sector-specifiek advies voor zorg, welzijn en gemeenten.',
     images: [
       {
         url: '/og-ai-proof-checklist.webp',
@@ -41,7 +41,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Gratis AI Readiness Scan | WeAreImpact',
     description:
-      'Ontdek in 5 minuten wat AI jouw organisatie concreet oplevert. Sector-specifiek advies voor zorg, welzijn en gemeenten.',
+      'Ontdek in 2 minuten wat AI jouw organisatie concreet oplevert. Sector-specifiek advies voor zorg, welzijn en gemeenten.',
     images: ['/og-ai-proof-checklist.webp'],
   },
 };
@@ -51,7 +51,7 @@ const toolSchema = {
   '@type': 'WebApplication',
   name: 'AI Readiness Scan',
   description:
-    'Gratis interactieve scan die in 5 minuten inzicht geeft in de AI-kansen voor jouw organisatie. Sector-specifiek advies voor zorg, welzijn, gemeenten en non-profit.',
+    'Gratis interactieve scan die in 2 minuten inzicht geeft in de AI-kansen voor jouw organisatie. Sector-specifiek advies voor zorg, welzijn, gemeenten en non-profit.',
   url: 'https://weareimpact.nl/ai-scan',
   applicationCategory: 'BusinessApplication',
   operatingSystem: 'Web',
@@ -84,7 +84,7 @@ const faqSchema = {
       name: 'Hoe lang duurt de scan?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'De scan duurt ongeveer 5 minuten. Je beantwoordt een paar gerichte vragen over jouw sector, uitdagingen en huidige AI-gebruik. Direct daarna ontvang je een gepersonaliseerd rapport.',
+        text: 'De scan duurt ongeveer 2 minuten. Je beantwoordt drie gerichte vragen over jouw sector, uitdagingen en huidige AI-gebruik. Direct daarna ontvang je een gepersonaliseerd rapport.',
       },
     },
     {
