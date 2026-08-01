@@ -6,7 +6,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "seo:check": "node scripts/seo-check.mjs",
+    "seo:gsc": "node --env-file=.env.local scripts/gsc-report.mjs",
+    "podcast:cover": "node scripts/generate-podcast-cover.mjs"
   },
   "dependencies": {
     "@neondatabase/serverless": "^1.0.2",

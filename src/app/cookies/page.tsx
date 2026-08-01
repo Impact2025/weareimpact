@@ -4,6 +4,7 @@ import Link from 'next/link';
 export const metadata: Metadata = {
   title: 'Cookiebeleid',
   description: 'Cookiebeleid van WeAreImpact. Welke cookies wij plaatsen, waarom en hoe u uw voorkeuren beheert.',
+  alternates: { canonical: 'https://weareimpact.nl/cookies' },
   robots: { index: true, follow: true },
 };
 

@@ -40,11 +40,6 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(url, { status: 301 });
   }
 
-  // Block traffic from spam countries
-  if (BLOCKED_COUNTRIES.includes(country)) {
-    return new NextResponse('Access denied', { status: 403 });
-  }
-
   const isProtectedPage = protectedPaths.some(
     (path) => pathname.startsWith(path) && !publicAdminPaths.includes(pathname)
   );
@@ -52,9 +47,16 @@ export async function middleware(request: NextRequest) {
     pathname.startsWith(protectedApiPrefix) && !publicApiPaths.includes(pathname);
   const isProtectedPath = isProtectedPage || isProtectedApi;
 
-  // Allow bots only on non-protected paths
+  // Allow bots only on non-protected paths. Deze check staat bewust vóór de
+  // landenblokkade: zoekmachines crawlen ook vanuit geblokkeerde regio's en een
+  // 403 op Googlebot/Bingbot kost direct indexering.
   const isBot = BOT_USER_AGENTS.some((bot) => userAgent.includes(bot));
   if (isBot && !isProtectedPath) return NextResponse.next();
+
+  // Block traffic from spam countries
+  if (BLOCKED_COUNTRIES.includes(country)) {
+    return new NextResponse('Access denied', { status: 403 });
+  }
 
   if (!isProtectedPath) {
     return NextResponse.next();

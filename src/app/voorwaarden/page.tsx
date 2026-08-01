@@ -4,6 +4,7 @@ import Link from 'next/link';
 export const metadata: Metadata = {
   title: 'Algemene Voorwaarden',
   description: 'Algemene voorwaarden van WeAreImpact — Vincent van Munster. KvK 70285888.',
+  alternates: { canonical: 'https://weareimpact.nl/voorwaarden' },
   robots: { index: true, follow: true },
 };
 

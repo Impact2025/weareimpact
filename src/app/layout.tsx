@@ -26,6 +26,11 @@ export const metadata: Metadata = {
   },
   description:
     'AI consultant voor welzijnsorganisaties, gemeenten en sociaal ondernemers. ✓ Geen rapport en wegwezen ✓ 15+ jaar sociaal domein ✓ LEGO® Serious Play facilitator. Gratis kennismakingsgesprek.',
+  // LET OP: dit is de canonical van de homepage. Next.js erft `alternates` naar
+  // elke route die er zelf geen definieert — die pagina verklaart dan de
+  // homepage als origineel en wordt door Google niet geïndexeerd.
+  // Elke nieuwe pagina MOET dus een eigen `alternates.canonical` zetten.
+  // `npm run seo:check` controleert dit tegen de live site.
   alternates: {
     canonical: 'https://weareimpact.nl',
   },
@@ -148,6 +153,7 @@ export default function RootLayout({
       <head>
         <link rel="manifest" href="/manifest.json" />
         <link rel="alternate" type="application/rss+xml" title="WeAreImpact — AI in het Sociaal Domein" href="/feed.xml" />
+        <link rel="alternate" type="application/rss+xml" title="WeAreImpact Podcast — AI in het sociaal domein" href="/podcast.xml" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(personSchema) }}

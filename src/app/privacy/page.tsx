@@ -5,6 +5,9 @@ export const metadata: Metadata = {
   title: 'Privacyverklaring',
   description: 'Privacyverklaring van WeAreImpact — Vincent van Munster. Lees hoe wij omgaan met uw persoonsgegevens conform de AVG/GDPR.',
   robots: { index: true, follow: true },
+  // Zonder eigen canonical erft deze pagina die van de root layout (= homepage),
+  // waardoor Google haar als duplicaat van / behandelt en niet indexeert.
+  alternates: { canonical: 'https://weareimpact.nl/privacy' },
 };
 
 const LAST_UPDATED = 'juni 2026';

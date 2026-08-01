@@ -140,8 +140,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: 'monthly',
       priority: 0.8,
     },
+    // /interim staat bewust NIET in de sitemap: next.config redirect (308)
+    // hem naar /vincent-van-munster. Redirects in een sitemap leveren de GSC-
+    // melding "Pagina met omleiding" op.
     {
-      url: `${BASE_URL}/interim`,
+      url: `${BASE_URL}/impact-calculator`,
+      lastModified: new Date('2026-06-01'),
+      changeFrequency: 'monthly',
+      priority: 0.8,
+    },
+    {
+      url: `${BASE_URL}/demo-aanvraag`,
       lastModified: new Date('2026-06-01'),
       changeFrequency: 'monthly',
       priority: 0.7,
