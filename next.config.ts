@@ -86,6 +86,61 @@ const nextConfig: NextConfig = {
       // Interne pipeline-artefacten die per abuis live stonden → deindex + relevante bestemming
       { source: '/blog/eindredactionele-check-outreach-e-mails-en-gastblog-concepte', destination: '/blog', permanent: true },
       { source: '/blog/seo-optimalisatie-structured-data-meta-amp-interne-links-vo', destination: '/kennisbank/ai-consulent-sociaal-domein', permanent: true },
+
+      // ============================================================
+      // 404-oplossing (GSC-melding 2026-08-02): expliciete redirects
+      // voor oude WordPress/slug-URLs die nergens meer bestonden en
+      // daardoor als 404 geregistreerd stonden. Doelen zijn bestaande,
+      // geïndexeerde pagina's uit de sitemap.
+      // ============================================================
+      // Blog-posts die per ongeluk onder /blog/kennisbank/ stonden
+      { source: '/blog/kennisbank/impact-box-70000-geluksmomenten', destination: '/kennisbank/impact-box-70000-geluksmomenten', permanent: true },
+      { source: '/blog/kennisbank/weerstand-ai-overwinnen-sociaal-domein-legio-serious-play', destination: '/kennisbank/weerstand-ai-overwinnen-sociaal-domein-legio-serious-play', permanent: true },
+      // Oude privacy-slug
+      { source: '/privacy-policy-2', destination: '/privacy', permanent: true },
+      { source: '/privacy-policy-2/', destination: '/privacy', permanent: true },
+      // Categorie-archieven (NL + EN spelling, WordPress)
+      { source: '/category/impact', destination: '/kennisbank/categorie/impact-meten', permanent: true },
+      { source: '/category/impact/', destination: '/kennisbank/categorie/impact-meten', permanent: true },
+      { source: '/categorie/innovatie-strategie', destination: '/kennisbank/categorie/ai-tech', permanent: true },
+      { source: '/categorie/innovatie-strategie/', destination: '/kennisbank/categorie/ai-tech', permanent: true },
+      // Tag-archieven (WordPress) → kennisbank
+      { source: '/tag/kunstmatige-intelligentie-sociaal-domein', destination: '/kennisbank', permanent: true },
+      { source: '/tag/kunstmatige-intelligentie-sociaal-domein/', destination: '/kennisbank', permanent: true },
+      { source: '/tag/sro-nederland', destination: '/kennisbank', permanent: true },
+      { source: '/tag/sro-nederland/', destination: '/kennisbank', permanent: true },
+      { source: '/tag/ai-in-welzijn-2025', destination: '/kennisbank', permanent: true },
+      { source: '/tag/ai-in-welzijn-2025/', destination: '/kennisbank', permanent: true },
+      { source: '/tag/impactmeting-welzijn', destination: '/kennisbank', permanent: true },
+      { source: '/tag/impactmeting-welzijn/', destination: '/kennisbank', permanent: true },
+      { source: '/tag/sroi-nederland-basis', destination: '/kennisbank', permanent: true },
+      { source: '/tag/sroi-nederland-basis/', destination: '/kennisbank', permanent: true },
+      { source: '/tag/vrijwilligersmatiging-met-ai', destination: '/kennisbank', permanent: true },
+      { source: '/tag/vrijwilligersmatiging-met-ai/', destination: '/kennisbank', permanent: true },
+      // Oude blog-naam / impact-archief
+      { source: '/impact-blog', destination: '/blog', permanent: true },
+      { source: '/impact-blog/', destination: '/blog', permanent: true },
+      { source: '/impact/:path*', destination: '/blog', permanent: true },
+      { source: '/nieuw/:path*', destination: '/vincent-van-munster', permanent: true },
+      // Specifieke impactnieuws-artikelen (oude WP) → blog overzicht
+      { source: '/impactnieuws-noord-holland-noord-koploper-in-banenafspraak', destination: '/blog', permanent: true },
+      { source: '/voor-sociaal-ondernemers-organisaties', destination: '/kennisbank/categorie/sociaal-ondernemen', permanent: true },
+      { source: '/voor-sociaal-ondernemers-organisaties/', destination: '/kennisbank/categorie/sociaal-ondernemen', permanent: true },
+      { source: '/ai-advies-tools-met-impact', destination: '/kennisbank/ai-consulent-sociaal-domein', permanent: true },
+      { source: '/ai-advies-tools-met-impact/', destination: '/kennisbank/ai-consulent-sociaal-domein', permanent: true },
+      { source: '/impactnieuws-participatiewet-in-balans-wat-betekent-dit-voor-gemeenten', destination: '/blog', permanent: true },
+      { source: '/impactnieuws-participatiewet-in-balans-wat-betekent-dit-voor-gemeenten/', destination: '/blog', permanent: true },
+      { source: '/impactnieuws-participatiewet-in-balans-wat-betekent-dit-voor-gemeenten/feed', destination: '/blog', permanent: true },
+      { source: '/impactnieuws-participatiewet-in-balans-wat-betekent-dit-voor-gemeenten/feed/', destination: '/blog', permanent: true },
+      { source: '/impactnieuws-vrijwilligerswerk-2023-veer-op-pre-coronaniveau', destination: '/blog', permanent: true },
+      { source: '/uncategorized/impactnieuws-participatiewet-in-balans-wat-betekent-dit-voor-gemeenten', destination: '/blog', permanent: true },
+      { source: '/wat-is-sroi-een-simpele-uitleg-voor-bedrijven-in-nederland', destination: '/kennisbank/social-return-on-investment-sroi-vijf-stappen', permanent: true },
+      { source: '/wat-is-sroi-een-simpele-uitleg-voor-bedrijven-in-nederland/', destination: '/kennisbank/social-return-on-investment-sroi-vijf-stappen', permanent: true },
+      { source: '/bouwen-aan-meer-dan-alleen-sets', destination: '/kennisbank/lego-serious-play-voor-teamontwikkeling', permanent: true },
+      { source: '/bouwen-aan-meer-dan-alleen-sets/', destination: '/kennisbank/lego-serious-play-voor-teamontwikkeling', permanent: true },
+      { source: '/impactnieuws-heft-van-nederlanders-doe-t-vrijwilligerswerk-in-2024', destination: '/blog', permanent: true },
+      // Catch-all voor overgebleven impactnieuws-* artikelen
+      { source: '/impactnieuws-:path*', destination: '/blog', permanent: true },
     ];
   },
 
