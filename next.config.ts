@@ -139,8 +139,6 @@ const nextConfig: NextConfig = {
       { source: '/bouwen-aan-meer-dan-alleen-sets', destination: '/kennisbank/lego-serious-play-voor-teamontwikkeling', permanent: true },
       { source: '/bouwen-aan-meer-dan-alleen-sets/', destination: '/kennisbank/lego-serious-play-voor-teamontwikkeling', permanent: true },
       { source: '/impactnieuws-heft-van-nederlanders-doe-t-vrijwilligerswerk-in-2024', destination: '/blog', permanent: true },
-      // Catch-all voor overgebleven impactnieuws-* artikelen
-      { source: '/impactnieuws-:path*', destination: '/blog', permanent: true },
     ];
   },
 
