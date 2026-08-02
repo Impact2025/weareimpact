@@ -51,47 +51,39 @@ export default function AgendaPage() {
   const fetchWeekEvents = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await fetch('/api/admin/iris', {
-        method: 'POST',
+      const weekStart = (() => {
+        const d = new Date(currentWeekStart);
+        d.setHours(0, 0, 0, 0);
+        return d.toISOString().split('T')[0];
+      })();
+
+      const res = await fetch(`/api/admin/calendar/events?weekStart=${weekStart}`, {
+        method: 'GET',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          messages: [{ role: 'user', content: 'Wat staat er deze week op de planning?' }],
-        }),
       });
 
-      // For now, we'll parse the response as plain text
-      // In production, you'd want a dedicated calendar API endpoint
       if (res.ok) {
-        const reader = res.body?.getReader();
-        const decoder = new TextDecoder();
-        let text = '';
-
-        while (reader) {
-          const { done, value } = await reader.read();
-          if (done) break;
-          text += decoder.decode(value);
+        const data = await res.json();
+        if (Array.isArray(data.week)) {
+          // Backfill dayName/dayNumber in case the API omits them.
+          const week: DayEvents[] = data.week.map((day: any, i: number) => ({
+            date: day.date,
+            dayName: day.dayName || dayNames[i],
+            dayNumber: day.dayNumber ?? new Date(day.date).getDate(),
+            isToday: day.isToday ?? false,
+            events: (day.events || []).map((e: any) => ({
+              id: e.id,
+              summary: e.summary,
+              start: e.start,
+              end: e.end,
+              meetLink: e.meetLink,
+              attendees: e.attendees || [],
+            })),
+          }));
+          setWeekEvents(week);
         }
-
-        // Generate week structure even without parsed events
-        const week: DayEvents[] = [];
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-
-        for (let i = 0; i < 7; i++) {
-          const date = new Date(currentWeekStart);
-          date.setDate(date.getDate() + i);
-          const dateStr = date.toISOString().split('T')[0];
-
-          week.push({
-            date: dateStr,
-            dayName: dayNames[i],
-            dayNumber: date.getDate(),
-            isToday: date.getTime() === today.getTime(),
-            events: [], // Events would be parsed from a proper API
-          });
-        }
-
-        setWeekEvents(week);
+      } else {
+        console.error('Agenda API gaf status', res.status);
       }
     } catch (err) {
       console.error('Failed to fetch events:', err);
@@ -99,6 +91,44 @@ export default function AgendaPage() {
       setLoading(false);
     }
   }, [currentWeekStart]);
+
+  const handleBlockTime = useCallback(async () => {
+    const title = window.prompt('Wat wil je blokkeren? (bijv. "Dieptewerk")');
+    if (!title) return;
+    const hours = window.prompt('Vanaf hoe laat? (uur, 0-23)', '9');
+    const until = window.prompt('Tot hoe laat? (uur, 0-23)', '12');
+    if (!hours || !until) return;
+
+    const day = new Date(currentWeekStart);
+    day.setHours(0, 0, 0, 0);
+    const start = new Date(day);
+    start.setDate(start.getDate());
+    start.setHours(parseInt(hours, 10), 0, 0, 0);
+    const end = new Date(start);
+    end.setHours(parseInt(until, 10), 0, 0, 0);
+
+    try {
+      const res = await fetch('/api/admin/calendar/block', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title,
+          startTime: start.toISOString(),
+          endTime: end.toISOString(),
+          description: 'Geblokkeerd via Agenda',
+        }),
+      });
+      if (res.ok) {
+        fetchWeekEvents();
+      } else {
+        const data = await res.json().catch(() => ({}));
+        alert(`Blokkeren mislukt: ${data.error || res.status}`);
+      }
+    } catch (err) {
+      console.error('Block failed:', err);
+      alert('Blokkeren mislukt (netwerkfout).');
+    }
+  }, [currentWeekStart, fetchWeekEvents]);
 
   useEffect(() => {
     fetchWeekEvents();
@@ -246,9 +276,9 @@ export default function AgendaPage() {
 
       {/* Quick Actions */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Link
-          href="/admin/iris"
-          className="p-4 bg-gradient-to-br from-orange-50 to-orange-100 border border-orange-200 rounded-xl hover:shadow-md transition-shadow"
+        <div
+          onClick={handleBlockTime}
+          className="p-4 bg-gradient-to-br from-orange-50 to-orange-100 border border-orange-200 rounded-xl hover:shadow-md transition-shadow cursor-pointer"
         >
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-orange-500 rounded-lg flex items-center justify-center">
@@ -256,10 +286,10 @@ export default function AgendaPage() {
             </div>
             <div>
               <div className="font-semibold text-slate-900">Tijd blokkeren</div>
-              <div className="text-xs text-slate-500">Vraag Iris om tijd te blokkeren</div>
+              <div className="text-xs text-slate-500">Blokkeer direct een gat in je agenda</div>
             </div>
           </div>
-        </Link>
+        </div>
 
         <Link
           href="/admin/iris"
@@ -295,11 +325,12 @@ export default function AgendaPage() {
       {/* Info */}
       <div className="bg-slate-50 rounded-xl p-4 text-center">
         <p className="text-sm text-slate-500">
-          Je agenda is gekoppeld aan Google Calendar. Gebruik{' '}
+          Je agenda is live gekoppeld aan Google Calendar — hier zie je je echte
+          afspraken van de week. Blokkeer tijd met één klik, of vraag{' '}
           <Link href="/admin/iris" className="text-orange-600 font-medium hover:underline">
             Iris
           </Link>{' '}
-          om afspraken te maken, tijd te blokkeren, of je planning te bekijken.
+          om afspraken te zoeken of je planning te bespreken.
         </p>
       </div>
     </div>

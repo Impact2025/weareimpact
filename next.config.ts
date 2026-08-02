@@ -7,12 +7,14 @@ const nextConfig: NextConfig = {
       { source: '/lego-serious-play', destination: '/kennisbank/categorie/lego-serious-play', permanent: true },
       { source: '/interim-management', destination: '/programmamanager-digitale-transformatie', permanent: true },
       { source: '/programmamanagement', destination: '/programmamanager-digitale-transformatie', permanent: true },
-      { source: '/strategisch-advies', destination: '/', permanent: true },
-      { source: '/over-ons', destination: '/', permanent: true },
-      { source: '/over', destination: '/', permanent: true },
-      { source: '/team', destination: '/', permanent: true },
-      { source: '/diensten', destination: '/', permanent: true },
-      { source: '/diensten/:path*', destination: '/', permanent: true },
+      // Oude merk/persoon-pagina's → persoonlijke profielpagina (behoud link-juice)
+      { source: '/strategisch-advies', destination: '/ai-strategie-consultant', permanent: true },
+      { source: '/over-ons', destination: '/vincent-van-munster', permanent: true },
+      { source: '/over', destination: '/vincent-van-munster', permanent: true },
+      { source: '/team', destination: '/vincent-van-munster', permanent: true },
+      // Diensten → primaire dienst-pagina i.p.v. homepage (behoud ranking-signaal)
+      { source: '/diensten', destination: '/ai-strategie-consultant', permanent: true },
+      { source: '/diensten/:path*', destination: '/ai-strategie-consultant', permanent: true },
 
       // Persoonlijk profiel — naam in URL is primair rankingsignaal
       { source: '/interim', destination: '/vincent-van-munster', permanent: true },
@@ -39,8 +41,8 @@ const nextConfig: NextConfig = {
       // Oude WordPress-URL's (verspillen crawl budget)
       { source: '/over-vincent-van-munster', destination: '/vincent-van-munster', permanent: true },
       { source: '/over-vincent-van-munster/', destination: '/vincent-van-munster', permanent: true },
-      { source: '/algemene-voorwaarden-van', destination: '/', permanent: true },
-      { source: '/algemene-voorwaarden-van/', destination: '/', permanent: true },
+      { source: '/algemene-voorwaarden-van', destination: '/voorwaarden', permanent: true },
+      { source: '/algemene-voorwaarden-van/', destination: '/voorwaarden', permanent: true },
       { source: '/social-return-on-investment-de-basis-voor-beginners', destination: '/kennisbank', permanent: true },
       { source: '/social-return-on-investment-de-basis-voor-beginners/', destination: '/kennisbank', permanent: true },
       { source: '/wishlist-2', destination: '/', permanent: true },
@@ -48,7 +50,8 @@ const nextConfig: NextConfig = {
       { source: '/category/:path*', destination: '/kennisbank', permanent: true },
       { source: '/tag/:path*', destination: '/kennisbank', permanent: true },
       { source: '/portfolio-tag/:path*', destination: '/kennisbank', permanent: true },
-      { source: '/maatschappelijke-impact/:path*', destination: '/', permanent: true },
+      // Maatschappelijke impact → kennisbank impact-categorie (behoud thema)
+      { source: '/maatschappelijke-impact/:path*', destination: '/kennisbank/categorie/impact-meten', permanent: true },
       { source: '/:year(\\d{4})/:month(\\d{2})', destination: '/blog', permanent: true },
       { source: '/:year(\\d{4})/:month(\\d{2})/', destination: '/blog', permanent: true },
 

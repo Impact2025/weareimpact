@@ -92,7 +92,29 @@ export async function POST(request: NextRequest) {
     // Verwijder een leidende <h1> — de blogpagina toont de titel zelf al
     const cleanContent = content.replace(/^\s*<h1[^>]*>[\s\S]*?<\/h1>\s*/i, '').trim();
     const plainText = stripHtml(cleanContent);
-    const finalExcerpt = (excerpt?.trim() || seoDescription?.trim() || plainText.slice(0, 200)).slice(0, 300);
+
+    // Excerpt-afleiding — NOOIT een harde slice midden in een woord.
+    // Volgorde: meegegeven excerpt → seoDescription → een samenvatting uit de
+    // EIGEN artikeltekst (eerste 1-2 volledige zinnen, op zin-grens afgekapt).
+    // Zo verschijnt er nooit '... welzijnsorga...' en nooit tekst van een ánder artikel.
+    function deriveExcerpt(text: string, max = 200): string {
+      const clean = (text || '').replace(/\s+/g, ' ').trim();
+      if (!clean) return '';
+      const sentences = clean.match(/[^.!?]+[.!?]+/g) || [clean];
+      let out = '';
+      for (const s of sentences) {
+        const cand = (out + ' ' + s).trim();
+        if (cand.length > max && out) break;
+        out = cand;
+      }
+      if (!out) out = clean.slice(0, max).replace(/\s+\S*$/, '');
+      return out;
+    }
+    const finalExcerpt = (
+      excerpt?.trim() ||
+      seoDescription?.trim() ||
+      deriveExcerpt(plainText, 200)
+    ).slice(0, 300).replace(/\s+\S*$/, '');
 
     const baseSlug = slugify(requestedSlug?.trim() || title);
     // Upsert-op-slug: bestaat de slug al → UPDATE (geen duplicaat bij herpublicatie),
