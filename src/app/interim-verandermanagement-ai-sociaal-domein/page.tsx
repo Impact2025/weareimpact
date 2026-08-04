@@ -626,6 +626,11 @@ export default function InterimVerandermanagement() {
             href: '/kennisbank/ai-implementeren-non-profit-stappenplan',
             description: 'Van weerstand naar adoptie in 8 weken. Praktisch stappenplan voor welzijnsorganisaties.',
           },
+          {
+            title: 'AI consultant sociaal domein — Vincent van Munster',
+            href: '/ai-consultant-sociaal-domein',
+            description: 'Hoe een AI consultant het sociaal domein concreet verder helpt — van scan tot werkende implementatie.',
+          },
         ]}
       />
     </>

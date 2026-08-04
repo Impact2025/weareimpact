@@ -6,6 +6,7 @@ export const metadata: Metadata = {
     'AI consultant sociaal domein met 15+ jaar ervaring. ✓ Werkende AI-implementatie ✓ AVG-proof ✓ LEGO® Serious Play. Voor welzijn, gemeenten en sociaal ondernemers. Gratis gesprek.',
   keywords: [
     'AI consultant sociaal domein',
+    'AI adviseur sociaal domein',
     'AI welzijnsorganisaties',
     'AI implementatie sociaal domein',
     'AI gemeente sociaal domein',

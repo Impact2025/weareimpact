@@ -255,7 +255,7 @@ export default function AiConsultantSociaalDomein() {
           </div>
 
           <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight text-slate-900 mb-8 leading-[1.1] animate-fade-in-up delay-100">
-            Sociaal werkers verdienen <br className="hidden md:block" />
+            AI consultant sociaal domein: <br className="hidden md:block" />
             <span className="text-gradient">tijd voor mensen.</span>
           </h1>
 
@@ -384,7 +384,7 @@ export default function AiConsultantSociaalDomein() {
               Voor wie
             </div>
             <h2 className="text-4xl md:text-5xl font-bold text-slate-900 leading-tight">
-              Herken jij dit?
+              Herken jij dit? Voor wie is een AI consultant in het sociaal domein?
             </h2>
           </div>
           <div className="grid md:grid-cols-3 gap-8">
@@ -458,7 +458,7 @@ export default function AiConsultantSociaalDomein() {
         <div className="container mx-auto px-6">
           <div className="max-w-2xl mx-auto text-center mb-20">
             <p className="text-sm font-bold tracking-widest text-orange-600 uppercase mb-4">WeAreImpact in de praktijk</p>
-            <h2 className="text-4xl md:text-5xl font-bold text-slate-900 leading-tight">Hoe ik werk</h2>
+            <h2 className="text-4xl md:text-5xl font-bold text-slate-900 leading-tight">Hoe ik werk als AI-adviseur in het sociaal domein</h2>
           </div>
           <div className="flex flex-col gap-6 max-w-4xl mx-auto">
             {diensten.map((dienst) => (
@@ -478,6 +478,31 @@ export default function AiConsultantSociaalDomein() {
                 </div>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* WAAROM EEN AI CONSULTANT SOCIAAL DOMEIN */}
+      <section id="waarom-ai-consultant" className="py-24 bg-white border-t border-slate-100">
+        <div className="container mx-auto px-6 max-w-4xl">
+          <div className="text-center mb-12">
+            <div className="inline-block px-3 py-1 bg-orange-100 text-orange-600 rounded-full text-xs font-bold uppercase tracking-widest mb-4">
+              Waarom een specialist
+            </div>
+            <h2 className="text-4xl md:text-5xl font-bold text-slate-900 leading-tight">
+              Wat is een AI consultant voor het sociaal domein?
+            </h2>
+          </div>
+          <div className="prose prose-lg max-w-none text-slate-600 leading-relaxed space-y-5">
+            <p>
+              Een AI consultant voor het sociaal domein helpt welzijnsorganisaties, gemeenten en sociaal ondernemers bij het zinvol inzetten van kunstmatige intelligentie — verder dan alleen adviseren. Een goede consultant implementeert ook, borgt de AVG-compliance en zorgt dat medewerkers de techniek daadwerkelijk gebruiken. In het sociaal domein is sectorkennis daarbij onmisbaar: AI raakt hier altijd aan gevoelige cliëntdata en aan mensenwerk dat je niet zomaar uitbesteedt.
+            </p>
+            <p>
+              De reputatie van adviseurs voor AI-projecten in het sociale domein staat of valt met de vraag of de oplossing landt in de praktijk. Daarom werk ik niet als buitenstaander met een mooi verhaal, maar als iemand die de sector van binnenuit kent en die naast je team blijft staan totdat het werkt. Niet het rapport telt, maar de tijd die jouw sociaal werkers terugkrijgen voor de mensen voor wie ze er zijn.
+            </p>
+            <p>
+              Zoek je een AI consultant sociaal domein die het verschil maakt tussen een pilot die wegkwijnt en een werkende aanpak? Dan begint het met een gesprek, niet met een contract.
+            </p>
           </div>
         </div>
       </section>
