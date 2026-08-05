@@ -1,9 +1,9 @@
 ﻿import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'AI Consultant Sociaal Domein | Vincent van Munster',
+  title: 'AI consultant sociaal domein',
   description:
-    'AI consultant sociaal domein met 15+ jaar ervaring. ✓ Werkende AI-implementatie ✓ AVG-proof ✓ LEGO® Serious Play. Voor welzijn, gemeenten en sociaal ondernemers. Gratis gesprek.',
+    'Ik help welzijnsorganisaties, gemeenten en sociaal ondernemers AI werkend krijgen. AVG-proof, zonder jargon, met oog voor de mensen die ermee moeten werken.',
   keywords: [
     'AI consultant sociaal domein',
     'AI adviseur sociaal domein',
@@ -29,7 +29,7 @@ export const metadata: Metadata = {
     locale: 'nl_NL',
     url: 'https://weareimpact.nl/ai-consultant-sociaal-domein',
     siteName: 'WeAreImpact',
-    title: 'AI Consultant Sociaal Domein | WeAreImpact',
+    title: 'AI consultant sociaal domein | WeAreImpact',
     description:
       'AI consultant met 15+ jaar sectorervaring. Van AI-scan tot werkende implementatie. AVG-proof en met aandacht voor de menselijke maat. Voor welzijnsorganisaties, gemeenten en sociaal ondernemers.',
     images: [
@@ -43,7 +43,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'AI Consultant Sociaal Domein | WeAreImpact',
+    title: 'AI consultant sociaal domein | WeAreImpact',
     description:
       'AI consultant met 15+ jaar sectorervaring. Van AI-scan tot werkende implementatie. AVG-proof, menselijk, resultaatgericht.',
     images: ['/og-ai-consultant-sociaal-domein.webp'],

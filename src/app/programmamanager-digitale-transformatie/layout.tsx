@@ -1,9 +1,9 @@
 ﻿import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Programmamanager Digitale Transformatie | Sociaal Domein',
+  title: 'Programmamanager digitale transformatie inhuren',
   description:
-    'Programmamanager digitale transformatie voor het sociaal domein. ✓ Strategie naar werkende roadmap ✓ AI-implementatie ✓ LEGO® Serious Play. Voor gemeenten, zorg en welzijn. Gratis verkenning.',
+    'Ik ben zelfstandig programmamanager digitale transformatie in het sociaal domein. 15 jaar ervaring, zichtbaar resultaat binnen 90 dagen. Geen bureau ertussen.',
   keywords: [
     'programmamanager digitale transformatie',
     'digitale transformatie gemeente',
@@ -26,9 +26,9 @@ export const metadata: Metadata = {
     locale: 'nl_NL',
     url: 'https://weareimpact.nl/programmamanager-digitale-transformatie',
     siteName: 'WeAreImpact',
-    title: 'Programmamanager Digitale Transformatie | Sociaal Domein | WeAreImpact',
+    title: 'Programmamanager digitale transformatie inhuren | WeAreImpact',
     description:
-      'Digitale transformatie die écht landt. Van strategie naar werkende AI-toepassingen en duurzaam draagvlak. Voor programmamanagers in gemeenten, zorg en welzijn.',
+      'Zelfstandig programmamanager digitale transformatie voor gemeenten, zorg en welzijn. 15 jaar in het sociale domein, zichtbaar resultaat binnen 90 dagen.',
     images: [
       {
         url: '/og-programmamanager-digitale-transformatie.webp',
@@ -40,9 +40,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Programmamanager Digitale Transformatie | Sociaal Domein',
+    title: 'Programmamanager digitale transformatie inhuren',
     description:
-      'Digitale transformatie die écht landt. Van strategie naar werkende AI-toepassingen en duurzaam draagvlak.',
+      'Zelfstandig programmamanager voor gemeenten, zorg en welzijn. Zichtbaar resultaat binnen 90 dagen.',
     images: ['/og-programmamanager-digitale-transformatie.webp'],
   },
 };

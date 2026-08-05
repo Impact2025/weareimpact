@@ -16,6 +16,7 @@ import { Button } from '@/components/ui/button';
 import { KennisbankChat } from '@/components/features/KennisbankChat';
 import { ArticleFeedback } from '@/components/features/ArticleFeedback';
 import { LeadMagnetDownload } from '@/components/features/LeadMagnetDownload';
+import { RelatedService } from '@/components/seo/RelatedService';
 import { ViewTracker } from '@/components/features/ViewTracker';
 import { TableOfContents, ReadingProgress, ScrollToTop } from '@/components/features/TableOfContents';
 import { ArticleJsonLd, BreadcrumbJsonLd, FAQPageJsonLd, HowToJsonLd, extractStepsFromContent } from '@/components/seo/JsonLd';
@@ -641,6 +642,14 @@ export default async function KennisbankArticlePage({ params }: Props) {
             ))}
           </div>
         )}
+
+        {/* Contextuele link terug naar de bijbehorende dienstpagina */}
+        <RelatedService
+          slug={article.slug}
+          title={article.title}
+          tags={article.tags}
+          categorySlug={article.category_slug}
+        />
 
         {/* Feedback */}
         <ArticleFeedback articleId={article.id} />

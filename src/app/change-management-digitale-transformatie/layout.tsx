@@ -1,9 +1,9 @@
 ﻿import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Change Management Digitale Transformatie | Gemeenten & Welzijn',
+  title: 'Change management digitale transformatie',
   description:
-    'Digitale transformatie mislukt op mensen, niet op tech. ✓ Draagvlak van binnenuit ✓ LEGO® Serious Play ✓ 90-dagenplan. Specialist sociaal domein. Lees de aanpak.',
+    'Digitale transformatie mislukt zelden op techniek en bijna altijd op mensen. Zo bouw je draagvlak van binnenuit, met een plan dat je team na 90 dagen zelf draait.',
   keywords: [
     'change management digitale transformatie',
     'cultuurverandering AI implementatie',
@@ -26,7 +26,7 @@ export const metadata: Metadata = {
     locale: 'nl_NL',
     url: 'https://weareimpact.nl/change-management-digitale-transformatie',
     siteName: 'WeAreImpact',
-    title: 'Change Management Digitale Transformatie | WeAreImpact',
+    title: 'Change management digitale transformatie | WeAreImpact',
     description:
       '85% van digitale transformaties mislukt door mensen, niet technologie. Van weerstand naar eigenaarschap — in 90 dagen. Specialist in sociaal domein met LEGO® Serious Play.',
     images: [
@@ -40,7 +40,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Change Management Digitale Transformatie | Gemeenten & Welzijn',
+    title: 'Change management digitale transformatie',
     description:
       '85% van digitale transformaties mislukt door mensen, niet technologie. Van weerstand naar eigenaarschap in 90 dagen.',
     images: ['/og-change-management-digitale-transformatie.webp'],

@@ -1,9 +1,9 @@
 ﻿import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Interim Verandermanagement AI & Innovatie in het Sociaal Domein',
+  title: 'Interim verandermanagement AI sociaal domein',
   description:
-    'Interim verandermanagement AI in het sociaal domein. ✓ 25 jaar directie-ervaring ✓ AI-adoptie die wél landt ✓ Menselijke maat. Voor zorg, welzijn en gemeenten. Gratis verkenning.',
+    'Na 25 jaar als directeur in het sociaal domein help ik organisaties AI invoeren die blijft werken als ik weer weg ben. Voor zorg, welzijn en gemeenten.',
   keywords: [
     'interim verandermanagement AI',
     'interim manager sociaal domein',
@@ -27,13 +27,13 @@ export const metadata: Metadata = {
     locale: 'nl_NL',
     url: 'https://weareimpact.nl/interim-verandermanagement-ai-sociaal-domein',
     siteName: 'WeAreImpact',
-    title: 'Interim Verandermanagement AI & Innovatie in het Sociaal Domein | WeAreImpact',
+    title: 'Interim verandermanagement AI sociaal domein | WeAreImpact',
     description:
       'IT-consultants leveren systemen, maar de werkvloer weigert ze. Vincent van Munster — uit de welzijnshoek, 25 jaar ervaring — zorgt dat AI-innovatie ook echt landt in uw organisatie.',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Interim Verandermanagement AI & Innovatie in het Sociaal Domein',
+    title: 'Interim verandermanagement AI sociaal domein',
     description:
       'AI-projecten in de zorg mislukken op mensen, niet op technologie. Vincent van Munster begeleidt adoptie vanuit 25 jaar welzijnsachtergrond.',
   },

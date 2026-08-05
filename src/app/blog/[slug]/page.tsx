@@ -10,6 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ArticleJsonLd, BreadcrumbJsonLd } from '@/components/seo/JsonLd';
 import { ViewTracker } from '@/components/features/ViewTracker';
+import { RelatedService } from '@/components/seo/RelatedService';
 import { PodcastPlayer } from '@/components/blog/PodcastPlayer';
 import type { Metadata } from 'next';
 import parse from 'html-react-parser';
@@ -398,6 +399,14 @@ export default async function BlogPostPage({ params }: Props) {
             ))}
           </div>
         )}
+
+        {/* Contextuele link terug naar de bijbehorende dienstpagina */}
+        <RelatedService
+          slug={post.slug}
+          title={post.title}
+          tags={post.tags}
+          categorySlug={post.category}
+        />
 
         {/* Share */}
         <div className="flex items-center justify-between py-6 border-t border-slate-200">

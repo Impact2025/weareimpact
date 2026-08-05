@@ -7,6 +7,13 @@ import { useCookieConsent } from '@/components/cookie-consent/CookieConsentProvi
 
 const GA_MEASUREMENT_ID = 'G-Q8Q67SKTJV';
 
+// Interne paden die nooit als publieksverkeer geteld mogen worden.
+// Zonder dit domineren admin-sessies de statistieken (zie weekrapport 2026-W30).
+const INTERNAL_PATH_PREFIXES = ['/admin', '/api'];
+
+export const isInternalPath = (path: string) =>
+  INTERNAL_PATH_PREFIXES.some((prefix) => path === prefix || path.startsWith(`${prefix}/`));
+
 declare global {
   interface Window {
     gtag: (...args: unknown[]) => void;
@@ -29,9 +36,14 @@ export const initGA = () => {
 };
 
 export const pageview = (url: string) => {
-  if (typeof window !== 'undefined' && window.gtag) {
-    window.gtag('config', GA_MEASUREMENT_ID, { page_path: url });
-  }
+  if (typeof window === 'undefined' || !window.gtag) return;
+  if (isInternalPath(url.split('?')[0])) return;
+
+  window.gtag('event', 'page_view', {
+    page_path: url,
+    page_location: window.location.origin + url,
+    page_title: document.title,
+  });
 };
 
 export const event = ({
@@ -94,6 +106,8 @@ function GAPageViewTracker() {
   const searchParams = useSearchParams();
 
   useEffect(() => {
+    if (isInternalPath(pathname)) return;
+
     const url = pathname + (searchParams?.toString() ? `?${searchParams.toString()}` : '');
     pageview(url);
   }, [pathname, searchParams]);
@@ -103,8 +117,11 @@ function GAPageViewTracker() {
 
 export function GoogleAnalytics() {
   const { consent } = useCookieConsent();
+  const pathname = usePathname();
 
   if (consent !== 'accepted') return null;
+  // Laad GA helemaal niet in de admin-omgeving.
+  if (isInternalPath(pathname)) return null;
 
   return (
     <>
@@ -121,9 +138,12 @@ export function GoogleAnalytics() {
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
             gtag('config', '${GA_MEASUREMENT_ID}', {
-              page_path: window.location.pathname,
               anonymize_ip: true,
               cookie_flags: 'SameSite=Lax',
+              // Page views worden expliciet verstuurd door GAPageViewTracker,
+              // zodat interne paden (/admin, /api) overgeslagen kunnen worden
+              // en client-side navigatie niet dubbel telt.
+              send_page_view: false,
             });
           `,
         }}

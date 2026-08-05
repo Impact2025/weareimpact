@@ -4,6 +4,18 @@ import Link from 'next/link';
 import { ArrowRight, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
+// Labels zijn bewust de zoekwoorden waarop deze pagina's moeten ranken.
+const SERVICE_LINKS = [
+  {
+    label: 'Programmamanager digitale transformatie',
+    href: '/programmamanager-digitale-transformatie',
+  },
+  { label: 'AI consultant sociaal domein', href: '/ai-consultant-sociaal-domein' },
+  { label: 'AI strategie', href: '/ai-strategie-consultant' },
+  { label: 'Change management', href: '/change-management-digitale-transformatie' },
+  { label: 'Interim', href: '/interim-verandermanagement-ai-sociaal-domein' },
+];
+
 export function Hero() {
   return (
     <header className="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden">
@@ -55,6 +67,33 @@ export function Hero() {
             <Link href="/#contact">Drink koffie met Vincent</Link>
           </Button>
         </div>
+
+        {/* Directe paden naar de dienstpagina's. Beide CTA's hierboven blijven op
+            de homepage; zonder deze rij verlaat bezoek de site zonder door te klikken. */}
+        <nav
+          aria-label="Waarmee ik help"
+          className="mt-12 animate-fade-in-up delay-400"
+        >
+          <p className="text-sm uppercase tracking-wide text-slate-500 mb-4">
+            Waar zoek je hulp bij?
+          </p>
+          <ul className="flex flex-wrap justify-center gap-2">
+            {SERVICE_LINKS.map((service) => (
+              <li key={service.href}>
+                <Link
+                  href={service.href}
+                  className="group inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white/80 px-4 py-2 text-sm font-medium text-slate-700 shadow-sm transition-all hover:border-orange-300 hover:text-slate-900"
+                >
+                  {service.label}
+                  <ArrowRight
+                    size={14}
+                    className="text-slate-400 transition-transform group-hover:translate-x-0.5 group-hover:text-orange-500"
+                  />
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
       </div>
 
       {/* Scroll Indicator */}
