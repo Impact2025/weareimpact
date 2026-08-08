@@ -93,6 +93,13 @@ const nextConfig: NextConfig = {
       // daardoor als 404 geregistreerd stonden. Doelen zijn bestaande,
       // geïndexeerde pagina's uit de sitemap.
       // ============================================================
+      // Slug hernoemd (2026-08-08): de oude slug was per ongeluk de eerste H2
+      // van het artikel in plaats van de titel.
+      {
+        source: '/blog/1-jullie-besteden-meer-tijd-aan-rapportages-dan-aan-clienten',
+        destination: '/blog/7-signalen-dat-je-een-consultant-sociaal-domein-nodig-hebt',
+        permanent: true,
+      },
       // Blog-posts die per ongeluk onder /blog/kennisbank/ stonden
       { source: '/blog/kennisbank/impact-box-70000-geluksmomenten', destination: '/kennisbank/impact-box-70000-geluksmomenten', permanent: true },
       { source: '/blog/kennisbank/weerstand-ai-overwinnen-sociaal-domein-legio-serious-play', destination: '/kennisbank/weerstand-ai-overwinnen-sociaal-domein-legio-serious-play', permanent: true },
