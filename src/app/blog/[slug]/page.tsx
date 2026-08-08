@@ -8,7 +8,7 @@ import { sql } from '@/lib/db/neon';
 import { ArrowLeft, Calendar, Clock, Linkedin, Twitter, ChevronRight, BookOpen } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { ArticleJsonLd, BreadcrumbJsonLd } from '@/components/seo/JsonLd';
+import { ArticleJsonLd, BreadcrumbJsonLd, FAQPageJsonLd } from '@/components/seo/JsonLd';
 import { ViewTracker } from '@/components/features/ViewTracker';
 import { RelatedService } from '@/components/seo/RelatedService';
 import { PodcastPlayer } from '@/components/blog/PodcastPlayer';
@@ -33,6 +33,45 @@ function contentToHtml(content: string): string {
 
   // Convert markdown to HTML
   return marked.parse(content, { async: false }) as string;
+}
+
+// Pull question/answer pairs out of a post's FAQ section so we can emit FAQPage schema.
+// Looks for an <h2> whose text starts with "Veelgestelde vragen" and treats every <h3>
+// that follows as a question, with the paragraphs up to the next heading as the answer.
+function extractFaqItems(content: string): Array<{ question: string; answer: string }> {
+  if (!content) return [];
+
+  // Posts that ship their own JSON-LD already declare their FAQ; don't emit it twice.
+  if (/"@type"\s*:\s*"FAQPage"/.test(content)) return [];
+
+  const faqStart = content.search(/<h2[^>]*>\s*Veelgestelde vragen/i);
+  if (faqStart === -1) return [];
+
+  const stripTags = (html: string) =>
+    html
+      .replace(/<[^>]+>/g, ' ')
+      .replace(/&nbsp;/g, ' ')
+      .replace(/&amp;/g, '&')
+      .replace(/&quot;/g, '"')
+      .replace(/&#39;/g, "'")
+      .replace(/\s+/g, ' ')
+      .trim();
+
+  const section = content.slice(faqStart);
+  const items: Array<{ question: string; answer: string }> = [];
+  const questionRe = /<h3[^>]*>([\s\S]*?)<\/h3>/gi;
+
+  let match: RegExpExecArray | null;
+  while ((match = questionRe.exec(section)) !== null) {
+    const question = stripTags(match[1]);
+    const rest = section.slice(match.index + match[0].length);
+    // The answer runs until the next heading of any level.
+    const nextHeading = rest.search(/<h[1-3][^>]*>/i);
+    const answer = stripTags(nextHeading === -1 ? rest : rest.slice(0, nextHeading));
+    if (question && answer) items.push({ question, answer });
+  }
+
+  return items;
 }
 
 export const revalidate = 3600;
@@ -184,11 +223,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 
   const siteUrl = 'https://weareimpact.nl';
+  // Posts without a cover image fall back to the generated OG image for this slug.
+  // Passing an empty images array here would override Next's file-convention default,
+  // leaving the post with no og:image at all.
   const ogImageUrl = post.cover_image
     ? (post.cover_image.startsWith('http')
         ? post.cover_image
         : `${siteUrl}${post.cover_image.startsWith('/') ? '' : '/'}${post.cover_image}`)
-    : undefined;
+    : `${siteUrl}/blog/${slug}/opengraph-image`;
 
   // Prefer the curated SEO title/description; fall back to the on-page title/excerpt.
   const metaTitle = decodeEntities(post.seo_title || post.title);
@@ -207,13 +249,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       url: `https://weareimpact.nl/blog/${slug}`,
       publishedTime: post.published_at,
       authors: [post.author_name || 'Vincent van Munster'],
-      images: ogImageUrl ? [{ url: ogImageUrl, width: 1200, height: 630, alt: post.title }] : [],
+      images: [{ url: ogImageUrl, width: 1200, height: 630, alt: post.cover_image_alt || post.title }],
     },
     twitter: {
       card: 'summary_large_image',
       title: metaTitle,
       description: metaDescription,
-      images: ogImageUrl ? [ogImageUrl] : [],
+      images: [ogImageUrl],
     },
   };
 }
@@ -243,6 +285,8 @@ export default async function BlogPostPage({ params }: Props) {
     { name: post.title, url: `/blog/${post.slug}` },
   ];
 
+  const faqItems = extractFaqItems(post.content);
+
   return (
     <article className="min-h-screen bg-[#FDFBF7] pt-32 pb-24">
       <ArticleJsonLd
@@ -263,6 +307,7 @@ export default async function BlogPostPage({ params }: Props) {
         }}
       />
       <BreadcrumbJsonLd items={breadcrumbItems} />
+      {faqItems.length > 0 && <FAQPageJsonLd faqItems={faqItems} />}
       <ViewTracker articleId={post.id} endpoint="/api/blog/view" />
 
       <div className="container mx-auto px-6 max-w-3xl">
