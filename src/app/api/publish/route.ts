@@ -5,6 +5,7 @@ import { sql } from '@/lib/db/neon';
 import { pingIndexNow, pingGoogleIndexingAPI } from '@/lib/indexing';
 import { generateAndPostSocials, type SocialRunReport } from '@/lib/social/service';
 import { isAdminAuthenticated } from '@/lib/admin-auth';
+import { guardArticle } from '@/lib/content-guard';
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 60;
@@ -77,10 +78,11 @@ export async function POST(request: NextRequest) {
       coverImage,
       socials = true,
       source = 'api',
+      force = false,
     } = body as {
       title?: string; content?: string; slug?: string; renameFrom?: string; excerpt?: string;
       category?: string; tags?: string[]; seoTitle?: string; seoDescription?: string;
-      coverImage?: string; socials?: boolean; source?: string;
+      coverImage?: string; socials?: boolean; source?: string; force?: boolean;
     };
 
     if (!title?.trim() || !content?.trim()) {
@@ -89,8 +91,34 @@ export async function POST(request: NextRequest) {
 
     const safeCategory = VALID_CATEGORIES.includes(category) ? category : 'ai';
 
-    // Verwijder een leidende <h1> — de blogpagina toont de titel zelf al
-    const cleanContent = content.replace(/^\s*<h1[^>]*>[\s\S]*?<\/h1>\s*/i, '').trim();
+    // Verwijder de <h1> — de blogpagina rendert de titel zelf al als H1.
+    // Zowel een leidende H1 als een H1 die na een wrapper (<article>, <div>)
+    // volgt; verder in het document laten we koppen met rust.
+    const cleanContent = content
+      .replace(/^(\s*(?:<(?:article|div|section|main)[^>]*>\s*)*)<h1[^>]*>[\s\S]*?<\/h1>\s*/i, '$1')
+      .trim();
+
+    // Kwaliteitspoort: dode bronlinks, verzonnen auteurs en tussenkoppen-als-titel
+    // horen niet live te komen. `force: true` overschrijft dit bewust.
+    const guard = await guardArticle({
+      title: title.trim(),
+      content: cleanContent,
+      seoTitle,
+      seoDescription,
+      excerpt,
+    });
+    if (!guard.ok && !force) {
+      return NextResponse.json(
+        {
+          error: 'Publicatie geblokkeerd door de contentcontrole',
+          blocking: guard.blocking,
+          warnings: guard.warnings,
+          checkedLinks: guard.checkedLinks,
+          hint: 'Los de blokkerende punten op, of stuur nogmaals met "force": true als je bewust wilt doorzetten.',
+        },
+        { status: 422 }
+      );
+    }
     const plainText = stripHtml(cleanContent);
 
     // Excerpt-afleiding — NOOIT een harde slice midden in een woord.
@@ -216,6 +244,11 @@ export async function POST(request: NextRequest) {
       },
       socials: socialReport,
       socialError,
+      guard: {
+        warnings: guard.warnings,
+        forced: !guard.ok && force ? guard.blocking : undefined,
+        checkedLinks: guard.checkedLinks.length,
+      },
     }, { status: 201 });
   } catch (error) {
     console.error('Publish error:', error);

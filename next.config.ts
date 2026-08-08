@@ -100,6 +100,12 @@ const nextConfig: NextConfig = {
         destination: '/blog/7-signalen-dat-je-een-consultant-sociaal-domein-nodig-hebt',
         permanent: true,
       },
+      // Naam stond verkeerd gespeld in de slug ("Vince" i.p.v. "Vincent").
+      {
+        source: '/blog/vince-van-munster-expert-in-digitale-transformatie-voor-het',
+        destination: '/blog/vincent-van-munster-digitale-transformatie-sociaal-domein',
+        permanent: true,
+      },
       // Blog-posts die per ongeluk onder /blog/kennisbank/ stonden
       { source: '/blog/kennisbank/impact-box-70000-geluksmomenten', destination: '/kennisbank/impact-box-70000-geluksmomenten', permanent: true },
       { source: '/blog/kennisbank/weerstand-ai-overwinnen-sociaal-domein-legio-serious-play', destination: '/kennisbank/weerstand-ai-overwinnen-sociaal-domein-legio-serious-play', permanent: true },
