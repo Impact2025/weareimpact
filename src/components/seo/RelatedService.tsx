@@ -59,6 +59,24 @@ const SERVICES: Service[] = [
     match: ['interim', 'interim-manager', 'projectleider', 'verandermanagement'],
   },
   {
+    anchor: 'kwartiermaker AI sociaal domein',
+    href: '/kwartiermaker-ai-sociaal-domein',
+    sentence:
+      'Bestaat er nog geen blauwdruk voor jouw nieuwe werkwijze? Ik werk als {link} — van visie naar bewezen concept.',
+    match: [
+      'kwartiermaker',
+      'kwartiermaken',
+      'nieuwe werkwijze',
+      'blauwdruk',
+      'fusie',
+      'reorganisatie',
+      'werkcentrum',
+      'wet suwi',
+      'mandaatvacuüm',
+      'regionaal beraad',
+    ],
+  },
+  {
     anchor: 'AI strategie consultant',
     href: '/ai-strategie-consultant',
     sentence:

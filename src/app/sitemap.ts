@@ -129,6 +129,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.9,
     },
     {
+      url: `${BASE_URL}/kwartiermaker-ai-sociaal-domein`,
+      lastModified: new Date('2026-08-08'),
+      changeFrequency: 'monthly',
+      priority: 0.85,
+    },
+    {
       url: `${BASE_URL}/contact`,
       lastModified: new Date('2025-10-01'),
       changeFrequency: 'monthly',

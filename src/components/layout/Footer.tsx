@@ -67,6 +67,14 @@ export function Footer() {
               </li>
               <li>
                 <Link
+                  href="/kwartiermaker-ai-sociaal-domein"
+                  className="text-sm hover:text-orange-400 transition-colors"
+                >
+                  Kwartiermaker AI Sociaal Domein
+                </Link>
+              </li>
+              <li>
+                <Link
                   href="/change-management-digitale-transformatie"
                   className="text-sm hover:text-orange-400 transition-colors"
                 >

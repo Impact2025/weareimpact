@@ -14,6 +14,7 @@ const STATIC_URLS = [
   '/ai-welzijn-expert',
   '/change-management-digitale-transformatie',
   '/programmamanager-digitale-transformatie',
+  '/kwartiermaker-ai-sociaal-domein',
   '/impact-calculator',
   '/contact',
   '/vincent-van-munster',

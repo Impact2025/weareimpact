@@ -11,6 +11,7 @@ const SERVICE_LINKS = [
     href: '/programmamanager-digitale-transformatie',
   },
   { label: 'AI consultant sociaal domein', href: '/ai-consultant-sociaal-domein' },
+  { label: 'Kwartiermaker AI', href: '/kwartiermaker-ai-sociaal-domein' },
   { label: 'AI strategie', href: '/ai-strategie-consultant' },
   { label: 'Change management', href: '/change-management-digitale-transformatie' },
   { label: 'Interim', href: '/interim-verandermanagement-ai-sociaal-domein' },

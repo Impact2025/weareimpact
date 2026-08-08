@@ -46,6 +46,7 @@ const rollen = [
       'AI-strategie die van papier naar uitvoering moet',
       'Nieuwe dienst of aanpak die bewezen moet worden',
     ],
+    href: '/kwartiermaker-ai-sociaal-domein',
   },
   {
     code: '03',
@@ -434,7 +435,7 @@ export default function InterimProfiel() {
                     <span className="text-sm font-semibold text-orange-600 hidden sm:block">&mdash; {rol.sub}</span>
                   </div>
                   <p className="text-slate-600 leading-relaxed text-[0.925rem] mb-5 max-w-3xl">{rol.omschrijving}</p>
-                  <div className="inline-flex flex-col gap-1.5">
+                  <div className="inline-flex flex-col gap-1.5 mb-5">
                     {rol.wanneer.map((w) => (
                       <div key={w} className="flex items-start gap-2 text-slate-600 text-sm">
                         <CheckCircle size={14} className="text-orange-400 shrink-0 mt-0.5" />
@@ -442,6 +443,15 @@ export default function InterimProfiel() {
                       </div>
                     ))}
                   </div>
+                  {'href' in rol && rol.href && (
+                    <Link
+                      href={rol.href}
+                      className="inline-flex items-center gap-1.5 text-sm font-semibold text-orange-600 hover:text-orange-700"
+                    >
+                      Meer over {rol.titel.toLowerCase()} AI
+                      <ArrowRight size={14} />
+                    </Link>
+                  )}
                 </div>
               </div>
             ))}

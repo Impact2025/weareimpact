@@ -143,6 +143,7 @@ const personSchema = {
         itemOffered: {
           '@type': 'Service',
           name: 'Kwartiermaker Innovatie & AI',
+          url: 'https://weareimpact.nl/kwartiermaker-ai-sociaal-domein',
           provider: { '@id': 'https://weareimpact.nl/vincent-van-munster#person' },
         },
       },
