@@ -3,6 +3,7 @@ export interface IntakeQuestion {
   text: string;
   placeholder?: string;
   multiline?: boolean;
+  optional?: boolean;
 }
 
 export interface IntakeGroup {
@@ -34,8 +35,12 @@ export const INTAKE_GROUPS: IntakeGroup[] = [
         multiline: true,
       },
       {
-        id: "eerder_geprobeerd_ai",
-        text: "Wat heb je de afgelopen maand geprobeerd zelf met AI te doen, en waar liep dat op vast?",
+        id: "welke_ai_tool",
+        text: "Welke AI-tool heb je de afgelopen maand geprobeerd te gebruiken?",
+      },
+      {
+        id: "ai_resultaat",
+        text: "Wat was het concrete resultaat — te generiek, verkeerde toon, te tijdrovend om te leren, iets anders?",
         multiline: true,
       },
     ],
@@ -107,6 +112,10 @@ export const INTAKE_GROUPS: IntakeGroup[] = [
         text: "Heb je voorbeelden van eerder geschreven content die representatief zijn voor jouw stem? (Je kunt dit later mailen, een korte omschrijving is nu genoeg.)",
         multiline: true,
       },
+      {
+        id: "compliance_eisen",
+        text: "Werk je in een sector met specifieke privacy-/compliance-eisen (AVG, keurmerk, subsidievoorwaarden) waar ik rekening mee moet houden?",
+      },
     ],
   },
   {
@@ -114,6 +123,11 @@ export const INTAKE_GROUPS: IntakeGroup[] = [
     title: "Verwachtingen & randvoorwaarden",
     intro: "Laatste blok, dan weet ik precies waar ik rekening mee moet houden.",
     questions: [
+      {
+        id: "nooit_door_ai",
+        text: "Zijn er specifieke taken (bijv. financiële communicatie, contact met subsidieverstrekkers, gevoelige klantcommunicatie) die je altijd zelf wilt blijven doen?",
+        multiline: true,
+      },
       {
         id: "bewijs_drie_maanden",
         text: "Wat zou voor jou over drie maanden het bewijs zijn dat dit heeft gewerkt?",
@@ -124,13 +138,14 @@ export const INTAKE_GROUPS: IntakeGroup[] = [
         text: "Heb je een budget-bandbreedte in gedachten, of wil je eerst zien wat er nodig is voordat we over prijs praten?",
       },
       {
-        id: "nooit_door_ai",
-        text: "Zijn er dingen die je nooit door AI wilt laten doen, ook niet met jouw goedkeuring achteraf?",
-        multiline: true,
+        id: "beslissingsbevoegdheid",
+        text: "Beslis jij hier zelf over, of is er een bestuur/team dat moet meebeslissen?",
       },
       {
-        id: "compliance_eisen",
-        text: "Werk je in een sector met specifieke privacy-/compliance-eisen (AVG, keurmerk, subsidievoorwaarden) waar ik rekening mee moet houden?",
+        id: "overig",
+        text: "Is er iets dat we hierboven niet gevraagd hebben, maar dat je wel wilt meegeven?",
+        multiline: true,
+        optional: true,
       },
     ],
   },

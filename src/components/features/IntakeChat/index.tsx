@@ -1,18 +1,12 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 import Image from 'next/image';
-import { Send, Loader2, Check, User, Mail, Building, Phone } from 'lucide-react';
+import { Check, User, Mail, Building, Phone, Loader2, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
-import { INTAKE_GROUPS, INTAKE_QUESTION_COUNT } from '@/lib/intake/questions';
-
-interface ChatMessage {
-  id: string;
-  role: 'iris' | 'user';
-  content: string;
-}
+import { INTAKE_GROUPS } from '@/lib/intake/questions';
 
 interface ContactData {
   name: string;
@@ -21,95 +15,52 @@ interface ContactData {
   phone: string;
 }
 
-// Platte lijst van alle vragen met hun groep, voor eenvoudige index-navigatie
-const FLAT_QUESTIONS = INTAKE_GROUPS.flatMap((group) =>
-  group.questions.map((question) => ({ group, question }))
-);
+// De contactgegevens vormen de laatste stap, na de inhoudelijke vragengroepen.
+const STEP_TITLES = [...INTAKE_GROUPS.map((group) => group.title), 'Contact'];
+const CONTACT_STEP = INTAKE_GROUPS.length;
 
-type Phase = 'chat' | 'contact' | 'submitting' | 'done' | 'error';
+type Phase = 'form' | 'submitting' | 'done' | 'error';
 
 export function IntakeChat() {
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
-  const [questionIndex, setQuestionIndex] = useState(0);
+  const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
-  const [inputValue, setInputValue] = useState('');
-  const [phase, setPhase] = useState<Phase>('chat');
+  const [phase, setPhase] = useState<Phase>('form');
   const [contact, setContact] = useState<ContactData>({ name: '', email: '', organisation: '', phone: '' });
   const [honeypot, setHoneypot] = useState('');
-  const messagesEndRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const startTimeRef = useRef<number>(Date.now());
-  const initialisedRef = useRef(false);
+  const [startTime] = useState(() => Date.now());
 
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
-  }, [messages, phase]);
+  const currentGroup = step < CONTACT_STEP ? INTAKE_GROUPS[step] : null;
+  const isContactStep = step === CONTACT_STEP;
 
-  // Herstel focus op het invoerveld na elke overgang naar een nieuwe vraag,
-  // want het veld wordt tijdens de overgangsanimatie kort disabled en verliest daardoor focus.
-  useEffect(() => {
-    if (phase !== 'chat') return;
-    textareaRef.current?.focus();
-    inputRef.current?.focus();
-  }, [questionIndex, phase]);
+  const groupIsComplete = (groupIndex: number) =>
+    INTAKE_GROUPS[groupIndex].questions.every((q) => q.optional || (answers[q.id] ?? '').trim() !== '');
 
-  const addMessage = (role: 'iris' | 'user', content: string) => {
-    setMessages((prev) => [...prev, { id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`, role, content }]);
+  const canProceed = currentGroup ? groupIsComplete(step) : contact.name.trim() !== '' && contact.email.trim() !== '';
+
+  const handleAnswerChange = (questionId: string, value: string) => {
+    setAnswers((prev) => ({ ...prev, [questionId]: value }));
   };
 
-  // Introduceer de eerste groep + vraag bij het laden
-  useEffect(() => {
-    if (initialisedRef.current) return;
-    initialisedRef.current = true;
-    const first = FLAT_QUESTIONS[0];
-    addMessage('iris', "Hoi, ik ben Iris. Voordat we een prijsvoorstel maken, wil ik je een aantal vragen stellen zodat het onderbouwd is in plaats van geraden. Het duurt zo'n 5 tot 10 minuten.");
-    addMessage('iris', first.group.intro);
-    addMessage('iris', first.question.text);
-  }, []);
-
-  const currentEntry = FLAT_QUESTIONS[questionIndex];
-  const isLastQuestion = questionIndex === FLAT_QUESTIONS.length - 1;
-  const [isTransitioning, setIsTransitioning] = useState(false);
-
-  const handleSubmitAnswer = () => {
-    const value = inputValue.trim();
-    if (!value || !currentEntry || isTransitioning) return;
-
-    setIsTransitioning(true);
-    addMessage('user', value);
-    setAnswers((prev) => ({ ...prev, [currentEntry.question.id]: value }));
-    setInputValue('');
-
-    if (isLastQuestion) {
-      setTimeout(() => {
-        addMessage('iris', 'Dank je, dat is precies wat ik nodig heb. Laatste stap: waar mag ik het onderbouwde voorstel naartoe sturen?');
-        setPhase('contact');
-        setIsTransitioning(false);
-      }, 300);
-      return;
-    }
-
-    const nextIndex = questionIndex + 1;
-    const next = FLAT_QUESTIONS[nextIndex];
-    const isNewGroup = next.group.id !== currentEntry.group.id;
-
-    setTimeout(() => {
-      if (isNewGroup) {
-        addMessage('iris', next.group.intro);
-      }
-      addMessage('iris', next.question.text);
-      setQuestionIndex(nextIndex);
-      setIsTransitioning(false);
-    }, 300);
+  const goToStep = (target: number) => {
+    // Alleen terug naar een al voltooide stap, of naar de eerstvolgende stap springen.
+    if (target < step) setStep(target);
   };
 
-  const handleSubmitContact = async (e: React.FormEvent) => {
+  const handleNext = () => {
+    if (!canProceed) return;
+    setStep((s) => Math.min(s + 1, CONTACT_STEP));
+  };
+
+  const handleBack = () => {
+    setStep((s) => Math.max(s - 1, 0));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!contact.name.trim() || !contact.email.trim()) return;
+    if (!canProceed) return;
 
     setPhase('submitting');
-    const durationSeconds = Math.round((Date.now() - startTimeRef.current) / 1000);
+    const durationSeconds = Math.round((Date.now() - startTime) / 1000);
 
     try {
       const response = await fetch('/api/intake', {
@@ -128,18 +79,39 @@ export function IntakeChat() {
 
       if (!response.ok) throw new Error('Request failed');
 
-      addMessage('iris', `Dank je wel, ${contact.name.trim().split(' ')[0]}. Ik ga hiermee aan de slag en Vincent neemt dit met je door voor een onderbouwd voorstel. Je hoort snel van ons.`);
       setPhase('done');
     } catch {
       setPhase('error');
     }
   };
 
-  const progress = Math.round(
-    ((phase === 'contact' || phase === 'submitting' || phase === 'done' ? INTAKE_QUESTION_COUNT : questionIndex) /
-      INTAKE_QUESTION_COUNT) *
-      100
-  );
+  const progress = Math.round((step / CONTACT_STEP) * 100);
+
+  if (phase === 'done') {
+    return (
+      <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center pt-24 px-4">
+        <div className="w-16 h-16 rounded-full overflow-hidden relative shrink-0 mb-6 ring-4 ring-white shadow-lg">
+          <Image src="/iris-avatar.webp" alt="Iris" fill className="object-cover" />
+        </div>
+        <div className="max-w-md w-full bg-white rounded-2xl shadow-sm border border-slate-200 p-8 text-center">
+          <div className="text-4xl mb-4">✅</div>
+          <h1 className="text-xl font-semibold text-slate-900 mb-2">
+            Bedankt voor je aanvraag{contact.name.trim() ? `, ${contact.name.trim().split(' ')[0]}` : ''}!
+          </h1>
+          <p className="text-sm text-slate-600 leading-relaxed">
+            Ik heb je antwoorden ontvangen en geef ze door aan Vincent. Hij neemt ze met je door en komt terug met een
+            onderbouwd voorstel, geen geraden prijs.
+          </p>
+          <p className="text-sm text-slate-600 leading-relaxed mt-3">
+            Je hoort binnen enkele werkdagen van ons op <span className="font-medium text-slate-800">{contact.email}</span>.
+          </p>
+          <a href="https://weareimpact.nl" className="inline-block mt-6">
+            <Button variant="outline">Terug naar WeAreImpact.nl</Button>
+          </a>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col pt-24">
@@ -159,132 +131,145 @@ export function IntakeChat() {
         </div>
       </div>
 
-      {/* Chat area */}
-      <div className="flex-1 max-w-2xl w-full mx-auto px-4 py-6 space-y-4">
-        {messages.map((message) => (
-          <div key={message.id} className={cn('flex', message.role === 'user' ? 'justify-end' : 'justify-start')}>
-            <div
-              className={cn(
-                'max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed whitespace-pre-wrap',
-                message.role === 'user'
-                  ? 'bg-orange-500 text-white rounded-br-md'
-                  : 'bg-white text-slate-800 shadow-sm rounded-bl-md'
-              )}
-            >
-              {message.content}
-            </div>
-          </div>
-        ))}
-
-        {/* Contactformulier */}
-        {phase === 'contact' && (
-          <form onSubmit={handleSubmitContact} className="bg-white rounded-2xl p-4 shadow-sm space-y-3 max-w-[85%]">
-            <input
-              type="text"
-              value={honeypot}
-              onChange={(e) => setHoneypot(e.target.value)}
-              className="hidden"
-              tabIndex={-1}
-              autoComplete="off"
-            />
-            <div>
-              <label className="flex items-center gap-2 text-sm font-medium text-slate-700 mb-1">
-                <User className="w-4 h-4" /> Naam *
-              </label>
-              <Input value={contact.name} onChange={(e) => setContact({ ...contact, name: e.target.value })} placeholder="Je naam" required />
-            </div>
-            <div>
-              <label className="flex items-center gap-2 text-sm font-medium text-slate-700 mb-1">
-                <Mail className="w-4 h-4" /> E-mail *
-              </label>
-              <Input type="email" value={contact.email} onChange={(e) => setContact({ ...contact, email: e.target.value })} placeholder="je@organisatie.nl" required />
-            </div>
-            <div>
-              <label className="flex items-center gap-2 text-sm font-medium text-slate-700 mb-1">
-                <Building className="w-4 h-4" /> Organisatie
-              </label>
-              <Input value={contact.organisation} onChange={(e) => setContact({ ...contact, organisation: e.target.value })} placeholder="Optioneel" />
-            </div>
-            <div>
-              <label className="flex items-center gap-2 text-sm font-medium text-slate-700 mb-1">
-                <Phone className="w-4 h-4" /> Telefoon
-              </label>
-              <Input type="tel" value={contact.phone} onChange={(e) => setContact({ ...contact, phone: e.target.value })} placeholder="Optioneel" />
-            </div>
-            <Button type="submit" className="w-full bg-orange-500 hover:bg-orange-600" disabled={!contact.name.trim() || !contact.email.trim()}>
-              <Check className="w-4 h-4 mr-2" />
-              Verstuur intake
-            </Button>
-          </form>
-        )}
-
-        {phase === 'submitting' && (
-          <div className="flex justify-start">
-            <div className="bg-white rounded-2xl px-4 py-3 shadow-sm flex items-center gap-2 text-sm text-slate-500">
-              <Loader2 className="w-4 h-4 animate-spin" /> Even versturen...
-            </div>
-          </div>
-        )}
-
-        {phase === 'error' && (
-          <div className="bg-red-50 border border-red-200 rounded-2xl p-4 text-sm text-red-700 max-w-[85%]">
-            Er ging iets mis bij het versturen. Probeer het opnieuw of mail direct naar{' '}
-            <a href="mailto:v.munster@weareimpact.nl" className="underline">v.munster@weareimpact.nl</a>.
-            <div className="mt-3">
-              <Button size="sm" variant="outline" onClick={() => setPhase('contact')}>
-                Opnieuw proberen
-              </Button>
-            </div>
-          </div>
-        )}
-
-        {phase === 'done' && (
-          <div className="bg-green-50 border border-green-200 rounded-2xl p-4 text-center max-w-[85%]">
-            <div className="text-3xl mb-2">✅</div>
-            <p className="text-sm text-green-800 font-medium">Intake ontvangen</p>
-          </div>
-        )}
-
-        <div ref={messagesEndRef} />
+      {/* Stappen */}
+      <div className="bg-white border-b border-slate-200 overflow-x-auto">
+        <div className="max-w-2xl mx-auto px-4 py-3 flex items-center gap-1 min-w-max">
+          {STEP_TITLES.map((title, index) => {
+            const isDone = index < step;
+            const isCurrent = index === step;
+            const clickable = index < step;
+            return (
+              <div key={title} className="flex items-center">
+                {index > 0 && <div className={cn('w-6 h-px mx-1', isDone || isCurrent ? 'bg-orange-400' : 'bg-slate-200')} />}
+                <button
+                  type="button"
+                  onClick={() => goToStep(index)}
+                  disabled={!clickable}
+                  className={cn(
+                    'flex items-center gap-1.5 px-2 py-1 rounded-full text-xs font-medium transition-colors whitespace-nowrap',
+                    isCurrent && 'bg-orange-50 text-orange-700',
+                    isDone && 'text-slate-500 hover:text-slate-700 cursor-pointer',
+                    !isDone && !isCurrent && 'text-slate-300'
+                  )}
+                >
+                  <span
+                    className={cn(
+                      'w-5 h-5 rounded-full flex items-center justify-center text-[10px] shrink-0',
+                      isCurrent && 'bg-orange-500 text-white',
+                      isDone && 'bg-slate-200 text-slate-600',
+                      !isDone && !isCurrent && 'bg-slate-100 text-slate-300'
+                    )}
+                  >
+                    {isDone ? <Check className="w-3 h-3" /> : index + 1}
+                  </span>
+                  {title}
+                </button>
+              </div>
+            );
+          })}
+        </div>
       </div>
 
-      {/* Input */}
-      {phase === 'chat' && (
-        <div className="border-t border-slate-200 bg-white sticky bottom-0">
-          <div className="max-w-2xl mx-auto px-4 py-4 flex gap-2 items-end">
-            {currentEntry?.question.multiline ? (
-              <textarea
-                ref={textareaRef}
-                value={inputValue}
-                onChange={(e) => setInputValue(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' && !e.shiftKey) {
-                    e.preventDefault();
-                    handleSubmitAnswer();
-                  }
-                }}
-                placeholder="Typ je antwoord... (Shift+Enter voor nieuwe regel)"
-                rows={2}
-                disabled={isTransitioning}
-                className="flex-1 rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] resize-none disabled:opacity-50"
+      {/* Inhoud */}
+      <div className="flex-1 max-w-2xl w-full mx-auto px-4 py-8">
+        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+          {currentGroup && (
+            <>
+              <p className="text-sm text-slate-500 italic mb-6">{currentGroup.intro}</p>
+              <div className="space-y-5">
+                {currentGroup.questions.map((question) => (
+                  <div key={question.id}>
+                    <label className="block text-sm font-medium text-slate-800 mb-1.5">
+                      {question.text}
+                      {question.optional && <span className="text-slate-400 font-normal"> (optioneel)</span>}
+                    </label>
+                    {question.multiline ? (
+                      <textarea
+                        value={answers[question.id] ?? ''}
+                        onChange={(e) => handleAnswerChange(question.id, e.target.value)}
+                        rows={3}
+                        className="w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] resize-none"
+                      />
+                    ) : (
+                      <Input value={answers[question.id] ?? ''} onChange={(e) => handleAnswerChange(question.id, e.target.value)} />
+                    )}
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
+
+          {isContactStep && (
+            <form onSubmit={handleSubmit}>
+              <p className="text-sm text-slate-500 italic mb-6">
+                Laatste stap: waar mag ik het onderbouwde voorstel naartoe sturen?
+              </p>
+              <input
+                type="text"
+                value={honeypot}
+                onChange={(e) => setHoneypot(e.target.value)}
+                className="hidden"
+                tabIndex={-1}
+                autoComplete="off"
               />
-            ) : (
-              <Input
-                ref={inputRef}
-                value={inputValue}
-                onChange={(e) => setInputValue(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && handleSubmitAnswer()}
-                placeholder="Typ je antwoord..."
-                disabled={isTransitioning}
-                className="flex-1"
-              />
-            )}
-            <Button onClick={handleSubmitAnswer} disabled={!inputValue.trim() || isTransitioning} size="icon" className="bg-orange-500 hover:bg-orange-600 shrink-0">
-              <Send className="w-4 h-4" />
-            </Button>
-          </div>
+              <div className="space-y-4">
+                <div>
+                  <label className="flex items-center gap-2 text-sm font-medium text-slate-700 mb-1">
+                    <User className="w-4 h-4" /> Naam *
+                  </label>
+                  <Input value={contact.name} onChange={(e) => setContact({ ...contact, name: e.target.value })} placeholder="Je naam" required />
+                </div>
+                <div>
+                  <label className="flex items-center gap-2 text-sm font-medium text-slate-700 mb-1">
+                    <Mail className="w-4 h-4" /> E-mail *
+                  </label>
+                  <Input type="email" value={contact.email} onChange={(e) => setContact({ ...contact, email: e.target.value })} placeholder="je@organisatie.nl" required />
+                </div>
+                <div>
+                  <label className="flex items-center gap-2 text-sm font-medium text-slate-700 mb-1">
+                    <Building className="w-4 h-4" /> Organisatie
+                  </label>
+                  <Input value={contact.organisation} onChange={(e) => setContact({ ...contact, organisation: e.target.value })} placeholder="Optioneel" />
+                </div>
+                <div>
+                  <label className="flex items-center gap-2 text-sm font-medium text-slate-700 mb-1">
+                    <Phone className="w-4 h-4" /> Telefoon
+                  </label>
+                  <Input type="tel" value={contact.phone} onChange={(e) => setContact({ ...contact, phone: e.target.value })} placeholder="Optioneel" />
+                </div>
+              </div>
+
+              {phase === 'error' && (
+                <div className="mt-4 bg-red-50 border border-red-200 rounded-xl p-3 text-sm text-red-700">
+                  Er ging iets mis bij het versturen. Probeer het opnieuw of mail direct naar{' '}
+                  <a href="mailto:v.munster@weareimpact.nl" className="underline">v.munster@weareimpact.nl</a>.
+                </div>
+              )}
+
+              <div className="mt-6 flex justify-between">
+                <Button type="button" variant="outline" onClick={handleBack} disabled={phase === 'submitting'}>
+                  <ChevronLeft className="w-4 h-4 mr-1" /> Vorige
+                </Button>
+                <Button type="submit" className="bg-orange-500 hover:bg-orange-600" disabled={!canProceed || phase === 'submitting'}>
+                  {phase === 'submitting' ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Check className="w-4 h-4 mr-2" />}
+                  Verstuur intake
+                </Button>
+              </div>
+            </form>
+          )}
+
+          {currentGroup && (
+            <div className="mt-6 flex justify-between">
+              <Button type="button" variant="outline" onClick={handleBack} disabled={step === 0}>
+                <ChevronLeft className="w-4 h-4 mr-1" /> Vorige
+              </Button>
+              <Button type="button" onClick={handleNext} disabled={!canProceed} className="bg-orange-500 hover:bg-orange-600">
+                Volgende <ChevronRight className="w-4 h-4 ml-1" />
+              </Button>
+            </div>
+          )}
         </div>
-      )}
+      </div>
     </div>
   );
 }
