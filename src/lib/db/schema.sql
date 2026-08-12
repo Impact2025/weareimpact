@@ -281,6 +281,29 @@ CREATE TABLE IF NOT EXISTS error_404_log (
 CREATE INDEX IF NOT EXISTS idx_404_url    ON error_404_log(url);
 CREATE INDEX IF NOT EXISTS idx_404_hit_at ON error_404_log(hit_at DESC);
 
+-- =============================================
+-- AGENTOS / IRIS INTAKE
+-- =============================================
+
+CREATE TABLE IF NOT EXISTS intake_submissions (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  name VARCHAR(255) NOT NULL,
+  email VARCHAR(255) NOT NULL,
+  organisation VARCHAR(255),
+  phone VARCHAR(50),
+  answers JSONB NOT NULL,
+  duration_seconds INTEGER,
+  source VARCHAR(100) DEFAULT '/intake',
+  status VARCHAR(20) DEFAULT 'new' CHECK (status IN ('new', 'contacted', 'qualified', 'converted')),
+  starred BOOLEAN DEFAULT FALSE,
+  notes TEXT,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_intake_submissions_created ON intake_submissions(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_intake_submissions_status ON intake_submissions(status);
+
 -- CRM Indexes
 CREATE INDEX IF NOT EXISTS idx_companies_name ON companies(name);
 CREATE INDEX IF NOT EXISTS idx_companies_created ON companies(created_at DESC);
