@@ -23,6 +23,7 @@ interface ImpactCalculatorEmailData {
     aiPct: number;
     uurloon: number;
     investeringKosten?: number;
+    investeringIsSchatting?: boolean;
   };
   results: {
     weeklyHoursSaved: number;
@@ -53,7 +54,7 @@ interface Insight {
 }
 
 function generateInsights(
-  inputs: { fte: number; adminPct: number; aiPct: number; uurloon: number; investeringKosten?: number },
+  inputs: { fte: number; adminPct: number; aiPct: number; uurloon: number; investeringKosten?: number; investeringIsSchatting?: boolean },
   results: {
     weeklyHoursSaved: number;
     grossSavingsPerYear: number;
@@ -133,16 +134,19 @@ function generateInsights(
   // Insight 4: SROI-positionering — alleen als er een investering is ingevuld
   if (results.sroiRatio !== undefined && results.sroiRatio !== null && inputs.investeringKosten) {
     const ratio = results.sroiRatio;
+    const investeringLabel = inputs.investeringIsSchatting
+      ? `onze inschatting van € ${fmtN(inputs.investeringKosten)}`
+      : `jouw opgegeven € ${fmtN(inputs.investeringKosten)}`;
     if (ratio >= SROI_ONDERGRENS_SVI) {
       insights.push({
         title: `SROI van ${ratio.toFixed(1)} : 1 — boven de gangbare ondergrens voor een sterke sociale investering`,
-        body: `Elke geïnvesteerde euro (€ ${fmtN(inputs.investeringKosten)}) levert bij jouw team € ${ratio.toFixed(1)} aan operationele waarde en vermeden verzuimkosten op. Social Value International hanteert 3:1 als ondergrens voor een sterke maatschappelijke businesscase — bruikbaar als onderbouwing richting financiers, gemeenten of een aanbesteding met SROI-verplichting.`,
+        body: `Tegenover ${investeringLabel} staat € ${ratio.toFixed(1)} aan operationele waarde en vermeden verzuimkosten per geïnvesteerde euro. Social Value International hanteert 3:1 als ondergrens voor een sterke maatschappelijke businesscase — bruikbaar als onderbouwing richting financiers, gemeenten of een aanbesteding met SROI-verplichting.${inputs.investeringIsSchatting ? ' Vul je eigen offerte in voor een scherpere ratio.' : ''}`,
         type: 'positive',
       });
     } else {
       insights.push({
         title: `SROI van ${ratio.toFixed(1)} : 1 — nog onder de gangbare 3:1-ondergrens`,
-        body: `Bij een investering van € ${fmtN(inputs.investeringKosten)} staat daar nu € ${fmtN(results.grossSavingsPerYear + (results.avoidedVerzuimEuro || 0))} aan gemeten waarde tegenover. Een gefaseerde implementatie (kleiner beginnen, eerst het pilotteam) verlaagt de investering per stap en verbetert doorgaans de ratio voordat je volledig uitrolt.`,
+        body: `Tegenover ${investeringLabel} staat nu € ${fmtN(results.grossSavingsPerYear + (results.avoidedVerzuimEuro || 0))} aan gemeten waarde. Een gefaseerde implementatie (kleiner beginnen, eerst het pilotteam) verlaagt de investering per stap en verbetert doorgaans de ratio voordat je volledig uitrolt.${inputs.investeringIsSchatting ? ' Vul je eigen offerte in voor een scherpere ratio.' : ''}`,
         type: 'neutral',
       });
     }

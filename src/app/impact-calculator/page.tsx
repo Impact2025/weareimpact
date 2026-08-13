@@ -42,6 +42,17 @@ function burnoutReductieMidden(adminPct: number): number {
   return 0.14;                     // 12–16%
 }
 
+// Eigen inschatting (geen externe bron) — pilot + tooling + training schaalt met
+// teamgrootte, in lijn met de 12-weekse roadmap (pilotgroep 5–8 medewerkers, daarna
+// uitrol). Startpunt voor de slider, niet een bewering over marktprijzen.
+function schatInvesteringOpFte(fte: number): number {
+  if (fte <= 15) return 5000;
+  if (fte <= 30) return 10000;
+  if (fte <= 60) return 20000;
+  if (fte <= 120) return 35000;
+  return 50000;
+}
+
 interface CalcResults {
   weeklyHoursSaved: number;
   yearlyHoursSaved: number;
@@ -184,8 +195,17 @@ export default function ImpactCalculatorPage() {
   const [adminPct, setAdminPct] = useState(40);
   const [aiPct, setAiPct] = useState(10);
   const [uurloon, setUurloon] = useState(35);
-  const [investeringKosten, setInvesteringKosten] = useState(15000);
+  const [investeringKosten, setInvesteringKosten] = useState(schatInvesteringOpFte(30));
+  const [investeringAangepast, setInvesteringAangepast] = useState(false);
   const [hasInteracted, setHasInteracted] = useState(false);
+
+  // Zolang de gebruiker de investeringsslider niet zelf heeft aangeraakt, beweegt de
+  // schatting mee met de teamgrootte — zo staat er nooit een blanco, geraden getal.
+  const handleFteChange = (v: number) => {
+    setFte(v);
+    setHasInteracted(true);
+    if (!investeringAangepast) setInvesteringKosten(schatInvesteringOpFte(v));
+  };
 
   const [email, setEmail] = useState('');
   const [naam, setNaam] = useState('');
@@ -212,7 +232,7 @@ export default function ImpactCalculatorPage() {
           email,
           naam,
           organisatie,
-          inputs: { fte, adminPct, aiPct, uurloon, investeringKosten },
+          inputs: { fte, adminPct, aiPct, uurloon, investeringKosten, investeringIsSchatting: !investeringAangepast },
           results: {
             weeklyHoursSaved: Math.round(results.weeklyHoursSaved),
             yearlyHoursSaved: Math.round(results.yearlyHoursSaved),
@@ -302,7 +322,7 @@ export default function ImpactCalculatorPage() {
                 step={5}
                 display={`${fte} medewerkers`}
                 sublabel="Hoeveel zorgprofessionals / sociaal werkers werken er in jouw team?"
-                onChange={(v) => { setFte(v); setHasInteracted(true); }}
+                onChange={handleFteChange}
               />
               <ImpactSlider
                 label="Administratiedruk"
@@ -343,8 +363,12 @@ export default function ImpactCalculatorPage() {
                 max={75000}
                 step={2500}
                 display={fmtEuro(investeringKosten)}
-                sublabel="Eenmalige kosten + jaar 1 (tooling, training, begeleiding) — voor de SROI-ratio hieronder."
-                onChange={(v) => { setInvesteringKosten(v); setHasInteracted(true); }}
+                sublabel={
+                  investeringAangepast
+                    ? 'Eenmalige kosten + jaar 1 (tooling, training, begeleiding) — voor de SROI-ratio hieronder.'
+                    : `Onze inschatting bij ${fte} medewerkers (pilot + tooling + training). Sleep om je eigen offerte in te vullen.`
+                }
+                onChange={(v) => { setInvesteringKosten(v); setInvesteringAangepast(true); setHasInteracted(true); }}
               />
 
               <div className="mt-6 p-4 bg-white rounded-2xl border border-slate-200">
@@ -485,7 +509,7 @@ export default function ImpactCalculatorPage() {
               label="De SROI-ratio"
               value={results.sroiRatio !== null ? `${results.sroiRatio.toFixed(1)} : 1` : '—'}
               sub="maatschappelijke waarde per geïnvesteerde euro"
-              detail={`${fmtEuro(results.grossSavingsPerYear)} operationele waarde plus ${fmtEuro(results.avoidedVerzuimEuro)} vermeden verzuimkosten (AZW 2024), tegen ${fmtEuro(investeringKosten)} investering. Social Value International hanteert 3:1 als sterke ondergrens voor een maatschappelijke investering.`}
+              detail={`${fmtEuro(results.grossSavingsPerYear)} operationele waarde plus ${fmtEuro(results.avoidedVerzuimEuro)} vermeden verzuimkosten (AZW 2024), tegen ${fmtEuro(investeringKosten)} investering${investeringAangepast ? '' : ' (onze inschatting)'}. Social Value International hanteert 3:1 als sterke ondergrens voor een maatschappelijke investering.`}
             />
           </div>
 
