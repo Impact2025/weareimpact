@@ -28,6 +28,20 @@ const AI_REDUCTIEFACTOR = 0.40;
 const GESPREKSDUUR_UUR = 1.5;
 const WEKEN_PER_JAAR = 52;
 
+// SROI-onderbouwing — beide componenten zijn al gesourced elders op deze site
+// (Movisie 2024, AZW 2024, ZonMW): geen nieuw ongesourced cijfer, alleen de twee
+// bestaande, geciteerde cijfers gecombineerd tot een investeringsratio.
+const WERKDAGEN_PER_JAAR = 225;         // standaard NL fulltime-jaar
+const SECTOR_VERZUIM_PCT = 7.4;         // AZW 2024, óók gebruikt in het e-mailrapport
+const VERZUIM_KOSTEN_PER_DAG = 400;     // middenwaarde van de in dit rapport geciteerde €350–450/dag
+
+function burnoutReductieMidden(adminPct: number): number {
+  // Middenwaarde van dezelfde burnoutRange-bandbreedtes die al elders getoond worden.
+  if (adminPct >= 45) return 0.20; // 18–22%
+  if (adminPct >= 35) return 0.17; // 15–19%
+  return 0.14;                     // 12–16%
+}
+
 interface CalcResults {
   weeklyHoursSaved: number;
   yearlyHoursSaved: number;
@@ -38,9 +52,17 @@ interface CalcResults {
   burnoutRange: string;
   currentAdminHoursPerWeek: number;
   savedAdminPct: number;
+  avoidedVerzuimEuro: number;
+  sroiRatio: number | null;
 }
 
-function calculate(fte: number, adminPct: number, aiPct: number, uurloon: number): CalcResults {
+function calculate(
+  fte: number,
+  adminPct: number,
+  aiPct: number,
+  uurloon: number,
+  investeringKosten: number
+): CalcResults {
   const remainingPotential = 1 - aiPct / 100;
   const currentAdminHoursPerWeek = fte * WERKUREN_PER_WEEK * (adminPct / 100);
   const weeklyHoursSaved = currentAdminHoursPerWeek * AI_REDUCTIEFACTOR * remainingPotential;
@@ -52,6 +74,16 @@ function calculate(fte: number, adminPct: number, aiPct: number, uurloon: number
   const burnoutRange = adminPct >= 45 ? '18–22%' : adminPct >= 35 ? '15–19%' : '12–16%';
   const totalTeamHours = fte * WERKUREN_PER_WEEK;
   const savedAdminPct = totalTeamHours > 0 ? (weeklyHoursSaved / totalTeamHours) * 100 : 0;
+
+  // Vermeden verzuimkosten: lager admin-gedreven burn-outrisico → minder verzuimdagen
+  // tegen het sector-verzuimpercentage, gemonetariseerd tegen de geciteerde dagkosten.
+  const verzuimdagenPerFte = WERKDAGEN_PER_JAAR * (SECTOR_VERZUIM_PCT / 100);
+  const avoidedVerzuimEuro =
+    verzuimdagenPerFte * burnoutReductieMidden(adminPct) * VERZUIM_KOSTEN_PER_DAG * fte;
+
+  const sroiRatio =
+    investeringKosten > 0 ? (grossSavingsPerYear + avoidedVerzuimEuro) / investeringKosten : null;
+
   return {
     weeklyHoursSaved,
     yearlyHoursSaved,
@@ -62,6 +94,8 @@ function calculate(fte: number, adminPct: number, aiPct: number, uurloon: number
     burnoutRange,
     currentAdminHoursPerWeek,
     savedAdminPct,
+    avoidedVerzuimEuro,
+    sroiRatio,
   };
 }
 
@@ -150,6 +184,7 @@ export default function ImpactCalculatorPage() {
   const [adminPct, setAdminPct] = useState(40);
   const [aiPct, setAiPct] = useState(10);
   const [uurloon, setUurloon] = useState(35);
+  const [investeringKosten, setInvesteringKosten] = useState(15000);
   const [hasInteracted, setHasInteracted] = useState(false);
 
   const [email, setEmail] = useState('');
@@ -160,8 +195,8 @@ export default function ImpactCalculatorPage() {
   const [formError, setFormError] = useState('');
 
   const results = useMemo(
-    () => calculate(fte, adminPct, aiPct, uurloon),
-    [fte, adminPct, aiPct, uurloon]
+    () => calculate(fte, adminPct, aiPct, uurloon, investeringKosten),
+    [fte, adminPct, aiPct, uurloon, investeringKosten]
   );
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -177,7 +212,7 @@ export default function ImpactCalculatorPage() {
           email,
           naam,
           organisatie,
-          inputs: { fte, adminPct, aiPct, uurloon },
+          inputs: { fte, adminPct, aiPct, uurloon, investeringKosten },
           results: {
             weeklyHoursSaved: Math.round(results.weeklyHoursSaved),
             yearlyHoursSaved: Math.round(results.yearlyHoursSaved),
@@ -185,6 +220,8 @@ export default function ImpactCalculatorPage() {
             grossSavingsPerYear: Math.round(results.grossSavingsPerYear),
             hoursPerFTE: Math.round(results.hoursPerFTE * 10) / 10,
             burnoutRange: results.burnoutRange,
+            avoidedVerzuimEuro: Math.round(results.avoidedVerzuimEuro),
+            sroiRatio: results.sroiRatio !== null ? Math.round(results.sroiRatio * 100) / 100 : null,
           },
         }),
       });
@@ -299,6 +336,16 @@ export default function ImpactCalculatorPage() {
                 sublabel="Gemiddeld all-in uurloon inclusief werkgeverslasten."
                 onChange={(v) => { setUurloon(v); setHasInteracted(true); }}
               />
+              <ImpactSlider
+                label="Investering in AI-implementatie"
+                value={investeringKosten}
+                min={2500}
+                max={75000}
+                step={2500}
+                display={fmtEuro(investeringKosten)}
+                sublabel="Eenmalige kosten + jaar 1 (tooling, training, begeleiding) — voor de SROI-ratio hieronder."
+                onChange={(v) => { setInvesteringKosten(v); setHasInteracted(true); }}
+              />
 
               <div className="mt-6 p-4 bg-white rounded-2xl border border-slate-200">
                 <p className="text-xs text-slate-500 leading-relaxed">
@@ -408,14 +455,14 @@ export default function ImpactCalculatorPage() {
               Impact Dashboard
             </div>
             <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-4">
-              Drie dimensies van impact
+              Vier dimensies van impact
             </h2>
             <p className="text-lg text-slate-500 font-light max-w-2xl mx-auto">
               Jouw {fte}-koppig team genereert deze waarde wanneer AI-ondersteunde verslaglegging volledig is ingevoerd.
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-6 mb-12">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
             <ResultCard
               label="De menselijke factor"
               value={`${fmtN(results.weeklyHoursSaved)} uur`}
@@ -433,6 +480,12 @@ export default function ImpactCalculatorPage() {
               value={results.burnoutRange}
               sub="verwachte daling in burn-out risico"
               detail="Door de cognitieve belasting van rapportages te verlagen verbetert de mentale belastbaarheid van medewerkers — hogere retentie van kostbaar vakpersoneel."
+            />
+            <ResultCard
+              label="De SROI-ratio"
+              value={results.sroiRatio !== null ? `${results.sroiRatio.toFixed(1)} : 1` : '—'}
+              sub="maatschappelijke waarde per geïnvesteerde euro"
+              detail={`${fmtEuro(results.grossSavingsPerYear)} operationele waarde plus ${fmtEuro(results.avoidedVerzuimEuro)} vermeden verzuimkosten (AZW 2024), tegen ${fmtEuro(investeringKosten)} investering. Social Value International hanteert 3:1 als sterke ondergrens voor een maatschappelijke investering.`}
             />
           </div>
 

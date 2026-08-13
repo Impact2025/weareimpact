@@ -11,6 +11,7 @@ const AI_ADOPTIE_GEMEENTEN = 38;          // GemeenteNL 2025: 38% van gemeenten 
 const SECTOR_VERZUIM = 7.4;              // AZW 2024: ziekteverzuim sociaal werk
 const ADMIN_STRESS_PCT = 80;              // Movisie 2024: 80% ervaart stress door admin
 const VERTREK_OVERWEGING_PCT = 30;        // Movisie 2024: 30% overweegt te vertrekken door admin
+const SROI_ONDERGRENS_SVI = 3;            // Social Value International: 3:1 als sterke ondergrens
 
 interface ImpactCalculatorEmailData {
   email: string;
@@ -21,6 +22,7 @@ interface ImpactCalculatorEmailData {
     adminPct: number;
     aiPct: number;
     uurloon: number;
+    investeringKosten?: number;
   };
   results: {
     weeklyHoursSaved: number;
@@ -29,6 +31,8 @@ interface ImpactCalculatorEmailData {
     grossSavingsPerYear: number;
     hoursPerFTE: number;
     burnoutRange: string;
+    avoidedVerzuimEuro?: number;
+    sroiRatio?: number | null;
   };
 }
 
@@ -49,8 +53,14 @@ interface Insight {
 }
 
 function generateInsights(
-  inputs: { fte: number; adminPct: number; aiPct: number; uurloon: number },
-  results: { weeklyHoursSaved: number; grossSavingsPerYear: number; hoursPerFTE: number }
+  inputs: { fte: number; adminPct: number; aiPct: number; uurloon: number; investeringKosten?: number },
+  results: {
+    weeklyHoursSaved: number;
+    grossSavingsPerYear: number;
+    hoursPerFTE: number;
+    avoidedVerzuimEuro?: number;
+    sroiRatio?: number | null;
+  }
 ): Insight[] {
   const insights: Insight[] = [];
   const adminDiff = inputs.adminPct - SECTOR_ADMIN_GEMIDDELDE;
@@ -118,6 +128,24 @@ function generateInsights(
       body: `Met ${inputs.adminPct}% administratiedruk — onder het sectorgemiddelde — heeft jouw organisatie al een relatief voordeel in werknemerstevredenheid. ${VERTREK_OVERWEGING_PCT}% van sociaal werkers overweegt vertrek juist vanwege rapportagedruk (Movisie, 2024). Door dit voordeel nu verder te versterken met AI, vergroot je de afstand tot concurrerende werkgevers en bespaar je op wervings- en inloopkosten.`,
       type: 'positive',
     });
+  }
+
+  // Insight 4: SROI-positionering — alleen als er een investering is ingevuld
+  if (results.sroiRatio !== undefined && results.sroiRatio !== null && inputs.investeringKosten) {
+    const ratio = results.sroiRatio;
+    if (ratio >= SROI_ONDERGRENS_SVI) {
+      insights.push({
+        title: `SROI van ${ratio.toFixed(1)} : 1 — boven de gangbare ondergrens voor een sterke sociale investering`,
+        body: `Elke geïnvesteerde euro (€ ${fmtN(inputs.investeringKosten)}) levert bij jouw team € ${ratio.toFixed(1)} aan operationele waarde en vermeden verzuimkosten op. Social Value International hanteert 3:1 als ondergrens voor een sterke maatschappelijke businesscase — bruikbaar als onderbouwing richting financiers, gemeenten of een aanbesteding met SROI-verplichting.`,
+        type: 'positive',
+      });
+    } else {
+      insights.push({
+        title: `SROI van ${ratio.toFixed(1)} : 1 — nog onder de gangbare 3:1-ondergrens`,
+        body: `Bij een investering van € ${fmtN(inputs.investeringKosten)} staat daar nu € ${fmtN(results.grossSavingsPerYear + (results.avoidedVerzuimEuro || 0))} aan gemeten waarde tegenover. Een gefaseerde implementatie (kleiner beginnen, eerst het pilotteam) verlaagt de investering per stap en verbetert doorgaans de ratio voordat je volledig uitrolt.`,
+        type: 'neutral',
+      });
+    }
   }
 
   return insights;
@@ -214,6 +242,22 @@ export function generateImpactCalculatorEmail(data: ImpactCalculatorEmailData): 
       </td>
     </tr>
 
+    ${results.sroiRatio !== undefined && results.sroiRatio !== null ? `
+    <!-- SROI-ratio -->
+    <tr>
+      <td style="padding:16px 40px 0;">
+        <table width="100%" cellpadding="0" cellspacing="0" style="background:#fef3c7;border:2px solid #fde68a;border-radius:16px;">
+          <tr>
+            <td style="padding:20px 24px;text-align:center;">
+              <p style="margin:0 0 4px;font-size:11px;color:#92400e;font-weight:700;text-transform:uppercase;letter-spacing:1px;">SROI — maatschappelijke ratio</p>
+              <p style="margin:0;font-size:32px;font-weight:900;color:#78350f;line-height:1;">${results.sroiRatio.toFixed(1)} : 1</p>
+              <p style="margin:4px 0 0;font-size:13px;color:#92400e;">per euro investering (€ ${fmtN(inputs.investeringKosten || 0)}) — ondergrens sterke case: 3 : 1 (Social Value International)</p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>` : ''}
+
     <!-- SECTOR VERGELIJKING -->
     <tr>
       <td style="padding:32px 40px 0;">
@@ -306,6 +350,9 @@ export function generateImpactCalculatorEmail(data: ImpactCalculatorEmailData): 
             ['Extra cliëntgesprekken / maand', `${fmtN(results.extraContactsPerMonth)} gesprekken (à 90 min)`],
             ['Bruto operationele waarde / jaar', fmtEuro(results.grossSavingsPerYear)],
             ['Verwachte daling burn-out risico', results.burnoutRange],
+            ...(results.avoidedVerzuimEuro ? [['Vermeden verzuimkosten / jaar (AZW 2024)', fmtEuro(results.avoidedVerzuimEuro)]] : []),
+            ...(inputs.investeringKosten ? [['Investering in implementatie', fmtEuro(inputs.investeringKosten)]] : []),
+            ...(results.sroiRatio !== undefined && results.sroiRatio !== null ? [['SROI-ratio', `${results.sroiRatio.toFixed(1)} : 1`]] : []),
           ].map(([label, value], i) => `
             <tr style="background:${i % 2 === 0 ? '#f8fafc' : '#ffffff'};">
               <td style="padding:12px 16px;font-size:13px;color:#64748b;border-bottom:1px solid #f1f5f9;">${label}</td>
@@ -466,6 +513,7 @@ BEREKENING
 • Totale tijdwinst/jaar:   ${fmtN(results.yearlyHoursSaved)} uur
 • Extra gesprekken/maand:  ${fmtN(results.extraContactsPerMonth)} (à 90 min)
 • Bruto waarde/jaar:       ${fmtEuro(results.grossSavingsPerYear)}
+${results.avoidedVerzuimEuro ? `• Vermeden verzuimkosten:  ${fmtEuro(results.avoidedVerzuimEuro)}/jaar (AZW 2024)\n` : ''}${inputs.investeringKosten ? `• Investering:             ${fmtEuro(inputs.investeringKosten)}\n` : ''}${results.sroiRatio !== undefined && results.sroiRatio !== null ? `• SROI-ratio:              ${results.sroiRatio.toFixed(1)} : 1 (ondergrens sterke case: 3:1, Social Value International)\n` : ''}
 
 12-WEEKSE IMPLEMENTATIEROADMAP
 -------------------------------

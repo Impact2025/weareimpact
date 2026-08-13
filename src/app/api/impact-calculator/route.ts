@@ -22,6 +22,7 @@ export async function POST(request: NextRequest) {
         weekly_hours_saved, yearly_hours_saved,
         extra_contacts_per_month, gross_savings_per_year,
         hours_per_fte, burnout_range,
+        investering_kosten, avoided_verzuim_euro, sroi_ratio,
         source, created_at
       ) VALUES (
         ${email},
@@ -37,6 +38,9 @@ export async function POST(request: NextRequest) {
         ${results?.grossSavingsPerYear || null},
         ${results?.hoursPerFTE || null},
         ${results?.burnoutRange || null},
+        ${inputs?.investeringKosten || null},
+        ${results?.avoidedVerzuimEuro || null},
+        ${results?.sroiRatio ?? null},
         'impact-calculator',
         NOW()
       )
@@ -53,6 +57,9 @@ export async function POST(request: NextRequest) {
         gross_savings_per_year = EXCLUDED.gross_savings_per_year,
         hours_per_fte = EXCLUDED.hours_per_fte,
         burnout_range = EXCLUDED.burnout_range,
+        investering_kosten = EXCLUDED.investering_kosten,
+        avoided_verzuim_euro = EXCLUDED.avoided_verzuim_euro,
+        sroi_ratio = EXCLUDED.sroi_ratio,
         updated_at = NOW()
     `;
 
@@ -106,9 +113,10 @@ export async function POST(request: NextRequest) {
           <li>Team: ${inputs?.fte} FTE, ${inputs?.adminPct}% admin, ${inputs?.aiPct}% AI adoptie</li>
           <li>Tijdwinst: ${results?.weeklyHoursSaved} uur/week</li>
           <li>ROI: € ${results?.grossSavingsPerYear?.toLocaleString('nl-NL')}/jaar</li>
+          <li>SROI: ${results?.sroiRatio ?? '—'} : 1 (bij € ${inputs?.investeringKosten?.toLocaleString('nl-NL')} investering)</li>
         </ul>
       `,
-      text: `Nieuwe Impact Calculator lead: ${email} — ${inputs?.fte} FTE — €${results?.grossSavingsPerYear}/jaar ROI`,
+      text: `Nieuwe Impact Calculator lead: ${email} — ${inputs?.fte} FTE — €${results?.grossSavingsPerYear}/jaar ROI — SROI ${results?.sroiRatio ?? '—'}:1`,
     });
 
     return NextResponse.json({ success: true });
