@@ -141,6 +141,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.6,
     },
     {
+      url: `${BASE_URL}/faq`,
+      lastModified: new Date('2025-10-01'),
+      changeFrequency: 'monthly',
+      priority: 0.7,
+    },
+    {
       url: `${BASE_URL}/vincent-van-munster`,
       lastModified: new Date('2026-06-01'),
       changeFrequency: 'weekly',
