@@ -7,6 +7,7 @@ import { DigitalTwin } from '@/components/features/DigitalTwin';
 import { Toaster } from '@/components/ui/sonner';
 import { GoogleAnalytics, PageViewTracker } from '@/components/analytics';
 import { CookieConsentProvider, CookieBanner } from '@/components/cookie-consent';
+import { portfolioSameAs } from '@/lib/seo-kit';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -157,6 +158,19 @@ export default function RootLayout({
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(personSchema) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'Organization',
+              name: 'WeAreImpact',
+              url: 'https://weareimpact.nl',
+              founder: { '@type': 'Person', name: 'Vincent van Munster', url: 'https://weareimpact.nl' },
+              sameAs: [...portfolioSameAs],
+            }),
+          }}
         />
       </head>
       <body
