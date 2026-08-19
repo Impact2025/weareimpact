@@ -11,6 +11,7 @@ const navItems = [
   { label: 'MANIFEST', href: '/#manifest', isHash: true },
   { label: 'EXPERTISE', href: '/#diensten', isHash: true },
   { label: 'AI SCAN', href: '/#scan', icon: Sparkles, highlight: true, isHash: true },
+  { label: 'IRIS', href: '/iris', isHash: false },
   { label: 'IMPACT CALC', href: '/impact-calculator', isHash: false },
   { label: 'KENNISBANK', href: '/kennisbank', isHash: false },
   { label: 'BLOG', href: '/blog', isHash: false },
@@ -98,7 +99,7 @@ export function Navbar() {
           {/* Status badge — desktop only */}
           <div className="hidden lg:flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-green-50 border border-green-100 text-xs font-semibold text-green-800 whitespace-nowrap shrink-0">
             <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse shrink-0" />
-            Interim beschikbaar · Amsterdam / Haarlem / Leiden
+            AI &amp; Innovatie in het Sociaal Domein
           </div>
 
           {/* Desktop Menu */}
@@ -183,7 +184,7 @@ export function Navbar() {
         <div className="px-6 py-4 border-b border-slate-100">
           <div className="flex items-center gap-2 px-3.5 py-2 rounded-full bg-green-50 border border-green-100 text-xs font-semibold text-green-800">
             <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse shrink-0" />
-            Interim beschikbaar · Amsterdam / Haarlem / Leiden
+            AI &amp; Innovatie in het Sociaal Domein
           </div>
         </div>
 

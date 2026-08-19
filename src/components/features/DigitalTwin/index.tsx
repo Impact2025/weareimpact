@@ -655,6 +655,20 @@ export function DigitalTwin() {
     }
   };
 
+  // Listen for global openIrisChat event — used by standalone pages (bv. /iris)
+  // om de widget direct open te zetten, optioneel met een starterprompt.
+  useEffect(() => {
+    const handleOpenIrisChat = (e: Event) => {
+      setIsOpen(true);
+      const prompt = (e as CustomEvent<{ prompt?: string }>).detail?.prompt;
+      if (prompt) {
+        setTimeout(() => sendMessage(prompt), 400);
+      }
+    };
+    window.addEventListener('openIrisChat', handleOpenIrisChat);
+    return () => window.removeEventListener('openIrisChat', handleOpenIrisChat);
+  }, [messages.length]);
+
   const handleSelectType = (type: BookingType) => {
     setSelectedType(type);
     addMessage('user', type.name);

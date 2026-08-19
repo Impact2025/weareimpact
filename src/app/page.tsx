@@ -77,7 +77,7 @@ const projects = [
     tagline: 'AI-assistent voor welzijnsprofessionals',
     description:
       'Iris is mijn eigen AI-assistent, gebouwd voor professionals in het sociale domein. Ze helpt bij intakegesprekken, ondersteunt bij verslaglegging en beantwoordt vragen van cliënten op een warme, menselijke manier. Iris toont aan dat AI niet koud en afstandelijk hoeft te zijn, maar juist de menselijke professional kan versterken.',
-    url: null,
+    url: '/iris',
   },
   {
     id: 'bijeen',
@@ -141,12 +141,12 @@ function ProjectCards() {
                 {p.url && (
                   <a
                     href={p.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                    target={p.url.startsWith('http') ? '_blank' : undefined}
+                    rel={p.url.startsWith('http') ? 'noopener noreferrer' : undefined}
                     className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 hover:text-slate-800 transition-colors"
                   >
                     <ExternalLink size={13} />
-                    {p.url.replace('https://', '')}
+                    {p.url.startsWith('http') ? p.url.replace('https://', '') : 'Bekijk Iris'}
                   </a>
                 )}
               </div>
@@ -233,7 +233,7 @@ export default function Home() {
             >
               <Link href="/vincent-van-munster" className="flex items-center gap-2">
                 <Briefcase size={18} />
-                Interim Profiel &amp; CV
+                Bekijk Profiel &amp; CV
               </Link>
             </Button>
           </div>
