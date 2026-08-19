@@ -7,38 +7,51 @@ import {
   Share2,
   MessageSquare,
   ShieldCheck,
-  Moon,
-  Sparkles,
+  FileText,
+  Search,
   Phone,
+  Quote,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
-const PIJLERS = [
+const AGENTS = [
   {
-    icon: Mail,
-    title: 'Operationeel & communicatie',
-    description: 'Agenda, e-mail en sociale kanalen, zelfstandig beheerd.',
+    icon: FileText,
+    title: 'Content-agent',
+    description: 'Schrijft blogs en artikelen, checkt de SEO-score, zet ze klaar in mijn goedkeuringswachtrij.',
   },
   {
-    icon: Sparkles,
-    title: 'Content & groei',
-    description: 'Blogs schrijven, SEO-kansen opsporen, leads signaleren.',
+    icon: Search,
+    title: 'SEO-agent',
+    description: 'Volgt Google Search Console, signaleert stijgers en dalers, spot nieuwe kansen.',
+  },
+  {
+    icon: Mail,
+    title: 'Mail-agent',
+    description: 'Sorteert en beantwoordt inkomende mail. Twintig seconden per mail in plaats van een avond inbox.',
+  },
+  {
+    icon: Calendar,
+    title: 'Agenda-agent',
+    description: 'Plant afspraken, checkt conflicten en reistijd, boekt nooit zonder mijn akkoord.',
   },
   {
     icon: MessageSquare,
-    title: 'Triage & zorg',
-    description: 'Vragen van cliënten, relaties en vrijwilligers worden gefilterd en afgehandeld.',
-  },
-  {
-    icon: Moon,
-    title: 'Nachtelijke dossierstructurering',
-    description: "Terwijl jij slaapt, spit Iris projecten door, bouwt ze geheugen op en signaleert ze risico's.",
+    title: 'Klantenservice-agent',
+    description: 'Beantwoordt vragen van klanten via WhatsApp, escaleert naar mij zodra ze twijfelt.',
   },
   {
     icon: ShieldCheck,
-    title: 'Veiligheid & human-in-the-loop',
-    description: 'Niets gaat automatisch de deur uit. Alles wacht in mijn goedkeuringswachtrij tot ik op publiceer druk.',
+    title: 'Research-agent',
+    description: 'Spoort trends en kansen op in de markt, legt ze voor voordat er iets mee gebeurt.',
   },
+];
+
+const STATS = [
+  { value: '20 sec', label: 'per mail, in plaats van een avond inbox' },
+  { value: '96', label: 'artikelen geschreven in 30 dagen' },
+  { value: '12', label: 'sites die op hetzelfde systeem draaien' },
+  { value: '3 min', label: 'van goedkeuring tot live op de site' },
 ];
 
 const STARTER_PROMPTS = [
@@ -47,7 +60,7 @@ const STARTER_PROMPTS = [
   'Doe een korte AI-scan voor mijn team.',
 ];
 
-const WHATSAPP_NUMBER = '31614470977';
+const WHATSAPP_NUMBER = '31626760739';
 
 export default function IrisPage() {
   const openIrisChat = (prompt?: string) => {
@@ -125,24 +138,24 @@ export default function IrisPage() {
         <div className="container mx-auto px-6 max-w-6xl">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-slate-900 mb-4">
-              De 5 pijlers van AgentOS
+              Agents die ik aanstuur
             </h2>
             <p className="text-lg text-slate-500 max-w-2xl mx-auto font-light">
-              Wat het systeem elke dag daadwerkelijk doet.
+              Iris is de manager. Dit zijn de zes die het werk doen, elke dag.
             </p>
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {PIJLERS.map((p) => (
+            {AGENTS.map((agent) => (
               <div
-                key={p.title}
+                key={agent.title}
                 className="bg-white rounded-2xl border border-slate-100 p-6 shadow-sm hover:shadow-md transition-shadow"
               >
                 <div className="w-11 h-11 bg-orange-50 rounded-xl flex items-center justify-center text-orange-600 mb-4">
-                  <p.icon size={20} />
+                  <agent.icon size={20} />
                 </div>
-                <h3 className="text-base font-bold text-slate-900 mb-2">{p.title}</h3>
-                <p className="text-sm text-slate-600 leading-relaxed">{p.description}</p>
+                <h3 className="text-base font-bold text-slate-900 mb-2">{agent.title}</h3>
+                <p className="text-sm text-slate-600 leading-relaxed">{agent.description}</p>
               </div>
             ))}
           </div>
@@ -156,8 +169,38 @@ export default function IrisPage() {
             Ruimte voor de menselijke maat
           </h2>
           <p className="text-lg text-slate-600 leading-relaxed font-light">
-            AI moet overbelasting en burn-out in het sociaal domein voorkomen, niet vervangen wat mensen samen doen. Iris neemt het werk over dat jou weghoudt van de mensen voor wie je er wilt zijn. Twintig seconden per mail in plaats van een avond inbox. Zo krijg je die tijd terug.
+            AI moet overbelasting en burn-out in het sociaal domein voorkomen, niet vervangen wat mensen samen doen. Iris neemt het werk over dat jou weghoudt van de mensen voor wie je er wilt zijn. Zo krijg je die tijd terug.
           </p>
+        </div>
+      </section>
+
+      {/* IRIS AAN HET WOORD */}
+      <section className="py-24 bg-slate-900">
+        <div className="container mx-auto px-6 max-w-3xl text-center">
+          <div className="w-12 h-12 rounded-full bg-orange-500/10 border border-orange-500/30 flex items-center justify-center mx-auto mb-8">
+            <Quote size={20} className="text-orange-400" />
+          </div>
+          <p className="text-xl md:text-2xl text-white font-light leading-relaxed mb-8">
+            "Terwijl hij slaapt, structureer ik dossiers en signaleer ik operationele risico's. Ik leer van mezelf: elke inschatting die ik maak, toets ik later aan wat er echt is gebeurd. En het belangrijkste: er gaat nooit iets de deur uit zonder Vincents definitieve goedkeuring."
+          </p>
+          <p className="text-slate-400 font-light">
+            Vanaf vandaag ben ik ook rechtstreeks bereikbaar, via mijn eigen WhatsApp-nummer.
+          </p>
+          <p className="text-slate-500 text-sm mt-2">— Iris</p>
+        </div>
+      </section>
+
+      {/* CIJFERS */}
+      <section className="py-20 bg-slate-50">
+        <div className="container mx-auto px-6 max-w-5xl">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+            {STATS.map((s) => (
+              <div key={s.label}>
+                <div className="text-3xl md:text-4xl font-bold text-orange-600 mb-1">{s.value}</div>
+                <div className="text-sm text-slate-500 font-light">{s.label}</div>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
