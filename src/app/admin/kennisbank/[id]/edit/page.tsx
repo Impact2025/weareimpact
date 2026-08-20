@@ -23,6 +23,7 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { MarkdownEditor } from '@/components/KennisbankEditor/MarkdownEditor';
 import { Label } from '@/components/ui/label';
 import {
   Select,
@@ -492,15 +493,11 @@ export default function EditKennisbankArticlePage({
 
                 <div className="space-y-2">
                   <Label htmlFor="content">Artikel Content (Markdown) *</Label>
-                  <Textarea
-                    id="content"
-                    value={formData.content}
-                    onChange={(e) =>
-                      setFormData({ ...formData, content: e.target.value })
-                    }
+                  <MarkdownEditor
+                    content={formData.content}
+                    onChange={(markdown) => setFormData({ ...formData, content: markdown })}
+                    placeholder="Start met schrijven..."
                     rows={20}
-                    className="font-mono text-sm"
-                    required
                   />
                 </div>
               </CardContent>

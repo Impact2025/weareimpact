@@ -24,6 +24,7 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { MarkdownEditor } from '@/components/KennisbankEditor/MarkdownEditor';
 import { Label } from '@/components/ui/label';
 import {
   Select,
@@ -372,12 +373,9 @@ export default function NewKennisbankArticlePage() {
 
                     <div className="space-y-2">
                       <Label htmlFor="content">Artikel Content (Markdown) *</Label>
-                      <Textarea
-                        id="content"
-                        value={formData.content}
-                        onChange={(e) =>
-                          setFormData({ ...formData, content: e.target.value })
-                        }
+                      <MarkdownEditor
+                        content={formData.content}
+                        onChange={(markdown) => setFormData({ ...formData, content: markdown })}
                         placeholder="## Inleiding
 
 Schrijf hier je artikel in Markdown formaat...
@@ -386,12 +384,7 @@ Schrijf hier je artikel in Markdown formaat...
 
 ## Stap 2: ..."
                         rows={20}
-                        className="font-mono text-sm"
-                        required
                       />
-                      <p className="text-xs text-slate-500">
-                        Gebruik Markdown: ## voor H2, ### voor H3, - voor lijsten, **bold**, *italic*
-                      </p>
                     </div>
                   </CardContent>
                 </Card>
