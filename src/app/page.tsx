@@ -175,8 +175,13 @@ export default function Home() {
             <span className="font-bold text-slate-900">Vincent van Munster</span>
             <span className="w-1.5 h-1.5 bg-orange-400 rounded-full" />
             <span className="text-slate-600 font-medium tracking-wide uppercase text-xs">
-              AI Consultant
+              AI Strateeg &amp; Kwartiermaker
             </span>
+          </div>
+
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-medium mb-6 animate-fade-in-up">
+            <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
+            Beschikbaar voor opdrachten per september
           </div>
 
           <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight text-slate-900 mb-8 leading-[1.1] animate-fade-in-up delay-100">
@@ -185,7 +190,7 @@ export default function Home() {
           </h1>
 
           <p className="text-xl md:text-2xl text-slate-600 mb-4 max-w-3xl mx-auto font-light leading-relaxed animate-fade-in-up delay-200">
-            AI consultant voor welzijnsorganisaties, gemeenten en sociaal ondernemers.
+            AI- &amp; Innovatiepartner voor welzijnsorganisaties, gemeenten en sociaal ondernemers.
           </p>
 
           <p className="text-lg md:text-xl text-slate-500 mb-6 max-w-2xl mx-auto font-light leading-relaxed animate-fade-in-up delay-200">
