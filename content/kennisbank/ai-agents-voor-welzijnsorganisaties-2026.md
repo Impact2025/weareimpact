@@ -257,6 +257,8 @@ Als je wilt weten welke agent voor jouw organisatie de meeste winst oplevert, pl
 
 ## Gerelateerde artikelen
 
+- [Iris, mijn AI-manager: hoe AgentOS mij elke dag tijd teruggeeft](/kennisbank/iris-ai-manager-agentos-praktijkverhaal)
+- [Human-in-the-loop: hoe je AI-agents zelfstandig laat werken zonder de regie te verliezen](/kennisbank/human-in-the-loop-goedkeuringswachtrij-ai-agents)
 - [Administratieve druk verlagen met AI: 7 processen die je vandaag kunt automatiseren](/kennisbank/administratieve-druk-verlagen-ai)
 - [AI implementeren in je non-profit: stappenplan van 8 weken](/kennisbank/ai-implementeren-non-profit-stappenplan)
 - [Privacy en AI in de zorg: wat mag wel en wat niet?](/kennisbank/privacy-ai-zorg-avg-checklist)
