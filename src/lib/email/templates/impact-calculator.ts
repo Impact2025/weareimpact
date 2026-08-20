@@ -42,9 +42,12 @@ function fmtN(n: number): string {
 }
 
 function fmtEuro(n: number): string {
-  if (n >= 100000) return `€ ${Math.round(n / 1000)}k`;
-  const rounded = Math.round(n / 500) * 500;
+  const rounded = n >= 100000 ? Math.round(n / 1000) * 1000 : Math.round(n / 500) * 500;
   return `€ ${rounded.toLocaleString('nl-NL')}`;
+}
+
+function fmtRatio(n: number): string {
+  return n.toLocaleString('nl-NL', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
 }
 
 interface Insight {
@@ -139,13 +142,13 @@ function generateInsights(
       : `jouw opgegeven € ${fmtN(inputs.investeringKosten)}`;
     if (ratio >= SROI_ONDERGRENS_SVI) {
       insights.push({
-        title: `SROI van ${ratio.toFixed(1)} : 1 — boven de gangbare ondergrens voor een sterke sociale investering`,
-        body: `Tegenover ${investeringLabel} staat € ${ratio.toFixed(1)} aan operationele waarde en vermeden verzuimkosten per geïnvesteerde euro. Social Value International hanteert 3:1 als ondergrens voor een sterke maatschappelijke businesscase — bruikbaar als onderbouwing richting financiers, gemeenten of een aanbesteding met SROI-verplichting.${inputs.investeringIsSchatting ? ' Vul je eigen offerte in voor een scherpere ratio.' : ''}`,
+        title: `SROI van ${fmtRatio(ratio)} : 1 — boven de gangbare ondergrens voor een sterke sociale investering`,
+        body: `Tegenover ${investeringLabel} staat € ${fmtRatio(ratio)} aan operationele waarde en vermeden verzuimkosten per geïnvesteerde euro. Social Value International hanteert 3:1 als ondergrens voor een sterke maatschappelijke businesscase — bruikbaar als onderbouwing richting financiers, gemeenten of een aanbesteding met SROI-verplichting.${inputs.investeringIsSchatting ? ' Vul je eigen offerte in voor een scherpere ratio.' : ''}`,
         type: 'positive',
       });
     } else {
       insights.push({
-        title: `SROI van ${ratio.toFixed(1)} : 1 — nog onder de gangbare 3:1-ondergrens`,
+        title: `SROI van ${fmtRatio(ratio)} : 1 — nog onder de gangbare 3:1-ondergrens`,
         body: `Tegenover ${investeringLabel} staat nu € ${fmtN(results.grossSavingsPerYear + (results.avoidedVerzuimEuro || 0))} aan gemeten waarde. Een gefaseerde implementatie (kleiner beginnen, eerst het pilotteam) verlaagt de investering per stap en verbetert doorgaans de ratio voordat je volledig uitrolt.${inputs.investeringIsSchatting ? ' Vul je eigen offerte in voor een scherpere ratio.' : ''}`,
         type: 'neutral',
       });
@@ -178,7 +181,11 @@ export function generateImpactCalculatorEmail(data: ImpactCalculatorEmailData): 
   const adminPositieColor = adminVsSector > 2 ? '#dc2626' : adminVsSector < -2 ? '#16a34a' : '#64748b';
 
   const aiVsSector = inputs.aiPct - AI_ADOPTIE_WELZIJN_MIN;
-  const aiPositie = aiVsSector >= 0 ? `↑ ${inputs.aiPct}% (boven min.)` : `↓ ${Math.abs(aiVsSector)}% onder gem.`;
+  const aiPositie = inputs.aiPct > AI_ADOPTIE_GEMEENTEN
+    ? `↑ ${inputs.aiPct}% (koploper)`
+    : aiVsSector >= 0
+    ? `↑ ${inputs.aiPct}% (in range)`
+    : `↓ ${Math.abs(aiVsSector)}% onder gem.`;
   const aiPositieColor = aiVsSector >= 0 ? '#16a34a' : '#dc2626';
 
   const html = `
@@ -254,7 +261,7 @@ export function generateImpactCalculatorEmail(data: ImpactCalculatorEmailData): 
           <tr>
             <td style="padding:20px 24px;text-align:center;">
               <p style="margin:0 0 4px;font-size:11px;color:#92400e;font-weight:700;text-transform:uppercase;letter-spacing:1px;">SROI — maatschappelijke ratio</p>
-              <p style="margin:0;font-size:32px;font-weight:900;color:#78350f;line-height:1;">${results.sroiRatio.toFixed(1)} : 1</p>
+              <p style="margin:0;font-size:32px;font-weight:900;color:#78350f;line-height:1;">${fmtRatio(results.sroiRatio)} : 1</p>
               <p style="margin:4px 0 0;font-size:13px;color:#92400e;">per euro investering (€ ${fmtN(inputs.investeringKosten || 0)}) — ondergrens sterke case: 3 : 1 (Social Value International)</p>
             </td>
           </tr>
@@ -351,12 +358,12 @@ export function generateImpactCalculatorEmail(data: ImpactCalculatorEmailData): 
             ['Tijdwinst per medewerker', `${Math.round(results.hoursPerFTE * 10) / 10} uur per week`],
             ['Totale teamtijdwinst per week', `${fmtN(results.weeklyHoursSaved)} uur`],
             ['Totale teamtijdwinst per jaar', `${fmtN(results.yearlyHoursSaved)} uur`],
-            ['Extra cliëntgesprekken / maand', `${fmtN(results.extraContactsPerMonth)} gesprekken (à 90 min)`],
+            ['Extra cliëntgesprekken / maand', `${fmtN(results.extraContactsPerMonth)} gesprekken (à 90 min, bij 65% herbesteding aan cliëntcontact)`],
             ['Bruto operationele waarde / jaar', fmtEuro(results.grossSavingsPerYear)],
             ['Verwachte daling burn-out risico', results.burnoutRange],
             ...(results.avoidedVerzuimEuro ? [['Vermeden verzuimkosten / jaar (AZW 2024)', fmtEuro(results.avoidedVerzuimEuro)]] : []),
             ...(inputs.investeringKosten ? [['Investering in implementatie', fmtEuro(inputs.investeringKosten)]] : []),
-            ...(results.sroiRatio !== undefined && results.sroiRatio !== null ? [['SROI-ratio', `${results.sroiRatio.toFixed(1)} : 1`]] : []),
+            ...(results.sroiRatio !== undefined && results.sroiRatio !== null ? [['SROI-ratio', `${fmtRatio(results.sroiRatio)} : 1`]] : []),
           ].map(([label, value], i) => `
             <tr style="background:${i % 2 === 0 ? '#f8fafc' : '#ffffff'};">
               <td style="padding:12px 16px;font-size:13px;color:#64748b;border-bottom:1px solid #f1f5f9;">${label}</td>
@@ -515,9 +522,9 @@ BEREKENING
 • Tijdwinst per mdw/week:  ${Math.round(results.hoursPerFTE * 10) / 10} uur
 • Totale tijdwinst/week:   ${fmtN(results.weeklyHoursSaved)} uur
 • Totale tijdwinst/jaar:   ${fmtN(results.yearlyHoursSaved)} uur
-• Extra gesprekken/maand:  ${fmtN(results.extraContactsPerMonth)} (à 90 min)
+• Extra gesprekken/maand:  ${fmtN(results.extraContactsPerMonth)} (à 90 min, bij 65% herbesteding aan cliëntcontact)
 • Bruto waarde/jaar:       ${fmtEuro(results.grossSavingsPerYear)}
-${results.avoidedVerzuimEuro ? `• Vermeden verzuimkosten:  ${fmtEuro(results.avoidedVerzuimEuro)}/jaar (AZW 2024)\n` : ''}${inputs.investeringKosten ? `• Investering:             ${fmtEuro(inputs.investeringKosten)}\n` : ''}${results.sroiRatio !== undefined && results.sroiRatio !== null ? `• SROI-ratio:              ${results.sroiRatio.toFixed(1)} : 1 (ondergrens sterke case: 3:1, Social Value International)\n` : ''}
+${results.avoidedVerzuimEuro ? `• Vermeden verzuimkosten:  ${fmtEuro(results.avoidedVerzuimEuro)}/jaar (AZW 2024)\n` : ''}${inputs.investeringKosten ? `• Investering:             ${fmtEuro(inputs.investeringKosten)}\n` : ''}${results.sroiRatio !== undefined && results.sroiRatio !== null ? `• SROI-ratio:              ${fmtRatio(results.sroiRatio)} : 1 (ondergrens sterke case: 3:1, Social Value International)\n` : ''}
 
 12-WEEKSE IMPLEMENTATIEROADMAP
 -------------------------------

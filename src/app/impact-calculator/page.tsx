@@ -27,6 +27,10 @@ const WERKUREN_PER_WEEK = 36;
 const AI_REDUCTIEFACTOR = 0.40;
 const GESPREKSDUUR_UUR = 1.5;
 const WEKEN_PER_JAAR = 52;
+// Niet alle vrijgekomen tijd vloeit 1-op-1 naar cliëntcontact — een deel gaat naar
+// overleg, reistijd en overige taken. 65% is een conservatieve inschatting, geen
+// gemeten cijfer.
+const CONTACT_CONVERSIEFACTOR = 0.65;
 
 // SROI-onderbouwing — beide componenten zijn al gesourced elders op deze site
 // (Movisie 2024, AZW 2024, ZonMW): geen nieuw ongesourced cijfer, alleen de twee
@@ -78,7 +82,7 @@ function calculate(
   const currentAdminHoursPerWeek = fte * WERKUREN_PER_WEEK * (adminPct / 100);
   const weeklyHoursSaved = currentAdminHoursPerWeek * AI_REDUCTIEFACTOR * remainingPotential;
   const yearlyHoursSaved = weeklyHoursSaved * WEKEN_PER_JAAR;
-  const extraContactsPerWeek = weeklyHoursSaved / GESPREKSDUUR_UUR;
+  const extraContactsPerWeek = (weeklyHoursSaved * CONTACT_CONVERSIEFACTOR) / GESPREKSDUUR_UUR;
   const extraContactsPerMonth = extraContactsPerWeek * (WEKEN_PER_JAAR / 12);
   const grossSavingsPerYear = yearlyHoursSaved * uurloon;
   const hoursPerFTE = fte > 0 ? weeklyHoursSaved / fte : 0;
@@ -115,9 +119,12 @@ function fmtN(n: number): string {
 }
 
 function fmtEuro(n: number): string {
-  if (n >= 100000) return `€ ${Math.round(n / 1000)}k`;
-  const rounded = Math.round(n / 500) * 500;
+  const rounded = n >= 100000 ? Math.round(n / 1000) * 1000 : Math.round(n / 500) * 500;
   return `€ ${rounded.toLocaleString('nl-NL')}`;
+}
+
+function fmtRatio(n: number): string {
+  return n.toLocaleString('nl-NL', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
 }
 
 // --- Slider ---
@@ -491,7 +498,7 @@ export default function ImpactCalculatorPage() {
               label="De menselijke factor"
               value={`${fmtN(results.weeklyHoursSaved)} uur`}
               sub="per week terug voor echt contact"
-              detail={`Gelijk aan ${fmtN(results.extraContactsPerMonth)} extra huisbezoeken per maand — zonder de werkdruk te verhogen of extra personeel aan te trekken.`}
+              detail={`Bij 65% herbesteding aan cliëntcontact (rest gaat naar overleg en overige taken) gelijk aan ${fmtN(results.extraContactsPerMonth)} extra huisbezoeken per maand — zonder de werkdruk te verhogen of extra personeel aan te trekken.`}
             />
             <ResultCard
               label="De businesscase"
@@ -507,7 +514,7 @@ export default function ImpactCalculatorPage() {
             />
             <ResultCard
               label="De SROI-ratio"
-              value={results.sroiRatio !== null ? `${results.sroiRatio.toFixed(1)} : 1` : '—'}
+              value={results.sroiRatio !== null ? `${fmtRatio(results.sroiRatio)} : 1` : '—'}
               sub="maatschappelijke waarde per geïnvesteerde euro"
               detail={`${fmtEuro(results.grossSavingsPerYear)} operationele waarde plus ${fmtEuro(results.avoidedVerzuimEuro)} vermeden verzuimkosten (AZW 2024), tegen ${fmtEuro(investeringKosten)} investering${investeringAangepast ? '' : ' (onze inschatting)'}. Social Value International hanteert 3:1 als sterke ondergrens voor een maatschappelijke investering.`}
             />
