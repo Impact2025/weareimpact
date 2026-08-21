@@ -199,6 +199,8 @@ export function generateArticleSchema(article: {
   title: string;
   description: string;
   slug: string;
+  /** Full URL path (e.g. "kennisbank/foo" or "blog/foo"). Defaults to "blog/{slug}" for backward compatibility with existing blog callers. */
+  path?: string;
   publishedAt: string;
   modifiedAt?: string;
   authorName?: string;
@@ -231,13 +233,15 @@ export function generateArticleSchema(article: {
       }
     : {};
 
+  const path = article.path || `blog/${article.slug}`;
+
   return {
     '@context': 'https://schema.org',
     '@type': 'Article',
-    '@id': `${BASE_URL}/blog/${article.slug}#article`,
+    '@id': `${BASE_URL}/${path}#article`,
     headline: article.title,
     description: article.description,
-    url: `${BASE_URL}/blog/${article.slug}`,
+    url: `${BASE_URL}/${path}`,
     datePublished: article.publishedAt,
     dateModified: article.modifiedAt || article.publishedAt,
     ...(article.imageUrl && { image: article.imageUrl }),

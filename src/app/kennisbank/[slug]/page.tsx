@@ -471,7 +471,8 @@ export default async function KennisbankArticlePage({ params }: Props) {
         article={{
           title: article.title,
           description: article.excerpt,
-          slug: `kennisbank/${article.slug}`,
+          slug: article.slug,
+          path: `kennisbank/${article.slug}`,
           publishedAt: article.published_at,
           modifiedAt: article.updated_at,
           authorName: article.author_name || 'Vincent van Munster',
