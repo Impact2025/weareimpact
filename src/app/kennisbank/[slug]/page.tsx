@@ -5,7 +5,7 @@ import fs from 'fs';
 import path from 'path';
 import type { ImgHTMLAttributes } from 'react';
 import matter from 'gray-matter';
-import ReactMarkdown from 'react-markdown';
+import ReactMarkdown, { defaultUrlTransform } from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeSlug from 'rehype-slug';
 import type { Plugin } from 'unified';
@@ -156,6 +156,13 @@ function getTextContent(node: Element | { type: string; value?: string; children
 // URL. ReactMarkdown has no raw-HTML pass-through here (content is untrusted
 // markdown, not sanitized HTML), so we intercept at the `img` renderer and swap
 // in a responsive iframe embed for that one case; every other image renders normally.
+// react-markdown sanitizes all URLs through defaultUrlTransform, which only
+// allows a fixed protocol allowlist (http/https/mailto/...) and blanks anything
+// else — including our youtube:VIDEO_ID sentinel. Let that one scheme through
+// unchanged; everything else still goes through the normal sanitizer.
+const markdownUrlTransform = (url: string) =>
+  url.startsWith('youtube:') ? url : defaultUrlTransform(url);
+
 const markdownComponents = {
   img: ({ src, alt }: ImgHTMLAttributes<HTMLImageElement>) => {
     if (typeof src === 'string' && src.startsWith('youtube:')) {
@@ -626,6 +633,7 @@ export default async function KennisbankArticlePage({ params }: Props) {
                 remarkPlugins={[remarkGfm]}
                 rehypePlugins={[rehypeSlug, rehypeCustomIds]}
                 components={markdownComponents}
+                urlTransform={markdownUrlTransform}
               >
                 {processedContent}
               </ReactMarkdown>
