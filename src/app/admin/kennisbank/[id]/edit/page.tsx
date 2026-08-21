@@ -18,7 +18,9 @@ import {
   Type,
   FileCode,
   Wand2,
+  Headphones,
 } from 'lucide-react';
+import { upload } from '@vercel/blob/client';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -59,6 +61,7 @@ export default function EditKennisbankArticlePage({
   const [isLoading, setIsLoading] = useState(false);
   const [isFetching, setIsFetching] = useState(true);
   const [isUploading, setIsUploading] = useState(false);
+  const [isUploadingAudio, setIsUploadingAudio] = useState(false);
   const [isEnhancing, setIsEnhancing] = useState(false);
   const [isFormatting, setIsFormatting] = useState(false);
   const [activeTab, setActiveTab] = useState<TabType>('editor');
@@ -79,6 +82,10 @@ export default function EditKennisbankArticlePage({
     difficulty: 'beginner',
     status: 'draft',
     published_at: '',
+    audioUrl: '',
+    audioTitle: '',
+    audioDuration: 0,
+    transcript: '',
     seoTitle: '',
     seoDescription: '',
     seoKeywords: '',
@@ -119,6 +126,10 @@ export default function EditKennisbankArticlePage({
           difficulty: article.difficulty || 'beginner',
           status: article.status || 'draft',
           published_at: publishedAt,
+          audioUrl: article.audio_url || '',
+          audioTitle: article.audio_title || '',
+          audioDuration: article.audio_duration || 0,
+          transcript: article.transcript || '',
           seoTitle: article.seo_title || '',
           seoDescription: article.seo_description || '',
           seoKeywords: article.seo_keywords?.join(', ') || '',
@@ -182,6 +193,54 @@ export default function EditKennisbankArticlePage({
       alert('Er ging iets fout bij het uploaden');
     } finally {
       setIsUploading(false);
+    }
+  };
+
+  // Read the duration (seconds) from an audio file client-side, for schema.org + UI.
+  const getAudioDuration = (file: File): Promise<number> =>
+    new Promise((resolve) => {
+      try {
+        const url = URL.createObjectURL(file);
+        const audioEl = document.createElement('audio');
+        audioEl.preload = 'metadata';
+        audioEl.onloadedmetadata = () => {
+          URL.revokeObjectURL(url);
+          resolve(Number.isFinite(audioEl.duration) ? Math.round(audioEl.duration) : 0);
+        };
+        audioEl.onerror = () => {
+          URL.revokeObjectURL(url);
+          resolve(0);
+        };
+        audioEl.src = url;
+      } catch {
+        resolve(0);
+      }
+    });
+
+  const handleAudioUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsUploadingAudio(true);
+    try {
+      const duration = await getAudioDuration(file);
+
+      const blob = await upload(`podcasts/${Date.now()}-${file.name}`, file, {
+        access: 'public',
+        handleUploadUrl: '/api/upload/audio',
+      });
+
+      setFormData((prev) => ({
+        ...prev,
+        audioUrl: blob.url,
+        audioDuration: duration,
+        audioTitle: prev.audioTitle || file.name.replace(/\.[^.]+$/, ''),
+      }));
+    } catch (error) {
+      console.error('Audio upload error:', error);
+      alert('Audio uploaden mislukt: ' + (error instanceof Error ? error.message : 'onbekende fout'));
+    } finally {
+      setIsUploadingAudio(false);
     }
   };
 
@@ -308,6 +367,10 @@ export default function EditKennisbankArticlePage({
           lead_magnet_title: formData.leadMagnetTitle,
           lead_magnet_description: formData.leadMagnetDescription,
           lead_magnet_type: formData.leadMagnetType,
+          audio_url: formData.audioUrl,
+          audio_title: formData.audioTitle,
+          audio_duration: formData.audioDuration || null,
+          transcript: formData.transcript,
         }),
       });
 
@@ -868,6 +931,89 @@ export default function EditKennisbankArticlePage({
                         </div>
                       </div>
                     </div>
+                  )}
+                </div>
+
+                {/* Podcast / Audio */}
+                <div className="space-y-4 border-t pt-4">
+                  <div className="flex items-center gap-2">
+                    <Headphones size={18} className="text-orange-600" />
+                    <Label>Podcast (audio)</Label>
+                  </div>
+                  <p className="text-xs text-slate-500 -mt-2">
+                    Upload de NotebookLM-aflevering (.m4a). Voeg een transcript toe voor extra SEO — die tekst wordt geïndexeerd.
+                  </p>
+
+                  <div className="border-2 border-dashed border-slate-300 rounded-lg p-4 hover:border-orange-400 transition-colors">
+                    {formData.audioUrl ? (
+                      <div className="space-y-3">
+                        <audio controls src={formData.audioUrl} className="w-full" />
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs text-slate-500 truncate">
+                            {formData.audioDuration
+                              ? `${Math.floor(formData.audioDuration / 60)}:${(formData.audioDuration % 60).toString().padStart(2, '0')} min`
+                              : 'Audio geüpload'}
+                          </span>
+                          <Button
+                            type="button"
+                            variant="destructive"
+                            size="sm"
+                            onClick={() => setFormData({ ...formData, audioUrl: '', audioDuration: 0 })}
+                          >
+                            <X size={16} className="mr-1" /> Verwijder
+                          </Button>
+                        </div>
+                      </div>
+                    ) : (
+                      <label className="flex flex-col items-center justify-center h-28 cursor-pointer">
+                        {isUploadingAudio ? (
+                          <Loader2 className="w-8 h-8 text-slate-400 animate-spin" />
+                        ) : (
+                          <>
+                            <Headphones className="w-8 h-8 text-slate-400 mb-2" />
+                            <span className="text-sm text-slate-500">Klik om podcast te uploaden</span>
+                            <span className="text-xs text-slate-400 mt-1">M4A, MP3, WAV (max 150MB)</span>
+                          </>
+                        )}
+                        <input
+                          type="file"
+                          accept="audio/mp4,audio/x-m4a,audio/aac,audio/mpeg,audio/wav,.m4a,.mp3,.wav"
+                          onChange={handleAudioUpload}
+                          className="hidden"
+                          disabled={isUploadingAudio}
+                        />
+                      </label>
+                    )}
+                  </div>
+
+                  {formData.audioUrl && (
+                    <>
+                      <div className="space-y-2">
+                        <Label htmlFor="audioTitle">Aflevering titel</Label>
+                        <Input
+                          id="audioTitle"
+                          value={formData.audioTitle}
+                          onChange={(e) => setFormData({ ...formData, audioTitle: e.target.value })}
+                          placeholder="Titel van de podcast-aflevering"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="transcript" className="flex items-center gap-2">
+                          <FileText size={16} />
+                          Transcript (SEO)
+                        </Label>
+                        <Textarea
+                          id="transcript"
+                          value={formData.transcript}
+                          onChange={(e) => setFormData({ ...formData, transcript: e.target.value })}
+                          placeholder="Plak hier het transcript van het gesprek. Deze tekst is uniek t.o.v. het artikel en wordt door Google geïndexeerd."
+                          rows={6}
+                        />
+                        <p className="text-xs text-slate-500">
+                          {formData.transcript.length} tekens — hoe completer, hoe meer indexeerbare content.
+                        </p>
+                      </div>
+                    </>
                   )}
                 </div>
 

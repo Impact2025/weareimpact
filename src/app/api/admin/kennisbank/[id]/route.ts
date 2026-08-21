@@ -67,6 +67,10 @@ export async function PUT(
       difficulty,
       status,
       published_at,
+      audio_url,
+      audio_title,
+      audio_duration,
+      transcript,
     } = body;
 
     // Calculate reading time
@@ -114,6 +118,10 @@ export async function PUT(
         difficulty = ${difficulty},
         status = ${status},
         search_content = ${search_content},
+        audio_url = ${audio_url || null},
+        audio_title = ${audio_title || null},
+        audio_duration = ${audio_duration || null},
+        transcript = ${transcript || null},
         published_at = CASE
           WHEN ${publishedAtValue}::timestamp IS NOT NULL THEN ${publishedAtValue}::timestamp
           WHEN ${status} = 'published' AND published_at IS NULL THEN NOW()

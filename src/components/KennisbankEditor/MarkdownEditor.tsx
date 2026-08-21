@@ -11,6 +11,7 @@ import {
   Quote,
   Link as LinkIcon,
   Image as ImageIcon,
+  Youtube,
   Loader2,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -93,6 +94,31 @@ export function MarkdownEditor({ content, onChange, placeholder, rows = 20 }: Ma
     wrapSelection('[', `](${url})`, selected || 'linktekst');
   };
 
+  // Extract a YouTube video ID from any common URL shape, or a bare 11-char ID.
+  const extractYoutubeId = (input: string): string | null => {
+    const trimmed = input.trim();
+    const patterns = [
+      /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/|youtube\.com\/shorts\/)([\w-]{11})/,
+      /^([\w-]{11})$/,
+    ];
+    for (const pattern of patterns) {
+      const match = trimmed.match(pattern);
+      if (match) return match[1];
+    }
+    return null;
+  };
+
+  const addYoutube = () => {
+    const url = window.prompt('YouTube-URL (of video-ID):');
+    if (!url) return;
+    const videoId = extractYoutubeId(url);
+    if (!videoId) {
+      alert('Kon geen geldige YouTube-video herkennen in die link.');
+      return;
+    }
+    insertAtCursor(`\n\n![YouTube video](youtube:${videoId})\n\n`);
+  };
+
   const addImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -168,6 +194,7 @@ export function MarkdownEditor({ content, onChange, placeholder, rows = 20 }: Ma
 
         <div className="flex gap-1">
           <ToolbarButton onClick={addLink} icon={LinkIcon} title="Add Link" />
+          <ToolbarButton onClick={addYoutube} icon={Youtube} title="YouTube video invoegen" />
           <label
             className="inline-flex items-center justify-center h-8 w-8 rounded-md hover:bg-accent cursor-pointer"
             title="Add Image"

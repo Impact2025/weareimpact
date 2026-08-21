@@ -3,6 +3,7 @@ import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import fs from 'fs';
 import path from 'path';
+import type { ImgHTMLAttributes } from 'react';
 import matter from 'gray-matter';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -14,6 +15,7 @@ import { ArrowLeft, Calendar, Clock, Linkedin, Twitter, BookOpen, Download, Help
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { KennisbankChat } from '@/components/features/KennisbankChat';
+import { PodcastPlayer } from '@/components/blog/PodcastPlayer';
 import { ArticleFeedback } from '@/components/features/ArticleFeedback';
 import { LeadMagnetDownload } from '@/components/features/LeadMagnetDownload';
 import { RelatedService } from '@/components/seo/RelatedService';
@@ -53,6 +55,10 @@ interface Article {
   lead_magnet_file: string | null;
   seo_title: string | null;
   seo_description: string | null;
+  audio_url: string | null;
+  audio_title: string | null;
+  audio_duration: number | null;
+  transcript: string | null;
 }
 
 interface RelatedArticle {
@@ -145,6 +151,32 @@ function getTextContent(node: Element | { type: string; value?: string; children
   return '';
 }
 
+// The Kennisbank editor inserts YouTube videos as a markdown image whose "src"
+// is a youtube:VIDEO_ID sentinel (`![alt](youtube:dQw4w9WgXcQ)`) instead of a real
+// URL. ReactMarkdown has no raw-HTML pass-through here (content is untrusted
+// markdown, not sanitized HTML), so we intercept at the `img` renderer and swap
+// in a responsive iframe embed for that one case; every other image renders normally.
+const markdownComponents = {
+  img: ({ src, alt }: ImgHTMLAttributes<HTMLImageElement>) => {
+    if (typeof src === 'string' && src.startsWith('youtube:')) {
+      const videoId = src.slice('youtube:'.length);
+      return (
+        <span className="block relative my-6 aspect-video w-full overflow-hidden rounded-xl">
+          <iframe
+            src={`https://www.youtube-nocookie.com/embed/${videoId}`}
+            title={alt || 'YouTube video'}
+            className="absolute inset-0 h-full w-full"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+          />
+        </span>
+      );
+    }
+    // eslint-disable-next-line @next/next/no-img-element
+    return <img src={src} alt={alt || ''} loading="lazy" />;
+  },
+};
+
 async function getArticleFromDatabase(slug: string): Promise<Article | null> {
   try {
     const articles = await sql`
@@ -182,6 +214,10 @@ async function getArticleFromDatabase(slug: string): Promise<Article | null> {
       lead_magnet_file: (data.lead_magnet_file as string) || null,
       seo_title: (data.seo_title as string) || null,
       seo_description: (data.seo_description as string) || null,
+      audio_url: (data.audio_url as string) || null,
+      audio_title: (data.audio_title as string) || null,
+      audio_duration: (data.audio_duration as number) || null,
+      transcript: (data.transcript as string) || null,
     };
   } catch (error) {
     console.error('Error fetching from database:', error);
@@ -235,6 +271,10 @@ async function getArticleFromMarkdown(slug: string): Promise<Article | null> {
           lead_magnet_file: data.lead_magnet_file || null,
           seo_title: data.seo_title || null,
           seo_description: data.seo_description || null,
+          audio_url: data.audio_url || null,
+          audio_title: data.audio_title || null,
+          audio_duration: data.audio_duration || null,
+          transcript: data.transcript || null,
         };
       }
     }
@@ -438,6 +478,9 @@ export default async function KennisbankArticlePage({ params }: Props) {
           category: article.category_slug,
           tags: article.tags,
           readingTime: article.reading_time,
+          audioUrl: article.audio_url,
+          audioDuration: article.audio_duration,
+          hasTranscript: Boolean(article.transcript),
         }}
       />
       <BreadcrumbJsonLd items={breadcrumbItems} />
@@ -560,6 +603,16 @@ export default async function KennisbankArticlePage({ params }: Props) {
           </div>
         </header>
 
+        {/* Podcast player (if this article has an audio episode) */}
+        {article.audio_url && (
+          <PodcastPlayer
+            audioUrl={article.audio_url}
+            title={article.audio_title}
+            durationSeconds={article.audio_duration}
+            transcript={article.transcript}
+          />
+        )}
+
         {/* Table of Contents */}
         <TableOfContents content={article.content} className="mb-6 md:mb-8" />
 
@@ -571,6 +624,7 @@ export default async function KennisbankArticlePage({ params }: Props) {
               <ReactMarkdown
                 remarkPlugins={[remarkGfm]}
                 rehypePlugins={[rehypeSlug, rehypeCustomIds]}
+                components={markdownComponents}
               >
                 {processedContent}
               </ReactMarkdown>

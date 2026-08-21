@@ -80,6 +80,10 @@ export async function POST(request: NextRequest) {
       difficulty = 'beginner',
       status = 'draft',
       published_at,
+      audio_url,
+      audio_title,
+      audio_duration,
+      transcript,
     } = body;
 
     // Calculate reading time (avg 200 words per minute)
@@ -102,7 +106,8 @@ export async function POST(request: NextRequest) {
         header_type, header_color, header_title,
         table_of_contents, faq_items, lead_magnet_title, lead_magnet_description,
         lead_magnet_file, lead_magnet_type, reading_time, difficulty, status,
-        search_content, published_at
+        search_content, published_at,
+        audio_url, audio_title, audio_duration, transcript
       ) VALUES (
         ${title}, ${slug}, ${subtitle}, ${excerpt}, ${content}, ${category_slug}, ${tags},
         ${seo_title}, ${seo_description}, ${seo_keywords}, ${featured_image}, ${featured_image_alt},
@@ -110,7 +115,8 @@ export async function POST(request: NextRequest) {
         ${JSON.stringify(table_of_contents)}, ${JSON.stringify(faq_items)},
         ${lead_magnet_title}, ${lead_magnet_description}, ${lead_magnet_file}, ${lead_magnet_type},
         ${reading_time}, ${difficulty}, ${status}, ${search_content},
-        ${finalPublishedAt}
+        ${finalPublishedAt},
+        ${audio_url || null}, ${audio_title || null}, ${audio_duration || null}, ${transcript || null}
       )
       RETURNING id, slug
     `;
