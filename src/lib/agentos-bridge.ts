@@ -17,6 +17,7 @@ export interface BookingLeadPush {
   customerEmail: string;
   customerPhone?: string;
   customerOrganization?: string;
+  customerWebsite?: string;
   notes?: string;
   bookingStatus: 'pending' | 'approved' | 'rejected';
 }

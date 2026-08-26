@@ -21,6 +21,7 @@ interface CreateBookingRequest {
     email: string;
     phone?: string;
     organization?: string;
+    website?: string;
   };
 }
 
@@ -47,6 +48,11 @@ async function ensureBookingRequestsTable() {
   // nooit meegestuurd of opgeslagen — de bezoeker typte iets dat nergens
   // landde. IF NOT EXISTS want deze tabel bestaat al bij bestaande installaties.
   await sql`ALTER TABLE booking_requests ADD COLUMN IF NOT EXISTS notes TEXT`;
+  // Website (26 aug 2026): AgentOS' verrijking gokte tot nu toe het bedrijf
+  // van de aanvrager uit het e-maildomein of de vrij-getypte organisatienaam
+  // — bij een privé-mailadres of afwijkend label ging dat mis. Eén optioneel
+  // veld geeft een harde ankertekst in plaats van een gok.
+  await sql`ALTER TABLE booking_requests ADD COLUMN IF NOT EXISTS customer_website TEXT`;
 }
 
 // De afspraaktool boekte hiervoor rechtstreeks in Google Calendar
@@ -89,14 +95,16 @@ export async function POST(request: NextRequest) {
     await ensureBookingRequestsTable();
     const token = randomUUID();
 
+    const website = typeof customer.website === 'string' ? customer.website.trim().slice(0, 200) : '';
+
     const inserted = await sql`
       INSERT INTO booking_requests (
         booking_type, start_time, end_time, customer_name, customer_email,
-        customer_phone, customer_organization, token, notes
+        customer_phone, customer_organization, customer_website, token, notes
       ) VALUES (
         ${bookingType}, ${start.toISOString()}, ${end.toISOString()},
         ${customer.name}, ${customer.email}, ${customer.phone || null},
-        ${customer.organization || null}, ${token}, ${notes || null}
+        ${customer.organization || null}, ${website || null}, ${token}, ${notes || null}
       )
       RETURNING id
     `;
@@ -112,6 +120,7 @@ export async function POST(request: NextRequest) {
       customerEmail: customer.email,
       customerPhone: customer.phone,
       customerOrganization: customer.organization,
+      customerWebsite: website || undefined,
       notes,
       bookingStatus: 'pending',
     });

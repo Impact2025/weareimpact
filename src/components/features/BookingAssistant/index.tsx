@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { Calendar, Send, User, Mail, Building, Phone, Check, Loader2 } from 'lucide-react';
+import { Calendar, Send, User, Mail, Building, Phone, Globe, Check, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
@@ -39,6 +39,7 @@ interface CustomerData {
   email: string;
   phone: string;
   organization: string;
+  website: string;
 }
 
 type Step = 'chat' | 'select_type' | 'select_time' | 'fill_form' | 'confirmed';
@@ -65,6 +66,7 @@ export function BookingAssistant() {
     email: '',
     phone: '',
     organization: '',
+    website: '',
   });
   const [booking, setBooking] = useState<{ id: string; typeName: string; startTime: string; duration: number } | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -201,6 +203,7 @@ export function BookingAssistant() {
             email: customerData.email,
             phone: customerData.phone || undefined,
             organization: customerData.organization || undefined,
+            website: customerData.website || undefined,
           },
         }),
       });
@@ -234,7 +237,7 @@ export function BookingAssistant() {
     setStep('chat');
     setSelectedType(null);
     setSelectedSlot(null);
-    setCustomerData({ name: '', email: '', phone: '', organization: '' });
+    setCustomerData({ name: '', email: '', phone: '', organization: '', website: '' });
     setBooking(null);
     setMessages([
       {
@@ -406,6 +409,16 @@ export function BookingAssistant() {
                     value={customerData.organization}
                     onChange={(e) => setCustomerData({ ...customerData, organization: e.target.value })}
                     placeholder="Optioneel"
+                  />
+                </div>
+                <div>
+                  <label className="flex items-center gap-2 text-sm font-medium text-slate-700 mb-1">
+                    <Globe className="w-4 h-4" /> Website
+                  </label>
+                  <Input
+                    value={customerData.website}
+                    onChange={(e) => setCustomerData({ ...customerData, website: e.target.value })}
+                    placeholder="Optioneel, bv. jouwbedrijf.nl"
                   />
                 </div>
                 <div>
