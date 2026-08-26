@@ -1,11 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createBooking, BOOKING_TYPES, BookingTypeSlug } from '@/lib/google-calendar';
+import { randomUUID } from 'crypto';
+import { BOOKING_TYPES, BookingTypeSlug } from '@/lib/google-calendar';
 import { sql } from '@/lib/db/neon';
 import { sendEmail } from '@/lib/email/send';
-import { generateBookingConfirmationEmail } from '@/lib/email/templates/booking-confirmation';
-import { generateBookingNotificationEmail } from '@/lib/email/templates/booking-notification';
+import { generateBookingRequestReceivedEmail } from '@/lib/email/templates/booking-request-received';
+import { generateBookingRequestNotificationEmail } from '@/lib/email/templates/booking-request-notification';
+
+export const dynamic = 'force-dynamic';
 
 const OWNER_EMAIL = 'v.munster@weareimpact.nl';
+const WEB_BASE = 'https://weareimpact.nl';
 
 interface CreateBookingRequest {
   bookingType: string;
@@ -18,68 +22,39 @@ interface CreateBookingRequest {
   };
 }
 
-// Check if Google Calendar is configured
-function isGoogleCalendarConfigured(): boolean {
-  return !!(
-    process.env.GOOGLE_PRIVATE_KEY &&
-    process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL &&
-    process.env.GOOGLE_CALENDAR_ID
-  );
+async function ensureBookingRequestsTable() {
+  await sql`
+    CREATE TABLE IF NOT EXISTS booking_requests (
+      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      booking_type TEXT NOT NULL,
+      start_time TIMESTAMP WITH TIME ZONE NOT NULL,
+      end_time TIMESTAMP WITH TIME ZONE NOT NULL,
+      customer_name TEXT NOT NULL,
+      customer_email TEXT NOT NULL,
+      customer_phone TEXT,
+      customer_organization TEXT,
+      status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'approved', 'rejected')),
+      token TEXT NOT NULL,
+      calendar_event_id TEXT,
+      meet_link TEXT,
+      created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+      decided_at TIMESTAMP WITH TIME ZONE
+    )
+  `;
 }
 
-// Store booking as lead when Google Calendar is not available
-async function storeBookingAsLead(
-  bookingType: string,
-  startTime: string,
-  customer: { name: string; email: string; phone?: string; organization?: string }
-) {
-  const type = BOOKING_TYPES[bookingType as BookingTypeSlug];
-
-  try {
-    // Try to store in leads table
-    await sql`
-      INSERT INTO leads (name, email, phone, company, source, notes, status)
-      VALUES (
-        ${customer.name},
-        ${customer.email},
-        ${customer.phone || null},
-        ${customer.organization || null},
-        'booking_widget',
-        ${`Afspraakverzoek: ${type?.name || bookingType} op ${new Date(startTime).toLocaleString('nl-NL', { dateStyle: 'full', timeStyle: 'short' })}`},
-        'new'
-      )
-    `;
-  } catch (dbError) {
-    // Table might not exist yet, log but continue
-    console.error('Failed to store lead (table may not exist):', dbError);
-  }
-
-  try {
-    // Log activity
-    await sql`
-      INSERT INTO activity_log (type, title, description, metadata)
-      VALUES (
-        'booking',
-        'Afspraakverzoek ontvangen',
-        ${`${customer.name} wil een ${type?.name || bookingType}`},
-        ${JSON.stringify({ bookingType, startTime, customer })}::jsonb
-      )
-    `;
-  } catch (activityError) {
-    // Constraint might not include 'booking', log but continue
-    console.error('Failed to log activity:', activityError);
-  }
-
-  // Always return success - we don't want to fail the booking just because DB logging failed
-  return { success: true };
-}
-
+// De afspraaktool boekte hiervoor rechtstreeks in Google Calendar
+// (sendUpdates:'all' — de klant kreeg meteen een échte agenda-uitnodiging),
+// zonder dat Vincent er ooit naar had gekeken. Dat is precies het patroon dat
+// AgentOS elders bewust vermijdt: niets gaat automatisch naar buiten, alles
+// is een voorstel tot een mens het goedkeurt. Deze route legt de aanvraag nu
+// vast en stuurt Vincent een mail met een Goedkeuren/Afwijzen-link; de échte
+// boeking gebeurt pas in api/booking/respond/route.ts na zijn klik.
 export async function POST(request: NextRequest) {
   try {
     const body: CreateBookingRequest = await request.json();
     const { bookingType, startTime, customer } = body;
 
-    // Validate required fields
     if (!bookingType || !startTime || !customer?.name || !customer?.email) {
       return NextResponse.json(
         { error: 'Vul alle verplichte velden in' },
@@ -87,15 +62,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Validate booking type
-    if (!BOOKING_TYPES[bookingType as BookingTypeSlug]) {
+    const type = BOOKING_TYPES[bookingType as BookingTypeSlug];
+    if (!type) {
       return NextResponse.json(
         { error: 'Ongeldig type afspraak' },
         { status: 400 }
       );
     }
 
-    // Validate start time is in the future
     const start = new Date(startTime);
     if (start <= new Date()) {
       return NextResponse.json(
@@ -103,233 +77,88 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
+    const end = new Date(start.getTime() + type.duration * 60000);
 
-    // Check if Google Calendar is configured
-    if (!isGoogleCalendarConfigured()) {
-      console.log('Google Calendar not configured:', {
-        hasPrivateKey: !!process.env.GOOGLE_PRIVATE_KEY,
-        hasServiceEmail: !!process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
-        hasCalendarId: !!process.env.GOOGLE_CALENDAR_ID,
-      });
+    await ensureBookingRequestsTable();
+    const token = randomUUID();
 
-      // Store as lead instead
-      const leadResult = await storeBookingAsLead(bookingType, startTime, customer);
+    const inserted = await sql`
+      INSERT INTO booking_requests (
+        booking_type, start_time, end_time, customer_name, customer_email,
+        customer_phone, customer_organization, token
+      ) VALUES (
+        ${bookingType}, ${start.toISOString()}, ${end.toISOString()},
+        ${customer.name}, ${customer.email}, ${customer.phone || null},
+        ${customer.organization || null}, ${token}
+      )
+      RETURNING id
+    `;
+    const requestId = inserted[0]?.id;
 
-      if (!leadResult.success) {
-        return NextResponse.json(
-          { error: 'Er ging iets mis. Probeer het later opnieuw.' },
-          { status: 500 }
-        );
-      }
-
-      const type = BOOKING_TYPES[bookingType as BookingTypeSlug];
-      const booking = {
-        id: `lead-${Date.now()}`,
-        typeName: type.name,
-        startTime,
-        endTime: new Date(start.getTime() + type.duration * 60000).toISOString(),
-        duration: type.duration,
-      };
-
-      // Send confirmation email even when Google Calendar is not configured
-      const emailTemplate = generateBookingConfirmationEmail({
-        customerName: customer.name,
-        bookingType: type.name,
-        startTime: booking.startTime,
-        endTime: booking.endTime,
-        duration: booking.duration,
-      });
-
-      const emailResult = await sendEmail({
-        to: customer.email,
-        subject: emailTemplate.subject,
-        html: emailTemplate.html,
-        text: emailTemplate.text,
-      });
-
-      if (!emailResult.success) {
-        console.error('Failed to send confirmation email:', emailResult.error);
-      }
-
-      // Send notification email to owner (no meet link in fallback mode)
-      const notificationTemplate = generateBookingNotificationEmail({
-        customerName: customer.name,
-        customerEmail: customer.email,
-        customerPhone: customer.phone,
-        customerOrganization: customer.organization,
-        bookingType: type.name,
-        startTime: booking.startTime,
-        endTime: booking.endTime,
-        duration: booking.duration,
-      });
-
-      const notificationResult = await sendEmail({
-        to: OWNER_EMAIL,
-        subject: notificationTemplate.subject,
-        html: notificationTemplate.html,
-        text: notificationTemplate.text,
-      });
-
-      if (!notificationResult.success) {
-        console.error('Failed to send notification email:', notificationResult.error);
-      }
-
-      return NextResponse.json({
-        success: true,
-        booking,
-        message: 'Je aanvraag is ontvangen! Je ontvangt een bevestiging per e-mail.',
-      });
-    }
-
-    // Try to create the booking in Google Calendar
-    let result: {
-      success: boolean;
-      booking?: {
-        id: string;
-        typeName: string;
-        startTime: string;
-        endTime: string;
-        duration: number;
-        meetLink?: string;
-      };
-      error?: string;
-    } = { success: false };
-
+    // Activiteit loggen — best effort, mag de aanvraag zelf nooit blokkeren.
     try {
-      result = await createBooking({
-        bookingType: bookingType as BookingTypeSlug,
-        startTime,
-        customer: {
-          name: customer.name,
-          email: customer.email,
-          phone: customer.phone,
-          organization: customer.organization,
-        },
-      });
-    } catch (gcalError) {
-      console.error('Google Calendar exception:', gcalError);
-      result = { success: false, error: String(gcalError) };
+      await sql`
+        INSERT INTO activity_log (type, title, description, metadata)
+        VALUES (
+          'booking',
+          'Boekingsaanvraag ontvangen',
+          ${`${customer.name} vraagt een ${type.name} aan`},
+          ${JSON.stringify({ requestId, bookingType, startTime: start.toISOString(), customer })}::jsonb
+        )
+      `;
+    } catch (activityError) {
+      console.error('Failed to log booking activity:', activityError);
     }
 
-    if (result.success) {
-      // Google Calendar booking succeeded
-      // Send confirmation email to customer
-      const emailTemplate = generateBookingConfirmationEmail({
-        customerName: customer.name,
-        bookingType: BOOKING_TYPES[bookingType as BookingTypeSlug].name,
-        startTime: result.booking!.startTime,
-        endTime: result.booking!.endTime,
-        duration: result.booking!.duration,
-        meetLink: result.booking!.meetLink,
-      });
-
-      const emailResult = await sendEmail({
-        to: customer.email,
-        subject: emailTemplate.subject,
-        html: emailTemplate.html,
-        text: emailTemplate.text,
-      });
-
-      if (!emailResult.success) {
-        console.error('Failed to send confirmation email:', emailResult.error);
-      }
-
-      // Send notification email to owner
-      const notificationTemplate = generateBookingNotificationEmail({
-        customerName: customer.name,
-        customerEmail: customer.email,
-        customerPhone: customer.phone,
-        customerOrganization: customer.organization,
-        bookingType: BOOKING_TYPES[bookingType as BookingTypeSlug].name,
-        startTime: result.booking!.startTime,
-        endTime: result.booking!.endTime,
-        duration: result.booking!.duration,
-        meetLink: result.booking!.meetLink,
-      });
-
-      const notificationResult = await sendEmail({
-        to: OWNER_EMAIL,
-        subject: notificationTemplate.subject,
-        html: notificationTemplate.html,
-        text: notificationTemplate.text,
-      });
-
-      if (!notificationResult.success) {
-        console.error('Failed to send notification email:', notificationResult.error);
-      }
-
-      return NextResponse.json({
-        success: true,
-        booking: result.booking,
-        message: 'Je afspraak is bevestigd! Je ontvangt een bevestiging per e-mail.',
-      });
-    }
-
-    // Google Calendar failed, use fallback
-    console.error('Google Calendar booking failed:', result.error);
-
-    // Store as lead (this always returns success now)
-    await storeBookingAsLead(bookingType, startTime, customer);
-
-    const type = BOOKING_TYPES[bookingType as BookingTypeSlug];
-    const booking = {
-      id: `lead-${Date.now()}`,
-      typeName: type.name,
-      startTime,
-      endTime: new Date(start.getTime() + type.duration * 60000).toISOString(),
-      duration: type.duration,
-    };
-
-    // Send confirmation email even when Google Calendar fails
-    const emailTemplate = generateBookingConfirmationEmail({
+    // Bevestiging naar de klant — bewust GEEN "geboekt", de afspraak staat
+    // nog niet vast.
+    const receivedTemplate = generateBookingRequestReceivedEmail({
       customerName: customer.name,
       bookingType: type.name,
-      startTime: booking.startTime,
-      endTime: booking.endTime,
-      duration: booking.duration,
+      startTime: start.toISOString(),
+      duration: type.duration,
     });
-
-    const emailResult = await sendEmail({
+    const receivedResult = await sendEmail({
       to: customer.email,
-      subject: emailTemplate.subject,
-      html: emailTemplate.html,
-      text: emailTemplate.text,
+      subject: receivedTemplate.subject,
+      html: receivedTemplate.html,
+      text: receivedTemplate.text,
     });
-
-    if (!emailResult.success) {
-      console.error('Failed to send confirmation email:', emailResult.error);
+    if (!receivedResult.success) {
+      console.error('Failed to send booking-received email:', receivedResult.error);
     }
 
-    // Send notification email to owner (no meet link in fallback mode)
-    const notificationTemplate = generateBookingNotificationEmail({
+    // Notificatie naar Vincent met de goedkeur-/afwijslink.
+    const approveUrl = `${WEB_BASE}/api/booking/respond?id=${requestId}&token=${token}&action=approve`;
+    const rejectUrl = `${WEB_BASE}/api/booking/respond?id=${requestId}&token=${token}&action=reject`;
+    const notificationTemplate = generateBookingRequestNotificationEmail({
       customerName: customer.name,
       customerEmail: customer.email,
       customerPhone: customer.phone,
       customerOrganization: customer.organization,
       bookingType: type.name,
-      startTime: booking.startTime,
-      endTime: booking.endTime,
-      duration: booking.duration,
+      startTime: start.toISOString(),
+      duration: type.duration,
+      approveUrl,
+      rejectUrl,
     });
-
     const notificationResult = await sendEmail({
       to: OWNER_EMAIL,
       subject: notificationTemplate.subject,
       html: notificationTemplate.html,
       text: notificationTemplate.text,
     });
-
     if (!notificationResult.success) {
-      console.error('Failed to send notification email:', notificationResult.error);
+      console.error('Failed to send booking-notification email:', notificationResult.error);
     }
 
     return NextResponse.json({
       success: true,
-      booking,
-      message: 'Je aanvraag is ontvangen! Je ontvangt een bevestiging per e-mail.',
+      requestId,
+      message: 'Je aanvraag is ontvangen! Vincent bevestigt deze persoonlijk zodra hij zijn agenda heeft gecheckt.',
     });
   } catch (error) {
-    console.error('Error creating booking:', error);
+    console.error('Booking request error:', error);
     return NextResponse.json(
       { error: 'Er ging iets mis. Probeer het later opnieuw.' },
       { status: 500 }

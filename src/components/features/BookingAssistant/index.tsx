@@ -208,11 +208,20 @@ export function BookingAssistant() {
       const data = await response.json();
 
       if (data.success) {
-        setBooking(data.booking);
+        // De server bevestigt niet meer automatisch (zie api/booking/create) —
+        // Vincent keurt de aanvraag zelf goed via de link in zijn mail. De
+        // getoonde details komen daarom uit wat de bezoeker net koos, niet uit
+        // een 'geboekt'-antwoord dat er niet meer is.
+        setBooking({
+          id: data.requestId,
+          typeName: selectedType.name,
+          startTime: selectedSlot.start,
+          duration: selectedType.duration,
+        });
         setStep('confirmed');
-        addMessage('assistant', `✅ Gelukt! Je afspraak met Vincent staat gepland. Je ontvangt een bevestiging op ${customerData.email}.`);
+        addMessage('assistant', `Je aanvraag is verstuurd! Vincent bevestigt 'm persoonlijk — je hoort dan op ${customerData.email} of dit moment past.`);
       } else {
-        addMessage('assistant', 'Er ging iets mis bij het boeken. Probeer het opnieuw of mail naar v.munster@weareimpact.nl');
+        addMessage('assistant', 'Er ging iets mis bij het aanvragen. Probeer het opnieuw of mail naar v.munster@weareimpact.nl');
       }
     } catch {
       addMessage('assistant', 'Er ging iets mis. Neem contact op via v.munster@weareimpact.nl');
@@ -428,8 +437,8 @@ export function BookingAssistant() {
             {/* Confirmation */}
             {step === 'confirmed' && booking && (
               <div className="bg-green-50 border border-green-200 rounded-xl p-4 text-center">
-                <div className="text-4xl mb-3">🎉</div>
-                <h4 className="font-semibold text-green-800 mb-2">Afspraak bevestigd!</h4>
+                <div className="text-4xl mb-3">📨</div>
+                <h4 className="font-semibold text-green-800 mb-2">Aanvraag verstuurd!</h4>
                 <div className="text-sm text-green-700 space-y-1">
                   <p className="font-medium">{booking.typeName}</p>
                   <p>
@@ -448,7 +457,7 @@ export function BookingAssistant() {
                 </div>
                 <div className="mt-4 pt-4 border-t border-green-200">
                   <p className="text-xs text-green-600 mb-3">
-                    Je ontvangt een bevestiging met de videocall link op {customerData.email}
+                    Vincent bevestigt dit moment persoonlijk — je hoort het per mail op {customerData.email}
                   </p>
                   <Button
                     variant="outline"
