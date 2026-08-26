@@ -134,10 +134,10 @@ const projects = [
     initials: 'IR',
     color: 'text-violet-600',
     accent: 'border-violet-400',
-    name: 'Iris',
-    tagline: 'AI-assistent voor welzijnsprofessionals',
+    name: 'Iris & AgentOS',
+    tagline: 'Autonoom AI-besturingssysteem & AI-Manager',
     description:
-      'Iris is mijn eigen AI-assistent, gebouwd voor professionals in het sociale domein. Een voorbeeld van hoe een kwartiermakerstraject eruit kan zien: van idee naar werkend concept, nu in gebruik bij professionals.',
+      'Geen losse chatbot, maar een zelflerend digitaal zenuwstelsel dat dagelijks repeterend werk overneemt op veilige, eigen infrastructuur. Een voorbeeld van hoe een kwartiermakerstraject eruit kan zien: van idee naar een autonome orchestrator die gespecialiseerde subagents aanstuurt, met een dynamisch, lerend geheugen en een ingebouwde review-gate (Gauntlet Loop) waarbij jij altijd de definitieve goedkeuring houdt.',
     url: null,
   },
   {
@@ -152,15 +152,15 @@ const projects = [
     url: 'https://bijeen.app',
   },
   {
-    id: 'brickme',
-    initials: 'BM',
-    color: 'text-orange-600',
-    accent: 'border-orange-400',
-    name: 'Brickme.nl',
-    tagline: 'Zelfontdekking via AI en LEGO® Serious Play',
+    id: 'bewaardvoorjou',
+    initials: 'BJ',
+    color: 'text-emerald-600',
+    accent: 'border-emerald-400',
+    name: 'Bewaardvoorjou.nl',
+    tagline: 'Digitaal nalatenschap & herinneringen bewaren',
     description:
-      'Brickme combineert mijn achtergrond als LEGO® Serious Play facilitator met AI. Zelf de kaders bepaald, zelf gebouwd, zelf bewezen.',
-    url: 'https://brickme.nl',
+      'Bewaardvoorjou.nl helpt mensen om herinneringen, verhalen en dierbare digitale nalatenschap veilig te bewaren en door te geven aan volgende generaties. Zelf opgezet, bewezen en overgedragen.',
+    url: 'https://bewaardvoorjou.nl',
   },
 ];
 

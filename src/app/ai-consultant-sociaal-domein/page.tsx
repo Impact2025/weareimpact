@@ -148,10 +148,10 @@ const projects = [
     initials: 'IR',
     color: 'text-violet-600',
     accent: 'border-violet-400',
-    name: 'Iris',
-    tagline: 'AI-assistent voor welzijnsprofessionals',
+    name: 'Iris & AgentOS',
+    tagline: 'Autonoom AI-besturingssysteem & AI-Manager',
     description:
-      'Iris is mijn eigen AI-assistent, gebouwd voor professionals in het sociale domein. Ze helpt bij intakegesprekken, ondersteunt bij verslaglegging en beantwoordt vragen van cliënten op een warme, menselijke manier. Iris toont aan dat AI niet koud en afstandelijk hoeft te zijn, maar juist de menselijke professional kan versterken.',
+      'Geen losse chatbot, maar een zelflerend digitaal zenuwstelsel dat dagelijks repeterend werk overneemt op veilige, eigen infrastructuur. Iris fungeert als centrale orchestrator die gespecialiseerde subagents over meerdere operationele domeinen aanstuurt via een FastAPI-backend — terwijl jij slaapt, analyseert het systeem prioriteiten, scant het op operationele risico\'s en bereidt het taken autonoom voor. In plaats van een "vergeetachtig" chatvenster beschikt Iris over een dynamisch, lerend geheugen dat direct gekoppeld is aan de eigen document-vault, zodat kennis, dossiers en organisatierichtlijnen structureel geborgd blijven. Het systeem beheert de hele keten: van e-mailtriage en screening van subsidie- of projectoproepen tot B2B-prospectie, realtime zoektrendanalyses en complete publicatie-pipelines. Alles draait op eigen, afgeschermde infrastructuur waarbij gevoelige data binnen de organisatie blijft. Via een ingebouwde review-gate (Gauntlet Loop) voert AI het werk uit, maar behoud jij altijd de definitieve goedkeuring vóór verzending of publicatie.',
     url: null,
   },
   {
@@ -166,15 +166,15 @@ const projects = [
     url: 'https://bijeen.app',
   },
   {
-    id: 'brickme',
-    initials: 'BM',
-    color: 'text-orange-600',
-    accent: 'border-orange-400',
-    name: 'Brickme.nl',
-    tagline: 'Zelfontdekking via AI en LEGO® Serious Play®',
+    id: 'bewaardvoorjou',
+    initials: 'BJ',
+    color: 'text-emerald-600',
+    accent: 'border-emerald-400',
+    name: 'Bewaardvoorjou.nl',
+    tagline: 'Digitaal nalatenschap & herinneringen bewaren',
     description:
-      'Brickme combineert mijn achtergrond als LEGO® Serious Play facilitator met AI. Gebruikers doorlopen een begeleide zelfsessie, ze bouwen, fotograferen en krijgen reflectieve feedback van een AI-coach. Een tool voor iedereen die vastloopt op wat hij of zij écht wil.',
-    url: 'https://brickme.nl',
+      'Bewaardvoorjou.nl helpt mensen om herinneringen, verhalen en dierbare digitale nalatenschap veilig te bewaren en door te geven aan volgende generaties. Een platform gebouwd vanuit dezelfde overtuiging als mijn andere projecten: technologie die mensen echt raakt, zonder dat het ingewikkeld hoeft te zijn.',
+    url: 'https://bewaardvoorjou.nl',
   },
 ];
 

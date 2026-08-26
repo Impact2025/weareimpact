@@ -97,10 +97,10 @@ const projects = [
     initials: 'IR',
     color: 'text-violet-600',
     accent: 'border-violet-400',
-    name: 'Iris',
-    tagline: 'AI-assistent voor professionals',
+    name: 'Iris & AgentOS',
+    tagline: 'Autonoom AI-besturingssysteem & AI-Manager',
     description:
-      'Iris is mijn eigen AI-assistent, gebouwd voor professionals in het sociale domein. Ze helpt bij intakegesprekken, ondersteunt bij verslaglegging en beantwoordt vragen van cliënten op een warme, menselijke manier. Een concreet voorbeeld van hoe digitale transformatie er in de praktijk uitziet.',
+      'Geen losse chatbot, maar een zelflerend digitaal zenuwstelsel dat dagelijks repeterend werk overneemt op veilige, eigen infrastructuur. Iris fungeert als centrale orchestrator die gespecialiseerde subagents over meerdere operationele domeinen aanstuurt via een FastAPI-backend — terwijl jij slaapt, analyseert het systeem prioriteiten, scant het op operationele risico\'s en bereidt het taken autonoom voor. Een concreet voorbeeld van hoe digitale transformatie er in de praktijk uitziet: van e-mailtriage en screening van subsidie- of projectoproepen tot B2B-prospectie, realtime zoektrendanalyses en complete publicatie-pipelines, allemaal op eigen, afgeschermde infrastructuur — met een ingebouwde review-gate (Gauntlet Loop) waarbij jij altijd de definitieve goedkeuring houdt.',
     url: null,
   },
   {
@@ -115,15 +115,15 @@ const projects = [
     url: 'https://bijeen.app',
   },
   {
-    id: 'brickme',
-    initials: 'BM',
-    color: 'text-orange-600',
-    accent: 'border-orange-400',
-    name: 'Brickme.nl',
-    tagline: 'Zelfontdekking via AI en LEGO® Serious Play®',
+    id: 'bewaardvoorjou',
+    initials: 'BJ',
+    color: 'text-emerald-600',
+    accent: 'border-emerald-400',
+    name: 'Bewaardvoorjou.nl',
+    tagline: 'Digitaal nalatenschap & herinneringen bewaren',
     description:
-      'Brickme combineert mijn achtergrond als LEGO® Serious Play facilitator met AI. Gebruikers doorlopen een begeleide zelfsessie, ze bouwen, fotograferen en krijgen reflectieve feedback van een AI-coach. Een tool voor iedereen die vastloopt op wat hij of zij écht wil.',
-    url: 'https://brickme.nl',
+      'Bewaardvoorjou.nl helpt mensen om herinneringen, verhalen en dierbare digitale nalatenschap veilig te bewaren en door te geven aan volgende generaties. Een platform gebouwd vanuit dezelfde overtuiging als mijn andere projecten: technologie die mensen echt raakt, zonder dat het ingewikkeld hoeft te zijn.',
+    url: 'https://bewaardvoorjou.nl',
   },
 ];
 
