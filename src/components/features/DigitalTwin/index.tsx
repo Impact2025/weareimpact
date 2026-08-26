@@ -92,9 +92,9 @@ const BOOKING_TYPES: BookingType[] = [
 ];
 
 const STARTER_PROMPTS = [
-  'Hoe kan AI de welzijnssector versterken?',
-  'Wat is LEGO Serious Play?',
-  'Vertel over WeAreImpact ventures',
+  'Ik was bij het AI Leadership Lab: waar vind ik de slides en prompts?',
+  'Hoe pas ik procesautomatisering toe in mijn maatschappelijke organisatie?',
+  'Plan een 1-op-1 AI-verkenning met Vincent',
 ];
 
 const BOOKING_KEYWORDS = [
