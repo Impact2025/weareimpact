@@ -5,6 +5,7 @@ import { sql } from '@/lib/db/neon';
 import { sendEmail } from '@/lib/email/send';
 import { generateBookingRequestReceivedEmail } from '@/lib/email/templates/booking-request-received';
 import { generateBookingRequestNotificationEmail } from '@/lib/email/templates/booking-request-notification';
+import { pushBookingLead } from '@/lib/agentos-bridge';
 
 export const dynamic = 'force-dynamic';
 
@@ -14,6 +15,7 @@ const WEB_BASE = 'https://weareimpact.nl';
 interface CreateBookingRequest {
   bookingType: string;
   startTime: string;
+  notes?: string;
   customer: {
     name: string;
     email: string;
@@ -41,6 +43,10 @@ async function ensureBookingRequestsTable() {
       decided_at TIMESTAMP WITH TIME ZONE
     )
   `;
+  // Notes bestond al in de UI (het "wil je iets meegeven"-veld) maar werd
+  // nooit meegestuurd of opgeslagen — de bezoeker typte iets dat nergens
+  // landde. IF NOT EXISTS want deze tabel bestaat al bij bestaande installaties.
+  await sql`ALTER TABLE booking_requests ADD COLUMN IF NOT EXISTS notes TEXT`;
 }
 
 // De afspraaktool boekte hiervoor rechtstreeks in Google Calendar
@@ -54,6 +60,7 @@ export async function POST(request: NextRequest) {
   try {
     const body: CreateBookingRequest = await request.json();
     const { bookingType, startTime, customer } = body;
+    const notes = typeof body.notes === 'string' ? body.notes.trim().slice(0, 2000) : '';
 
     if (!bookingType || !startTime || !customer?.name || !customer?.email) {
       return NextResponse.json(
@@ -85,15 +92,29 @@ export async function POST(request: NextRequest) {
     const inserted = await sql`
       INSERT INTO booking_requests (
         booking_type, start_time, end_time, customer_name, customer_email,
-        customer_phone, customer_organization, token
+        customer_phone, customer_organization, token, notes
       ) VALUES (
         ${bookingType}, ${start.toISOString()}, ${end.toISOString()},
         ${customer.name}, ${customer.email}, ${customer.phone || null},
-        ${customer.organization || null}, ${token}
+        ${customer.organization || null}, ${token}, ${notes || null}
       )
       RETURNING id
     `;
     const requestId = inserted[0]?.id;
+
+    // Naar AgentOS' Leads-tab — best effort, zie pushBookingLead hierboven.
+    await pushBookingLead({
+      bookingRequestId: requestId,
+      bookingType,
+      startTime: start.toISOString(),
+      durationMinutes: type.duration,
+      customerName: customer.name,
+      customerEmail: customer.email,
+      customerPhone: customer.phone,
+      customerOrganization: customer.organization,
+      notes,
+      bookingStatus: 'pending',
+    });
 
     // Activiteit loggen — best effort, mag de aanvraag zelf nooit blokkeren.
     try {
@@ -139,6 +160,7 @@ export async function POST(request: NextRequest) {
       bookingType: type.name,
       startTime: start.toISOString(),
       duration: type.duration,
+      notes,
       approveUrl,
       rejectUrl,
     });

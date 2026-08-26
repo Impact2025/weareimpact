@@ -7,8 +7,15 @@ import type { SocialPlatform } from './generator';
 
 export interface PostInput {
   content: string;
-  url: string;       // artikel-URL (voor platforms met aparte link-attach)
+  url: string;       // artikel-URL — komt in de EERSTE reactie (FB) / body (LI), mét UTM
   imageUrl?: string; // voor Instagram (vereist publiek JPEG)
+}
+
+// Universele social-post standaard: elke link krijgt UTM zodat GA4 de bron meet.
+function withUtm(rawUrl: string, source: string, campaign: string): string {
+  if (!rawUrl || rawUrl.includes('utm_')) return rawUrl;
+  const sep = rawUrl.includes('?') ? '&' : '?';
+  return `${rawUrl}${sep}utm_source=${source}&utm_medium=organic&utm_campaign=${campaign}`;
 }
 
 export interface PostResult {
@@ -53,7 +60,7 @@ async function postToLinkedIn(input: PostInput): Promise<PostResult> {
           'com.linkedin.ugc.ShareContent': {
             shareCommentary: { text: input.content },
             shareMediaCategory: 'ARTICLE',
-            media: [{ status: 'READY', originalUrl: input.url }],
+            media: [{ status: 'READY', originalUrl: withUtm(input.url, 'linkedin', 'weareimpact_social') }],
           },
         },
         visibility: { 'com.linkedin.ugc.MemberNetworkVisibility': 'PUBLIC' },
@@ -79,9 +86,10 @@ async function postToFacebook(input: PostInput): Promise<PostResult> {
   if (!pageId || !token) return notConfigured('FACEBOOK_PAGE_ID/FACEBOOK_PAGE_ACCESS_TOKEN');
 
   try {
+    // Standaard: GEEN link in de body. Post eerst de tekst, daarna de link
+    // (met UTM) in de EERSTE reactie via /comments.
     const params = new URLSearchParams({
       message: input.content,
-      link: input.url,
       access_token: token,
     });
     const res = await fetch(`https://graph.facebook.com/v21.0/${pageId}/feed`, {
@@ -93,7 +101,27 @@ async function postToFacebook(input: PostInput): Promise<PostResult> {
 
     if (!res.ok) return { ok: false, configured: true, error: await readError(res) };
     const data = (await res.json()) as { id?: string };
-    return { ok: true, configured: true, externalId: data.id };
+    const postId = data.id;
+    if (!postId) return { ok: false, configured: true, error: 'Geen post-id van Facebook' };
+
+    // Alleen een eerste reactie plaatsen als er een URL is (anders lege reactie).
+    if (input.url) {
+      const commentUrl = withUtm(input.url, 'facebook', 'weareimpact_social');
+      const cParams = new URLSearchParams({ message: commentUrl, access_token: token });
+      const cRes = await fetch(`https://graph.facebook.com/v21.0/${postId}/comments`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: cParams,
+        signal: AbortSignal.timeout(15_000),
+      });
+      if (!cRes.ok) {
+        // Body-post is gelukt, maar de eerste reactie mislukte — post blijft
+        // staan; de link ontbreekt dan tijdelijk (handmatig herstellen).
+        return { ok: true, configured: true, externalId: postId,
+          error: `post OK, maar eerste reactie mislukt: ${await readError(cRes)}` };
+      }
+    }
+    return { ok: true, configured: true, externalId: postId };
   } catch (e) {
     return { ok: false, configured: true, error: String(e).slice(0, 300) };
   }

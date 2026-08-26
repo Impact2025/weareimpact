@@ -3,7 +3,8 @@ import { sql } from '@/lib/db/neon';
 
 export const dynamic = 'force-dynamic';
 
-// POST - Track a page view
+// POST - Track a page view (one bundled write per visit: pageview + duration together,
+// sent via sendBeacon on page leave — avoids a separate DB round trip on every page load)
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
@@ -14,6 +15,7 @@ export async function POST(request: NextRequest) {
       referrer,
       userAgent,
       device,
+      durationSeconds,
     } = body;
 
     if (!visitorId || !pagePath) {
@@ -23,45 +25,15 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Insert page view
     await sql`
-      INSERT INTO page_views (visitor_id, page_path, page_title, referrer, user_agent, device)
-      VALUES (${visitorId}, ${pagePath}, ${pageTitle || null}, ${referrer || null}, ${userAgent || null}, ${device || null})
+      INSERT INTO page_views (visitor_id, page_path, page_title, referrer, user_agent, device, duration_seconds)
+      VALUES (${visitorId}, ${pagePath}, ${pageTitle || null}, ${referrer || null}, ${userAgent || null}, ${device || null}, ${durationSeconds || null})
     `;
 
     return NextResponse.json({ success: true }, { status: 201 });
   } catch (error) {
     console.error('Analytics POST error:', error);
     // Don't fail silently for analytics - just return success
-    return NextResponse.json({ success: true });
-  }
-}
-
-// PUT - Update page view with duration
-export async function PUT(request: NextRequest) {
-  try {
-    const body = await request.json();
-    const { visitorId, pagePath, durationSeconds } = body;
-
-    if (!visitorId || !pagePath) {
-      return NextResponse.json({ success: true });
-    }
-
-    // Update the most recent page view for this visitor and path
-    await sql`
-      UPDATE page_views
-      SET duration_seconds = ${durationSeconds}
-      WHERE id = (
-        SELECT id FROM page_views
-        WHERE visitor_id = ${visitorId} AND page_path = ${pagePath}
-        ORDER BY created_at DESC
-        LIMIT 1
-      )
-    `;
-
-    return NextResponse.json({ success: true });
-  } catch (error) {
-    console.error('Analytics PUT error:', error);
     return NextResponse.json({ success: true });
   }
 }

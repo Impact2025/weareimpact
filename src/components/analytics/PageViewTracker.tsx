@@ -39,7 +39,7 @@ export function getDevice(): string {
 export function PageViewTracker() {
   const pathname = usePathname();
   const startTimeRef = useRef<number>(Date.now());
-  const lastPathRef = useRef<string>('');
+  const sentRef = useRef<boolean>(false);
   const { consent } = useCookieConsent();
 
   useEffect(() => {
@@ -48,45 +48,41 @@ export function PageViewTracker() {
     const visitorId = getVisitorId();
     if (!visitorId) return;
 
-    if (lastPathRef.current && lastPathRef.current !== pathname) {
-      const duration = Math.round((Date.now() - startTimeRef.current) / 1000);
-      if (duration > 0 && duration < 3600) {
-        fetch('/api/analytics', {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ visitorId, pagePath: lastPathRef.current, durationSeconds: duration }),
-        }).catch(() => {});
-      }
-    }
-
     startTimeRef.current = Date.now();
-    lastPathRef.current = pathname;
+    sentRef.current = false;
 
-    fetch('/api/analytics', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        visitorId,
-        pagePath: pathname,
-        pageTitle: document.title,
-        referrer: document.referrer || null,
-        userAgent: navigator.userAgent,
-        device: getDevice(),
-      }),
-    }).catch(() => {});
-
-    const handleUnload = () => {
+    // Eén gebundelde write per paginabezoek (pageview + duration samen),
+    // pas verstuurd bij vertrek. Voorkomt de directe DB-call bij elke page
+    // load die eerder de Neon-compute continu wakker hield (nooit scale-to-zero).
+    const send = () => {
+      if (sentRef.current) return;
+      sentRef.current = true;
       const duration = Math.round((Date.now() - startTimeRef.current) / 1000);
-      if (duration > 0 && duration < 3600) {
-        navigator.sendBeacon(
-          '/api/analytics',
-          JSON.stringify({ visitorId, pagePath: pathname, durationSeconds: duration, _method: 'PUT' }),
-        );
-      }
+      navigator.sendBeacon(
+        '/api/analytics',
+        JSON.stringify({
+          visitorId,
+          pagePath: pathname,
+          pageTitle: document.title,
+          referrer: document.referrer || null,
+          userAgent: navigator.userAgent,
+          device: getDevice(),
+          durationSeconds: duration > 0 && duration < 3600 ? duration : null,
+        }),
+      );
     };
 
-    window.addEventListener('beforeunload', handleUnload);
-    return () => window.removeEventListener('beforeunload', handleUnload);
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'hidden') send();
+    };
+
+    window.addEventListener('pagehide', send);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => {
+      send();
+      window.removeEventListener('pagehide', send);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
   }, [pathname, consent]);
 
   return null;

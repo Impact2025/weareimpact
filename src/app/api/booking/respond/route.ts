@@ -4,6 +4,7 @@ import { sql } from '@/lib/db/neon';
 import { sendEmail } from '@/lib/email/send';
 import { generateBookingConfirmationEmail } from '@/lib/email/templates/booking-confirmation';
 import { generateBookingRequestDeclinedEmail } from '@/lib/email/templates/booking-request-declined';
+import { pushBookingLead } from '@/lib/agentos-bridge';
 
 export const dynamic = 'force-dynamic';
 
@@ -71,6 +72,18 @@ export async function GET(request: NextRequest) {
     if (!result.success) {
       console.error('Failed to send decline email:', result.error);
     }
+    await pushBookingLead({
+      bookingRequestId: id,
+      bookingType: typeName,
+      startTime: new Date(bookingRequest.start_time).toISOString(),
+      durationMinutes: type?.duration || 0,
+      customerName: bookingRequest.customer_name,
+      customerEmail: bookingRequest.customer_email,
+      customerPhone: bookingRequest.customer_phone || undefined,
+      customerOrganization: bookingRequest.customer_organization || undefined,
+      notes: bookingRequest.notes || undefined,
+      bookingStatus: 'rejected',
+    });
     return page('Afgewezen', `De aanvraag van ${bookingRequest.customer_name} is afgewezen. De klant is per mail geïnformeerd.`);
   }
 
@@ -124,6 +137,19 @@ export async function GET(request: NextRequest) {
   if (!emailResult.success) {
     console.error('Failed to send booking confirmation email:', emailResult.error);
   }
+
+  await pushBookingLead({
+    bookingRequestId: id,
+    bookingType: typeName,
+    startTime: result.booking.startTime,
+    durationMinutes: result.booking.duration,
+    customerName: bookingRequest.customer_name,
+    customerEmail: bookingRequest.customer_email,
+    customerPhone: bookingRequest.customer_phone || undefined,
+    customerOrganization: bookingRequest.customer_organization || undefined,
+    notes: bookingRequest.notes || undefined,
+    bookingStatus: 'approved',
+  });
 
   return page(
     'Goedgekeurd',

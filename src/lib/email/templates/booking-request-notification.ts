@@ -8,6 +8,7 @@ interface BookingRequestNotificationData {
   bookingType: string;
   startTime: string;
   duration: number;
+  notes?: string;
   approveUrl: string;
   rejectUrl: string;
 }
@@ -27,6 +28,11 @@ export function generateBookingRequestNotificationEmail(data: BookingRequestNoti
   const formattedTime = date.toLocaleTimeString('nl-NL', { hour: '2-digit', minute: '2-digit' });
 
   const subject = `Boekingsaanvraag: ${data.bookingType} met ${data.customerName}`;
+  // Escapen want dit is vrije tekst van de bezoeker (in tegenstelling tot naam/
+  // organisatie, die al bij het aanmaken van de afspraak elders gevalideerd zijn) —
+  // zonder escapen zou een bezoeker HTML in Vincents mail kunnen injecteren.
+  const escapedNotes = (data.notes || '')
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
   const body = `
               <p style="margin: 0 0 20px; font-size: 16px; line-height: 1.6; color: #334155;">
@@ -52,6 +58,11 @@ export function generateBookingRequestNotificationEmail(data: BookingRequestNoti
                   <tr><td><p style="margin: 0; font-size: 13px; color: ${EMAIL_COLORS.muted};">Tijd</p><p style="margin: 4px 0 0; font-size: 16px; color: #1e293b; font-weight: 500;">${formattedTime} (${data.duration} minuten)</p></td></tr>
                 </table>
               `)}
+
+              ${data.notes ? emailCard(`
+                <p style="margin: 0 0 12px; font-size: 13px; color: ${EMAIL_COLORS.muted}; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600;">Bericht van de bezoeker</p>
+                <p style="margin: 0; font-size: 15px; color: #334155; white-space: pre-wrap;">${escapedNotes}</p>
+              `) : ''}
 
               ${emailButton('Goedkeuren — zet in mijn agenda', data.approveUrl)}
               <p style="margin: 16px 0 0; text-align: center;"><a href="${data.rejectUrl}" style="color: ${EMAIL_COLORS.muted}; font-size: 14px; text-decoration: underline;">Dit moment past niet — afwijzen</a></p>
@@ -82,7 +93,7 @@ GEVRAAGD MOMENT:
 Type: ${data.bookingType}
 Datum: ${formattedDate}
 Tijd: ${formattedTime} (${data.duration} minuten)
-
+${data.notes ? `\nBERICHT VAN DE BEZOEKER:\n------------------------\n${data.notes}\n` : ''}
 Goedkeuren: ${data.approveUrl}
 Afwijzen: ${data.rejectUrl}
   `.trim();

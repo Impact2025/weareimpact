@@ -210,10 +210,15 @@ function VincentAvatar({ size = 'md', showStatus = false }: { size?: 'sm' | 'md'
   );
 }
 
-function renderContent(text: string): React.ReactNode[] {
-  // Strip markdown headers and parse **bold** + [link](url)
+function renderContent(text: string, onStartBooking?: () => void): React.ReactNode[] {
+  // Strip markdown headers en parse **bold** + [link](url) + kale [haakjes-tekst]
+  // zonder (url). Dat laatste is geen geldige markdown-link maar iets wat het
+  // model met enige regelmaat toch schrijft als het naar 'Gesprek plannen'
+  // verwijst (het kent de linksyntax uit de kennisbank-instructie hierboven).
+  // Zonder deze tak bleef dat als letterlijke '[Gesprek plannen]' in de tekst
+  // staan: een instructie om te klikken op iets dat niet klikbaar was.
   const cleaned = text.replace(/^#{1,3}\s*/gm, '');
-  const tokenRegex = /(\*\*([^*]+)\*\*|\[([^\]]+)\]\(([^)]+)\))/g;
+  const tokenRegex = /(\*\*([^*]+)\*\*|\[([^\]]+)\]\(([^)]+)\)|\[([^\]]+)\])/g;
   const parts: React.ReactNode[] = [];
   let lastIndex = 0;
   let match;
@@ -221,11 +226,22 @@ function renderContent(text: string): React.ReactNode[] {
     if (match.index > lastIndex) parts.push(cleaned.slice(lastIndex, match.index));
     if (match[0].startsWith('**')) {
       parts.push(<strong key={match.index}>{match[2]}</strong>);
-    } else {
+    } else if (match[4] !== undefined) {
       parts.push(
         <a key={match.index} href={match[4]} className="text-orange-500 underline hover:text-orange-600 transition-colors">
           {match[3]}
         </a>
+      );
+    } else {
+      parts.push(
+        <button
+          key={match.index}
+          type="button"
+          onClick={() => onStartBooking?.()}
+          className="inline-flex items-center px-2.5 py-1 mx-0.5 bg-orange-500 hover:bg-orange-600 text-white text-xs font-semibold rounded-full transition-colors align-middle"
+        >
+          {match[5]}
+        </button>
       );
     }
     lastIndex = match.index + match[0].length;
@@ -238,11 +254,13 @@ function renderContent(text: string): React.ReactNode[] {
 function AnimatedMessage({
   message,
   isLatest,
-  onQuickReply
+  onQuickReply,
+  onStartBooking
 }: {
   message: Message;
   isLatest: boolean;
   onQuickReply?: (text: string) => void;
+  onStartBooking?: () => void;
 }) {
   const [displayedContent, setDisplayedContent] = useState('');
   const [isAnimating, setIsAnimating] = useState(false);
@@ -314,7 +332,7 @@ function AnimatedMessage({
           )}
         >
           <p className="whitespace-pre-wrap leading-relaxed">
-            {renderContent(displayedContent)}
+            {renderContent(displayedContent, onStartBooking)}
             {isAnimating && (
               <span className="inline-block w-0.5 h-4 bg-slate-400 ml-0.5 animate-pulse" />
             )}
@@ -713,6 +731,7 @@ export function DigitalTwin() {
         body: JSON.stringify({
           bookingType: selectedType.slug,
           startTime: selectedSlot.start,
+          notes: bookingNotes || undefined,
           customer: {
             name: customerData.name,
             email: customerData.email,
@@ -725,9 +744,19 @@ export function DigitalTwin() {
       const data = await response.json();
 
       if (data.success) {
-        setBookingResult(data.booking);
+        // /api/booking/create legt alleen de aanvraag vast en mailt Vincent een
+        // goedkeur-/afwijslink (zie de toelichting in dat bestand) — het
+        // antwoord bevat dus geen 'booking' meer, alleen een requestId. De
+        // kaart hieronder bouwt zijn gegevens daarom uit wat de bezoeker zelf
+        // koos, niet uit een bevestiging die er nog niet is.
+        setBookingResult({
+          id: data.requestId,
+          typeName: selectedType.name,
+          startTime: selectedSlot.start,
+          duration: selectedType.duration,
+        });
         setBookingStep('confirmed');
-        addMessage('assistant', `Bevestigd. Je ontvangt een e-mail op ${customerData.email} met de details en videocall link.`);
+        addMessage('assistant', `Je aanvraag is verstuurd! Vincent bevestigt 'm persoonlijk — je hoort dan op ${customerData.email} of dit moment past.`);
         trackEvents.bookingComplete(selectedType.slug);
       } else {
         addMessage('assistant', 'Er ging iets mis. Probeer opnieuw of mail naar v.munster@weareimpact.nl');
@@ -1004,6 +1033,7 @@ export function DigitalTwin() {
                 message={message}
                 isLatest={idx === messages.length - 1}
                 onQuickReply={bookingStep === 'none' ? sendMessage : undefined}
+                onStartBooking={() => startBooking()}
               />
             ))}
 
@@ -1295,11 +1325,11 @@ export function DigitalTwin() {
                       {isLoading ? (
                         <><Loader2 className="w-4 h-4 animate-spin mr-2" />Bezig...</>
                       ) : (
-                        <>Bevestig gesprek <ChevronRight size={16} className="ml-1" /></>
+                        <>Vraag dit moment aan <ChevronRight size={16} className="ml-1" /></>
                       )}
                     </Button>
                     <p className="text-center text-xs text-slate-400 mt-2">
-                      Vincent bereidt zich voor op jullie gesprek
+                      Vincent bevestigt persoonlijk of dit moment past
                     </p>
                   </div>
                 </form>
@@ -1317,18 +1347,18 @@ export function DigitalTwin() {
                     </div>
                     <div className="absolute inset-0 rounded-full bg-emerald-400/20 animate-ping" />
                   </div>
-                  <h4 className="font-bold text-slate-900 text-lg mt-4 mb-1">Je staat in de agenda!</h4>
-                  <p className="text-sm text-slate-500">Bevestiging gestuurd naar <span className="font-medium text-slate-700">{customerData.email}</span></p>
+                  <h4 className="font-bold text-slate-900 text-lg mt-4 mb-1">Je aanvraag is verstuurd!</h4>
+                  <p className="text-sm text-slate-500">Bevestiging volgt op <span className="font-medium text-slate-700">{customerData.email}</span></p>
                 </div>
 
-                {/* Appointment card */}
+                {/* Requested slot card */}
                 <div className="bg-slate-900 rounded-xl p-4 mb-3">
                   <div className="flex items-start gap-3">
                     <div className="w-10 h-10 bg-orange-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
                       <Calendar size={18} className="text-orange-400" />
                     </div>
                     <div>
-                      <div className="font-semibold text-white text-sm">{bookingResult.typeName}</div>
+                      <div className="font-semibold text-white text-sm">{bookingResult.typeName} <span className="font-normal text-slate-400">(aangevraagd)</span></div>
                       <div className="text-slate-300 text-sm mt-1">
                         {new Date(bookingResult.startTime).toLocaleDateString('nl-NL', {
                           weekday: 'long', day: 'numeric', month: 'long',
@@ -1349,9 +1379,9 @@ export function DigitalTwin() {
                   <div className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-3">Wat kun je verwachten?</div>
                   <div className="space-y-2">
                     {[
-                      'Vincent stuurt een Google Meet link per e-mail',
-                      'Gesprek duurt precies ' + bookingResult.duration + ' minuten',
-                      'Vrijuit praten, geen verkooppitch',
+                      'Vincent checkt zijn agenda en bevestigt persoonlijk (meestal binnen 24 uur)',
+                      'Pas na zijn bevestiging staat dit moment echt vast',
+                      'Je ontvangt dan een e-mail met de Google Meet link',
                     ].map((item, i) => (
                       <div key={i} className="flex items-start gap-2">
                         <div className="w-4 h-4 bg-emerald-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
