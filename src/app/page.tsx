@@ -74,9 +74,9 @@ const projects = [
     color: 'text-violet-600',
     accent: 'border-violet-400',
     name: 'Iris & AgentOS',
-    tagline: 'Autonoom AI-besturingssysteem & AI-Manager',
+    tagline: 'Mijn AI-manager met 14 gespecialiseerde agents',
     description:
-      'Geen losse chatbot, maar een zelflerend digitaal zenuwstelsel dat dagelijks repeterend werk overneemt op veilige, eigen infrastructuur. Iris fungeert als centrale orchestrator die gespecialiseerde subagents over meerdere operationele domeinen aanstuurt via een FastAPI-backend — terwijl jij slaapt, analyseert het systeem prioriteiten, scant het op operationele risico\'s en bereidt het taken autonoom voor. In plaats van een "vergeetachtig" chatvenster beschikt Iris over een dynamisch, lerend geheugen dat direct gekoppeld is aan de eigen document-vault, zodat kennis, dossiers en organisatierichtlijnen structureel geborgd blijven. Het systeem beheert de hele keten: van e-mailtriage en screening van subsidie- of projectoproepen tot B2B-prospectie, realtime zoektrendanalyses en complete publicatie-pipelines. Alles draait op eigen, afgeschermde infrastructuur waarbij gevoelige data binnen de organisatie blijft. Via een ingebouwde review-gate (Gauntlet Loop) voert AI het werk uit, maar behoud jij altijd de definitieve goedkeuring vóór verzending of publicatie.',
+      'Geen losse chatbot, maar een team dat dagelijks repeterend werk overneemt op mijn eigen, afgeschermde infrastructuur. Iris stuurt 14 agents aan die schrijven, redigeren, mail sorteren en de markt in de gaten houden, met een schrijver en een criticus die altijd twee verschillende agents zijn. Iris heeft een structureel geheugen dat aan mijn eigen kennisbank gekoppeld is, dus kennis blijft geborgd ook als ik met vakantie ben. Elke inschatting die het systeem maakt, toetst het later aan wat er echt is gebeurd, zodat het advies elke maand scherper wordt. En er gaat nooit iets de deur uit zonder mijn definitieve goedkeuring.',
     url: '/iris',
   },
   {

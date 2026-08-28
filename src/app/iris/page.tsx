@@ -5,45 +5,47 @@ import {
   Mail,
   Calendar,
   Share2,
-  MessageSquare,
   ShieldCheck,
   FileText,
-  Search,
   Phone,
   Quote,
+  TrendingUp,
+  Users,
+  Brain,
+  RefreshCw,
+  PenLine,
+  Eye,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
-const AGENTS = [
+const CLUSTERS = [
   {
     icon: FileText,
-    title: 'Content-agent',
-    description: 'Schrijft blogs en artikelen, checkt de SEO-score, zet ze klaar in mijn goedkeuringswachtrij.',
+    title: 'Content & publiceren',
+    count: 6,
+    agents: ['SEO Copywriter', 'SEO Editor', 'Content Editor', 'Content Judge', 'Video Director', 'Social Media Copywriter'],
+    description: 'Van eerste concept tot artikel, social post of video. De schrijver en de criticus binnen dit team zijn altijd twee verschillende agents, zodat er nooit één iemand zijn eigen huiswerk nakijkt.',
   },
   {
-    icon: Search,
-    title: 'SEO-agent',
-    description: 'Volgt Google Search Console, signaleert stijgers en dalers, spot nieuwe kansen.',
+    icon: TrendingUp,
+    title: 'Markt & inzicht',
+    count: 3,
+    agents: ['Analytics Analist', 'Radar Trend-Analist', 'GEO Specialist'],
+    description: 'Lezen elke dag de cijfers: wat scoort goed bij Google, wat beweegt er bij concurrenten, en hoe vind je ons terug als je AI het antwoord geeft in plaats van een zoekmachine.',
+  },
+  {
+    icon: Users,
+    title: 'Groei & acquisitie',
+    count: 4,
+    agents: ['Lead Prospect Researcher', 'Outreach Copywriter', 'Outreach Beoordelaar', 'Vacature Fit-Analist'],
+    description: 'Zoeken nieuwe klanten en kansen, schrijven het eerste contact, en laten een tweede agent daar altijd overheen kijken vóórdat het mijn goedkeuringswachtrij bereikt.',
   },
   {
     icon: Mail,
-    title: 'Mail-agent',
+    title: 'Communicatie',
+    count: 1,
+    agents: ['Email Manager'],
     description: 'Sorteert en beantwoordt inkomende mail. Twintig seconden per mail in plaats van een avond inbox.',
-  },
-  {
-    icon: Calendar,
-    title: 'Agenda-agent',
-    description: 'Plant afspraken, checkt conflicten en reistijd, boekt nooit zonder mijn akkoord.',
-  },
-  {
-    icon: MessageSquare,
-    title: 'Klantenservice-agent',
-    description: 'Beantwoordt vragen van klanten via WhatsApp, escaleert naar mij zodra ze twijfelt.',
-  },
-  {
-    icon: ShieldCheck,
-    title: 'Research-agent',
-    description: 'Spoort trends en kansen op in de markt, legt ze voor voordat er iets mee gebeurt.',
   },
 ];
 
@@ -94,7 +96,7 @@ export default function IrisPage() {
             </h1>
 
             <p className="text-lg md:text-xl text-slate-600 mb-8 max-w-xl font-light leading-relaxed">
-              Geen chatbot die wat terugkletst. Een AgentOS dat administratieve rompslomp wegneemt, zodat jij weer toekomt aan de mensen om wie het gaat.
+              Geen chatbot die wat terugkletst. Iris stuurt 14 gespecialiseerde agents aan, onthoudt wat er speelt, en neemt zo de administratieve rompslomp weg die jou weghoudt van de mensen om wie het gaat.
             </p>
 
             <div className="flex flex-wrap gap-4">
@@ -133,32 +135,134 @@ export default function IrisPage() {
         </div>
       </header>
 
-      {/* 5 PIJLERS */}
+      {/* DE 14 AGENTS */}
       <section className="py-24 bg-slate-50">
         <div className="container mx-auto px-6 max-w-6xl">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-slate-900 mb-4">
-              Agents die ik aanstuur
+              De 14 agents die Iris aanstuurt
             </h2>
             <p className="text-lg text-slate-500 max-w-2xl mx-auto font-light">
-              Iris is de manager. Dit zijn de zes die het werk doen, elke dag.
+              Geen los AI-abonnement per taak, maar één team met vaste rollen. Iris verdeelt het werk, elke agent doet zijn eigen ding, elke dag opnieuw.
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {AGENTS.map((agent) => (
+          <div className="grid md:grid-cols-2 gap-6">
+            {CLUSTERS.map((cluster) => (
               <div
-                key={agent.title}
+                key={cluster.title}
                 className="bg-white rounded-2xl border border-slate-100 p-6 shadow-sm hover:shadow-md transition-shadow"
               >
-                <div className="w-11 h-11 bg-orange-50 rounded-xl flex items-center justify-center text-orange-600 mb-4">
-                  <agent.icon size={20} />
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-11 h-11 bg-orange-50 rounded-xl flex items-center justify-center text-orange-600 shrink-0">
+                    <cluster.icon size={20} />
+                  </div>
+                  <div>
+                    <h3 className="text-base font-bold text-slate-900">{cluster.title}</h3>
+                    <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">
+                      {cluster.count} {cluster.count === 1 ? 'agent' : 'agents'}
+                    </span>
+                  </div>
                 </div>
-                <h3 className="text-base font-bold text-slate-900 mb-2">{agent.title}</h3>
-                <p className="text-sm text-slate-600 leading-relaxed">{agent.description}</p>
+                <p className="text-sm text-slate-600 leading-relaxed mb-4">{cluster.description}</p>
+                <div className="flex flex-wrap gap-2">
+                  {cluster.agents.map((name) => (
+                    <span
+                      key={name}
+                      className="px-3 py-1 bg-slate-50 border border-slate-100 rounded-full text-xs font-medium text-slate-600"
+                    >
+                      {name}
+                    </span>
+                  ))}
+                </div>
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* GEHEUGEN */}
+      <section className="py-24 bg-slate-900">
+        <div className="container mx-auto px-6 max-w-6xl">
+          <div className="grid md:grid-cols-2 gap-12 items-center">
+            <div>
+              <div className="w-12 h-12 rounded-full bg-orange-500/10 border border-orange-500/30 flex items-center justify-center mb-6">
+                <Brain size={20} className="text-orange-400" />
+              </div>
+              <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-white mb-4">
+                Eén geheugen voor het hele team
+              </h2>
+              <p className="text-slate-300 leading-relaxed font-light">
+                In de meeste organisaties zit de kennis in het hoofd van één persoon. Zodra die persoon vakantie heeft, druk is of vertrekt, staat het werk stil. Bij Iris zit die kennis in een gedeelde kennisbank waar alle 14 agents uit putten: casuïstiek, merkstem, eerdere beslissingen, wat wel en niet werkte.
+              </p>
+            </div>
+            <div className="space-y-4">
+              <div className="bg-slate-800/60 border border-slate-700 rounded-2xl p-6">
+                <p className="text-slate-200 font-medium mb-1">Niet per gesprek, maar structureel</p>
+                <p className="text-sm text-slate-400 leading-relaxed">Een chatvenster onthoudt niets zodra je het sluit. Iris draait door, ook als jij dat niet doet, en elke agent leest uit dezelfde kennisbank.</p>
+              </div>
+              <div className="bg-slate-800/60 border border-slate-700 rounded-2xl p-6">
+                <p className="text-slate-200 font-medium mb-1">Ook 's nachts actief</p>
+                <p className="text-sm text-slate-400 leading-relaxed">Terwijl ik slaap, structureert Iris dossiers en signaleert ze wat morgenochtend mijn aandacht nodig heeft.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* VIER OGEN */}
+      <section className="py-24">
+        <div className="container mx-auto px-6 max-w-6xl">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-slate-900 mb-4">
+              Het vier-ogen-principe
+            </h2>
+            <p className="text-lg text-slate-500 max-w-2xl mx-auto font-light">
+              Agents controleren agents, vóórdat ik het te zien krijg.
+            </p>
+          </div>
+          <div className="grid md:grid-cols-4 gap-4">
+            <div className="bg-white rounded-2xl border border-slate-100 p-6 text-center">
+              <div className="w-11 h-11 bg-orange-50 rounded-xl flex items-center justify-center text-orange-600 mx-auto mb-4">
+                <PenLine size={20} />
+              </div>
+              <h3 className="text-sm font-bold text-slate-900 mb-2">Concept geschreven</h3>
+              <p className="text-sm text-slate-600 leading-relaxed">Eén agent levert een eerste versie: artikel, mail of advies.</p>
+            </div>
+            <div className="bg-white rounded-2xl border border-slate-100 p-6 text-center">
+              <div className="w-11 h-11 bg-orange-50 rounded-xl flex items-center justify-center text-orange-600 mx-auto mb-4">
+                <Eye size={20} />
+              </div>
+              <h3 className="text-sm font-bold text-slate-900 mb-2">Een andere agent keurt</h3>
+              <p className="text-sm text-slate-600 leading-relaxed">Een onafhankelijke criticus beoordeelt op kwaliteit, feiten en merkstem.</p>
+            </div>
+            <div className="bg-white rounded-2xl border border-slate-100 p-6 text-center">
+              <div className="w-11 h-11 bg-orange-50 rounded-xl flex items-center justify-center text-orange-600 mx-auto mb-4">
+                <RefreshCw size={20} />
+              </div>
+              <h3 className="text-sm font-bold text-slate-900 mb-2">Herschreven tot het klopt</h3>
+              <p className="text-sm text-slate-600 leading-relaxed">Onder de lat? Terug naar de schrijver. Dit kan een paar rondes duren, volledig automatisch.</p>
+            </div>
+            <div className="bg-slate-900 rounded-2xl border border-slate-800 p-6 text-center">
+              <div className="w-11 h-11 bg-orange-500 rounded-xl flex items-center justify-center text-white mx-auto mb-4">
+                <ShieldCheck size={20} />
+              </div>
+              <h3 className="text-sm font-bold text-white mb-2">Pas dan naar mij</h3>
+              <p className="text-sm text-slate-300 leading-relaxed">Alleen wat de lat haalt, bereikt de wachtrij. Ik bepaal altijd zelf of iets geplaatst of verstuurd wordt.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* LEER-LUS */}
+      <section className="py-24 bg-slate-50">
+        <div className="container mx-auto px-6 max-w-3xl text-center">
+          <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-slate-900 mb-4">
+            Iris rekent zichzelf af
+          </h2>
+          <p className="text-lg text-slate-600 leading-relaxed font-light mb-8">
+            Bij elke briefing legt Iris een paar concrete verwachtingen vast: dit artikel gaat klimmen, deze aanpak levert meer reacties op. Weken later toetst ze die verwachting aan wat er echt is gebeurd. Klopte het? Dan wint die aanpak vertrouwen. Klopte het niet, drie keer op rij, dan laat ze die aanpak los. Zo leert het systeem van bewijs, niet van herhaling, en wordt Iris' advies elke maand een beetje scherper.
+          </p>
         </div>
       </section>
 

@@ -1,4 +1,4 @@
-import { FlaskConical, CheckCircle2, Clock, ExternalLink, Bot } from 'lucide-react';
+import { FlaskConical, CheckCircle2, Clock, ExternalLink } from 'lucide-react';
 
 const portfolio = [
   {
@@ -49,16 +49,6 @@ const portfolio = [
 ];
 
 const labs = [
-  {
-    id: 'iris',
-    initial: null,
-    icon: Bot,
-    name: 'Iris',
-    tagline: 'AI-assistent voor welzijnsprofessionals',
-    description:
-      'Iris is mijn eigen AI-assistent, gebouwd voor professionals in het sociale domein. Ze helpt bij intakegesprekken, ondersteunt bij verslaglegging en beantwoordt vragen van cliënten op een warme, menselijke manier. Iris toont aan dat AI niet koud en afstandelijk hoeft te zijn, maar juist de menselijke professional kan versterken.',
-    color: 'text-violet-500',
-  },
   {
     id: 'ictusgo',
     initial: 'IG',
@@ -183,7 +173,7 @@ export function Ventures() {
         </div>
 
         {/* Labs Cards */}
-        <div className="grid md:grid-cols-3 gap-6">
+        <div className="grid md:grid-cols-2 gap-6 max-w-3xl mx-auto">
           {labs.map((venture) => (
             <div
               key={venture.id}
@@ -193,7 +183,7 @@ export function Ventures() {
                 <div
                   className={`w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-sm ${venture.color} font-bold text-sm`}
                 >
-                  {venture.icon ? <venture.icon size={20} /> : venture.initial}
+                  {venture.initial}
                 </div>
                 <div>
                   <h4 className="text-xl font-bold text-slate-900 leading-none mb-1">
