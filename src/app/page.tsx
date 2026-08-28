@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { useState } from 'react';
-import { ArrowRight, ChevronDown, Heart, Brain, Quote, Linkedin, ArrowUpRight, CheckCircle, Cpu, Clock, TrendingUp, BarChart3, Activity, Plus, Minus, ExternalLink, Briefcase } from 'lucide-react';
+import { ArrowRight, ChevronDown, Heart, Brain, Quote, Linkedin, ArrowUpRight, CheckCircle, Cpu, Clock, TrendingUp, BarChart3, Activity, Plus, Minus, ExternalLink, Briefcase, Rocket } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   Accordion,
@@ -61,10 +61,43 @@ const faqs = [
 ];
 
 const stats = [
-  { value: '15+', label: 'Jaar ervaring' },
-  { value: '2', label: 'Live platforms' },
+  { value: '27+', label: 'Jaar ondernemerschap' },
+  { value: '100.000+', label: 'Geluksmomenten gerealiseerd' },
+  { value: '6', label: 'Gemeenten als partner' },
   { value: 'LSP', label: 'Certified facilitator' },
-  { value: 'AI', label: 'Gedreven aanpak' },
+];
+
+const timeline = [
+  {
+    icon: Briefcase,
+    period: '1999 – 2014',
+    title: 'Commercieel ondernemer',
+    points: [
+      '1999: eerste internetbedrijf gestart',
+      'Tientallen websites en webshops gebouwd',
+      '2009: eerste datingsite voor mensen met een beperking, de eerste kiem voor maatschappelijke impact',
+    ],
+  },
+  {
+    icon: Heart,
+    period: '2014 – 2023',
+    title: 'Sociaal ondernemer',
+    points: [
+      'Vaderschap in 2014 als kantelpunt',
+      'Met vallen en opstaan sociaal ondernemer geworden',
+      'Harde les: impact vereist een ijzersterke bedrijfsvoering',
+    ],
+  },
+  {
+    icon: Rocket,
+    period: '2023 – heden',
+    title: 'WeAreImpact',
+    points: [
+      'Directeur Stichting de Baan geweest: 700 deelnemers en 180 vrijwilligers',
+      'Zelf de 60% administratie ervaren die ten koste ging van de mensen',
+      'WeAreImpact (opgericht 2016): minder regeldruk door AI, meer tijd voor de mens',
+    ],
+  },
 ];
 
 const projects = [
@@ -445,13 +478,32 @@ export default function Home() {
               <span className="text-orange-400 font-bold">LEGO&reg; Serious Play</span> facilitator.
             </p>
             <p className="text-slate-400 text-lg mb-6 leading-relaxed max-w-2xl">
-              Ik werk al meer dan 15 jaar in het sociale domein, als directeur, als bouwer, als sociaal ondernemer, als iemand die organisaties van binnenuit kent. Ik heb platforms gebouwd die dagelijks impact maken voor gemeenten en stichtingen. Ik weet wat er speelt op de werkvloer, wat er misgaat in bestuurskamers en waarom goede initiatieven vaak stranden.
+              Ik begon in 1999 als commercieel internetondernemer en bouwde tientallen websites en webshops. In 2009 startte ik mijn eerste datingsite voor mensen met een beperking, de eerste kiem voor wat later maatschappelijke impact zou worden. Vaderschap in 2014 werd een kantelpunt: ik werd sociaal ondernemer, met vallen en opstaan, en leerde de harde les dat impact een ijzersterke bedrijfsvoering vereist.
+            </p>
+            <p className="text-slate-400 text-lg mb-6 leading-relaxed max-w-2xl">
+              Als directeur van Stichting de Baan stond ik zelf 60% van mijn tijd kwijt aan spreadsheets en verantwoording, tijd die niet naar de 700 deelnemers en 180 vrijwilligers ging voor wie ik was begonnen. Ik werkte samen met fondsen als het Oranje Fonds en Rabobank Foundation, en met gemeenten als Utrecht, Haarlem, Amsterdam, Haarlemmermeer, Heemstede en Bloemendaal. Over al mijn projecten samen leverden de vrijwilligers die ik ondersteunde inmiddels meer dan 100.000 geluksmomenten op.
             </p>
             <p className="text-slate-400 text-lg mb-8 leading-relaxed max-w-2xl">
-              Ik combineer dat met een hands-on kennis van AI die de meeste consultants niet hebben. Ik bouw het zelf. Ik gebruik het zelf. En ik help jou het te begrijpen en te benutten.
+              Die frustratie is precies waarom WeAreImpact bestaat. Ik combineer die 25+ jaar praktijkervaring met een hands-on kennis van AI die de meeste consultants niet hebben. Ik bouw het zelf. Ik gebruik het zelf. En ik help jou het te begrijpen en te benutten.
             </p>
+            <div className="grid md:grid-cols-3 gap-4 w-full mb-10 text-left">
+              {timeline.map((item) => (
+                <div key={item.period} className="bg-slate-800 rounded-2xl p-6">
+                  <div className="w-10 h-10 bg-orange-500/15 rounded-xl flex items-center justify-center text-orange-400 mb-4">
+                    <item.icon size={18} />
+                  </div>
+                  <div className="text-xs font-bold text-orange-400 uppercase tracking-widest mb-1">{item.period}</div>
+                  <h3 className="text-base font-bold text-white mb-3">{item.title}</h3>
+                  <ul className="space-y-1.5">
+                    {item.points.map((point) => (
+                      <li key={point} className="text-sm text-slate-400 leading-relaxed">{point}</li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
             <div className="p-6 bg-slate-800 rounded-2xl border-l-4 border-orange-500 italic text-slate-300 mb-10 max-w-2xl text-left">
-              &ldquo;Ik ben geen snelle jongen met een mooi deck. Ik ben iemand die begrijpt waar jij voor staat, en die naast je staat totdat het werkt.&rdquo;
+              &ldquo;Je bent ooit begonnen voor de mensen en de maatschappelijke missie. Waarom ben je dan 60% van je tijd kwijt aan spreadsheets en subsidieverantwoordingen?&rdquo;
             </div>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 w-full mb-10">
               {stats.map((stat) => (
