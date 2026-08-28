@@ -135,6 +135,31 @@ export default function IrisPage() {
         </div>
       </header>
 
+      {/* WAAROM & ZELF GEBOUWD */}
+      <section className="py-24">
+        <div className="container mx-auto px-6 max-w-4xl">
+          <div className="text-center mb-12">
+            <div className="inline-block px-3 py-1 bg-orange-50 text-orange-600 rounded-full text-xs font-bold uppercase tracking-widest mb-6">Waarom ik dit zelf bouwde</div>
+            <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-slate-900 mb-6">
+              Geen leverancier. Ik bouw en onderhoud dit systeem zelf.
+            </h2>
+          </div>
+          <div className="space-y-5 text-lg text-slate-600 leading-relaxed font-light max-w-2xl mx-auto">
+            <p>
+              Ik ben zelf jarenlang directeur geweest in het sociaal domein. Ik weet hoe het voelt als de administratie wint van de mensen om wie het gaat. Ik ben niet begonnen met code, maar met kijken naar mijn eigen werkweek: welk proces kost mij de meeste tijd en energie? Uit die analyse kwamen mijn eerste drie agents, niet gekocht maar gebouwd, en daaruit is Iris gegroeid tot wat ze nu is.
+            </p>
+            <p>
+              Ik gebruik AI niet om mensen te vervangen. Ik gebruik het om ruimte te maken: voor echte gesprekken, voor echte verbinding, voor het werk waarvoor je ooit in het sociaal domein bent begonnen. Dat is ook waarom ik dit systeem eerst op mezelf en mijn eigen projecten heb losgelaten, voordat ik het aan een ander aanbied.
+            </p>
+          </div>
+          <div className="mt-10 bg-slate-900 rounded-2xl p-8 max-w-2xl mx-auto text-center">
+            <p className="text-white text-lg font-medium leading-relaxed">
+              Iris stelt voor, agents controleren elkaar, maar ik bepaal. Elke autonome actie eindigt vóór publicatie of verzending bij mijn eigen, handmatige klik. Niet omdat het moet van de wet, maar omdat het zo hoort.
+            </p>
+          </div>
+        </div>
+      </section>
+
       {/* DE 14 AGENTS */}
       <section className="py-24 bg-slate-50">
         <div className="container mx-auto px-6 max-w-6xl">
