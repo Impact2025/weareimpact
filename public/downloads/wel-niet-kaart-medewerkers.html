@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<title>De Wel/Niet-kaart voor medewerkers — WeAreImpact</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+    color: #0f172a;
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 40px 32px 60px;
+    line-height: 1.5;
+  }
+  .eyebrow {
+    display: inline-block;
+    background: #fff7ed;
+    color: #ea580c;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    border-radius: 999px;
+    margin-bottom: 12px;
+  }
+  h1 { font-size: 24px; margin: 0 0 4px; }
+  .sub { color: #64748b; margin: 0 0 28px; font-size: 14px; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th, td { border: 1px solid #e2e8f0; padding: 12px 14px; vertical-align: top; text-align: left; }
+  th { background: #0f172a; color: #fff; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; }
+  th.wel { background: #059669; }
+  th.niet { background: #dc2626; }
+  td.domain { font-weight: 700; background: #f8fafc; width: 16%; }
+  ul { margin: 0; padding-left: 18px; }
+  li { margin-bottom: 6px; }
+  .footer { margin-top: 32px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 12px; }
+  @media print {
+    body { padding: 0; }
+    .eyebrow, th { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+  <span class="eyebrow">Bijlage B</span>
+  <h1>De "Wel/Niet"-kaart voor medewerkers</h1>
+  <p class="sub">Governance-kaart bij de AI Diagnose &amp; Doorbraak Sprint — WeAreImpact</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Domein</th>
+        <th class="wel">✔ Wel doen (standaard werkwijze)</th>
+        <th class="niet">✖ Niet doen (strikte veiligheidsgrens)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="domain">Data &amp; Privacy</td>
+        <td>
+          <ul>
+            <li>Zakelijke data, publieke info en geanonimiseerde context invoeren.</li>
+            <li>Uitsluitend werken binnen goedgekeurde zakelijke bedrijfsaccounts.</li>
+          </ul>
+        </td>
+        <td>
+          <ul>
+            <li>Nooit BSN, medische gegevens, cliëntdossiers of wachtwoorden invoeren.</li>
+            <li>Geen gratis consumenten-AI (bv. gratis ChatGPT) gebruiken voor bedrijfsdata.</li>
+          </ul>
+        </td>
+      </tr>
+      <tr>
+        <td class="domain">Kwaliteit &amp; Regie</td>
+        <td>
+          <ul>
+            <li>Elk AI-gegenereerd concept kritisch nalezen en corrigeren vóór verzending.</li>
+            <li>Cijfers en feiten altijd verifiëren tegen originele brondocumenten.</li>
+          </ul>
+        </td>
+        <td>
+          <ul>
+            <li>Nooit AI-teksten ongezien extern publiceren of versturen.</li>
+            <li>AI nooit autonoom laten beslissen over toelating of afwijzing van mensen.</li>
+          </ul>
+        </td>
+      </tr>
+      <tr>
+        <td class="domain">Uitzonderingen &amp; Fouten</td>
+        <td>
+          <ul>
+            <li>Twijfelgevallen direct markeren als "menselijke beoordeling vereist".</li>
+            <li>Terugkerende fouten noteren in het Verbeterlog.</li>
+          </ul>
+        </td>
+        <td>
+          <ul>
+            <li>Nooit gokken bij ontbrekende brondata.</li>
+            <li>Niet zelfstandig nieuwe externe tools of datakoppelingen toevoegen.</li>
+          </ul>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="footer">
+    WeAreImpact — Vincent van Munster — v.munster@weareimpact.nl — weareimpact.nl/doorbraak-sprint
+  </div>
+</body>
+</html>

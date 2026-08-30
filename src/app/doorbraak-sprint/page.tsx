@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import {
   ArrowRight,
   Clock,
@@ -14,8 +15,13 @@ import {
   Wrench,
   ClipboardCheck,
   MapPin,
+  Mail,
+  Building2,
+  Loader2,
+  Download,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 
 const SPRINTS = [
   {
@@ -90,8 +96,36 @@ const NIET = [
 ];
 
 export default function DoorbraakSprintPage() {
+  const [downloadEmail, setDownloadEmail] = useState('');
+  const [downloadOrg, setDownloadOrg] = useState('');
+  const [isDownloadSubmitting, setIsDownloadSubmitting] = useState(false);
+  const [isDownloadSuccess, setIsDownloadSuccess] = useState(false);
+  const [downloadError, setDownloadError] = useState('');
+
   const openBooking = (typeSlug?: string) => {
     window.dispatchEvent(new CustomEvent('openBooking', typeSlug ? { detail: { typeSlug } } : undefined));
+  };
+
+  const handleDownloadSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!downloadEmail.trim() || isDownloadSubmitting) return;
+
+    setIsDownloadSubmitting(true);
+    setDownloadError('');
+
+    try {
+      const response = await fetch('/api/doorbraak-sprint/download', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: downloadEmail, organisatie: downloadOrg }),
+      });
+      if (!response.ok) throw new Error('Submission failed');
+      setIsDownloadSuccess(true);
+    } catch {
+      setDownloadError('Er ging iets mis. Probeer het opnieuw.');
+    } finally {
+      setIsDownloadSubmitting(false);
+    }
   };
 
   return (
@@ -299,9 +333,90 @@ export default function DoorbraakSprintPage() {
           <p className="text-lg text-slate-600 leading-relaxed font-light mb-4">
             De Sprint richt zich op één afgebakend, terugkerend werkproces. De oplevering bestaat uit een werkende eerste versie in jouw bestaande digitale omgeving, inclusief menselijke controle, een 1-A4 Team-SOP en 14 dagen asynchrone nazorg via e-mail of WhatsApp.
           </p>
-          <p className="text-base text-slate-400 leading-relaxed">
+          <p className="text-base text-slate-400 leading-relaxed mb-8">
             Buiten scope: complexe software-ontwikkeling, datamigraties, juridisch advies, DPIA-uitvoering en autonome AI-besluitvorming.
           </p>
+          <div className="bg-orange-50 border border-orange-100 rounded-2xl p-6 text-left max-w-2xl mx-auto">
+            <h3 className="text-sm font-bold text-orange-700 uppercase tracking-widest mb-2">Wat als het KPI-doel niet gehaald wordt?</h3>
+            <p className="text-sm text-slate-600 leading-relaxed">
+              Na de 14 dagen nazorg toetsen we samen de scorekaart. Wordt het succescriterium niet gehaald, dan volgt kosteloos maximaal 30 minuten asynchrone bijstelling binnen scope. Ligt de oorzaak buiten scope — bijvoorbeeld doordat systeemtoegang op locatie niet werkte — dan spreken we in overleg een passend vervolg af. Dat kan een extra sessie zijn, nooit een verplichting zonder jouw akkoord.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* BIJLAGEN */}
+      <section className="py-24">
+        <div className="container mx-auto px-6 max-w-2xl">
+          <div className="bg-white rounded-[2rem] p-8 md:p-10 shadow-xl border border-slate-100 relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-56 h-56 bg-orange-50 rounded-bl-full -mr-8 -mt-8 opacity-60 pointer-events-none" />
+            <div className="relative z-10 text-center">
+              <div className="inline-block px-4 py-1.5 bg-orange-600 text-white rounded-full text-xs font-bold uppercase tracking-widest mb-6">
+                Gratis templates
+              </div>
+              <h2 className="text-2xl md:text-3xl font-bold text-slate-900 mb-3">
+                De Sprintbrief &amp; de Wel/Niet-kaart
+              </h2>
+              <p className="text-slate-600 mb-8">
+                De 1-A4 Sprintbrief &amp; Opdrachtovereenkomst en de Wel/Niet-kaart voor medewerkers, direct in je inbox. Handig om alvast te bekijken vóór de intake.
+              </p>
+
+              {isDownloadSuccess ? (
+                <div className="p-6 bg-emerald-50 rounded-2xl border border-emerald-200">
+                  <CheckCircle2 className="w-10 h-10 text-emerald-500 mx-auto mb-3" />
+                  <h3 className="text-lg font-bold text-emerald-800 mb-1">Check je inbox!</h3>
+                  <p className="text-emerald-700 text-sm">
+                    Beide templates zijn onderweg naar {downloadEmail}.
+                  </p>
+                </div>
+              ) : (
+                <form onSubmit={handleDownloadSubmit} className="space-y-4">
+                  <div className="relative">
+                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+                    <Input
+                      type="email"
+                      placeholder="Je e-mailadres"
+                      value={downloadEmail}
+                      onChange={(e) => setDownloadEmail(e.target.value)}
+                      required
+                      className="pl-12 py-6 text-base rounded-xl border-slate-200"
+                    />
+                  </div>
+                  <div className="relative">
+                    <Building2 className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+                    <Input
+                      type="text"
+                      placeholder="Naam organisatie (optioneel)"
+                      value={downloadOrg}
+                      onChange={(e) => setDownloadOrg(e.target.value)}
+                      className="pl-12 py-6 text-base rounded-xl border-slate-200"
+                    />
+                  </div>
+
+                  {downloadError && <p className="text-red-600 text-sm">{downloadError}</p>}
+
+                  <Button
+                    type="submit"
+                    size="lg"
+                    disabled={isDownloadSubmitting || !downloadEmail.trim()}
+                    className="w-full py-6 bg-orange-600 text-white rounded-xl font-bold hover:bg-orange-700 transition-all shadow-lg shadow-orange-500/30"
+                  >
+                    {isDownloadSubmitting ? (
+                      <>
+                        <Loader2 className="mr-2 animate-spin" size={18} />
+                        Even geduld...
+                      </>
+                    ) : (
+                      <>
+                        <Download className="mr-2" size={18} />
+                        Stuur me de templates
+                      </>
+                    )}
+                  </Button>
+                </form>
+              )}
+            </div>
+          </div>
         </div>
       </section>
 
