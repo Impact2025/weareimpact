@@ -107,9 +107,9 @@ const projects = [
     color: 'text-violet-600',
     accent: 'border-violet-400',
     name: 'Iris & AgentOS',
-    tagline: 'Mijn AI-manager met 14 gespecialiseerde agents',
+    tagline: 'Mijn AI-manager met 15 gespecialiseerde agents',
     description:
-      'Geen losse chatbot, maar een team dat dagelijks repeterend werk overneemt op mijn eigen, afgeschermde infrastructuur. Iris stuurt 14 agents aan die schrijven, redigeren, mail sorteren en de markt in de gaten houden, met een schrijver en een criticus die altijd twee verschillende agents zijn. Iris heeft een structureel geheugen dat aan mijn eigen kennisbank gekoppeld is, dus kennis blijft geborgd ook als ik met vakantie ben. Elke inschatting die het systeem maakt, toetst het later aan wat er echt is gebeurd, zodat het advies elke maand scherper wordt. En er gaat nooit iets de deur uit zonder mijn definitieve goedkeuring.',
+      'Geen losse chatbot, maar een team dat dagelijks repeterend werk overneemt op mijn eigen, afgeschermde infrastructuur. Iris stuurt 15 agents aan die meedenken, schrijven, redigeren, mail sorteren en de markt in de gaten houden, met een schrijver en een criticus die altijd twee verschillende agents zijn. Iris heeft een structureel geheugen dat aan mijn eigen kennisbank gekoppeld is, dus kennis blijft geborgd ook als ik met vakantie ben. Elke inschatting die het systeem maakt, toetst het later aan wat er echt is gebeurd, zodat het advies elke maand scherper wordt. En er gaat nooit iets de deur uit zonder mijn definitieve goedkeuring.',
     url: '/iris',
   },
   {

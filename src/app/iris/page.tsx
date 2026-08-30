@@ -1,5 +1,6 @@
 'use client';
 
+import { useRef, useState } from 'react';
 import {
   ArrowRight,
   Mail,
@@ -15,16 +16,19 @@ import {
   RefreshCw,
   PenLine,
   Eye,
+  Volume2,
+  VolumeX,
+  Compass,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const CLUSTERS = [
   {
-    icon: FileText,
-    title: 'Content & publiceren',
-    count: 6,
-    agents: ['SEO Copywriter', 'SEO Editor', 'Content Editor', 'Content Judge', 'Video Director', 'Social Media Copywriter'],
-    description: 'Van eerste concept tot artikel, social post of video. De schrijver en de criticus binnen dit team zijn altijd twee verschillende agents, zodat er nooit één iemand zijn eigen huiswerk nakijkt.',
+    icon: Compass,
+    title: 'Sparring & communicatie',
+    count: 2,
+    agents: ['Persoonlijke Sparringpartner & Coach', 'Email Manager'],
+    description: 'Mijn eigen dagelijkse klankbord: helpt prioriteiten stellen, bereidt complexe vraagstukken scherp voor en denkt kritisch mee over strategische keuzes. Ernaast sorteert en beantwoordt een tweede agent de inkomende mail, twintig seconden per mail in plaats van een avond inbox.',
   },
   {
     icon: TrendingUp,
@@ -34,25 +38,25 @@ const CLUSTERS = [
     description: 'Lezen elke dag de cijfers: wat scoort goed bij Google, wat beweegt er bij concurrenten, en hoe vind je ons terug als je AI het antwoord geeft in plaats van een zoekmachine.',
   },
   {
+    icon: FileText,
+    title: 'Content & publiceren',
+    count: 6,
+    agents: ['SEO Copywriter', 'SEO Editor', 'Content Editor', 'Content Judge', 'Video Director', 'Social Media Copywriter'],
+    description: 'Van eerste concept tot artikel, social post of video. De schrijver en de criticus binnen dit team zijn altijd twee verschillende agents, zodat er nooit één iemand zijn eigen huiswerk nakijkt.',
+  },
+  {
     icon: Users,
     title: 'Groei & acquisitie',
     count: 4,
     agents: ['Lead Prospect Researcher', 'Outreach Copywriter', 'Outreach Beoordelaar', 'Vacature Fit-Analist'],
-    description: 'Zoeken nieuwe klanten en kansen, schrijven het eerste contact, en laten een tweede agent daar altijd overheen kijken vóórdat het mijn goedkeuringswachtrij bereikt.',
-  },
-  {
-    icon: Mail,
-    title: 'Communicatie',
-    count: 1,
-    agents: ['Email Manager'],
-    description: 'Sorteert en beantwoordt inkomende mail. Twintig seconden per mail in plaats van een avond inbox.',
+    description: 'Zoeken nieuwe klanten, partners en kansen, schrijven het eerste contact, en laten een tweede agent daar altijd overheen kijken vóórdat het mijn goedkeuringswachtrij bereikt.',
   },
 ];
 
 const STATS = [
   { value: '20 sec', label: 'per mail, in plaats van een avond inbox' },
-  { value: '96', label: 'artikelen geschreven in 30 dagen' },
-  { value: '12', label: 'sites die op hetzelfde systeem draaien' },
+  { value: '6-8 uur', label: 'tijdwinst per week, per proceseigenaar' },
+  { value: '100%', label: 'gecontroleerd door een tweede agent vóór het bij mij komt' },
   { value: '3 min', label: 'van goedkeuring tot live op de site' },
 ];
 
@@ -65,6 +69,16 @@ const STARTER_PROMPTS = [
 const WHATSAPP_NUMBER = '31626760739';
 
 export default function IrisPage() {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [isMuted, setIsMuted] = useState(true);
+
+  const toggleMute = () => {
+    const video = videoRef.current;
+    if (!video) return;
+    video.muted = !video.muted;
+    setIsMuted(video.muted);
+  };
+
   const openIrisChat = (prompt?: string) => {
     window.dispatchEvent(new CustomEvent('openIrisChat', { detail: prompt ? { prompt } : undefined }));
   };
@@ -96,7 +110,7 @@ export default function IrisPage() {
             </h1>
 
             <p className="text-lg md:text-xl text-slate-600 mb-8 max-w-xl font-light leading-relaxed">
-              Geen chatbot die wat terugkletst. Iris stuurt 14 gespecialiseerde agents aan, onthoudt wat er speelt, en neemt zo de administratieve rompslomp weg die jou weghoudt van de mensen om wie het gaat.
+              Geen chatbot die wat terugkletst. Iris stuurt 15 gespecialiseerde agents aan, onthoudt wat er speelt, en neemt zo de administratieve rompslomp weg die jou weghoudt van de mensen om wie het gaat.
             </p>
 
             <div className="flex flex-wrap gap-4">
@@ -123,6 +137,7 @@ export default function IrisPage() {
           <div className="relative">
             <div className="relative aspect-[9/16] max-w-xs mx-auto rounded-3xl overflow-hidden shadow-2xl bg-slate-900">
               <video
+                ref={videoRef}
                 src="/videos/iris/welcome.mp4"
                 className="w-full h-full object-cover"
                 autoPlay
@@ -130,6 +145,14 @@ export default function IrisPage() {
                 loop
                 playsInline
               />
+              <button
+                type="button"
+                onClick={toggleMute}
+                aria-label={isMuted ? 'Geluid aanzetten' : 'Geluid uitzetten'}
+                className="absolute bottom-4 right-4 w-10 h-10 rounded-full bg-slate-900/70 backdrop-blur text-white flex items-center justify-center hover:bg-slate-900/90 transition-colors"
+              >
+                {isMuted ? <VolumeX size={18} /> : <Volume2 size={18} />}
+              </button>
             </div>
           </div>
         </div>
@@ -146,7 +169,7 @@ export default function IrisPage() {
           </div>
           <div className="space-y-5 text-lg text-slate-600 leading-relaxed font-light max-w-2xl mx-auto">
             <p>
-              Ik ben zelf jarenlang directeur geweest in het sociaal domein. Ik weet hoe het voelt als de administratie wint van de mensen om wie het gaat. Ik ben niet begonnen met code, maar met kijken naar mijn eigen werkweek: welk proces kost mij de meeste tijd en energie? Uit die analyse kwamen mijn eerste drie agents, niet gekocht maar gebouwd, en daaruit is Iris gegroeid tot wat ze nu is.
+              Als sociaal ondernemer, manager en directeur in het sociaal domein weet ik hoe het voelt als de administratie wint van de mensen om wie het gaat. Ik ben niet begonnen met code, maar met kijken naar mijn eigen werkweek: welk proces kost mij de meeste tijd en energie? Uit die analyse kwamen mijn eerste drie agents, niet gekocht maar gebouwd, en daaruit is Iris gegroeid tot wat ze nu is.
             </p>
             <p>
               Ik gebruik AI niet om mensen te vervangen. Ik gebruik het om ruimte te maken: voor echte gesprekken, voor echte verbinding, voor het werk waarvoor je ooit in het sociaal domein bent begonnen. Dat is ook waarom ik dit systeem eerst op mezelf en mijn eigen projecten heb losgelaten, voordat ik het aan een ander aanbied.
@@ -160,15 +183,15 @@ export default function IrisPage() {
         </div>
       </section>
 
-      {/* DE 14 AGENTS */}
+      {/* DE 15 AGENTS */}
       <section className="py-24 bg-slate-50">
         <div className="container mx-auto px-6 max-w-6xl">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-slate-900 mb-4">
-              De 14 agents die Iris aanstuurt
+              De 15 agents die Iris aanstuurt
             </h2>
             <p className="text-lg text-slate-500 max-w-2xl mx-auto font-light">
-              Geen los AI-abonnement per taak, maar één team met vaste rollen. Iris verdeelt het werk, elke agent doet zijn eigen ding, elke dag opnieuw.
+              Geen los AI-abonnement per taak, maar één team met vaste rollen. Iris verdeelt het werk, elke agent doet zijn eigen ding, elke dag opnieuw. Dit team runt vandaag WeAreImpact zelf; bij een implementatie bij jouw organisatie bouw ik een vergelijkbaar team toegespitst op jouw processen: dossiers, rapportage, verantwoording.
             </p>
           </div>
 
@@ -218,7 +241,7 @@ export default function IrisPage() {
                 Eén geheugen voor het hele team
               </h2>
               <p className="text-slate-300 leading-relaxed font-light">
-                In de meeste organisaties zit de kennis in het hoofd van één persoon. Zodra die persoon vakantie heeft, druk is of vertrekt, staat het werk stil. Bij Iris zit die kennis in een gedeelde kennisbank waar alle 14 agents uit putten: casuïstiek, merkstem, eerdere beslissingen, wat wel en niet werkte.
+                In de meeste organisaties zit de kennis in het hoofd van één persoon. Zodra die persoon vakantie heeft, druk is of vertrekt, staat het werk stil. Bij Iris zit die kennis in een gedeelde kennisbank waar alle 15 agents uit putten: casuïstiek, merkstem, eerdere beslissingen, wat wel en niet werkte.
               </p>
             </div>
             <div className="space-y-4">
@@ -369,7 +392,7 @@ export default function IrisPage() {
             Ook zo'n systeem voor jouw organisatie?
           </h2>
           <p className="text-lg text-slate-600 mb-10 font-light max-w-xl mx-auto">
-            Als interim kwartiermaker help ik organisaties in het sociaal domein met een AI-aanpak die bij hen past, geen kant-en-klaar pakket.
+            Wil je zien hoe een AI-team jouw organisatie 5 tot 10 uur per week aan administratie bespaart, volledig gecontroleerd vóórdat er iets de deur uitgaat? Als interim kwartiermaker bouw ik die aanpak op maat, geen kant-en-klaar pakket. Boek een verkenning of test Iris direct.
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             <Button
