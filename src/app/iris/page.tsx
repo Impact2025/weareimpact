@@ -71,6 +71,7 @@ const WHATSAPP_NUMBER = '31626760739';
 export default function IrisPage() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isMuted, setIsMuted] = useState(true);
+  const [isVideoDone, setIsVideoDone] = useState(false);
 
   const toggleMute = () => {
     const video = videoRef.current;
@@ -139,20 +140,22 @@ export default function IrisPage() {
               <video
                 ref={videoRef}
                 src="/videos/iris/welcome.mp4"
-                className="w-full h-full object-cover"
+                className={`w-full h-full object-cover transition-opacity duration-[2000ms] ease-in-out ${isVideoDone ? 'opacity-0' : 'opacity-100'}`}
                 autoPlay
                 muted
-                loop
                 playsInline
+                onEnded={() => setIsVideoDone(true)}
               />
-              <button
-                type="button"
-                onClick={toggleMute}
-                aria-label={isMuted ? 'Geluid aanzetten' : 'Geluid uitzetten'}
-                className="absolute bottom-4 right-4 w-10 h-10 rounded-full bg-slate-900/70 backdrop-blur text-white flex items-center justify-center hover:bg-slate-900/90 transition-colors"
-              >
-                {isMuted ? <VolumeX size={18} /> : <Volume2 size={18} />}
-              </button>
+              {!isVideoDone && (
+                <button
+                  type="button"
+                  onClick={toggleMute}
+                  aria-label={isMuted ? 'Geluid aanzetten' : 'Geluid uitzetten'}
+                  className="absolute bottom-4 right-4 w-10 h-10 rounded-full bg-slate-900/70 backdrop-blur text-white flex items-center justify-center hover:bg-slate-900/90 transition-colors"
+                >
+                  {isMuted ? <VolumeX size={18} /> : <Volume2 size={18} />}
+                </button>
+              )}
             </div>
           </div>
         </div>
