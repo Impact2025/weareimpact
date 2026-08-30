@@ -89,6 +89,27 @@ const BOOKING_TYPES: BookingType[] = [
     price: '€250',
     description: 'Introductie workshop voor teams'
   },
+  {
+    slug: 'sprint-triage',
+    name: 'Sprint: Intake- & Vraagtriage',
+    duration: 30,
+    price: 'Gratis intake',
+    description: 'Fit & Focus-intake voor de AI Diagnose & Doorbraak Sprint (€1.750, 1 dagdeel)'
+  },
+  {
+    slug: 'sprint-offerte',
+    name: 'Sprint: Offerte- & Leadmachine',
+    duration: 30,
+    price: 'Gratis intake',
+    description: 'Fit & Focus-intake voor de AI Diagnose & Doorbraak Sprint (€1.750, 1 dagdeel)'
+  },
+  {
+    slug: 'sprint-impact',
+    name: 'Sprint: Impact & Subsidies',
+    duration: 30,
+    price: 'Gratis intake',
+    description: 'Fit & Focus-intake voor de AI Diagnose & Doorbraak Sprint (€1.750, 1 dagdeel)'
+  },
 ];
 
 const STARTER_PROMPTS = [
@@ -547,11 +568,26 @@ export function DigitalTwin() {
   }, []);
 
   // Listen for global openBooking event (must be after addMessage definition)
+  // Optioneel detail.typeSlug: springt direct naar tijdselectie voor dat type
+  // (gebruikt door landingspagina's die al een specifieke sprint/dienst tonen).
   useEffect(() => {
-    const handleOpenBooking = () => {
+    const handleOpenBooking = (e: Event) => {
       setIsOpen(true);
-      // Start booking flow after a short delay
+      const typeSlug = (e as CustomEvent<{ typeSlug?: string }>).detail?.typeSlug;
+      const preselected = typeSlug ? BOOKING_TYPES.find((t) => t.slug === typeSlug) : undefined;
+
       setTimeout(() => {
+        if (preselected) {
+          if (messages.length === 0) {
+            const greeting = getTimeBasedGreeting();
+            addMessage('assistant', `${greeting}! Laten we de intake voor "${preselected.name}" inplannen.`);
+          }
+          setSelectedType(preselected);
+          addMessage('assistant', `${preselected.name} — ${preselected.duration} minuten. Kies een moment:`);
+          setBookingStep('select_time');
+          return;
+        }
+
         if (messages.length === 0) {
           const greeting = getTimeBasedGreeting();
           addMessage('assistant', `${greeting}! Leuk dat je een gesprek wilt plannen. Wat voor type gesprek past het beste bij je?`);

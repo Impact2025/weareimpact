@@ -10,7 +10,8 @@ import { Button } from '@/components/ui/button';
 const navItems = [
   { label: 'MANIFEST', href: '/#manifest', isHash: true },
   { label: 'EXPERTISE', href: '/#diensten', isHash: true },
-  { label: 'AI SCAN', href: '/#scan', icon: Sparkles, highlight: true, isHash: true },
+  { label: 'DOORBRAAK SPRINT', href: '/doorbraak-sprint', icon: Sparkles, highlight: true, isHash: false },
+  { label: 'AI SCAN', href: '/#scan', isHash: true },
   { label: 'IRIS', href: '/iris', isHash: false },
   { label: 'IMPACT CALC', href: '/impact-calculator', isHash: false },
   { label: 'KENNISBANK', href: '/kennisbank', isHash: false },

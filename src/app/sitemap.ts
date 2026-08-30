@@ -168,6 +168,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.8,
     },
     {
+      url: `${BASE_URL}/iris`,
+      lastModified: new Date('2026-08-30'),
+      changeFrequency: 'weekly',
+      priority: 0.9,
+    },
+    {
+      url: `${BASE_URL}/doorbraak-sprint`,
+      lastModified: new Date('2026-08-30'),
+      changeFrequency: 'weekly',
+      priority: 0.95,
+    },
+    {
       url: `${BASE_URL}/demo-aanvraag`,
       lastModified: new Date('2026-06-01'),
       changeFrequency: 'monthly',

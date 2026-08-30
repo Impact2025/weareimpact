@@ -26,6 +26,24 @@ export const BOOKING_TYPES = {
     price: '€250',
     description: 'Introductiesessie LEGO Serious Play methodiek',
   },
+  'sprint-triage': {
+    name: 'Sprint 1: Intake- & Vraagtriage — Fit & Focus',
+    duration: 30,
+    price: 'Gratis intake · sprint €1.750',
+    description: 'Intakegesprek voor de AI Diagnose & Doorbraak Sprint: automatische triage en matching van hulpvragen',
+  },
+  'sprint-offerte': {
+    name: 'Sprint 2: Offerte- & Leadmachine — Fit & Focus',
+    duration: 30,
+    price: 'Gratis intake · sprint €1.750',
+    description: 'Intakegesprek voor de AI Diagnose & Doorbraak Sprint: notities naar dossier, CRM en conceptofferte',
+  },
+  'sprint-impact': {
+    name: 'Sprint 3: Impact & Subsidies — Fit & Focus',
+    duration: 30,
+    price: 'Gratis intake · sprint €1.750',
+    description: 'Intakegesprek voor de AI Diagnose & Doorbraak Sprint: impactregister en conceptrapportages',
+  },
 } as const;
 
 export type BookingTypeSlug = keyof typeof BOOKING_TYPES;

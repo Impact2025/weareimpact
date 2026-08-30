@@ -5,7 +5,6 @@ import {
   ArrowRight,
   Mail,
   Calendar,
-  Share2,
   ShieldCheck,
   FileText,
   Phone,
@@ -395,23 +394,23 @@ export default function IrisPage() {
             Ook zo'n systeem voor jouw organisatie?
           </h2>
           <p className="text-lg text-slate-600 mb-10 font-light max-w-xl mx-auto">
-            Wil je zien hoe een AI-team jouw organisatie 5 tot 10 uur per week aan administratie bespaart, volledig gecontroleerd vóórdat er iets de deur uitgaat? Als interim kwartiermaker bouw ik die aanpak op maat, geen kant-en-klaar pakket. Boek een verkenning of test Iris direct.
+            Wil je zien hoe een AI-team jouw organisatie 5 tot 10 uur per week aan administratie bespaart, volledig gecontroleerd vóórdat er iets de deur uitgaat? In de AI Diagnose & Doorbraak Sprint bouw ik die aanpak in één dagdeel, vast tarief, geen kant-en-klaar pakket.
           </p>
           <div className="flex flex-wrap justify-center gap-4">
+            <a
+              href="/doorbraak-sprint"
+              className="px-8 py-4 bg-orange-600 text-white rounded-full font-bold hover:bg-orange-700 transition-all shadow-lg shadow-orange-500/30"
+            >
+              Bekijk de Doorbraak Sprint
+            </a>
             <Button
               size="lg"
+              variant="outline"
               onClick={openBooking}
-              className="px-8 py-4 bg-orange-600 text-white rounded-full font-bold hover:bg-orange-700 transition-all shadow-lg shadow-orange-500/30"
+              className="px-8 py-4 bg-white border border-slate-200 rounded-full font-bold text-slate-700 hover:border-orange-300 hover:text-orange-600 transition-all"
             >
               Koffie met Vincent
             </Button>
-            <a
-              href="/ai-scan"
-              className="inline-flex items-center gap-2 px-8 py-4 bg-white border border-slate-200 rounded-full font-bold text-slate-700 hover:border-orange-300 hover:text-orange-600 transition-all"
-            >
-              <Share2 size={18} />
-              Doe de gratis AI-scan
-            </a>
           </div>
         </div>
       </section>
