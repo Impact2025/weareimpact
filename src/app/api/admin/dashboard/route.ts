@@ -51,6 +51,13 @@ interface DashboardStats {
     scan: number;
     kennisbank: number;
   };
+  newsletterStats: {
+    total_subscribers: number;
+    active_campaigns: number;
+    total_sent: number;
+    total_opens: number;
+    avg_open_rate: number;
+  };
 }
 
 function calculateChange(current: number, previous: number): number {
@@ -82,6 +89,7 @@ export async function GET() {
       leadsOverview,
       topPages,
       chatsBySource,
+      newsletterStats,
     ] = await Promise.all([
       // Visitors this month
       sql`SELECT COUNT(DISTINCT visitor_id) as count FROM page_views WHERE created_at >= ${startOfMonth.toISOString()}`,
@@ -135,6 +143,14 @@ export async function GET() {
         COUNT(*) FILTER (WHERE source = 'scan') as scan,
         COUNT(*) FILTER (WHERE source = 'kennisbank') as kennisbank
       FROM chat_sessions`,
+
+      // Newsletter stats
+      sql`SELECT
+        (SELECT COUNT(*) FROM newsletter_subscribers WHERE status = 'active') as total_subscribers,
+        (SELECT COUNT(*) FROM newsletter_campaigns WHERE status = 'draft') as active_campaigns,
+        (SELECT COUNT(*) FROM newsletter_campaigns WHERE status = 'sent') as total_sent,
+        (SELECT COALESCE(SUM(open_count), 0) FROM newsletter_campaigns WHERE status = 'sent') as total_opens
+      `,
     ]);
 
     // Build response
@@ -195,6 +211,19 @@ export async function GET() {
         scan: Number(chatsBySource[0]?.scan || 0),
         kennisbank: Number(chatsBySource[0]?.kennisbank || 0),
       },
+      newsletterStats: {
+        total_subscribers: Number(newsletterStats[0]?.total_subscribers || 0),
+        active_campaigns: Number(newsletterStats[0]?.active_campaigns || 0),
+        total_sent: Number(newsletterStats[0]?.total_sent || 0),
+        total_opens: Number(newsletterStats[0]?.total_opens || 0),
+        avg_open_rate: Number(newsletterStats[0]?.total_sent || 0) > 0
+          ? Math.round(
+              (Number(newsletterStats[0]?.total_opens || 0) /
+                Math.max(1, Number(newsletterStats[0]?.total_sent || 0))) *
+                100
+            )
+          : 0,
+      },
     };
 
     return NextResponse.json(stats);
@@ -210,6 +239,13 @@ export async function GET() {
       leadsOverview: { new: 0, contacted: 0, qualified: 0, converted: 0 },
       topPages: [],
       chatsBySource: { widget: 0, booking: 0, scan: 0, kennisbank: 0 },
+      newsletterStats: {
+        total_subscribers: 0,
+        active_campaigns: 0,
+        total_sent: 0,
+        total_opens: 0,
+        avg_open_rate: 0,
+      },
     });
   }
 }

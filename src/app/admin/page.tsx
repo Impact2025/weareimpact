@@ -9,7 +9,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { Users, FileText, Brain, MessageSquare, TrendingUp, TrendingDown, Loader2, RefreshCw, BarChart3, Target } from 'lucide-react';
+import { Users, FileText, Brain, MessageSquare, TrendingUp, TrendingDown, Loader2, RefreshCw, BarChart3, Target, Send, Mail } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface DashboardStats {
@@ -59,6 +59,13 @@ interface DashboardStats {
     booking: number;
     scan: number;
     kennisbank: number;
+  };
+  newsletterStats: {
+    total_subscribers: number;
+    active_campaigns: number;
+    total_sent: number;
+    total_opens: number;
+    avg_open_rate: number;
   };
 }
 
@@ -368,6 +375,22 @@ export default function AdminDashboard() {
                 <p className="font-bold text-slate-900">Kennisbank Artikel</p>
                 <p className="text-sm text-slate-500">
                   Maak een nieuwe gids of stappenplan
+                </p>
+              </div>
+            </Link>
+            <Link
+              href="/admin/newsletter/new"
+              className="flex items-center gap-4 p-4 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors"
+            >
+              <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
+                <Send size={24} className="text-orange-600" />
+              </div>
+              <div>
+                <p className="font-bold text-slate-900">Nieuwsbrief Campagne</p>
+                <p className="text-sm text-slate-500">
+                  {stats.newsletterStats.active_campaigns > 0
+                    ? `${stats.newsletterStats.active_campaigns} concepten wachten`
+                    : 'Nieuwe nieuwsbrief voor abonnees'}
                 </p>
               </div>
             </Link>

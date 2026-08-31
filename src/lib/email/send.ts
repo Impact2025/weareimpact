@@ -18,6 +18,8 @@ export interface SendEmailOptions {
   subject: string;
   html: string;
   text?: string;
+  /** Overrides the default from-address, e.g. `"WeAreImpact <nieuws@weareimpact.nl>"`. */
+  from?: string;
   replyTo?: string;
   headers?: Record<string, string>;
 }
@@ -42,7 +44,7 @@ export async function sendEmail(options: SendEmailOptions): Promise<{
 
   try {
     const result = await client.emails.send({
-      from: fromEmail,
+      from: options.from || fromEmail,
       to: Array.isArray(options.to) ? options.to : [options.to],
       subject: options.subject,
       html: options.html,

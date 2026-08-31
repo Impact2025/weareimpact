@@ -15,6 +15,7 @@ import {
   BookOpen,
   Sparkles,
   Mail,
+  Send,
   Briefcase,
   Building2,
   Users,
@@ -84,6 +85,7 @@ const sidebarItems: SidebarItem[] = [
   { label: 'Social', href: '/admin/social', icon: Share2 },
   { label: 'AI Scanner Leads', href: '/admin/leads', icon: Brain },
   { label: 'Contact Berichten', href: '/admin/contact', icon: Mail },
+  { label: 'Nieuwsbrieven', href: '/admin/newsletter', icon: Send },
   { label: 'Chat Logs', href: '/admin/chats', icon: MessageSquare },
   { label: 'Instellingen', href: '/admin/settings', icon: Settings },
 ];
