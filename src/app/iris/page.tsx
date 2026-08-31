@@ -39,8 +39,8 @@ const CLUSTERS = [
   {
     icon: FileText,
     title: 'Content & publiceren',
-    count: 6,
-    agents: ['SEO Copywriter', 'SEO Editor', 'Content Editor', 'Content Judge', 'Video Director', 'Social Media Copywriter'],
+    count: 5,
+    agents: ['SEO Copywriter', 'SEO Editor', 'Content Editor', 'Content Judge', 'Video Director'],
     description: 'Van eerste concept tot artikel, social post of video. De schrijver en de criticus binnen dit team zijn altijd twee verschillende agents, zodat er nooit één iemand zijn eigen huiswerk nakijkt.',
   },
   {
@@ -110,7 +110,7 @@ export default function IrisPage() {
             </h1>
 
             <p className="text-lg md:text-xl text-slate-600 mb-8 max-w-xl font-light leading-relaxed">
-              Geen chatbot die wat terugkletst. Iris stuurt 15 gespecialiseerde agents aan, onthoudt wat er speelt, en neemt zo de administratieve rompslomp weg die jou weghoudt van de mensen om wie het gaat.
+              Geen chatbot die wat terugkletst. Iris stuurt 14 gespecialiseerde agents aan, onthoudt wat er speelt, en neemt zo de administratieve rompslomp weg die jou weghoudt van de mensen om wie het gaat.
             </p>
 
             <div className="flex flex-wrap gap-4">
@@ -185,12 +185,12 @@ export default function IrisPage() {
         </div>
       </section>
 
-      {/* DE 15 AGENTS */}
+      {/* DE 14 AGENTS */}
       <section className="py-24 bg-slate-50">
         <div className="container mx-auto px-6 max-w-6xl">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-slate-900 mb-4">
-              De 15 agents die Iris aanstuurt
+              De 14 agents die Iris aanstuurt
             </h2>
             <p className="text-lg text-slate-500 max-w-2xl mx-auto font-light">
               Geen los AI-abonnement per taak, maar één team met vaste rollen. Iris verdeelt het werk, elke agent doet zijn eigen ding, elke dag opnieuw. Dit team runt vandaag WeAreImpact zelf; bij een implementatie bij jouw organisatie bouw ik een vergelijkbaar team toegespitst op jouw processen: dossiers, rapportage, verantwoording.
@@ -243,7 +243,7 @@ export default function IrisPage() {
                 Eén geheugen voor het hele team
               </h2>
               <p className="text-slate-300 leading-relaxed font-light">
-                In de meeste organisaties zit de kennis in het hoofd van één persoon. Zodra die persoon vakantie heeft, druk is of vertrekt, staat het werk stil. Bij Iris zit die kennis in een gedeelde kennisbank waar alle 15 agents uit putten: casuïstiek, merkstem, eerdere beslissingen, wat wel en niet werkte.
+                In de meeste organisaties zit de kennis in het hoofd van één persoon. Zodra die persoon vakantie heeft, druk is of vertrekt, staat het werk stil. Bij Iris zit die kennis in een gedeelde kennisbank waar alle 14 agents uit putten: casuïstiek, merkstem, eerdere beslissingen, wat wel en niet werkte.
               </p>
             </div>
             <div className="space-y-4">
