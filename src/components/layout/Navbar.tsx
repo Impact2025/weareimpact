@@ -12,6 +12,7 @@ const navItems = [
   { label: 'EXPERTISE', href: '/#diensten', isHash: true },
   { label: 'DOORBRAAK SPRINT', href: '/doorbraak-sprint', icon: Sparkles, highlight: true, isHash: false },
   { label: 'AI SCAN', href: '/#scan', isHash: true },
+  { label: 'AI LAB', href: '/lab', isHash: false },
   { label: 'IRIS', href: '/iris', isHash: false },
   { label: 'IMPACT CALC', href: '/impact-calculator', isHash: false },
   { label: 'KENNISBANK', href: '/kennisbank', isHash: false },
