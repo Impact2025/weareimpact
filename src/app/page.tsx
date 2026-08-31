@@ -269,9 +269,9 @@ export default function Home() {
               size="lg"
               className="px-8 py-4 bg-white text-slate-900 border border-slate-200 rounded-full font-medium hover:bg-slate-50 transition-all shadow-sm"
             >
-              <Link href="/vincent-van-munster" className="flex items-center gap-2">
-                <Briefcase size={18} />
-                Bekijk Profiel &amp; CV
+              <Link href="/iris" className="flex items-center gap-2">
+                <Brain size={18} />
+                Iris / ImpactOS
               </Link>
             </Button>
           </div>
