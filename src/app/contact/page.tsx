@@ -154,18 +154,14 @@ export default function ContactPage() {
                     </div>
 
                     {/* Quick Stats */}
-                    <div className="grid grid-cols-3 gap-4 mb-8 p-4 bg-slate-50 rounded-2xl">
+                    <div className="grid grid-cols-2 gap-4 mb-8 p-4 bg-slate-50 rounded-2xl">
                       <div className="text-center">
                         <div className="text-2xl font-bold text-slate-900">{"<"}4u</div>
                         <div className="text-xs text-slate-500">Reactietijd</div>
                       </div>
-                      <div className="text-center border-x border-slate-200">
+                      <div className="text-center border-l border-slate-200">
                         <div className="text-2xl font-bold text-slate-900">15+</div>
                         <div className="text-xs text-slate-500">Jaar ervaring</div>
-                      </div>
-                      <div className="text-center">
-                        <div className="text-2xl font-bold text-orange-600">2</div>
-                        <div className="text-xs text-slate-500">Plekken Q2</div>
                       </div>
                     </div>
 
@@ -175,12 +171,12 @@ export default function ContactPage() {
                       className="w-full py-6 bg-slate-900 hover:bg-orange-600 text-white rounded-2xl font-bold text-lg transition-all shadow-xl hover:shadow-orange-500/25 group"
                     >
                       <Coffee size={22} className="mr-3" />
-                      Plan een koffiemoment
+                      Plan via Iris
                       <ArrowRight size={20} className="ml-3 group-hover:translate-x-1 transition-transform" />
                     </Button>
 
                     <p className="text-center text-sm text-slate-500 mt-4">
-                      30 min vrijblijvend gesprek — online of in Utrecht
+                      30 min vrijblijvend gesprek — Iris plant het direct in, online of in Utrecht
                     </p>
 
                     {/* Divider */}
@@ -422,7 +418,7 @@ export default function ContactPage() {
                 Liever meteen plannen?
               </h2>
               <p className="text-slate-400">
-                Kies een moment in mijn agenda — ik kijk ernaar uit.
+                Iris kijkt mijn agenda voor je na en plant direct in.
               </p>
             </div>
             <Button
@@ -431,7 +427,7 @@ export default function ContactPage() {
               className="px-8 py-4 bg-orange-500 hover:bg-orange-600 text-white rounded-full font-bold shadow-lg shadow-orange-500/30 whitespace-nowrap"
             >
               <Calendar size={20} className="mr-2" />
-              Open agenda
+              Plan via Iris
             </Button>
           </div>
         </div>
