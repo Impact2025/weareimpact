@@ -11,13 +11,9 @@ const navItems = [
   { label: 'MANIFEST', href: '/#manifest', isHash: true },
   { label: 'EXPERTISE', href: '/#diensten', isHash: true },
   { label: 'DOORBRAAK SPRINT', href: '/doorbraak-sprint', icon: Sparkles, highlight: true, isHash: false },
-  { label: 'AI SCAN', href: '/#scan', isHash: true },
-  { label: 'AI LAB', href: '/lab', isHash: false },
   { label: 'IRIS', href: '/iris', isHash: false },
   { label: 'IMPACT CALC', href: '/impact-calculator', isHash: false },
-  { label: 'KENNISBANK', href: '/kennisbank', isHash: false },
   { label: 'BLOG', href: '/blog', isHash: false },
-  { label: 'CONTACT', href: '/contact', isHash: false },
 ];
 
 export function Navbar() {
@@ -139,7 +135,7 @@ export function Navbar() {
               onClick={() => window.dispatchEvent(new CustomEvent('openBooking'))}
               className="px-6 py-2.5 bg-slate-900 text-white text-sm font-medium rounded-full hover:bg-orange-600 transition-all duration-300 shadow-lg hover:shadow-orange-500/30"
             >
-              Let&apos;s Talk
+              Samen Impact maken?
             </Button>
           </div>
 
