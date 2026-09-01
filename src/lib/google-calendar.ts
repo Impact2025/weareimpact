@@ -26,6 +26,12 @@ export const BOOKING_TYPES = {
     price: '€250',
     description: 'Introductiesessie LEGO Serious Play methodiek',
   },
+  'presentatie-online': {
+    name: 'Online presentatie',
+    duration: 40,
+    price: 'Op aanvraag',
+    description: 'Online presentatie (max. 40 minuten). Geef in het opmerkingenveld door via welke app je wilt bellen (Zoom, Teams, Google Meet, etc.).',
+  },
   'sprint-triage': {
     name: 'Sprint 1: Intake- & Vraagtriage — Fit & Focus',
     duration: 30,
@@ -54,6 +60,9 @@ const BUSINESS_HOURS = {
   end: 17,  // 5 PM
   daysOff: [0, 6], // Sunday = 0, Saturday = 6
 };
+
+// Vincent wil zich altijd kunnen voorbereiden: afspraken pas vanaf 2 dagen na vandaag boekbaar
+const MIN_NOTICE_HOURS = 48;
 
 // Get authenticated Google Calendar client
 function getCalendarClient() {
@@ -120,9 +129,9 @@ function generateTimeSlots(
   const dayEnd = new Date(date);
   dayEnd.setHours(BUSINESS_HOURS.end, 0, 0, 0);
 
-  // Don't generate slots for past times
-  const now = new Date();
-  const slotStart = new Date(Math.max(dayStart.getTime(), now.getTime()));
+  // Don't generate slots for past times, en houd minimaal 2 dagen voorbereidingstijd aan
+  const earliestAllowed = new Date(Date.now() + MIN_NOTICE_HOURS * 60 * 60 * 1000);
+  const slotStart = new Date(Math.max(dayStart.getTime(), earliestAllowed.getTime()));
 
   // Round up to next 30 minute interval
   const minutes = slotStart.getMinutes();

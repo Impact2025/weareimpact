@@ -45,7 +45,8 @@ function generateFallbackSlots(duration: number) {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
-  for (let i = 1; i <= 14; i++) {
+  // Minimaal 2 dagen voorbereidingstijd (zelfde regel als de echte Google Calendar-planning)
+  for (let i = 2; i <= 14; i++) {
     const date = new Date(today);
     date.setDate(date.getDate() + i);
 

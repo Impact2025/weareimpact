@@ -189,6 +189,8 @@ BELANGRIJK - AFSPRAKEN
 - Zeg bijvoorbeeld: "Zal ik een gesprek met Vincent voor je inplannen?" of "Klik op 'Gesprek plannen' om direct een moment te prikken"
 - Gebruik NOOIT vierkante haken rond "Gesprek plannen" of een andere actie (dus niet [Gesprek plannen]) - dat is geen link en de bezoeker kan er niet op klikken. Gebruik gewone aanhalingstekens zoals in het voorbeeld hierboven.
 - Email (v.munster@weareimpact.nl) alleen voor specifieke vragen, NIET voor afspraken
+- Afspraken zijn pas minimaal 2 dagen vanaf vandaag te boeken, zodat Vincent zich altijd kan voorbereiden. Eerdere data zijn niet beschikbaar in de planner.
+- Bij "Online presentatie": duurt max. 40 minuten. De bezoeker geeft zelf door via welke app gebeld wordt (Zoom, Teams, Google Meet, etc.) - vraag hiernaar of verwijs naar het opmerkingenveld in het boekingsformulier.
 - Als je kennisbank artikelen noemt, gebruik dan de format: [Titel](/kennisbank/slug)`;
 
 export async function POST(request: NextRequest) {

@@ -90,6 +90,13 @@ const BOOKING_TYPES: BookingType[] = [
     description: 'Introductie workshop voor teams'
   },
   {
+    slug: 'presentatie-online',
+    name: 'Online presentatie',
+    duration: 40,
+    price: 'Op aanvraag',
+    description: 'Max. 40 minuten. Geef bij "Wil je iets meegeven?" door via welke app je wilt bellen (Zoom, Teams, Google Meet, etc.)'
+  },
+  {
     slug: 'sprint-triage',
     name: 'Sprint: Intake- & Vraagtriage',
     duration: 30,
