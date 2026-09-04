@@ -1,10 +1,16 @@
+import { randomUUID } from 'crypto';
 import { NextRequest, NextResponse } from 'next/server';
 import { createBooking, BOOKING_TYPES, BookingTypeSlug } from '@/lib/google-calendar';
 import { sql } from '@/lib/db/neon';
 import { sendEmail } from '@/lib/email/send';
 import { generateBookingConfirmationEmail } from '@/lib/email/templates/booking-confirmation';
 import { generateBookingRequestDeclinedEmail } from '@/lib/email/templates/booking-request-declined';
+import { generateSprintbriefInviteEmail } from '@/lib/email/templates/sprintbrief-invite';
 import { pushBookingLead } from '@/lib/agentos-bridge';
+import { ensureDealForBooking } from '@/lib/crm/dealFromBooking';
+import { getSprintTitle } from '@/lib/intake/sprintbrief-questions';
+
+const WEB_BASE = 'https://weareimpact.nl';
 
 export const dynamic = 'force-dynamic';
 
@@ -136,6 +142,47 @@ export async function GET(request: NextRequest) {
   });
   if (!emailResult.success) {
     console.error('Failed to send booking confirmation email:', emailResult.error);
+  }
+
+  // AI Diagnose & Doorbraak Sprint: bij goedkeuring meteen een CRM-deal
+  // aanmaken en de klant de sprint-specifieke Sprintbrief laten invullen,
+  // zodat Vincent zich vóór de sprintdag kan voorbereiden.
+  if (bookingRequest.booking_type.startsWith('sprint-')) {
+    try {
+      const dealId = await ensureDealForBooking({
+        bookingType: bookingRequest.booking_type as BookingTypeSlug,
+        customer: {
+          name: bookingRequest.customer_name,
+          email: bookingRequest.customer_email,
+          phone: bookingRequest.customer_phone,
+          organization: bookingRequest.customer_organization,
+          website: bookingRequest.customer_website,
+        },
+      });
+
+      const sprintbriefToken = randomUUID();
+      await sql`
+        UPDATE booking_requests SET deal_id = ${dealId}, sprintbrief_token = ${sprintbriefToken} WHERE id = ${id}
+      `;
+
+      const sprintbriefTemplate = generateSprintbriefInviteEmail({
+        customerName: bookingRequest.customer_name,
+        sprintTitle: getSprintTitle(bookingRequest.booking_type),
+        sprintbriefUrl: `${WEB_BASE}/sprintbrief/${sprintbriefToken}`,
+      });
+      const sprintbriefResult = await sendEmail({
+        to: bookingRequest.customer_email,
+        subject: sprintbriefTemplate.subject,
+        html: sprintbriefTemplate.html,
+        text: sprintbriefTemplate.text,
+      });
+      if (!sprintbriefResult.success) {
+        console.error('Failed to send sprintbrief invite email:', sprintbriefResult.error);
+      }
+    } catch (dealError) {
+      // Mag de goedkeuring zelf nooit blokkeren — de afspraak staat al vast.
+      console.error('Failed to create deal / send sprintbrief for approved sprint booking:', dealError);
+    }
   }
 
   await pushBookingLead({

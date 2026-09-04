@@ -400,6 +400,45 @@ CREATE TABLE IF NOT EXISTS intake_submissions (
 CREATE INDEX IF NOT EXISTS idx_intake_submissions_created ON intake_submissions(created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_intake_submissions_status ON intake_submissions(status);
 
+-- =============================================
+-- AI DIAGNOSE & DOORBRAAK SPRINT
+-- =============================================
+
+-- Sprintbrief: de gerichte vragenlijst die na goedkeuring van de Fit & Focus-
+-- intake naar de klant gaat, per gekozen sprint (triage/offerte/impact).
+CREATE TABLE IF NOT EXISTS sprintbrief_submissions (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  booking_request_id UUID REFERENCES booking_requests(id) ON DELETE SET NULL,
+  deal_id UUID REFERENCES deals(id) ON DELETE SET NULL,
+  sprint_slug VARCHAR(50) NOT NULL,
+  answers JSONB NOT NULL,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_sprintbrief_deal ON sprintbrief_submissions(deal_id);
+
+-- Sprint-sessie: het werkdocument voor op locatie (Diagnose/Doorbraak/Borging)
+-- inclusief het AI-gegenereerde concept van de 1-A4 SOP.
+CREATE TABLE IF NOT EXISTS sprint_sessions (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  deal_id UUID NOT NULL REFERENCES deals(id) ON DELETE CASCADE,
+  sprint_slug VARCHAR(50) NOT NULL,
+  diagnose_notes TEXT,
+  doorbraak_notes TEXT,
+  borging_notes TEXT,
+  sop_draft TEXT,
+  status VARCHAR(20) NOT NULL DEFAULT 'gepland' CHECK (status IN ('gepland', 'bezig', 'afgerond')),
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_sprint_sessions_deal ON sprint_sessions(deal_id);
+
+-- booking_requests: koppeling naar de deal die bij goedkeuring wordt
+-- aangemaakt, en het eenmalige token voor de Sprintbrief-link in de mail.
+ALTER TABLE booking_requests ADD COLUMN IF NOT EXISTS deal_id UUID REFERENCES deals(id) ON DELETE SET NULL;
+ALTER TABLE booking_requests ADD COLUMN IF NOT EXISTS sprintbrief_token TEXT;
+
 -- CRM Indexes
 CREATE INDEX IF NOT EXISTS idx_companies_name ON companies(name);
 CREATE INDEX IF NOT EXISTS idx_companies_created ON companies(created_at DESC);

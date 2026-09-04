@@ -29,6 +29,7 @@ import {
   ListChecks,
   AlertTriangle,
   ClipboardList,
+  Rocket,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import IrisVoiceButton from '@/components/admin/IrisVoiceButton';
@@ -48,6 +49,7 @@ const sidebarItems: SidebarItem[] = [
   { label: 'Praat met Iris', href: '/admin/iris', icon: Sparkles },
   { label: 'Dashboard', href: '/admin', icon: LayoutDashboard },
   { label: 'Agenda', href: '/admin/agenda', icon: Calendar },
+  { label: 'Sprint Sessies', href: '/admin/sprint', icon: Rocket },
   {
     label: 'CRM',
     href: '/admin/crm',
