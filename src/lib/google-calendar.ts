@@ -520,10 +520,16 @@ Geboekt via weareimpact.nl
   `.trim();
 
   try {
+    // Geen 'attendees' + sendUpdates: het service-account heeft geen Domain-Wide
+    // Delegation, en Google weigert dan native uitnodigingen ("Service accounts
+    // cannot invite attendees without Domain-Wide Delegation of Authority").
+    // AgentOS/Iris gebruikt hetzelfde service-account en loopt hier bewust omheen
+    // door nooit attendees te zetten (zie backend/domains/calendar/service_google.py).
+    // De klant hoort het via de eigen bevestigingsmail (generateBookingConfirmationEmail),
+    // niet via een Google-uitnodiging.
     const event = await calendar.events.insert({
       calendarId,
       conferenceDataVersion: 1,
-      sendUpdates: 'all', // Google sends calendar invite to attendees
       requestBody: {
         summary: `${type.name} - ${data.customer.name}`,
         description,
@@ -535,9 +541,6 @@ Geboekt via weareimpact.nl
           dateTime: endTime.toISOString(),
           timeZone: 'Europe/Amsterdam',
         },
-        attendees: [
-          { email: data.customer.email, displayName: data.customer.name },
-        ],
         conferenceData: {
           createRequest: {
             requestId: `booking-${Date.now()}-${Math.random().toString(36).substring(7)}`,
@@ -546,7 +549,6 @@ Geboekt via weareimpact.nl
             },
           },
         },
-        guestsCanSeeOtherGuests: false,
       },
     });
 
