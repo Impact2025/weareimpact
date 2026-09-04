@@ -520,16 +520,18 @@ Geboekt via weareimpact.nl
   `.trim();
 
   try {
-    // Geen 'attendees' + sendUpdates: het service-account heeft geen Domain-Wide
-    // Delegation, en Google weigert dan native uitnodigingen ("Service accounts
-    // cannot invite attendees without Domain-Wide Delegation of Authority").
-    // AgentOS/Iris gebruikt hetzelfde service-account en loopt hier bewust omheen
-    // door nooit attendees te zetten (zie backend/domains/calendar/service_google.py).
-    // De klant hoort het via de eigen bevestigingsmail (generateBookingConfirmationEmail),
-    // niet via een Google-uitnodiging.
+    // Geen 'attendees'/sendUpdates en geen automatische conferenceData: het
+    // service-account heeft geen Domain-Wide Delegation, en zonder een échte
+    // Workspace-gebruiker erachter weigert Google zowel native uitnodigingen
+    // ("Service accounts cannot invite attendees without Domain-Wide
+    // Delegation of Authority") als het aanmaken van een Meet-link ("Invalid
+    // conference type value."). AgentOS/Iris gebruikt hetzelfde service-account
+    // en loopt hier bewust omheen door nooit attendees/conferenceData te zetten
+    // (zie backend/domains/calendar/service_google.py). De klant hoort het via
+    // de eigen bevestigingsmail (generateBookingConfirmationEmail), niet via
+    // een Google-uitnodiging of automatische Meet-link.
     const event = await calendar.events.insert({
       calendarId,
-      conferenceDataVersion: 1,
       requestBody: {
         summary: `${type.name} - ${data.customer.name}`,
         description,
@@ -541,27 +543,8 @@ Geboekt via weareimpact.nl
           dateTime: endTime.toISOString(),
           timeZone: 'Europe/Amsterdam',
         },
-        conferenceData: {
-          createRequest: {
-            requestId: `booking-${Date.now()}-${Math.random().toString(36).substring(7)}`,
-            conferenceSolutionKey: {
-              type: 'hangoutsMeet',
-            },
-          },
-        },
       },
     });
-
-    // Log conference data for debugging
-    console.log('Calendar event created:', {
-      id: event.data.id,
-      conferenceData: event.data.conferenceData,
-      hangoutLink: event.data.hangoutLink,
-    });
-
-    const meetLink = event.data.conferenceData?.entryPoints?.find(
-      (ep) => ep.entryPointType === 'video'
-    )?.uri || event.data.hangoutLink || undefined;
 
     return {
       success: true,
@@ -571,7 +554,7 @@ Geboekt via weareimpact.nl
         startTime: startTime.toISOString(),
         endTime: endTime.toISOString(),
         duration: type.duration,
-        meetLink,
+        meetLink: undefined,
       },
     };
   } catch (error: unknown) {
