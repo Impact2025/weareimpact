@@ -53,8 +53,9 @@ export default async function PortalPage({
       <div style={styles.card}>
         <h1 style={styles.title}>{project.name}</h1>
         <p style={styles.text}>
-          Iris loopt met je door een paar korte vragen. Antwoord gewoon in je eigen woorden — je
-          kunt dit venster altijd sluiten en later verdergaan.
+          Iris loopt met je door een paar vragen. Antwoord in je eigen woorden en schrijf gerust
+          uitgebreid — hoe meer je deelt, hoe beter we je kunnen helpen. Je kunt dit venster
+          altijd sluiten en later verdergaan.
         </p>
         <ChatClient projectSlug={projectSlug} />
       </div>

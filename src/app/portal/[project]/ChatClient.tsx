@@ -100,16 +100,26 @@ export default function ChatClient({ projectSlug }: { projectSlug: string }) {
           Bedankt! Je antwoorden zijn opgeslagen. Je kunt dit venster sluiten.
         </p>
       ) : (
-        <div style={{ display: 'flex', gap: 8 }}>
-          <input
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          <textarea
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && send()}
-            placeholder="Typ je antwoord…"
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                send();
+              }
+            }}
+            placeholder="Schrijf hier gerust uitgebreid je antwoord… (Shift+Enter voor een nieuwe regel)"
+            rows={5}
             style={inputStyle}
             disabled={sending}
           />
-          <button onClick={send} disabled={sending || !input.trim()} style={buttonStyle}>
+          <button
+            onClick={send}
+            disabled={sending || !input.trim()}
+            style={{ ...buttonStyle, alignSelf: 'flex-end' }}
+          >
             {sending ? '…' : 'Versturen'}
           </button>
         </div>
@@ -132,12 +142,14 @@ const chatBoxStyle: React.CSSProperties = {
 };
 
 const inputStyle: React.CSSProperties = {
-  flex: 1,
-  padding: '10px 12px',
+  width: '100%',
+  boxSizing: 'border-box',
+  padding: '12px 14px',
   borderRadius: 8,
   border: '1px solid #d1d5db',
   fontSize: 15,
   fontFamily: 'inherit',
+  resize: 'vertical',
 };
 
 const buttonStyle: React.CSSProperties = {
