@@ -39,9 +39,13 @@ beantwoord moet worden, vóór er productcode geschreven wordt.
 
 Een klein, apart onderdeel in de bestaande `weareimpact`-app geeft de klant (Schmesch Holding)
 via een persoonlijke, tijdelijke link toegang tot een **gecureerde** vragenlijst — nooit de ruwe
-`open-vragen.md` hierboven, die is voor intern/WaiterAid-gebruik.
+`open-vragen.md` hierboven, die is voor intern/WaiterAid-gebruik. De klant beantwoordt de vragen
+in gesprek met Iris (chat): Iris stelt de vragen één voor één, vraagt door (max. 2 keer per
+onderwerp) bij een vaag antwoord, en rondt af met een samenvatting + voorgestelde
+vervolgstappen die je terugziet op `/admin/dossiers/dinestar-boost`.
 
-- Code: `src/app/portal/[project]/`, `src/app/api/crm/portal/[project]/questions/`,
+- Code: `src/app/portal/[project]/` (chat-UI), `src/app/api/crm/portal/[project]/chat/`
+  (gespreks-API + tool-calling), `src/lib/crm/chat.ts` (systeemprompt + tools),
   `src/app/api/crm/magic-link/`, `src/lib/crm/`.
 - Schema: `supabase/crm-portal-schema.sql` (tabellen `crm_projects`, `crm_questions`,
   `crm_magic_links`), aangemaakt via `scripts/create-crm-portal-tables.js`.
