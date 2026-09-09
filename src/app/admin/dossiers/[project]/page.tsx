@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'next/navigation';
-import { Plus, Trash2, Send, Loader2, Copy, Check, Eye, EyeOff } from 'lucide-react';
+import { Plus, Trash2, Send, Loader2, Copy, Check, Eye, EyeOff, ChevronUp, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -24,6 +24,7 @@ interface Question {
   client_answer: string | null;
   answered_at: string | null;
   origin: 'admin' | 'iris';
+  sort_order: number;
 }
 
 interface ChatSummary {
@@ -137,6 +138,33 @@ export default function DossierDetailPage() {
 
   async function deleteQuestion(id: string) {
     await fetch(`/api/admin/dossiers/${projectSlug}/questions/${id}`, { method: 'DELETE' });
+    load();
+  }
+
+  async function moveQuestion(index: number, direction: -1 | 1) {
+    if (!questions) return;
+    const targetIndex = index + direction;
+    if (targetIndex < 0 || targetIndex >= questions.length) return;
+    const current = questions[index];
+    const target = questions[targetIndex];
+
+    const reordered = [...questions];
+    reordered[index] = target;
+    reordered[targetIndex] = current;
+    setQuestions(reordered);
+
+    await Promise.all([
+      fetch(`/api/admin/dossiers/${projectSlug}/questions/${current.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ sortOrder: target.sort_order }),
+      }),
+      fetch(`/api/admin/dossiers/${projectSlug}/questions/${target.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ sortOrder: current.sort_order }),
+      }),
+    ]);
     load();
   }
 
@@ -511,7 +539,7 @@ export default function DossierDetailPage() {
           {questions === null ? (
             <Loader2 className="animate-spin" />
           ) : (
-            questions.map((q) => (
+            questions.map((q, i) => (
               <Card key={q.id}>
                 <CardContent className="pt-6">
                   <div className="flex items-start justify-between gap-3">
@@ -534,9 +562,29 @@ export default function DossierDetailPage() {
                         </Badge>
                       )}
                     </div>
-                    <Button size="icon" variant="ghost" onClick={() => deleteQuestion(q.id)}>
-                      <Trash2 size={16} />
-                    </Button>
+                    <div className="flex flex-col gap-1">
+                      <div className="flex gap-1">
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          disabled={i === 0}
+                          onClick={() => moveQuestion(i, -1)}
+                        >
+                          <ChevronUp size={16} />
+                        </Button>
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          disabled={i === questions.length - 1}
+                          onClick={() => moveQuestion(i, 1)}
+                        >
+                          <ChevronDown size={16} />
+                        </Button>
+                        <Button size="icon" variant="ghost" onClick={() => deleteQuestion(q.id)}>
+                          <Trash2 size={16} />
+                        </Button>
+                      </div>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
