@@ -17,6 +17,13 @@ interface Question {
   answered_at: string | null;
 }
 
+interface ChatSummary {
+  id: string;
+  summary: string;
+  next_steps: string | null;
+  created_at: string;
+}
+
 export default function DossierDetailPage() {
   const params = useParams<{ project: string }>();
   const projectSlug = params.project;
@@ -24,6 +31,7 @@ export default function DossierDetailPage() {
   const [questions, setQuestions] = useState<Question[] | null>(null);
   const [newQuestion, setNewQuestion] = useState('');
   const [adding, setAdding] = useState(false);
+  const [summaries, setSummaries] = useState<ChatSummary[] | null>(null);
 
   const [email, setEmail] = useState('');
   const [sending, setSending] = useState(false);
@@ -35,6 +43,9 @@ export default function DossierDetailPage() {
     fetch(`/api/admin/dossiers/${projectSlug}/questions`)
       .then((res) => res.json())
       .then((data) => setQuestions(data.questions ?? []));
+    fetch(`/api/admin/dossiers/${projectSlug}/summaries`)
+      .then((res) => res.json())
+      .then((data) => setSummaries(data.summaries ?? []));
   }, [projectSlug]);
 
   useEffect(() => {
@@ -100,6 +111,28 @@ export default function DossierDetailPage() {
           het dossier.
         </p>
       </div>
+
+      {summaries && summaries.length > 0 && (
+        <div className="space-y-3">
+          <h2 className="font-semibold">Gespreksverslag van Iris</h2>
+          {summaries.map((s) => (
+            <Card key={s.id} className="border-amber-200 bg-amber-50">
+              <CardContent className="pt-6 space-y-2">
+                <p className="text-xs text-muted-foreground">
+                  {new Date(s.created_at).toLocaleString('nl-NL')}
+                </p>
+                <p className="text-sm">{s.summary}</p>
+                {s.next_steps && (
+                  <div className="text-sm">
+                    <span className="font-semibold">Voorgestelde vervolgstappen: </span>
+                    {s.next_steps}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      )}
 
       <Card>
         <CardContent className="pt-6 space-y-3">

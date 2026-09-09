@@ -67,6 +67,34 @@ async function createCrmPortalTables() {
     `;
     console.log('✅ Created index: idx_crm_magic_links_project');
 
+    await sql`
+      CREATE TABLE IF NOT EXISTS crm_chat_messages (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        project_slug TEXT NOT NULL REFERENCES crm_projects(slug) ON DELETE CASCADE,
+        role TEXT NOT NULL CHECK (role IN ('user', 'assistant')),
+        content TEXT NOT NULL,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )
+    `;
+    console.log('✅ Created table: crm_chat_messages');
+
+    await sql`
+      CREATE INDEX IF NOT EXISTS idx_crm_chat_messages_project
+      ON crm_chat_messages(project_slug, created_at)
+    `;
+    console.log('✅ Created index: idx_crm_chat_messages_project');
+
+    await sql`
+      CREATE TABLE IF NOT EXISTS crm_chat_summaries (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        project_slug TEXT NOT NULL REFERENCES crm_projects(slug) ON DELETE CASCADE,
+        summary TEXT NOT NULL,
+        next_steps TEXT,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )
+    `;
+    console.log('✅ Created table: crm_chat_summaries');
+
     console.log('\n✨ Done!');
   } catch (error) {
     console.error('❌ Failed:', error);

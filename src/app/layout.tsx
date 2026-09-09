@@ -1,12 +1,10 @@
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
-import { Navbar } from '@/components/layout/Navbar';
-import { Footer } from '@/components/layout/Footer';
-import { DigitalTwin } from '@/components/features/DigitalTwin';
+import { SiteChrome } from '@/components/layout/SiteChrome';
 import { Toaster } from '@/components/ui/sonner';
 import { GoogleAnalytics, PageViewTracker } from '@/components/analytics';
-import { CookieConsentProvider, CookieBanner } from '@/components/cookie-consent';
+import { CookieConsentProvider } from '@/components/cookie-consent';
 import { portfolioSameAs } from '@/lib/seo-kit';
 
 const geistSans = Geist({
@@ -179,12 +177,8 @@ export default function RootLayout({
         <CookieConsentProvider>
           <GoogleAnalytics />
           <PageViewTracker />
-          <Navbar />
-          <main>{children}</main>
-          <Footer />
-          <DigitalTwin />
+          <SiteChrome>{children}</SiteChrome>
           <Toaster />
-          <CookieBanner />
         </CookieConsentProvider>
       </body>
     </html>

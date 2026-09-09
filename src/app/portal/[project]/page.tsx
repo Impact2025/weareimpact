@@ -1,7 +1,7 @@
 import { cookies } from 'next/headers';
 import { sql } from '@/lib/db/neon';
 import { isValidPortalSessionToken, portalCookieName } from '@/lib/crm/portal-session';
-import QuestionsClient from './QuestionsClient';
+import ChatClient from './ChatClient';
 
 export const dynamic = 'force-dynamic';
 
@@ -53,10 +53,10 @@ export default async function PortalPage({
       <div style={styles.card}>
         <h1 style={styles.title}>{project.name}</h1>
         <p style={styles.text}>
-          Hieronder staan de vragen die voor jou openstaan. Beantwoord ze wanneer het jou uitkomt
-          — je hoeft niet alles in één keer te doen.
+          Iris loopt met je door een paar korte vragen. Antwoord gewoon in je eigen woorden — je
+          kunt dit venster altijd sluiten en later verdergaan.
         </p>
-        <QuestionsClient projectSlug={projectSlug} />
+        <ChatClient projectSlug={projectSlug} />
       </div>
     </main>
   );

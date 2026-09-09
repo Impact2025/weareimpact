@@ -40,3 +40,28 @@ CREATE TABLE IF NOT EXISTS crm_magic_links (
 
 CREATE INDEX IF NOT EXISTS idx_crm_magic_links_project
   ON crm_magic_links(project_slug);
+
+-- Chatgeschiedenis: de klant beantwoordt de vragen conversationeel met Iris.
+-- Elk project heeft in de praktijk één klant, dus scopen op project_slug
+-- alleen is voldoende voor v1.
+CREATE TABLE IF NOT EXISTS crm_chat_messages (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  project_slug TEXT NOT NULL REFERENCES crm_projects(slug) ON DELETE CASCADE,
+  role TEXT NOT NULL CHECK (role IN ('user', 'assistant')),
+  content TEXT NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_crm_chat_messages_project
+  ON crm_chat_messages(project_slug, created_at);
+
+-- Wordt gevuld zodra Iris alle vragen als afgerond beschouwt: een
+-- samenvatting + voorstel vervolgstappen voor Vincent, vóór hij ergens naar
+-- handelt (mens blijft in de loop op het punt dat het ertoe doet).
+CREATE TABLE IF NOT EXISTS crm_chat_summaries (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  project_slug TEXT NOT NULL REFERENCES crm_projects(slug) ON DELETE CASCADE,
+  summary TEXT NOT NULL,
+  next_steps TEXT,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
