@@ -27,12 +27,16 @@ CREATE TABLE IF NOT EXISTS crm_questions (
   -- tijdens het gesprek (doorvragen op de briefing of op het antwoord van de
   -- klant). Puur ter info in de admin-UI, verandert niets aan het gedrag.
   origin TEXT NOT NULL DEFAULT 'admin' CHECK (origin IN ('admin', 'iris')),
+  -- Wie deze vraag beantwoordt: de restaurant-klant, of de
+  -- opdrachtgever/projecteigenaar. Elke doelgroep heeft zijn eigen
+  -- vragenlijst, chat en magic link binnen hetzelfde project.
+  audience TEXT NOT NULL DEFAULT 'klant' CHECK (audience IN ('klant', 'opdrachtgever')),
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
 CREATE INDEX IF NOT EXISTS idx_crm_questions_project
-  ON crm_questions(project_slug, sort_order);
+  ON crm_questions(project_slug, audience, sort_order);
 
 -- Magic links zijn single-use en kortlevend. We slaan een hash van het
 -- token op, nooit het token zelf (zelfde principe als een wachtwoord-hash) —
@@ -40,6 +44,7 @@ CREATE INDEX IF NOT EXISTS idx_crm_questions_project
 CREATE TABLE IF NOT EXISTS crm_magic_links (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   project_slug TEXT NOT NULL REFERENCES crm_projects(slug) ON DELETE CASCADE,
+  audience TEXT NOT NULL DEFAULT 'klant' CHECK (audience IN ('klant', 'opdrachtgever')),
   email TEXT NOT NULL,
   token_hash TEXT NOT NULL UNIQUE,
   expires_at TIMESTAMPTZ NOT NULL,
@@ -56,13 +61,14 @@ CREATE INDEX IF NOT EXISTS idx_crm_magic_links_project
 CREATE TABLE IF NOT EXISTS crm_chat_messages (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   project_slug TEXT NOT NULL REFERENCES crm_projects(slug) ON DELETE CASCADE,
+  audience TEXT NOT NULL DEFAULT 'klant' CHECK (audience IN ('klant', 'opdrachtgever')),
   role TEXT NOT NULL CHECK (role IN ('user', 'assistant')),
   content TEXT NOT NULL,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
 CREATE INDEX IF NOT EXISTS idx_crm_chat_messages_project
-  ON crm_chat_messages(project_slug, created_at);
+  ON crm_chat_messages(project_slug, audience, created_at);
 
 -- Wordt gevuld zodra Iris alle vragen als afgerond beschouwt: een
 -- samenvatting + voorstel vervolgstappen voor Vincent, vóór hij ergens naar
@@ -70,6 +76,7 @@ CREATE INDEX IF NOT EXISTS idx_crm_chat_messages_project
 CREATE TABLE IF NOT EXISTS crm_chat_summaries (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   project_slug TEXT NOT NULL REFERENCES crm_projects(slug) ON DELETE CASCADE,
+  audience TEXT NOT NULL DEFAULT 'klant' CHECK (audience IN ('klant', 'opdrachtgever')),
   summary TEXT NOT NULL,
   next_steps TEXT,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()

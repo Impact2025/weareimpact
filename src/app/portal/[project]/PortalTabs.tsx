@@ -1,10 +1,11 @@
 'use client';
 
 import { useState } from 'react';
+import type { Audience } from '@/lib/crm/portal-session';
 import ChatClient from './ChatClient';
 import OverviewClient from './OverviewClient';
 
-export default function PortalTabs({ projectSlug }: { projectSlug: string }) {
+export default function PortalTabs({ projectSlug, audience }: { projectSlug: string; audience: Audience }) {
   const [tab, setTab] = useState<'chat' | 'overview'>('chat');
 
   return (
@@ -17,7 +18,11 @@ export default function PortalTabs({ projectSlug }: { projectSlug: string }) {
           Voortgang
         </button>
       </div>
-      {tab === 'chat' ? <ChatClient projectSlug={projectSlug} /> : <OverviewClient projectSlug={projectSlug} />}
+      {tab === 'chat' ? (
+        <ChatClient projectSlug={projectSlug} audience={audience} />
+      ) : (
+        <OverviewClient projectSlug={projectSlug} audience={audience} />
+      )}
     </div>
   );
 }

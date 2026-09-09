@@ -172,6 +172,16 @@ async function createCrmPortalTables() {
     `;
     console.log('✅ Added column: crm_questions.origin');
 
+    // Doelgroep: één project kan meerdere gesprekspartners hebben (bv. de
+    // restaurant-klant én de opdrachtgever/projecteigenaar), elk met een
+    // eigen vragenlijst, chat en magic link.
+    for (const table of ['crm_questions', 'crm_chat_messages', 'crm_chat_summaries', 'crm_magic_links']) {
+      await sql.query(`ALTER TABLE ${table} ADD COLUMN IF NOT EXISTS audience TEXT NOT NULL DEFAULT 'klant'`);
+      await sql.query(`ALTER TABLE ${table} DROP CONSTRAINT IF EXISTS ${table}_audience_check`);
+      await sql.query(`ALTER TABLE ${table} ADD CONSTRAINT ${table}_audience_check CHECK (audience IN ('klant', 'opdrachtgever'))`);
+      console.log(`✅ Added column: ${table}.audience`);
+    }
+
     console.log('\n✨ Done!');
   } catch (error) {
     console.error('❌ Failed:', error);

@@ -17,6 +17,13 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 
+type Audience = 'klant' | 'opdrachtgever';
+
+const AUDIENCE_LABELS: Record<Audience, string> = {
+  klant: 'Klant',
+  opdrachtgever: 'Opdrachtgever',
+};
+
 interface Question {
   id: string;
   question: string;
@@ -24,6 +31,7 @@ interface Question {
   client_answer: string | null;
   answered_at: string | null;
   origin: 'admin' | 'iris';
+  audience: Audience;
   sort_order: number;
 }
 
@@ -32,6 +40,7 @@ interface ChatSummary {
   summary: string;
   next_steps: string | null;
   created_at: string;
+  audience: Audience;
 }
 
 interface Milestone {
@@ -76,6 +85,8 @@ export default function DossierDetailPage() {
   const [newQuestion, setNewQuestion] = useState('');
   const [adding, setAdding] = useState(false);
   const [summaries, setSummaries] = useState<ChatSummary[] | null>(null);
+  const [audienceFilter, setAudienceFilter] = useState<Audience>('klant');
+  const [magicLinkAudience, setMagicLinkAudience] = useState<Audience>('klant');
 
   const [milestones, setMilestones] = useState<Milestone[] | null>(null);
   const [newMilestone, setNewMilestone] = useState('');
@@ -127,7 +138,7 @@ export default function DossierDetailPage() {
       await fetch(`/api/admin/dossiers/${projectSlug}/questions`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ question: newQuestion.trim() }),
+        body: JSON.stringify({ question: newQuestion.trim(), audience: audienceFilter }),
       });
       setNewQuestion('');
       load();
@@ -141,17 +152,11 @@ export default function DossierDetailPage() {
     load();
   }
 
-  async function moveQuestion(index: number, direction: -1 | 1) {
-    if (!questions) return;
+  async function moveQuestion(list: Question[], index: number, direction: -1 | 1) {
     const targetIndex = index + direction;
-    if (targetIndex < 0 || targetIndex >= questions.length) return;
-    const current = questions[index];
-    const target = questions[targetIndex];
-
-    const reordered = [...questions];
-    reordered[index] = target;
-    reordered[targetIndex] = current;
-    setQuestions(reordered);
+    if (targetIndex < 0 || targetIndex >= list.length) return;
+    const current = list[index];
+    const target = list[targetIndex];
 
     await Promise.all([
       fetch(`/api/admin/dossiers/${projectSlug}/questions/${current.id}`, {
@@ -193,7 +198,7 @@ export default function DossierDetailPage() {
       const res = await fetch(`/api/admin/dossiers/${projectSlug}/magic-link`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: email.trim() }),
+        body: JSON.stringify({ email: email.trim(), audience: magicLinkAudience }),
       });
       const data = await res.json();
       if (!res.ok) {
@@ -348,9 +353,18 @@ export default function DossierDetailPage() {
         <CardContent className="pt-6 space-y-3">
           <h2 className="font-semibold">Magic link versturen</h2>
           <div className="flex gap-2">
+            <Select value={magicLinkAudience} onValueChange={(v) => setMagicLinkAudience(v as Audience)}>
+              <SelectTrigger className="w-40">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="klant">Klant</SelectItem>
+                <SelectItem value="opdrachtgever">Opdrachtgever</SelectItem>
+              </SelectContent>
+            </Select>
             <Input
               type="email"
-              placeholder="klant@voorbeeld.nl"
+              placeholder="e-mailadres"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
@@ -359,6 +373,10 @@ export default function DossierDetailPage() {
               Versturen
             </Button>
           </div>
+          <p className="text-xs text-muted-foreground">
+            Kies de doelgroep vóórdat je verstuurt — dit bepaalt welke vragenlijst en welk gesprek
+            met Iris de ontvanger via de link te zien krijgt.
+          </p>
           {linkError && <p className="text-sm text-red-600">{linkError}</p>}
           {linkResult && (
             <div className="text-sm bg-green-50 border border-green-200 rounded p-3 flex items-center justify-between gap-2">
@@ -519,9 +537,11 @@ export default function DossierDetailPage() {
         </TabsContent>
 
         <TabsContent value="vragen" className="space-y-4 mt-4">
+          <AudienceToggle value={audienceFilter} onChange={setAudienceFilter} />
+
           <Card>
             <CardContent className="pt-6 space-y-3">
-              <h2 className="font-semibold">Nieuwe vraag toevoegen</h2>
+              <h2 className="font-semibold">Nieuwe vraag toevoegen ({AUDIENCE_LABELS[audienceFilter]})</h2>
               <div className="flex gap-2">
                 <Textarea
                   placeholder="Vraag voor de klant…"
@@ -539,62 +559,67 @@ export default function DossierDetailPage() {
           {questions === null ? (
             <Loader2 className="animate-spin" />
           ) : (
-            questions.map((q, i) => (
-              <Card key={q.id}>
-                <CardContent className="pt-6">
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="flex-1">
-                      <p className="font-medium">
-                        {q.question}
-                        {q.origin === 'iris' && (
-                          <Badge variant="secondary" className="ml-2 align-middle text-xs">
-                            door Iris gesteld
+            (() => {
+              const filtered = questions.filter((q) => q.audience === audienceFilter);
+              return filtered.map((q, i) => (
+                <Card key={q.id}>
+                  <CardContent className="pt-6">
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="flex-1">
+                        <p className="font-medium">
+                          {q.question}
+                          {q.origin === 'iris' && (
+                            <Badge variant="secondary" className="ml-2 align-middle text-xs">
+                              door Iris gesteld
+                            </Badge>
+                          )}
+                        </p>
+                        {q.status === 'answered' ? (
+                          <div className="mt-2 text-sm bg-green-50 border border-green-200 rounded p-2">
+                            {q.client_answer}
+                          </div>
+                        ) : (
+                          <Badge variant="outline" className="mt-2">
+                            open
                           </Badge>
                         )}
-                      </p>
-                      {q.status === 'answered' ? (
-                        <div className="mt-2 text-sm bg-green-50 border border-green-200 rounded p-2">
-                          {q.client_answer}
+                      </div>
+                      <div className="flex flex-col gap-1">
+                        <div className="flex gap-1">
+                          <Button
+                            size="icon"
+                            variant="ghost"
+                            disabled={i === 0}
+                            onClick={() => moveQuestion(filtered, i, -1)}
+                          >
+                            <ChevronUp size={16} />
+                          </Button>
+                          <Button
+                            size="icon"
+                            variant="ghost"
+                            disabled={i === filtered.length - 1}
+                            onClick={() => moveQuestion(filtered, i, 1)}
+                          >
+                            <ChevronDown size={16} />
+                          </Button>
+                          <Button size="icon" variant="ghost" onClick={() => deleteQuestion(q.id)}>
+                            <Trash2 size={16} />
+                          </Button>
                         </div>
-                      ) : (
-                        <Badge variant="outline" className="mt-2">
-                          open
-                        </Badge>
-                      )}
-                    </div>
-                    <div className="flex flex-col gap-1">
-                      <div className="flex gap-1">
-                        <Button
-                          size="icon"
-                          variant="ghost"
-                          disabled={i === 0}
-                          onClick={() => moveQuestion(i, -1)}
-                        >
-                          <ChevronUp size={16} />
-                        </Button>
-                        <Button
-                          size="icon"
-                          variant="ghost"
-                          disabled={i === questions.length - 1}
-                          onClick={() => moveQuestion(i, 1)}
-                        >
-                          <ChevronDown size={16} />
-                        </Button>
-                        <Button size="icon" variant="ghost" onClick={() => deleteQuestion(q.id)}>
-                          <Trash2 size={16} />
-                        </Button>
                       </div>
                     </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))
+                  </CardContent>
+                </Card>
+              ));
+            })()
           )}
         </TabsContent>
 
         <TabsContent value="gesprekken" className="space-y-3 mt-4">
-          {summaries && summaries.length > 0 ? (
-            summaries.map((s) => (
+          <AudienceToggle value={audienceFilter} onChange={setAudienceFilter} />
+
+          {summaries && summaries.filter((s) => s.audience === audienceFilter).length > 0 ? (
+            summaries.filter((s) => s.audience === audienceFilter).map((s) => (
               <Card key={s.id} className="border-amber-200 bg-amber-50">
                 <CardContent className="pt-6 space-y-2">
                   <p className="text-xs text-muted-foreground">
@@ -615,6 +640,18 @@ export default function DossierDetailPage() {
           )}
         </TabsContent>
       </Tabs>
+    </div>
+  );
+}
+
+function AudienceToggle({ value, onChange }: { value: Audience; onChange: (a: Audience) => void }) {
+  return (
+    <div className="flex gap-2">
+      {(['klant', 'opdrachtgever'] as const).map((a) => (
+        <Button key={a} size="sm" variant={value === a ? 'default' : 'outline'} onClick={() => onChange(a)}>
+          {AUDIENCE_LABELS[a]}
+        </Button>
+      ))}
     </div>
   );
 }

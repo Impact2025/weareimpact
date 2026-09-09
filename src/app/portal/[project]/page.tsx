@@ -1,6 +1,6 @@
 import { cookies } from 'next/headers';
 import { sql } from '@/lib/db/neon';
-import { isValidPortalSessionToken, portalCookieName } from '@/lib/crm/portal-session';
+import { resolvePortalAudience } from '@/lib/crm/portal-session';
 import PortalTabs from './PortalTabs';
 
 export const dynamic = 'force-dynamic';
@@ -16,10 +16,9 @@ export default async function PortalPage({
   const { error } = await searchParams;
 
   const store = await cookies();
-  const token = store.get(portalCookieName(projectSlug))?.value;
-  const authenticated = await isValidPortalSessionToken(token, projectSlug);
+  const audience = await resolvePortalAudience(projectSlug, (name) => store.get(name)?.value);
 
-  if (!authenticated) {
+  if (!audience) {
     return (
       <main style={styles.page}>
         <div style={styles.card}>
@@ -57,7 +56,7 @@ export default async function PortalPage({
           uitgebreid — hoe meer je deelt, hoe beter we je kunnen helpen. Je kunt dit venster
           altijd sluiten en later verdergaan.
         </p>
-        <PortalTabs projectSlug={projectSlug} />
+        <PortalTabs projectSlug={projectSlug} audience={audience} />
       </div>
     </main>
   );

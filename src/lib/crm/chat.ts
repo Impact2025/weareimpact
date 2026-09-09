@@ -1,5 +1,6 @@
 import type { ChatCompletionTool } from 'openai/resources/chat/completions';
 import { sql } from '@/lib/db/neon';
+import type { Audience } from '@/lib/crm/portal-session';
 
 export interface DossierQuestion {
   id: string;
@@ -8,10 +9,16 @@ export interface DossierQuestion {
   client_answer: string | null;
 }
 
+const AUDIENCE_LABEL: Record<Audience, string> = {
+  klant: 'een klant',
+  opdrachtgever: 'de opdrachtgever/projecteigenaar',
+};
+
 export function buildChatSystemPrompt(
   projectName: string,
   questions: DossierQuestion[],
-  intakeNotes?: string | null,
+  intakeNotes: string | null | undefined,
+  audience: Audience,
 ): string {
   const list = questions
     .map(
@@ -26,7 +33,7 @@ zien wat al bekend is, en vooral om te zien waar het nog vaag of onvolledig is. 
 de plekken waar jij bij de klant zelf op door moet vragen):\n${intakeNotes.trim()}\n`
     : '';
 
-  return `Je bent Iris, de AI-assistent van WeAreImpact. Je voert dit gesprek NAMENS WeAreImpact met een klant (niet met Vincent zelf) om input op te halen voor het project "${projectName}".
+  return `Je bent Iris, de AI-assistent van WeAreImpact. Je voert dit gesprek NAMENS WeAreImpact met ${AUDIENCE_LABEL[audience]} (niet met Vincent zelf) om input op te halen voor het project "${projectName}".
 ${briefing}
 VRAGENLIJST (loop deze in deze volgorde af, sla niets over):
 ${list}
@@ -136,6 +143,7 @@ export const crmChatTools: ChatCompletionTool[] = [
 
 export async function executeCrmChatTool(
   projectSlug: string,
+  audience: Audience,
   name: string,
   args: Record<string, unknown>,
 ): Promise<string> {
@@ -147,7 +155,7 @@ export async function executeCrmChatTool(
       const result = await sql`
         UPDATE crm_questions
         SET client_answer = ${answer}, status = 'answered', answered_at = NOW(), updated_at = NOW()
-        WHERE id = ${questionId} AND project_slug = ${projectSlug}
+        WHERE id = ${questionId} AND project_slug = ${projectSlug} AND audience = ${audience}
         RETURNING id
       `;
       return result.length > 0
@@ -163,13 +171,14 @@ export async function executeCrmChatTool(
     if (!question || !answer) return 'Fout: question en answer zijn verplicht.';
 
     const maxRows = await sql`
-      SELECT COALESCE(MAX(sort_order), -1) AS max_sort FROM crm_questions WHERE project_slug = ${projectSlug}
+      SELECT COALESCE(MAX(sort_order), -1) AS max_sort FROM crm_questions
+      WHERE project_slug = ${projectSlug} AND audience = ${audience}
     `;
     const nextSort = (maxRows[0]?.max_sort ?? -1) + 1;
 
     await sql`
-      INSERT INTO crm_questions (project_slug, question, status, client_answer, answered_at, sort_order, origin)
-      VALUES (${projectSlug}, ${question}, 'answered', ${answer}, NOW(), ${nextSort}, 'iris')
+      INSERT INTO crm_questions (project_slug, audience, question, status, client_answer, answered_at, sort_order, origin)
+      VALUES (${projectSlug}, ${audience}, ${question}, 'answered', ${answer}, NOW(), ${nextSort}, 'iris')
     `;
     return 'Extra vraag en antwoord opgeslagen.';
   }
@@ -179,17 +188,18 @@ export async function executeCrmChatTool(
     if (!summary) return 'Fout: summary is verplicht.';
 
     await sql`
-      INSERT INTO crm_chat_summaries (project_slug, summary, next_steps)
-      VALUES (${projectSlug}, ${summary}, ${nextSteps ?? null})
+      INSERT INTO crm_chat_summaries (project_slug, audience, summary, next_steps)
+      VALUES (${projectSlug}, ${audience}, ${summary}, ${nextSteps ?? null})
     `;
 
     if (nextSteps) {
       // Landt intern (client_visible = false) op het actie-dashboard, zodat
       // Vincent gespreksuitkomsten niet los in een tekstblok hoeft te lezen
       // maar meteen als actiepunt tussen de rest van het projectoverzicht ziet.
+      const audienceLabel = audience === 'klant' ? 'klant' : 'opdrachtgever';
       await sql`
         INSERT INTO crm_actions (project_slug, title, owner, source)
-        VALUES (${projectSlug}, ${`Vervolgstap uit gesprek met klant: ${nextSteps}`}, 'vincent', 'chat_summary')
+        VALUES (${projectSlug}, ${`Vervolgstap uit gesprek met ${audienceLabel}: ${nextSteps}`}, 'vincent', 'chat_summary')
       `;
     }
 

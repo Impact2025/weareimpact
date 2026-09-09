@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import type { ChatCompletionMessageParam } from 'openai/resources/chat/completions';
 import { sql } from '@/lib/db/neon';
-import { isValidPortalSessionToken, portalCookieName } from '@/lib/crm/portal-session';
+import { isValidPortalSessionToken, portalCookieName, isAudience, type Audience } from '@/lib/crm/portal-session';
 import { getOpenRouter, DEFAULT_MODELS } from '@/lib/ai/openrouter';
 import { buildChatSystemPrompt, crmChatTools, executeCrmChatTool, type DossierQuestion } from '@/lib/crm/chat';
 
@@ -11,29 +11,29 @@ export const runtime = 'nodejs';
 
 const MAX_TOOL_ROUNDS = 6;
 
-async function requireProjectSession(projectSlug: string): Promise<boolean> {
+async function requireProjectSession(projectSlug: string, audience: Audience): Promise<boolean> {
   const store = await cookies();
-  const token = store.get(portalCookieName(projectSlug))?.value;
-  return isValidPortalSessionToken(token, projectSlug);
+  const token = store.get(portalCookieName(projectSlug, audience))?.value;
+  return isValidPortalSessionToken(token, projectSlug, audience);
 }
 
 export async function GET(
   _request: NextRequest,
-  { params }: { params: Promise<{ project: string }> },
+  { params }: { params: Promise<{ project: string; audience: string }> },
 ) {
-  const { project: projectSlug } = await params;
-  if (!(await requireProjectSession(projectSlug))) {
+  const { project: projectSlug, audience } = await params;
+  if (!isAudience(audience) || !(await requireProjectSession(projectSlug, audience))) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
   const messages = await sql`
     SELECT role, content, created_at
     FROM crm_chat_messages
-    WHERE project_slug = ${projectSlug}
+    WHERE project_slug = ${projectSlug} AND audience = ${audience}
     ORDER BY created_at ASC
   `;
   const summary = await sql`
-    SELECT id FROM crm_chat_summaries WHERE project_slug = ${projectSlug} LIMIT 1
+    SELECT id FROM crm_chat_summaries WHERE project_slug = ${projectSlug} AND audience = ${audience} LIMIT 1
   `;
 
   return NextResponse.json({ messages, finished: summary.length > 0 });
@@ -41,10 +41,10 @@ export async function GET(
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: Promise<{ project: string }> },
+  { params }: { params: Promise<{ project: string; audience: string }> },
 ) {
-  const { project: projectSlug } = await params;
-  if (!(await requireProjectSession(projectSlug))) {
+  const { project: projectSlug, audience } = await params;
+  if (!isAudience(audience) || !(await requireProjectSession(projectSlug, audience))) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
@@ -59,7 +59,7 @@ export async function POST(
   const questionRows = await sql`
     SELECT id, question, status, client_answer
     FROM crm_questions
-    WHERE project_slug = ${projectSlug}
+    WHERE project_slug = ${projectSlug} AND audience = ${audience}
     ORDER BY sort_order ASC, created_at ASC
   `;
   const questions = questionRows as unknown as DossierQuestion[];
@@ -67,21 +67,21 @@ export async function POST(
   const historyRows = await sql`
     SELECT role, content
     FROM crm_chat_messages
-    WHERE project_slug = ${projectSlug}
+    WHERE project_slug = ${projectSlug} AND audience = ${audience}
     ORDER BY created_at ASC
   `;
 
   if (message && typeof message === 'string' && message.trim()) {
     await sql`
-      INSERT INTO crm_chat_messages (project_slug, role, content)
-      VALUES (${projectSlug}, 'user', ${message.trim()})
+      INSERT INTO crm_chat_messages (project_slug, audience, role, content)
+      VALUES (${projectSlug}, ${audience}, 'user', ${message.trim()})
     `;
   }
 
   try {
     const client = getOpenRouter();
     const convo: ChatCompletionMessageParam[] = [
-      { role: 'system', content: buildChatSystemPrompt(project.name, questions, project.intake_notes) },
+      { role: 'system', content: buildChatSystemPrompt(project.name, questions, project.intake_notes, audience) },
       ...historyRows.map((m) => ({ role: m.role as 'user' | 'assistant', content: m.content })),
       ...(message && typeof message === 'string' && message.trim()
         ? [{ role: 'user' as const, content: message.trim() }]
@@ -117,7 +117,7 @@ export async function POST(
         } catch {
           args = {};
         }
-        const result = await executeCrmChatTool(projectSlug, tc.function.name, args);
+        const result = await executeCrmChatTool(projectSlug, audience, tc.function.name, args);
         convo.push({ role: 'tool', tool_call_id: tc.id, content: result });
       }
     }
@@ -133,12 +133,12 @@ export async function POST(
     }
 
     await sql`
-      INSERT INTO crm_chat_messages (project_slug, role, content)
-      VALUES (${projectSlug}, 'assistant', ${finalContent})
+      INSERT INTO crm_chat_messages (project_slug, audience, role, content)
+      VALUES (${projectSlug}, ${audience}, 'assistant', ${finalContent})
     `;
 
     const summary = await sql`
-      SELECT id FROM crm_chat_summaries WHERE project_slug = ${projectSlug} LIMIT 1
+      SELECT id FROM crm_chat_summaries WHERE project_slug = ${projectSlug} AND audience = ${audience} LIMIT 1
     `;
 
     return NextResponse.json({ reply: finalContent, finished: summary.length > 0 });

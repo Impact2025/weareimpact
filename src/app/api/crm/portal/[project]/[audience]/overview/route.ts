@@ -1,22 +1,28 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { sql } from '@/lib/db/neon';
-import { isValidPortalSessionToken, portalCookieName } from '@/lib/crm/portal-session';
+import { isValidPortalSessionToken, portalCookieName, isAudience } from '@/lib/crm/portal-session';
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
 
 export async function GET(
   _request: NextRequest,
-  { params }: { params: Promise<{ project: string }> },
+  { params }: { params: Promise<{ project: string; audience: string }> },
 ) {
-  const { project: projectSlug } = await params;
+  const { project: projectSlug, audience } = await params;
+  if (!isAudience(audience)) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
   const store = await cookies();
-  const token = store.get(portalCookieName(projectSlug))?.value;
-  if (!(await isValidPortalSessionToken(token, projectSlug))) {
+  const token = store.get(portalCookieName(projectSlug, audience))?.value;
+  if (!(await isValidPortalSessionToken(token, projectSlug, audience))) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
+  // Het projectoverzicht (mijlpalen/afspraken/actiepunten) is project-breed,
+  // niet per doelgroep — beide doelgroepen zien dezelfde gedeelde, expliciet
+  // client_visible-gemaakte voortgang.
   const [milestones, agreements, actions] = await Promise.all([
     sql`
       SELECT id, title, description, status, due_date

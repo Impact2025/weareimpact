@@ -24,9 +24,9 @@ export async function GET(
     return NextResponse.redirect(errorUrl);
   }
 
-  const sessionToken = await createPortalSessionToken(projectSlug);
+  const sessionToken = await createPortalSessionToken(projectSlug, result.audience);
   const response = NextResponse.redirect(new URL(`/portal/${projectSlug}`, request.url));
-  response.cookies.set(portalCookieName(projectSlug), sessionToken, {
+  response.cookies.set(portalCookieName(projectSlug, result.audience), sessionToken, {
     httpOnly: true,
     secure: true,
     sameSite: 'lax',

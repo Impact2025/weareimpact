@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import type { Audience } from '@/lib/crm/portal-session';
 
 interface Milestone {
   id: string;
@@ -31,7 +32,7 @@ const STATUS_LABELS: Record<Milestone['status'], string> = {
   done: 'Klaar',
 };
 
-export default function OverviewClient({ projectSlug }: { projectSlug: string }) {
+export default function OverviewClient({ projectSlug, audience }: { projectSlug: string; audience: Audience }) {
   const [data, setData] = useState<{
     milestones: Milestone[];
     agreements: Agreement[];
@@ -39,10 +40,10 @@ export default function OverviewClient({ projectSlug }: { projectSlug: string })
   } | null>(null);
 
   useEffect(() => {
-    fetch(`/api/crm/portal/${projectSlug}/overview`)
+    fetch(`/api/crm/portal/${projectSlug}/${audience}/overview`)
       .then((res) => res.json())
       .then(setData);
-  }, [projectSlug]);
+  }, [projectSlug, audience]);
 
   if (!data) {
     return <p style={{ color: '#666' }}>Bezig met laden…</p>;

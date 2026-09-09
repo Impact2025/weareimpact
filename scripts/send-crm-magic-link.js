@@ -1,4 +1,4 @@
-// Gebruik: node scripts/send-crm-magic-link.js <project-slug> <email>
+// Gebruik: node scripts/send-crm-magic-link.js <project-slug> <email> [klant|opdrachtgever]
 const { neon } = require('@neondatabase/serverless');
 const { Resend } = require('resend');
 const crypto = require('crypto');
@@ -14,10 +14,11 @@ envContent.split('\n').forEach((line) => {
   }
 });
 
-const [projectSlug, email] = process.argv.slice(2);
+const [projectSlug, email, audienceArg] = process.argv.slice(2);
+const audience = audienceArg === 'opdrachtgever' ? 'opdrachtgever' : 'klant';
 
 if (!projectSlug || !email) {
-  console.error('Gebruik: node scripts/send-crm-magic-link.js <project-slug> <email>');
+  console.error('Gebruik: node scripts/send-crm-magic-link.js <project-slug> <email> [klant|opdrachtgever]');
   process.exit(1);
 }
 
@@ -36,8 +37,8 @@ async function main() {
   const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
 
   await sql`
-    INSERT INTO crm_magic_links (project_slug, email, token_hash, expires_at)
-    VALUES (${projectSlug}, ${email}, ${tokenHash}, ${expiresAt.toISOString()})
+    INSERT INTO crm_magic_links (project_slug, audience, email, token_hash, expires_at)
+    VALUES (${projectSlug}, ${audience}, ${email}, ${tokenHash}, ${expiresAt.toISOString()})
   `;
 
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.weareimpact.nl';

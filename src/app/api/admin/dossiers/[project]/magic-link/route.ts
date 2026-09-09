@@ -13,14 +13,15 @@ export async function POST(
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
   const { project: projectSlug } = await params;
-  const { email } = await request.json();
+  const { email, audience } = await request.json();
 
   if (!email) {
     return NextResponse.json({ error: 'email is verplicht' }, { status: 400 });
   }
+  const resolvedAudience = audience === 'opdrachtgever' ? 'opdrachtgever' : 'klant';
 
   try {
-    const result = await createAndSendMagicLink(projectSlug, email);
+    const result = await createAndSendMagicLink(projectSlug, resolvedAudience, email);
     return NextResponse.json({ success: true, url: result.url, expiresAt: result.expiresAt });
   } catch (error) {
     console.error('Failed to create magic link:', error);

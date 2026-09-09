@@ -1,13 +1,14 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import type { Audience } from '@/lib/crm/portal-session';
 
 interface Message {
   role: 'user' | 'assistant';
   content: string;
 }
 
-export default function ChatClient({ projectSlug }: { projectSlug: string }) {
+export default function ChatClient({ projectSlug, audience }: { projectSlug: string; audience: Audience }) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(true);
@@ -17,7 +18,7 @@ export default function ChatClient({ projectSlug }: { projectSlug: string }) {
 
   useEffect(() => {
     async function init() {
-      const res = await fetch(`/api/crm/portal/${projectSlug}/chat`);
+      const res = await fetch(`/api/crm/portal/${projectSlug}/${audience}/chat`);
       const data = await res.json();
       const history: Message[] = (data.messages ?? []).map((m: { role: string; content: string }) => ({
         role: m.role,
@@ -27,7 +28,7 @@ export default function ChatClient({ projectSlug }: { projectSlug: string }) {
 
       if (history.length === 0) {
         // Eerste bezoek: laat Iris zelf het gesprek openen.
-        const openRes = await fetch(`/api/crm/portal/${projectSlug}/chat`, {
+        const openRes = await fetch(`/api/crm/portal/${projectSlug}/${audience}/chat`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ message: '' }),
@@ -41,7 +42,7 @@ export default function ChatClient({ projectSlug }: { projectSlug: string }) {
       setLoading(false);
     }
     init();
-  }, [projectSlug]);
+  }, [projectSlug, audience]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -54,7 +55,7 @@ export default function ChatClient({ projectSlug }: { projectSlug: string }) {
     setMessages((prev) => [...prev, { role: 'user', content: text }]);
     setSending(true);
     try {
-      const res = await fetch(`/api/crm/portal/${projectSlug}/chat`, {
+      const res = await fetch(`/api/crm/portal/${projectSlug}/${audience}/chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message: text }),

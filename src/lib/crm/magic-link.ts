@@ -1,5 +1,6 @@
 import { sql } from '@/lib/db/neon';
 import { sendEmail } from '@/lib/email/send';
+import type { Audience } from '@/lib/crm/portal-session';
 
 const LINK_MAX_AGE_MS = 7 * 24 * 60 * 60 * 1000; // 7 dagen om de link te gebruiken
 
@@ -19,12 +20,16 @@ export interface CreateMagicLinkResult {
 }
 
 /**
- * Maakt een single-use magic link voor één project + e-mailadres, en
- * verstuurt die. Het ruwe token bestaat alleen in deze functie en de
- * verzonden e-mail — in de database staat uitsluitend de hash.
+ * Maakt een single-use magic link voor één project + doelgroep + e-mailadres,
+ * en verstuurt die. Het ruwe token bestaat alleen in deze functie en de
+ * verzonden e-mail — in de database staat uitsluitend de hash. De URL is voor
+ * elke doelgroep identiek (het token zelf bepaalt, via de database, voor welke
+ * doelgroep de sessie straks geldt) — er zit dus geen doelgroep-informatie in
+ * de link die je zou kunnen aanpassen.
  */
 export async function createAndSendMagicLink(
   projectSlug: string,
+  audience: Audience,
   email: string,
 ): Promise<CreateMagicLinkResult> {
   const token = randomToken();
@@ -32,8 +37,8 @@ export async function createAndSendMagicLink(
   const expiresAt = new Date(Date.now() + LINK_MAX_AGE_MS);
 
   await sql`
-    INSERT INTO crm_magic_links (project_slug, email, token_hash, expires_at)
-    VALUES (${projectSlug}, ${email}, ${tokenHash}, ${expiresAt.toISOString()})
+    INSERT INTO crm_magic_links (project_slug, audience, email, token_hash, expires_at)
+    VALUES (${projectSlug}, ${audience}, ${email}, ${tokenHash}, ${expiresAt.toISOString()})
   `;
 
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.weareimpact.nl';
@@ -60,11 +65,12 @@ export async function createAndSendMagicLink(
 
 export interface VerifiedMagicLink {
   projectSlug: string;
+  audience: Audience;
 }
 
 /**
- * Valideert en verbruikt een magic-linktoken (single-use). Geeft het
- * project terug waarvoor het gold, of null als het token ongeldig,
+ * Valideert en verbruikt een magic-linktoken (single-use). Geeft het project
+ * + de doelgroep terug waarvoor het gold, of null als het token ongeldig,
  * verlopen, of al gebruikt is.
  */
 export async function consumeMagicLinkToken(
@@ -74,7 +80,7 @@ export async function consumeMagicLinkToken(
   const tokenHash = await sha256Hex(token);
 
   const rows = await sql`
-    SELECT id, project_slug, expires_at, used_at
+    SELECT id, project_slug, audience, expires_at, used_at
     FROM crm_magic_links
     WHERE token_hash = ${tokenHash} AND project_slug = ${projectSlug}
   `;
@@ -85,5 +91,5 @@ export async function consumeMagicLinkToken(
 
   await sql`UPDATE crm_magic_links SET used_at = NOW() WHERE id = ${row.id}`;
 
-  return { projectSlug: row.project_slug };
+  return { projectSlug: row.project_slug, audience: row.audience as Audience };
 }
