@@ -30,6 +30,7 @@ import {
   AlertTriangle,
   ClipboardList,
   Rocket,
+  FolderOpen,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import IrisVoiceButton from '@/components/admin/IrisVoiceButton';
@@ -50,6 +51,7 @@ const sidebarItems: SidebarItem[] = [
   { label: 'Dashboard', href: '/admin', icon: LayoutDashboard },
   { label: 'Agenda', href: '/admin/agenda', icon: Calendar },
   { label: 'Sprint Sessies', href: '/admin/sprint', icon: Rocket },
+  { label: 'Klantdossiers', href: '/admin/dossiers', icon: FolderOpen },
   {
     label: 'CRM',
     href: '/admin/crm',
