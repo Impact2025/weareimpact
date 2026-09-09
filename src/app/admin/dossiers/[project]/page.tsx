@@ -23,6 +23,7 @@ interface Question {
   status: 'open' | 'answered';
   client_answer: string | null;
   answered_at: string | null;
+  origin: 'admin' | 'iris';
 }
 
 interface ChatSummary {
@@ -89,7 +90,14 @@ export default function DossierDetailPage() {
   const [linkError, setLinkError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
 
+  const [intakeNotes, setIntakeNotes] = useState('');
+  const [savingNotes, setSavingNotes] = useState(false);
+  const [notesSaved, setNotesSaved] = useState(false);
+
   const load = useCallback(() => {
+    fetch(`/api/admin/dossiers/${projectSlug}`)
+      .then((res) => res.json())
+      .then((data) => setIntakeNotes(data.project?.intake_notes ?? ''));
     fetch(`/api/admin/dossiers/${projectSlug}/questions`)
       .then((res) => res.json())
       .then((data) => setQuestions(data.questions ?? []));
@@ -130,6 +138,22 @@ export default function DossierDetailPage() {
   async function deleteQuestion(id: string) {
     await fetch(`/api/admin/dossiers/${projectSlug}/questions/${id}`, { method: 'DELETE' });
     load();
+  }
+
+  async function saveIntakeNotes() {
+    setSavingNotes(true);
+    setNotesSaved(false);
+    try {
+      await fetch(`/api/admin/dossiers/${projectSlug}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ intakeNotes }),
+      });
+      setNotesSaved(true);
+      setTimeout(() => setNotesSaved(false), 2000);
+    } finally {
+      setSavingNotes(false);
+    }
   }
 
   async function sendMagicLink() {
@@ -268,6 +292,29 @@ export default function DossierDetailPage() {
           intern (verborgen) — jij kiest wat gedeeld wordt.
         </p>
       </div>
+
+      <Card>
+        <CardContent className="pt-6 space-y-3">
+          <h2 className="font-semibold">Briefing (verslag intakegesprek)</h2>
+          <p className="text-sm text-muted-foreground">
+            Wat je hier zet, gebruikt Iris als achtergrond in het klantgesprek — ze ziet zo wat al
+            bekend is en weet waar ze zelf gericht op door moet vragen, naast de vaste vragenlijst.
+          </p>
+          <Textarea
+            placeholder="Samenvatting van je eigen gesprek met de klant…"
+            value={intakeNotes}
+            onChange={(e) => setIntakeNotes(e.target.value)}
+            rows={5}
+          />
+          <div className="flex items-center gap-2">
+            <Button onClick={saveIntakeNotes} disabled={savingNotes}>
+              {savingNotes ? <Loader2 size={16} className="animate-spin mr-1" /> : null}
+              Opslaan
+            </Button>
+            {notesSaved && <span className="text-sm text-green-700">Opgeslagen</span>}
+          </div>
+        </CardContent>
+      </Card>
 
       <Card>
         <CardContent className="pt-6 space-y-3">
@@ -469,7 +516,14 @@ export default function DossierDetailPage() {
                 <CardContent className="pt-6">
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex-1">
-                      <p className="font-medium">{q.question}</p>
+                      <p className="font-medium">
+                        {q.question}
+                        {q.origin === 'iris' && (
+                          <Badge variant="secondary" className="ml-2 align-middle text-xs">
+                            door Iris gesteld
+                          </Badge>
+                        )}
+                      </p>
                       {q.status === 'answered' ? (
                         <div className="mt-2 text-sm bg-green-50 border border-green-200 rounded p-2">
                           {q.client_answer}

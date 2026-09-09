@@ -159,6 +159,19 @@ async function createCrmPortalTables() {
     `;
     console.log('✅ Created index: idx_crm_actions_project');
 
+    await sql`ALTER TABLE crm_projects ADD COLUMN IF NOT EXISTS intake_notes TEXT`;
+    console.log('✅ Added column: crm_projects.intake_notes');
+
+    await sql`ALTER TABLE crm_questions ADD COLUMN IF NOT EXISTS origin TEXT NOT NULL DEFAULT 'admin'`;
+    await sql`
+      ALTER TABLE crm_questions DROP CONSTRAINT IF EXISTS crm_questions_origin_check
+    `;
+    await sql`
+      ALTER TABLE crm_questions ADD CONSTRAINT crm_questions_origin_check
+      CHECK (origin IN ('admin', 'iris'))
+    `;
+    console.log('✅ Added column: crm_questions.origin');
+
     console.log('\n✨ Done!');
   } catch (error) {
     console.error('❌ Failed:', error);

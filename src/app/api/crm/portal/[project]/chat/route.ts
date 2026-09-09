@@ -50,7 +50,7 @@ export async function POST(
 
   const { message } = await request.json();
 
-  const projectRows = await sql`SELECT name FROM crm_projects WHERE slug = ${projectSlug}`;
+  const projectRows = await sql`SELECT name, intake_notes FROM crm_projects WHERE slug = ${projectSlug}`;
   const project = projectRows[0];
   if (!project) {
     return NextResponse.json({ error: 'Project niet gevonden' }, { status: 404 });
@@ -81,7 +81,7 @@ export async function POST(
   try {
     const client = getOpenRouter();
     const convo: ChatCompletionMessageParam[] = [
-      { role: 'system', content: buildChatSystemPrompt(project.name, questions) },
+      { role: 'system', content: buildChatSystemPrompt(project.name, questions, project.intake_notes) },
       ...historyRows.map((m) => ({ role: m.role as 'user' | 'assistant', content: m.content })),
       ...(message && typeof message === 'string' && message.trim()
         ? [{ role: 'user' as const, content: message.trim() }]

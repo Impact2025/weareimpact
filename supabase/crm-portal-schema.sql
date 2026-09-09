@@ -7,6 +7,11 @@ CREATE TABLE IF NOT EXISTS crm_projects (
   slug TEXT PRIMARY KEY,
   name TEXT NOT NULL,
   client_name TEXT,
+  -- Verslag van Vincent's eigen intakegesprek met de klant (los van het
+  -- doorbraak-sprint-formulier). Iris gebruikt dit als briefing om te zien
+  -- wat al bekend is en waar ze bij de klant zelf nog scherper op door moet
+  -- vragen, in plaats van alleen de vaste vragenlijst af te werken.
+  intake_notes TEXT,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
@@ -18,6 +23,10 @@ CREATE TABLE IF NOT EXISTS crm_questions (
   client_answer TEXT,
   answered_at TIMESTAMPTZ,
   sort_order INTEGER NOT NULL DEFAULT 0,
+  -- 'admin' = door Vincent vooraf ingevoerd, 'iris' = zelf bedacht door Iris
+  -- tijdens het gesprek (doorvragen op de briefing of op het antwoord van de
+  -- klant). Puur ter info in de admin-UI, verandert niets aan het gedrag.
+  origin TEXT NOT NULL DEFAULT 'admin' CHECK (origin IN ('admin', 'iris')),
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
