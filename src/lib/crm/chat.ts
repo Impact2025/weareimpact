@@ -116,6 +116,17 @@ export async function executeCrmChatTool(
       INSERT INTO crm_chat_summaries (project_slug, summary, next_steps)
       VALUES (${projectSlug}, ${summary}, ${nextSteps ?? null})
     `;
+
+    if (nextSteps) {
+      // Landt intern (client_visible = false) op het actie-dashboard, zodat
+      // Vincent gespreksuitkomsten niet los in een tekstblok hoeft te lezen
+      // maar meteen als actiepunt tussen de rest van het projectoverzicht ziet.
+      await sql`
+        INSERT INTO crm_actions (project_slug, title, owner, source)
+        VALUES (${projectSlug}, ${`Vervolgstap uit gesprek met klant: ${nextSteps}`}, 'vincent', 'chat_summary')
+      `;
+    }
+
     return 'Samenvatting opgeslagen. Gesprek mag afgerond worden.';
   }
 

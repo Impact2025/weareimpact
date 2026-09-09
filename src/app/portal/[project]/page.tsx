@@ -1,7 +1,7 @@
 import { cookies } from 'next/headers';
 import { sql } from '@/lib/db/neon';
 import { isValidPortalSessionToken, portalCookieName } from '@/lib/crm/portal-session';
-import ChatClient from './ChatClient';
+import PortalTabs from './PortalTabs';
 
 export const dynamic = 'force-dynamic';
 
@@ -57,7 +57,7 @@ export default async function PortalPage({
           uitgebreid — hoe meer je deelt, hoe beter we je kunnen helpen. Je kunt dit venster
           altijd sluiten en later verdergaan.
         </p>
-        <ChatClient projectSlug={projectSlug} />
+        <PortalTabs projectSlug={projectSlug} />
       </div>
     </main>
   );

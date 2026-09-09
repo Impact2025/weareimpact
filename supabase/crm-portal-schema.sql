@@ -65,3 +65,53 @@ CREATE TABLE IF NOT EXISTS crm_chat_summaries (
   next_steps TEXT,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+
+-- Projectoverzicht: mijlpalen (tijdlijn), afspraken/beslissingen-log en
+-- actiepunten. `client_visible` bepaalt per item of de klant het in het
+-- portal te zien krijgt — standaard NIET zichtbaar, bewust opt-in per item
+-- zodat Vincent expliciet kiest wat naar buiten gaat.
+CREATE TABLE IF NOT EXISTS crm_milestones (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  project_slug TEXT NOT NULL REFERENCES crm_projects(slug) ON DELETE CASCADE,
+  title TEXT NOT NULL,
+  description TEXT,
+  prd_section TEXT,
+  status TEXT NOT NULL DEFAULT 'todo' CHECK (status IN ('todo', 'in_progress', 'done')),
+  due_date DATE,
+  sort_order INTEGER NOT NULL DEFAULT 0,
+  client_visible BOOLEAN NOT NULL DEFAULT FALSE,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_crm_milestones_project
+  ON crm_milestones(project_slug, sort_order);
+
+CREATE TABLE IF NOT EXISTS crm_agreements (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  project_slug TEXT NOT NULL REFERENCES crm_projects(slug) ON DELETE CASCADE,
+  title TEXT NOT NULL,
+  description TEXT,
+  decided_at DATE NOT NULL DEFAULT CURRENT_DATE,
+  client_visible BOOLEAN NOT NULL DEFAULT FALSE,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_crm_agreements_project
+  ON crm_agreements(project_slug, decided_at DESC);
+
+CREATE TABLE IF NOT EXISTS crm_actions (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  project_slug TEXT NOT NULL REFERENCES crm_projects(slug) ON DELETE CASCADE,
+  title TEXT NOT NULL,
+  owner TEXT NOT NULL DEFAULT 'vincent' CHECK (owner IN ('vincent', 'klant', 'waiterAid')),
+  status TEXT NOT NULL DEFAULT 'open' CHECK (status IN ('open', 'done')),
+  due_date DATE,
+  source TEXT NOT NULL DEFAULT 'manual' CHECK (source IN ('manual', 'chat_summary')),
+  client_visible BOOLEAN NOT NULL DEFAULT FALSE,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_crm_actions_project
+  ON crm_actions(project_slug, status);

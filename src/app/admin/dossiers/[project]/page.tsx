@@ -2,12 +2,20 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'next/navigation';
-import { Plus, Trash2, Send, Loader2, Copy, Check } from 'lucide-react';
+import { Plus, Trash2, Send, Loader2, Copy, Check, Eye, EyeOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 interface Question {
   id: string;
@@ -24,6 +32,40 @@ interface ChatSummary {
   created_at: string;
 }
 
+interface Milestone {
+  id: string;
+  title: string;
+  description: string | null;
+  prd_section: string | null;
+  status: 'todo' | 'in_progress' | 'done';
+  due_date: string | null;
+  client_visible: boolean;
+}
+
+interface Agreement {
+  id: string;
+  title: string;
+  description: string | null;
+  decided_at: string;
+  client_visible: boolean;
+}
+
+interface Action {
+  id: string;
+  title: string;
+  owner: 'vincent' | 'klant' | 'waiterAid';
+  status: 'open' | 'done';
+  due_date: string | null;
+  source: 'manual' | 'chat_summary';
+  client_visible: boolean;
+}
+
+const MILESTONE_STATUS_LABELS: Record<Milestone['status'], string> = {
+  todo: 'Te doen',
+  in_progress: 'Bezig',
+  done: 'Klaar',
+};
+
 export default function DossierDetailPage() {
   const params = useParams<{ project: string }>();
   const projectSlug = params.project;
@@ -32,6 +74,14 @@ export default function DossierDetailPage() {
   const [newQuestion, setNewQuestion] = useState('');
   const [adding, setAdding] = useState(false);
   const [summaries, setSummaries] = useState<ChatSummary[] | null>(null);
+
+  const [milestones, setMilestones] = useState<Milestone[] | null>(null);
+  const [newMilestone, setNewMilestone] = useState('');
+  const [agreements, setAgreements] = useState<Agreement[] | null>(null);
+  const [newAgreement, setNewAgreement] = useState('');
+  const [actions, setActions] = useState<Action[] | null>(null);
+  const [newAction, setNewAction] = useState('');
+  const [newActionOwner, setNewActionOwner] = useState<Action['owner']>('vincent');
 
   const [email, setEmail] = useState('');
   const [sending, setSending] = useState(false);
@@ -46,6 +96,15 @@ export default function DossierDetailPage() {
     fetch(`/api/admin/dossiers/${projectSlug}/summaries`)
       .then((res) => res.json())
       .then((data) => setSummaries(data.summaries ?? []));
+    fetch(`/api/admin/dossiers/${projectSlug}/milestones`)
+      .then((res) => res.json())
+      .then((data) => setMilestones(data.milestones ?? []));
+    fetch(`/api/admin/dossiers/${projectSlug}/agreements`)
+      .then((res) => res.json())
+      .then((data) => setAgreements(data.agreements ?? []));
+    fetch(`/api/admin/dossiers/${projectSlug}/actions`)
+      .then((res) => res.json())
+      .then((data) => setActions(data.actions ?? []));
   }, [projectSlug]);
 
   useEffect(() => {
@@ -102,37 +161,113 @@ export default function DossierDetailPage() {
     setTimeout(() => setCopied(false), 2000);
   }
 
+  async function addMilestone() {
+    if (!newMilestone.trim()) return;
+    await fetch(`/api/admin/dossiers/${projectSlug}/milestones`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ title: newMilestone.trim() }),
+    });
+    setNewMilestone('');
+    load();
+  }
+
+  async function cycleMilestoneStatus(m: Milestone) {
+    const next: Record<Milestone['status'], Milestone['status']> = {
+      todo: 'in_progress',
+      in_progress: 'done',
+      done: 'todo',
+    };
+    await fetch(`/api/admin/dossiers/${projectSlug}/milestones/${m.id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status: next[m.status] }),
+    });
+    load();
+  }
+
+  async function toggleMilestoneVisible(m: Milestone) {
+    await fetch(`/api/admin/dossiers/${projectSlug}/milestones/${m.id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ clientVisible: !m.client_visible }),
+    });
+    load();
+  }
+
+  async function deleteMilestone(id: string) {
+    await fetch(`/api/admin/dossiers/${projectSlug}/milestones/${id}`, { method: 'DELETE' });
+    load();
+  }
+
+  async function addAgreement() {
+    if (!newAgreement.trim()) return;
+    await fetch(`/api/admin/dossiers/${projectSlug}/agreements`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ title: newAgreement.trim() }),
+    });
+    setNewAgreement('');
+    load();
+  }
+
+  async function toggleAgreementVisible(a: Agreement) {
+    await fetch(`/api/admin/dossiers/${projectSlug}/agreements/${a.id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ clientVisible: !a.client_visible }),
+    });
+    load();
+  }
+
+  async function deleteAgreement(id: string) {
+    await fetch(`/api/admin/dossiers/${projectSlug}/agreements/${id}`, { method: 'DELETE' });
+    load();
+  }
+
+  async function addAction() {
+    if (!newAction.trim()) return;
+    await fetch(`/api/admin/dossiers/${projectSlug}/actions`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ title: newAction.trim(), owner: newActionOwner }),
+    });
+    setNewAction('');
+    load();
+  }
+
+  async function toggleActionDone(a: Action) {
+    await fetch(`/api/admin/dossiers/${projectSlug}/actions/${a.id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status: a.status === 'done' ? 'open' : 'done' }),
+    });
+    load();
+  }
+
+  async function toggleActionVisible(a: Action) {
+    await fetch(`/api/admin/dossiers/${projectSlug}/actions/${a.id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ clientVisible: !a.client_visible }),
+    });
+    load();
+  }
+
+  async function deleteAction(id: string) {
+    await fetch(`/api/admin/dossiers/${projectSlug}/actions/${id}`, { method: 'DELETE' });
+    load();
+  }
+
   return (
-    <div className="p-6 max-w-3xl mx-auto space-y-8">
+    <div className="p-6 max-w-3xl mx-auto space-y-6">
       <div>
         <h1 className="text-2xl font-bold capitalize">{projectSlug.replace(/-/g, ' ')}</h1>
         <p className="text-sm text-muted-foreground">
-          Vragen hieronder zijn wat de klant via de magic link te zien krijgt — niets anders uit
-          het dossier.
+          Het oogje-icoon bepaalt per item of de klant het in het portal te zien krijgt. Standaard
+          intern (verborgen) — jij kiest wat gedeeld wordt.
         </p>
       </div>
-
-      {summaries && summaries.length > 0 && (
-        <div className="space-y-3">
-          <h2 className="font-semibold">Gespreksverslag van Iris</h2>
-          {summaries.map((s) => (
-            <Card key={s.id} className="border-amber-200 bg-amber-50">
-              <CardContent className="pt-6 space-y-2">
-                <p className="text-xs text-muted-foreground">
-                  {new Date(s.created_at).toLocaleString('nl-NL')}
-                </p>
-                <p className="text-sm">{s.summary}</p>
-                {s.next_steps && (
-                  <div className="text-sm">
-                    <span className="font-semibold">Voorgestelde vervolgstappen: </span>
-                    {s.next_steps}
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      )}
 
       <Card>
         <CardContent className="pt-6 space-y-3">
@@ -163,53 +298,221 @@ export default function DossierDetailPage() {
         </CardContent>
       </Card>
 
-      <Card>
-        <CardContent className="pt-6 space-y-3">
-          <h2 className="font-semibold">Nieuwe vraag toevoegen</h2>
-          <div className="flex gap-2">
-            <Textarea
-              placeholder="Vraag voor de klant…"
-              value={newQuestion}
-              onChange={(e) => setNewQuestion(e.target.value)}
-              rows={2}
-            />
-            <Button onClick={addQuestion} disabled={adding || !newQuestion.trim()}>
-              <Plus size={16} />
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+      <Tabs defaultValue="overzicht">
+        <TabsList>
+          <TabsTrigger value="overzicht">Overzicht</TabsTrigger>
+          <TabsTrigger value="vragen">Vragen ({questions?.length ?? 0})</TabsTrigger>
+          <TabsTrigger value="gesprekken">Gesprekken ({summaries?.length ?? 0})</TabsTrigger>
+        </TabsList>
 
-      <div className="space-y-3">
-        <h2 className="font-semibold">Vragen ({questions?.length ?? 0})</h2>
-        {questions === null ? (
-          <Loader2 className="animate-spin" />
-        ) : (
-          questions.map((q) => (
-            <Card key={q.id}>
-              <CardContent className="pt-6">
-                <div className="flex items-start justify-between gap-3">
+        <TabsContent value="overzicht" className="space-y-6 mt-4">
+          <div className="space-y-3">
+            <h2 className="font-semibold">Tijdlijn / mijlpalen</h2>
+            <div className="flex gap-2">
+              <Input
+                placeholder="Nieuwe mijlpaal…"
+                value={newMilestone}
+                onChange={(e) => setNewMilestone(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && addMilestone()}
+              />
+              <Button onClick={addMilestone} disabled={!newMilestone.trim()}>
+                <Plus size={16} />
+              </Button>
+            </div>
+            {milestones?.map((m) => (
+              <Card key={m.id}>
+                <CardContent className="pt-4 flex items-center justify-between gap-3">
                   <div className="flex-1">
-                    <p className="font-medium">{q.question}</p>
-                    {q.status === 'answered' ? (
-                      <div className="mt-2 text-sm bg-green-50 border border-green-200 rounded p-2">
-                        {q.client_answer}
-                      </div>
-                    ) : (
-                      <Badge variant="outline" className="mt-2">
-                        open
+                    <button
+                      onClick={() => cycleMilestoneStatus(m)}
+                      className="text-left"
+                      title="Klik om status te wijzigen"
+                    >
+                      <Badge
+                        variant={m.status === 'done' ? 'secondary' : 'outline'}
+                        className="mr-2"
+                      >
+                        {MILESTONE_STATUS_LABELS[m.status]}
                       </Badge>
-                    )}
+                      <span className={m.status === 'done' ? 'line-through text-muted-foreground' : ''}>
+                        {m.title}
+                      </span>
+                    </button>
                   </div>
-                  <Button size="icon" variant="ghost" onClick={() => deleteQuestion(q.id)}>
-                    <Trash2 size={16} />
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          ))
-        )}
-      </div>
+                  <div className="flex gap-1">
+                    <Button size="icon" variant="ghost" onClick={() => toggleMilestoneVisible(m)}>
+                      {m.client_visible ? <Eye size={16} /> : <EyeOff size={16} className="text-muted-foreground" />}
+                    </Button>
+                    <Button size="icon" variant="ghost" onClick={() => deleteMilestone(m.id)}>
+                      <Trash2 size={16} />
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+          <div className="space-y-3">
+            <h2 className="font-semibold">Afspraken &amp; beslissingen</h2>
+            <div className="flex gap-2">
+              <Input
+                placeholder="Nieuwe afspraak…"
+                value={newAgreement}
+                onChange={(e) => setNewAgreement(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && addAgreement()}
+              />
+              <Button onClick={addAgreement} disabled={!newAgreement.trim()}>
+                <Plus size={16} />
+              </Button>
+            </div>
+            {agreements?.map((a) => (
+              <Card key={a.id}>
+                <CardContent className="pt-4 flex items-center justify-between gap-3">
+                  <div className="flex-1">
+                    <p>{a.title}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {new Date(a.decided_at).toLocaleDateString('nl-NL')}
+                    </p>
+                  </div>
+                  <div className="flex gap-1">
+                    <Button size="icon" variant="ghost" onClick={() => toggleAgreementVisible(a)}>
+                      {a.client_visible ? <Eye size={16} /> : <EyeOff size={16} className="text-muted-foreground" />}
+                    </Button>
+                    <Button size="icon" variant="ghost" onClick={() => deleteAgreement(a.id)}>
+                      <Trash2 size={16} />
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+          <div className="space-y-3">
+            <h2 className="font-semibold">Actiepunten</h2>
+            <div className="flex gap-2">
+              <Input
+                placeholder="Nieuw actiepunt…"
+                value={newAction}
+                onChange={(e) => setNewAction(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && addAction()}
+              />
+              <Select value={newActionOwner} onValueChange={(v) => setNewActionOwner(v as Action['owner'])}>
+                <SelectTrigger className="w-32">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="vincent">Vincent</SelectItem>
+                  <SelectItem value="klant">Klant</SelectItem>
+                  <SelectItem value="waiterAid">WaiterAid</SelectItem>
+                </SelectContent>
+              </Select>
+              <Button onClick={addAction} disabled={!newAction.trim()}>
+                <Plus size={16} />
+              </Button>
+            </div>
+            {actions?.map((a) => (
+              <Card key={a.id}>
+                <CardContent className="pt-4 flex items-center justify-between gap-3">
+                  <div className="flex-1 flex items-start gap-2">
+                    <input
+                      type="checkbox"
+                      checked={a.status === 'done'}
+                      onChange={() => toggleActionDone(a)}
+                      className="mt-1"
+                    />
+                    <div>
+                      <p className={a.status === 'done' ? 'line-through text-muted-foreground' : ''}>
+                        {a.title}
+                      </p>
+                      <Badge variant="outline" className="mt-1 text-xs">
+                        {a.owner}
+                      </Badge>
+                    </div>
+                  </div>
+                  <div className="flex gap-1">
+                    <Button size="icon" variant="ghost" onClick={() => toggleActionVisible(a)}>
+                      {a.client_visible ? <Eye size={16} /> : <EyeOff size={16} className="text-muted-foreground" />}
+                    </Button>
+                    <Button size="icon" variant="ghost" onClick={() => deleteAction(a.id)}>
+                      <Trash2 size={16} />
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </TabsContent>
+
+        <TabsContent value="vragen" className="space-y-4 mt-4">
+          <Card>
+            <CardContent className="pt-6 space-y-3">
+              <h2 className="font-semibold">Nieuwe vraag toevoegen</h2>
+              <div className="flex gap-2">
+                <Textarea
+                  placeholder="Vraag voor de klant…"
+                  value={newQuestion}
+                  onChange={(e) => setNewQuestion(e.target.value)}
+                  rows={2}
+                />
+                <Button onClick={addQuestion} disabled={adding || !newQuestion.trim()}>
+                  <Plus size={16} />
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+
+          {questions === null ? (
+            <Loader2 className="animate-spin" />
+          ) : (
+            questions.map((q) => (
+              <Card key={q.id}>
+                <CardContent className="pt-6">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex-1">
+                      <p className="font-medium">{q.question}</p>
+                      {q.status === 'answered' ? (
+                        <div className="mt-2 text-sm bg-green-50 border border-green-200 rounded p-2">
+                          {q.client_answer}
+                        </div>
+                      ) : (
+                        <Badge variant="outline" className="mt-2">
+                          open
+                        </Badge>
+                      )}
+                    </div>
+                    <Button size="icon" variant="ghost" onClick={() => deleteQuestion(q.id)}>
+                      <Trash2 size={16} />
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ))
+          )}
+        </TabsContent>
+
+        <TabsContent value="gesprekken" className="space-y-3 mt-4">
+          {summaries && summaries.length > 0 ? (
+            summaries.map((s) => (
+              <Card key={s.id} className="border-amber-200 bg-amber-50">
+                <CardContent className="pt-6 space-y-2">
+                  <p className="text-xs text-muted-foreground">
+                    {new Date(s.created_at).toLocaleString('nl-NL')}
+                  </p>
+                  <p className="text-sm">{s.summary}</p>
+                  {s.next_steps && (
+                    <div className="text-sm">
+                      <span className="font-semibold">Voorgestelde vervolgstappen: </span>
+                      {s.next_steps}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            ))
+          ) : (
+            <p className="text-sm text-muted-foreground">Nog geen afgeronde gesprekken.</p>
+          )}
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }

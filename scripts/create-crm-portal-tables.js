@@ -95,6 +95,70 @@ async function createCrmPortalTables() {
     `;
     console.log('✅ Created table: crm_chat_summaries');
 
+    await sql`
+      CREATE TABLE IF NOT EXISTS crm_milestones (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        project_slug TEXT NOT NULL REFERENCES crm_projects(slug) ON DELETE CASCADE,
+        title TEXT NOT NULL,
+        description TEXT,
+        prd_section TEXT,
+        status TEXT NOT NULL DEFAULT 'todo' CHECK (status IN ('todo', 'in_progress', 'done')),
+        due_date DATE,
+        sort_order INTEGER NOT NULL DEFAULT 0,
+        client_visible BOOLEAN NOT NULL DEFAULT FALSE,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )
+    `;
+    console.log('✅ Created table: crm_milestones');
+
+    await sql`
+      CREATE INDEX IF NOT EXISTS idx_crm_milestones_project
+      ON crm_milestones(project_slug, sort_order)
+    `;
+    console.log('✅ Created index: idx_crm_milestones_project');
+
+    await sql`
+      CREATE TABLE IF NOT EXISTS crm_agreements (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        project_slug TEXT NOT NULL REFERENCES crm_projects(slug) ON DELETE CASCADE,
+        title TEXT NOT NULL,
+        description TEXT,
+        decided_at DATE NOT NULL DEFAULT CURRENT_DATE,
+        client_visible BOOLEAN NOT NULL DEFAULT FALSE,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )
+    `;
+    console.log('✅ Created table: crm_agreements');
+
+    await sql`
+      CREATE INDEX IF NOT EXISTS idx_crm_agreements_project
+      ON crm_agreements(project_slug, decided_at DESC)
+    `;
+    console.log('✅ Created index: idx_crm_agreements_project');
+
+    await sql`
+      CREATE TABLE IF NOT EXISTS crm_actions (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        project_slug TEXT NOT NULL REFERENCES crm_projects(slug) ON DELETE CASCADE,
+        title TEXT NOT NULL,
+        owner TEXT NOT NULL DEFAULT 'vincent' CHECK (owner IN ('vincent', 'klant', 'waiterAid')),
+        status TEXT NOT NULL DEFAULT 'open' CHECK (status IN ('open', 'done')),
+        due_date DATE,
+        source TEXT NOT NULL DEFAULT 'manual' CHECK (source IN ('manual', 'chat_summary')),
+        client_visible BOOLEAN NOT NULL DEFAULT FALSE,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )
+    `;
+    console.log('✅ Created table: crm_actions');
+
+    await sql`
+      CREATE INDEX IF NOT EXISTS idx_crm_actions_project
+      ON crm_actions(project_slug, status)
+    `;
+    console.log('✅ Created index: idx_crm_actions_project');
+
     console.log('\n✨ Done!');
   } catch (error) {
     console.error('❌ Failed:', error);
