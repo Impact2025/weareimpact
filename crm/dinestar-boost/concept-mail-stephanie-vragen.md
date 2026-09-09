@@ -1,19 +1,19 @@
 # Concept e-mail aan Stéphanie — vragen vóór offerte
 
-> Concept, ter beoordeling door Vincent voordat dit verstuurd wordt.
+> Concept, ter beoordeling door Vincent voordat dit verstuurd wordt. Vincent verstuurt 'm zelf.
 
 ---
 
 Hoi Stéphanie,
 
-Wat een fijne meeting hadden we — ik ben er nog steeds enthousiast van. Dinestar Boost is
-precies het soort project waar ik heel graag mijn tanden in zet, en ik zou het traject het liefst
-op korte termijn oppakken.
+Bedankt voor het fijne gesprek — ik heb er ontzettend veel zin in om samen met jou aan Dinestar
+Boost te gaan werken. Precies het soort project waar ik heel graag mijn tanden in zet.
 
-Om een goede, realistische offerte te kunnen maken (in plaats van een slag in de lucht), heb ik
-nog een aantal vragen. Sommige overlappen met wat je zelf al noemde — laten we die dan meteen
-samen uitzoeken. Ik heb ze gegroepeerd zodat je ze eventueel kunt doorzetten naar de juiste
-persoon bij WaiterAid.
+Ik heb 'm meteen besproken met Iris, mijn AI-assistent, die zoals altijd weer met een aantal
+scherpe vragen kwam. Zou je die onderstaande vragen kunnen beantwoorden? Dan kan ik daarmee een
+realistische offerte maken in plaats van een slag in de lucht. Sommige overlappen met wat je zelf
+al noemde — laten we die dan meteen samen uitzoeken. Ik heb ze gegroepeerd zodat je ze eventueel
+kunt doorzetten naar de juiste persoon bij WaiterAid.
 
 **Technische afhankelijkheden (WaiterAid/Manager)**
 1. Welke delen van dit PRD draaien al in WaiterAid/Manager (reserverings-API, gast-CRM,
