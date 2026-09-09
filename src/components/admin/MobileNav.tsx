@@ -2,12 +2,13 @@
 
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
-import { LayoutDashboard, Briefcase, Calendar, CheckSquare } from 'lucide-react';
+import { LayoutDashboard, Briefcase, Calendar, CheckSquare, FolderOpen } from 'lucide-react';
 
 const navItems = [
   { href: '/admin', label: 'Home', icon: LayoutDashboard },
   { href: '/admin/agenda', label: 'Agenda', icon: Calendar },
   { href: '/admin/crm', label: 'CRM', icon: Briefcase },
+  { href: '/admin/dossiers', label: 'Dossiers', icon: FolderOpen },
   { href: '/admin/crm/taken', label: 'Taken', icon: CheckSquare },
 ];
 
