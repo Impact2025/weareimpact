@@ -183,43 +183,52 @@ export async function POST(
     // gebeurde — het gesprek liep door zonder ooit af te ronden), dwingen we
     // één extra modelaanroep af die die tool wél moet gebruiken. Zo hangt een
     // samenvatting nooit alleen af van of het model daar zelf aan denkt.
+    // Dit vangnet mag NOOIT het antwoord aan de klant kapotmaken: het draait
+    // in zijn eigen try/catch, los van finalContent, dat al vaststaat.
     if (!finishCalled) {
-      const stillOpen = await sql`
-        SELECT COUNT(*)::int AS n FROM crm_questions
-        WHERE project_slug = ${projectSlug} AND audience = ${audience} AND status = 'open'
-      `;
-      const existingSummary = await sql`
-        SELECT id FROM crm_chat_summaries WHERE project_slug = ${projectSlug} AND audience = ${audience} LIMIT 1
-      `;
-      if (stillOpen[0]?.n === 0 && existingSummary.length === 0) {
-        convo.push({ role: 'assistant', content: finalContent });
-        convo.push({
-          role: 'system',
-          content:
-            'Alle vragen uit de vragenlijst zijn nu beantwoord. Rond het gesprek nu af: roep de ' +
-            'tool finish_conversation aan met een feitelijke samenvatting en concrete ' +
-            'vervolgstappen voor Vincent.',
-        });
-        const wrapResp = await client.chat.completions.create({
-          model: DEFAULT_MODELS.chat,
-          messages: convo,
-          tools: crmChatTools,
-          tool_choice: { type: 'function', function: { name: 'finish_conversation' } },
-          temperature: 0.3,
-          max_tokens: 500,
-        });
-        const wrapMsg = wrapResp.choices[0]?.message;
-        const wrapCalls = wrapMsg?.tool_calls ?? [];
-        for (const tc of wrapCalls) {
-          if (tc.type !== 'function') continue;
-          let args: Record<string, unknown> = {};
-          try {
-            args = tc.function.arguments ? JSON.parse(tc.function.arguments) : {};
-          } catch {
-            args = {};
+      try {
+        const stillOpen = await sql`
+          SELECT COUNT(*)::int AS n FROM crm_questions
+          WHERE project_slug = ${projectSlug} AND audience = ${audience} AND status = 'open'
+        `;
+        const existingSummary = await sql`
+          SELECT id FROM crm_chat_summaries WHERE project_slug = ${projectSlug} AND audience = ${audience} LIMIT 1
+        `;
+        if (stillOpen[0]?.n === 0 && existingSummary.length === 0) {
+          convo.push({ role: 'assistant', content: finalContent });
+          convo.push({
+            role: 'system',
+            content:
+              'Alle vragen uit de vragenlijst zijn nu beantwoord. Rond het gesprek nu af: roep de ' +
+              'tool finish_conversation aan met een feitelijke samenvatting en concrete ' +
+              'vervolgstappen voor Vincent.',
+          });
+          const wrapResp = await client.chat.completions.create({
+            model: DEFAULT_MODELS.chat,
+            messages: convo,
+            tools: crmChatTools,
+            tool_choice: { type: 'function', function: { name: 'finish_conversation' } },
+            temperature: 0.3,
+            max_tokens: 500,
+          });
+          const wrapMsg = wrapResp.choices[0]?.message;
+          const wrapCalls = wrapMsg?.tool_calls ?? [];
+          for (const tc of wrapCalls) {
+            if (tc.type !== 'function') continue;
+            let args: Record<string, unknown> = {};
+            try {
+              args = tc.function.arguments ? JSON.parse(tc.function.arguments) : {};
+            } catch {
+              args = {};
+            }
+            await executeCrmChatTool(projectSlug, audience, tc.function.name, args);
           }
-          await executeCrmChatTool(projectSlug, audience, tc.function.name, args);
         }
+      } catch (wrapError) {
+        // Best-effort: als dit vangnet zelf faalt, krijgt de klant gewoon
+        // haar normale antwoord. Vincent heeft nog steeds de "Genereer
+        // samenvatting nu"-knop in admin als terugval.
+        console.error('finish_conversation vangnet mislukt (non-fatal):', wrapError);
       }
     }
 
