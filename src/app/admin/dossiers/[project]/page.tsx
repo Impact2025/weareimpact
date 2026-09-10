@@ -41,6 +41,26 @@ interface ChatSummary {
   next_steps: string | null;
   created_at: string;
   audience: Audience;
+  source: 'iris' | 'admin';
+}
+
+interface ChatMessage {
+  role: 'user' | 'assistant';
+  content: string;
+  audience: Audience;
+  created_at: string;
+}
+
+interface Document {
+  id: string;
+  filename: string;
+  content_type: string | null;
+  size_bytes: number | null;
+  blob_url: string | null;
+  source: 'upload' | 'pasted';
+  audience: Audience;
+  created_at: string;
+  preview: string;
 }
 
 interface Milestone {
@@ -85,6 +105,10 @@ export default function DossierDetailPage() {
   const [newQuestion, setNewQuestion] = useState('');
   const [adding, setAdding] = useState(false);
   const [summaries, setSummaries] = useState<ChatSummary[] | null>(null);
+  const [messages, setMessages] = useState<ChatMessage[] | null>(null);
+  const [documents, setDocuments] = useState<Document[] | null>(null);
+  const [generatingSummary, setGeneratingSummary] = useState(false);
+  const [generateError, setGenerateError] = useState<string | null>(null);
   const [audienceFilter, setAudienceFilter] = useState<Audience>('klant');
   const [magicLinkAudience, setMagicLinkAudience] = useState<Audience>('klant');
 
@@ -116,6 +140,12 @@ export default function DossierDetailPage() {
     fetch(`/api/admin/dossiers/${projectSlug}/summaries`)
       .then((res) => res.json())
       .then((data) => setSummaries(data.summaries ?? []));
+    fetch(`/api/admin/dossiers/${projectSlug}/messages`)
+      .then((res) => res.json())
+      .then((data) => setMessages(data.messages ?? []));
+    fetch(`/api/admin/dossiers/${projectSlug}/documents`)
+      .then((res) => res.json())
+      .then((data) => setDocuments(data.documents ?? []));
     fetch(`/api/admin/dossiers/${projectSlug}/milestones`)
       .then((res) => res.json())
       .then((data) => setMilestones(data.milestones ?? []));
@@ -309,6 +339,26 @@ export default function DossierDetailPage() {
       body: JSON.stringify({ clientVisible: !a.client_visible }),
     });
     load();
+  }
+
+  async function generateSummary() {
+    setGeneratingSummary(true);
+    setGenerateError(null);
+    try {
+      const res = await fetch(`/api/admin/dossiers/${projectSlug}/summaries/generate`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ audience: audienceFilter }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setGenerateError(data.error ?? 'Onbekende fout');
+        return;
+      }
+      load();
+    } finally {
+      setGeneratingSummary(false);
+    }
   }
 
   async function deleteAction(id: string) {
@@ -615,29 +665,114 @@ export default function DossierDetailPage() {
           )}
         </TabsContent>
 
-        <TabsContent value="gesprekken" className="space-y-3 mt-4">
+        <TabsContent value="gesprekken" className="space-y-6 mt-4">
           <AudienceToggle value={audienceFilter} onChange={setAudienceFilter} />
 
-          {summaries && summaries.filter((s) => s.audience === audienceFilter).length > 0 ? (
-            summaries.filter((s) => s.audience === audienceFilter).map((s) => (
-              <Card key={s.id} className="border-amber-200 bg-amber-50">
-                <CardContent className="pt-6 space-y-2">
-                  <p className="text-xs text-muted-foreground">
-                    {new Date(s.created_at).toLocaleString('nl-NL')}
-                  </p>
-                  <p className="text-sm">{s.summary}</p>
-                  {s.next_steps && (
-                    <div className="text-sm">
-                      <span className="font-semibold">Voorgestelde vervolgstappen: </span>
-                      {s.next_steps}
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            ))
-          ) : (
-            <p className="text-sm text-muted-foreground">Nog geen afgeronde gesprekken.</p>
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <h2 className="font-semibold">Samenvatting</h2>
+              <Button size="sm" variant="outline" onClick={generateSummary} disabled={generatingSummary}>
+                {generatingSummary ? <Loader2 size={14} className="animate-spin mr-1" /> : null}
+                Genereer samenvatting nu
+              </Button>
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Werkt altijd op het volledige transcript, ook als Iris zelf nooit heeft afgerond —
+              gebruik dit als vangnet zodra een gesprek is doodgebloed of afgekapt.
+            </p>
+            {generateError && <p className="text-sm text-red-600">{generateError}</p>}
+
+            {summaries && summaries.filter((s) => s.audience === audienceFilter).length > 0 ? (
+              summaries
+                .filter((s) => s.audience === audienceFilter)
+                .map((s) => (
+                  <Card key={s.id} className="border-amber-200 bg-amber-50">
+                    <CardContent className="pt-6 space-y-2">
+                      <div className="flex items-center justify-between">
+                        <p className="text-xs text-muted-foreground">
+                          {new Date(s.created_at).toLocaleString('nl-NL')}
+                        </p>
+                        <Badge variant="outline" className="text-xs">
+                          {s.source === 'admin' ? 'achteraf gegenereerd' : 'door Iris'}
+                        </Badge>
+                      </div>
+                      <p className="text-sm">{s.summary}</p>
+                      {s.next_steps && (
+                        <div className="text-sm">
+                          <span className="font-semibold">Voorgestelde vervolgstappen: </span>
+                          {s.next_steps}
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+                ))
+            ) : (
+              <p className="text-sm text-muted-foreground">Nog geen samenvatting voor deze doelgroep.</p>
+            )}
+          </div>
+
+          {documents && documents.filter((d) => d.audience === audienceFilter).length > 0 && (
+            <div className="space-y-3">
+              <h2 className="font-semibold">Gedeelde documenten</h2>
+              {documents
+                .filter((d) => d.audience === audienceFilter)
+                .map((d) => (
+                  <Card key={d.id}>
+                    <CardContent className="pt-4 space-y-1">
+                      <div className="flex items-center justify-between gap-2">
+                        <p className="font-medium text-sm">
+                          {d.filename}
+                          <Badge variant="outline" className="ml-2 text-xs">
+                            {d.source === 'upload' ? 'geüpload' : 'geplakt in chat'}
+                          </Badge>
+                        </p>
+                        {d.blob_url && (
+                          <a
+                            href={d.blob_url}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="text-xs text-blue-600 hover:underline shrink-0"
+                          >
+                            Origineel downloaden
+                          </a>
+                        )}
+                      </div>
+                      <p className="text-xs text-muted-foreground">
+                        {new Date(d.created_at).toLocaleString('nl-NL')}
+                      </p>
+                      <p className="text-xs text-muted-foreground italic">{d.preview}…</p>
+                    </CardContent>
+                  </Card>
+                ))}
+            </div>
           )}
+
+          <div className="space-y-3">
+            <h2 className="font-semibold">Ruw transcript</h2>
+            {messages === null ? (
+              <Loader2 className="animate-spin" />
+            ) : messages.filter((m) => m.audience === audienceFilter).length === 0 ? (
+              <p className="text-sm text-muted-foreground">Nog geen berichten voor deze doelgroep.</p>
+            ) : (
+              <div className="border rounded-lg divide-y max-h-[600px] overflow-y-auto">
+                {messages
+                  .filter((m) => m.audience === audienceFilter)
+                  .map((m, i) => (
+                    <div key={i} className="p-3 text-sm">
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="font-semibold text-xs uppercase text-muted-foreground">
+                          {m.role === 'user' ? AUDIENCE_LABELS[audienceFilter] : 'Iris'}
+                        </span>
+                        <span className="text-xs text-muted-foreground">
+                          {new Date(m.created_at).toLocaleString('nl-NL')}
+                        </span>
+                      </div>
+                      <p className="whitespace-pre-wrap">{m.content}</p>
+                    </div>
+                  ))}
+              </div>
+            )}
+          </div>
         </TabsContent>
       </Tabs>
     </div>

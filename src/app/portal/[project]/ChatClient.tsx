@@ -13,8 +13,11 @@ export default function ChatClient({ projectSlug, audience }: { projectSlug: str
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
   const [finished, setFinished] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     async function init() {
@@ -68,6 +71,40 @@ export default function ChatClient({ projectSlug, audience }: { projectSlug: str
     }
   }
 
+  async function uploadFile(file: File) {
+    if (sending || uploading) return;
+    setUploadError(null);
+    setUploading(true);
+    setMessages((prev) => [...prev, { role: 'user', content: `[Document geüpload: ${file.name}]` }]);
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      const uploadRes = await fetch(`/api/crm/portal/${projectSlug}/${audience}/documents`, {
+        method: 'POST',
+        body: formData,
+      });
+      const uploadData = await uploadRes.json();
+      if (!uploadRes.ok) {
+        setUploadError(uploadData.error ?? 'Upload mislukt.');
+        setMessages((prev) => prev.slice(0, -1));
+        return;
+      }
+      setSending(true);
+      const chatRes = await fetch(`/api/crm/portal/${projectSlug}/${audience}/chat`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: '', documentId: uploadData.documentId }),
+      });
+      const chatData = await chatRes.json();
+      setMessages((prev) => [...prev, { role: 'assistant', content: chatData.reply }]);
+      setFinished(!!chatData.finished);
+    } finally {
+      setUploading(false);
+      setSending(false);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
+  }
+
   if (loading) {
     return <p style={{ color: '#666' }}>Bezig met laden…</p>;
   }
@@ -102,6 +139,11 @@ export default function ChatClient({ projectSlug, audience }: { projectSlug: str
         </p>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          {uploadError && (
+            <p style={{ color: '#a12', background: '#fdecec', padding: 10, borderRadius: 8, fontSize: 13 }}>
+              {uploadError}
+            </p>
+          )}
           <textarea
             value={input}
             onChange={(e) => setInput(e.target.value)}
@@ -116,13 +158,35 @@ export default function ChatClient({ projectSlug, audience }: { projectSlug: str
             style={inputStyle}
             disabled={sending}
           />
-          <button
-            onClick={send}
-            disabled={sending || !input.trim()}
-            style={{ ...buttonStyle, alignSelf: 'flex-end' }}
-          >
-            {sending ? '…' : 'Versturen'}
-          </button>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8 }}>
+            <div>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept=".pdf,.txt,.md,.csv,application/pdf,text/plain,text/markdown,text/csv"
+                style={{ display: 'none' }}
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) uploadFile(file);
+                }}
+              />
+              <button
+                onClick={() => fileInputRef.current?.click()}
+                disabled={sending || uploading}
+                style={{ ...secondaryButtonStyle }}
+                type="button"
+              >
+                {uploading ? 'Bezig met uploaden…' : '+ Document delen (pdf, tekst)'}
+              </button>
+            </div>
+            <button
+              onClick={send}
+              disabled={sending || !input.trim()}
+              style={buttonStyle}
+            >
+              {sending ? '…' : 'Versturen'}
+            </button>
+          </div>
         </div>
       )}
     </div>
@@ -160,6 +224,17 @@ const buttonStyle: React.CSSProperties = {
   borderRadius: 8,
   padding: '10px 16px',
   fontSize: 14,
+  fontWeight: 600,
+  cursor: 'pointer',
+};
+
+const secondaryButtonStyle: React.CSSProperties = {
+  background: '#fff',
+  color: '#1a1a2e',
+  border: '1px solid #d1d5db',
+  borderRadius: 8,
+  padding: '10px 14px',
+  fontSize: 13,
   fontWeight: 600,
   cursor: 'pointer',
 };

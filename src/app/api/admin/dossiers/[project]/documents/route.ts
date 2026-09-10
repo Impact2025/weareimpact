@@ -14,12 +14,13 @@ export async function GET(
   }
   const { project: projectSlug } = await params;
 
-  const summaries = await sql`
-    SELECT id, summary, next_steps, audience, source, created_at
-    FROM crm_chat_summaries
+  const documents = await sql`
+    SELECT id, filename, content_type, size_bytes, blob_url, source, audience, created_at,
+           LEFT(extracted_text, 400) AS preview
+    FROM crm_documents
     WHERE project_slug = ${projectSlug}
     ORDER BY created_at DESC
   `;
 
-  return NextResponse.json({ summaries });
+  return NextResponse.json({ documents });
 }

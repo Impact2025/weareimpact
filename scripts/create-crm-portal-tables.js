@@ -182,6 +182,39 @@ async function createCrmPortalTables() {
       console.log(`✅ Added column: ${table}.audience`);
     }
 
+    await sql`
+      CREATE TABLE IF NOT EXISTS crm_documents (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        project_slug TEXT NOT NULL REFERENCES crm_projects(slug) ON DELETE CASCADE,
+        audience TEXT NOT NULL DEFAULT 'klant' CHECK (audience IN ('klant', 'opdrachtgever')),
+        filename TEXT NOT NULL,
+        content_type TEXT,
+        size_bytes INTEGER,
+        blob_url TEXT,
+        extracted_text TEXT,
+        source TEXT NOT NULL DEFAULT 'upload' CHECK (source IN ('upload', 'pasted')),
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )
+    `;
+    console.log('✅ Created table: crm_documents');
+
+    await sql`
+      CREATE INDEX IF NOT EXISTS idx_crm_documents_project
+      ON crm_documents(project_slug, audience, created_at)
+    `;
+    console.log('✅ Created index: idx_crm_documents_project');
+
+    // Onderscheidt een samenvatting die Iris zelf tijdens het gesprek heeft
+    // gemaakt (finish_conversation) van een die Vincent achteraf handmatig
+    // heeft laten genereren als vangnet wanneer Iris dat zelf niet deed.
+    await sql`ALTER TABLE crm_chat_summaries ADD COLUMN IF NOT EXISTS source TEXT NOT NULL DEFAULT 'iris'`;
+    await sql`ALTER TABLE crm_chat_summaries DROP CONSTRAINT IF EXISTS crm_chat_summaries_source_check`;
+    await sql`
+      ALTER TABLE crm_chat_summaries ADD CONSTRAINT crm_chat_summaries_source_check
+      CHECK (source IN ('iris', 'admin'))
+    `;
+    console.log('✅ Added column: crm_chat_summaries.source');
+
     console.log('\n✨ Done!');
   } catch (error) {
     console.error('❌ Failed:', error);

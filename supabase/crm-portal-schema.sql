@@ -79,6 +79,10 @@ CREATE TABLE IF NOT EXISTS crm_chat_summaries (
   audience TEXT NOT NULL DEFAULT 'klant' CHECK (audience IN ('klant', 'opdrachtgever')),
   summary TEXT NOT NULL,
   next_steps TEXT,
+  -- 'iris' = Iris riep zelf finish_conversation aan tijdens het gesprek;
+  -- 'admin' = Vincent heeft de samenvatting achteraf handmatig laten
+  -- genereren als vangnet, voor het geval Iris dat zelf niet deed.
+  source TEXT NOT NULL DEFAULT 'iris' CHECK (source IN ('iris', 'admin')),
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
@@ -86,6 +90,27 @@ CREATE TABLE IF NOT EXISTS crm_chat_summaries (
 -- actiepunten. `client_visible` bepaalt per item of de klant het in het
 -- portal te zien krijgt — standaard NIET zichtbaar, bewust opt-in per item
 -- zodat Vincent expliciet kiest wat naar buiten gaat.
+-- Documenten die de klant deelt: via echte upload (pdf/tekst) of automatisch
+-- gedetecteerd omdat de klant een lang stuk tekst in de chat plakte. In beide
+-- gevallen komt de volledige tekst hier te staan, en houdt de chatgeschiedenis
+-- zelf alleen een korte verwijzing — anders groeit elk vervolgbericht
+-- ongecontroleerd doordat de volledige tekst steeds opnieuw wordt meegestuurd.
+CREATE TABLE IF NOT EXISTS crm_documents (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  project_slug TEXT NOT NULL REFERENCES crm_projects(slug) ON DELETE CASCADE,
+  audience TEXT NOT NULL DEFAULT 'klant' CHECK (audience IN ('klant', 'opdrachtgever')),
+  filename TEXT NOT NULL,
+  content_type TEXT,
+  size_bytes INTEGER,
+  blob_url TEXT,
+  extracted_text TEXT,
+  source TEXT NOT NULL DEFAULT 'upload' CHECK (source IN ('upload', 'pasted')),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_crm_documents_project
+  ON crm_documents(project_slug, audience, created_at);
+
 CREATE TABLE IF NOT EXISTS crm_milestones (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   project_slug TEXT NOT NULL REFERENCES crm_projects(slug) ON DELETE CASCADE,
