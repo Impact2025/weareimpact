@@ -75,6 +75,22 @@ export function Footer() {
               </li>
               <li>
                 <Link
+                  href="/interim-manager"
+                  className="text-sm hover:text-orange-400 transition-colors"
+                >
+                  Interim Manager Sociaal Domein
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/interim-innovatiemanager"
+                  className="text-sm hover:text-orange-400 transition-colors"
+                >
+                  Interim Innovatiemanager
+                </Link>
+              </li>
+              <li>
+                <Link
                   href="/change-management-digitale-transformatie"
                   className="text-sm hover:text-orange-400 transition-colors"
                 >

@@ -25,14 +25,14 @@ import { Button } from '@/components/ui/button';
 const rollen = [
   {
     code: '01',
-    titel: 'Interim Projectleider',
+    titel: 'Interim Directeur-Bestuurder',
     sub: 'Welzijn & Sociaal Domein',
     omschrijving:
-      'Voor organisaties die een AI- of innovatieproject moeten realiseren maar missen wie het ook echt trekt. Van scope-definitie en stakeholdermanagement tot oplevering en overdracht aan het eigen team.',
+      'Voor organisaties die tijdelijk zonder directie zitten of een zware transitie moeten leiden. Volledige bestuurlijke verantwoordelijkheid: financiën, personeel, stakeholders en de relatie met de Raad van Toezicht.',
     wanneer: [
-      'Nieuw AI- of digitaliseringsproject zonder interne trekker',
-      'Bestaand project dat dreigt te stranden op mensen of planning',
-      'Bestuur dat regie wil houden maar uitvoering mist',
+      'Vacature of vertrek in de directie die snel moet worden opgevangen',
+      'Organisatie in transitie die stevige, ervaren leiding nodig heeft',
+      'Raad van Toezicht die iemand zoekt die het stuur echt overneemt',
     ],
   },
   {
@@ -236,14 +236,14 @@ export default function InterimProfiel() {
               </h1>
 
               <p className="text-xl text-slate-600 font-medium mb-6">
-                Strategic Innovation Partner &amp; Interim Manager
+                Interim Directeur-Bestuurder &amp; Kwartiermaker
               </p>
 
-              <div className="flex flex-wrap gap-x-3 gap-y-1 mb-8">
+              <div className="flex flex-wrap gap-x-3 gap-y-1 mb-4">
                 {[
-                  'Interim Projectleider Welzijn & Sociaal Domein',
-                  'Kwartiermaker Innovatie & AI',
-                  'Verandermanager Digitale Transformatie',
+                  'Interim Directeur-Bestuurder',
+                  'Kwartiermaker Publieke Sector',
+                  'Transitiemanager',
                 ].map((t, i, arr) => (
                   <span key={t} className="flex items-center gap-3 text-[0.8rem] text-slate-400 font-medium">
                     {t}
@@ -252,8 +252,21 @@ export default function InterimProfiel() {
                 ))}
               </div>
 
+              <div className="flex flex-wrap gap-x-3 gap-y-1 mb-8">
+                {[
+                  'Ex-Directeur Stichting de Baan',
+                  'Kwartiermaker C-Beta',
+                  '25+ jaar ondernemerschap',
+                ].map((t, i, arr) => (
+                  <span key={t} className="flex items-center gap-3 text-[0.75rem] text-slate-400 font-medium uppercase tracking-wide">
+                    {t}
+                    {i < arr.length - 1 && <span className="text-slate-200">|</span>}
+                  </span>
+                ))}
+              </div>
+
               <p className="text-lg text-slate-600 leading-relaxed mb-8 max-w-xl font-light">
-                Geen IT-consultant die een systeem oplevert en vertrekt. Iemand die de taal van de werkvloer én de boardroom spreekt — en zorgt dat het ook echt landt.
+                Geen dikke adviesrapporten vanaf de zijlijn. Een ervaren interim-leider die aan het roer stapt, rust brengt in complexe situaties en teams duurzaam in beweging zet — met de taal van werkvloer én boardroom.
               </p>
 
               <div className="flex flex-col md:flex-row gap-3 flex-wrap">
@@ -699,7 +712,7 @@ export default function InterimProfiel() {
             </p>
 
             <div className="p-6 bg-slate-800 rounded-2xl border-l-4 border-orange-500 italic text-slate-300 mb-10 max-w-2xl text-left">
-              &ldquo;Ik ben geen snelle jongen met een mooi deck. Ik ben iemand die begrijpt waar jij voor staat, en die naast je staat totdat het werkt.&rdquo;
+              &ldquo;Ik ben geen snelle jongen met een mooi deck. Ik stap aan boord, pak het stuur over en zorg dat het ook echt werkt.&rdquo;
             </div>
 
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 w-full mb-10">

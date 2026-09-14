@@ -208,7 +208,7 @@ export default function Home() {
             <span className="font-bold text-slate-900">Vincent van Munster</span>
             <span className="w-1.5 h-1.5 bg-orange-400 rounded-full" />
             <span className="text-slate-600 font-medium tracking-wide uppercase text-xs">
-              AI Strateeg &amp; Kwartiermaker
+              Interim Directeur &amp; Kwartiermaker Sociaal Domein
             </span>
           </div>
 
@@ -223,20 +223,31 @@ export default function Home() {
           </h1>
 
           <p className="text-xl md:text-2xl text-slate-600 mb-4 max-w-3xl mx-auto font-light leading-relaxed animate-fade-in-up delay-200">
-            AI- &amp; Innovatiepartner voor welzijnsorganisaties, gemeenten en sociaal ondernemers.
+            Interim-directeur en transformatieleider voor welzijnsorganisaties, gemeenten en sociaal ondernemers.
           </p>
 
           <p className="text-lg md:text-xl text-slate-500 mb-6 max-w-2xl mx-auto font-light leading-relaxed animate-fade-in-up delay-200">
-            Geen rapport en wegwezen. Maar iemand die naast je staat en het ook echt laat werken.
+            Geen dikke adviesrapporten vanaf de zijlijn. Wel een ervaren interim-leider die aan het roer stapt, rust brengt in complexe situaties en teams duurzaam in beweging zet.
           </p>
+
+          <div className="flex flex-wrap justify-center gap-x-3 gap-y-1 mb-6 animate-fade-in-up delay-200">
+            {[
+              'Interim Directeur-Bestuurder | Kwartiermaker Publieke Sector | Transitiemanager',
+            ].map((title, i, arr) => (
+              <span key={title} className="flex items-center gap-3 text-[0.8rem] text-slate-400 font-medium">
+                {title}
+                {i < arr.length - 1 && <span className="text-slate-200">|</span>}
+              </span>
+            ))}
+          </div>
 
           <div className="flex flex-wrap justify-center gap-x-3 gap-y-1 mb-12 animate-fade-in-up delay-200">
             {[
-              'Interim Projectleider Welzijn & Sociaal Domein',
-              'Kwartiermaker Innovatie & AI',
-              'Verandermanager Digitale Transformatie',
+              'Ex-Directeur Stichting de Baan',
+              'Kwartiermaker C-Beta',
+              '25+ jaar ondernemerschap',
             ].map((title, i, arr) => (
-              <span key={title} className="flex items-center gap-3 text-[0.8rem] text-slate-400 font-medium">
+              <span key={title} className="flex items-center gap-3 text-[0.75rem] text-slate-400 font-medium uppercase tracking-wide">
                 {title}
                 {i < arr.length - 1 && <span className="text-slate-200">|</span>}
               </span>

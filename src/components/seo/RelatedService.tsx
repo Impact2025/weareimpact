@@ -52,6 +52,36 @@ const SERVICES: Service[] = [
     ],
   },
   {
+    anchor: 'interim manager sociaal domein',
+    href: '/interim-manager',
+    sentence:
+      'Gat in de directie door vacature, ziekte of transitie? Ik werk als {link} — eindverantwoordelijk, direct inzetbaar.',
+    match: [
+      'interim directeur',
+      'directievacature',
+      'bestuurscrisis',
+      'raad van toezicht',
+      'interim bestuurder',
+      'vacature directeur',
+      'vertrek directeur',
+    ],
+  },
+  {
+    anchor: 'interim innovatiemanager',
+    href: '/interim-innovatiemanager',
+    sentence:
+      'Lopen er meerdere AI- of innovatie-initiatieven naast elkaar zonder regie? Ik werk als {link} — prioriteren, opschalen, overdragen.',
+    match: [
+      'innovatiemanager',
+      'innovatieportfolio',
+      'ai-portfolio',
+      'ai portfolio',
+      'meerdere pilots',
+      'pilots opschalen',
+      'innovatie-initiatieven',
+    ],
+  },
+  {
     anchor: 'interim verandermanagement in het sociaal domein',
     href: '/interim-verandermanagement-ai-sociaal-domein',
     sentence:

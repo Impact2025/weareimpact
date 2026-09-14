@@ -1,19 +1,19 @@
 ﻿import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Vincent van Munster | Interim Manager & AI Consultant Sociaal Domein',
+  title: 'Vincent van Munster | Interim Directeur-Bestuurder & Kwartiermaker',
   description:
-    'Vincent van Munster — Strategic Innovation Partner en interim manager met 25+ jaar directie-ervaring in het sociaal domein. Beschikbaar als interim projectleider, kwartiermaker innovatie & AI of verandermanager. 16–24 uur/week · Regio Amsterdam / Haarlem / Leiden · €125–€140/u.',
+    'Vincent van Munster — interim directeur-bestuurder en kwartiermaker met 25+ jaar directie-ervaring in het sociaal domein. Regio Amsterdam / Haarlem / Leiden.',
   keywords: [
     'Vincent van Munster',
     'Vincent van Münster',
     'WeAreImpact Vincent',
+    'interim directeur sociaal domein',
+    'interim directeur-bestuurder',
     'interim manager sociaal domein',
-    'Strategic Innovation Partner',
-    'interim directeur welzijn',
+    'kwartiermaker publieke sector',
+    'transitiemanager welzijn',
     'AI consultant sociaal domein',
-    'kwartiermaker innovatie AI',
-    'verandermanager digitale transformatie',
     'interim manager Amsterdam',
     'LEGO Serious Play facilitator',
   ],
@@ -25,9 +25,9 @@ export const metadata: Metadata = {
     locale: 'nl_NL',
     url: 'https://weareimpact.nl/vincent-van-munster',
     siteName: 'WeAreImpact',
-    title: 'Vincent van Munster | Interim Manager & AI Consultant',
+    title: 'Vincent van Munster | Interim Directeur-Bestuurder',
     description:
-      'Strategic Innovation Partner met 25+ jaar ervaring in het sociaal domein. Beschikbaar als interim manager, kwartiermaker innovatie & AI of verandermanager. 16–24 uur/week · Amsterdam / Haarlem / Leiden.',
+      'Interim directeur-bestuurder met 25+ jaar ervaring in het sociaal domein. Beschikbaar voor transitieopdrachten, kwartiermaken en digitale transformatie. 16–24 uur/week · Amsterdam / Haarlem / Leiden.',
     firstName: 'Vincent',
     lastName: 'van Munster',
     username: 'vincentvanmunster',
@@ -35,9 +35,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Vincent van Munster | Interim Manager & AI Consultant',
+    title: 'Vincent van Munster | Interim Directeur-Bestuurder',
     description:
-      'Strategic Innovation Partner met 25+ jaar ervaring in het sociaal domein. 16–24 uur/week · Regio Amsterdam / Haarlem / Leiden.',
+      'Interim directeur-bestuurder met 25+ jaar ervaring in het sociaal domein. 16–24 uur/week · Regio Amsterdam / Haarlem / Leiden.',
   },
 };
 
@@ -50,13 +50,13 @@ const personSchema = {
   givenName: 'Vincent',
   familyName: 'van Munster',
   jobTitle: [
-    'Strategic Innovation Partner',
+    'Interim Directeur-Bestuurder',
+    'Kwartiermaker Publieke Sector',
+    'Transitiemanager',
     'Interim Manager',
-    'AI Consultant',
-    'Kwartiermaker Innovatie & AI',
   ],
   description:
-    'Vincent van Munster is een Strategic Innovation Partner en interim manager met 25+ jaar directie- en managementervaring in het sociaal domein. Oprichter van WeAreImpact. Gecertificeerd LEGO® Serious Play facilitator. Beschikbaar als interim projectleider welzijn & sociaal domein, kwartiermaker innovatie & AI of verandermanager digitale transformatie.',
+    'Vincent van Munster is interim directeur-bestuurder en transitiemanager met 25+ jaar directie- en managementervaring in het sociaal domein. Oprichter van WeAreImpact en ex-directeur van Stichting de Baan. Gecertificeerd LEGO® Serious Play facilitator. Beschikbaar als interim directeur-bestuurder, kwartiermaker publieke sector of transitiemanager, met AI als instrument voor wendbare en menselijke organisaties.',
   url: 'https://weareimpact.nl/vincent-van-munster',
   image: {
     '@type': 'ImageObject',
@@ -134,7 +134,7 @@ const personSchema = {
         '@type': 'Offer',
         itemOffered: {
           '@type': 'Service',
-          name: 'Interim Projectleider Welzijn & Sociaal Domein',
+          name: 'Interim Directeur-Bestuurder Welzijn & Sociaal Domein',
           provider: { '@id': 'https://weareimpact.nl/vincent-van-munster#person' },
         },
       },

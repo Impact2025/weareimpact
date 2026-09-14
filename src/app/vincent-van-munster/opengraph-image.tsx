@@ -2,7 +2,7 @@ import { ImageResponse } from 'next/og';
 
 export const runtime = 'edge';
 
-export const alt = 'Vincent van Munster — Strategic Innovation Partner & Interim Manager | WeAreImpact';
+export const alt = 'Vincent van Munster — Interim Directeur-Bestuurder & Kwartiermaker | WeAreImpact';
 export const size = {
   width: 1200,
   height: 630,
@@ -54,15 +54,15 @@ export default async function Image() {
           Vincent van Munster
         </h1>
         <p style={{ fontSize: '26px', color: '#f97316', fontWeight: '700', margin: '0 0 36px 0', letterSpacing: '-0.3px' }}>
-          Strategic Innovation Partner &amp; Interim Manager
+          Interim Directeur-Bestuurder &amp; Kwartiermaker
         </p>
 
         {/* Drie rollen */}
         <div style={{ display: 'flex', gap: '12px' }}>
           {[
-            { label: 'Interim Projectleider', sub: 'Welzijn & Sociaal Domein' },
-            { label: 'Kwartiermaker', sub: 'Innovatie & AI' },
-            { label: 'Verandermanager', sub: 'Digitale Transformatie' },
+            { label: 'Interim Directeur-Bestuurder', sub: 'Welzijn & Sociaal Domein' },
+            { label: 'Kwartiermaker', sub: 'Publieke Sector' },
+            { label: 'Transitiemanager', sub: 'Digitale Transformatie' },
           ].map(({ label, sub }) => (
             <div key={label} style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.10)', borderRadius: '12px', padding: '14px 20px', display: 'flex', flexDirection: 'column', gap: '3px', flex: 1 }}>
               <span style={{ fontSize: '16px', color: '#f97316', fontWeight: '800' }}>{label}</span>
