@@ -214,7 +214,7 @@ export default function Home() {
 
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-medium mb-6 animate-fade-in-up">
             <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
-            Beschikbaar voor opdrachten per september
+            Beschikbaar voor opdrachten per 1 oktober
           </div>
 
           <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight text-slate-900 mb-8 leading-[1.1] animate-fade-in-up delay-100">

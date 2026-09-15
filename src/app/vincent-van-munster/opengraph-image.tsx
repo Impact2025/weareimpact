@@ -43,7 +43,7 @@ export default async function Image() {
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'rgba(34,197,94,0.12)', border: '1px solid rgba(34,197,94,0.30)', borderRadius: '100px', padding: '8px 20px' }}>
             <div style={{ width: '9px', height: '9px', borderRadius: '50%', background: '#22c55e' }} />
             <span style={{ fontSize: '14px', fontWeight: '700', color: '#4ade80', letterSpacing: '1px', textTransform: 'uppercase' }}>
-              Beschikbaar per direct · 16–24 uur/week
+              Beschikbaar per 1 oktober · 16–24 uur/week
             </span>
           </div>
           <span style={{ fontSize: '14px', color: '#475569', fontWeight: '500' }}>weareimpact.nl/vincent-van-munster</span>

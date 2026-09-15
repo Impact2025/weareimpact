@@ -388,7 +388,7 @@ export default function IrisPage() {
         <div className="container mx-auto px-6 max-w-3xl text-center">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-50 border border-emerald-100 text-emerald-700 text-sm font-semibold mb-6">
             <Calendar size={14} />
-            Interim beschikbaar per 1 september
+            Interim beschikbaar per 1 oktober
           </div>
           <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-slate-900 mb-4">
             Ook zo'n systeem voor jouw organisatie?

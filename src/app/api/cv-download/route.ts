@@ -106,7 +106,7 @@ export async function POST(request: NextRequest) {
       </div>
     </div>
     <div style="background:#fff7ed;border-radius:10px;padding:16px 20px;margin-bottom:32px">
-      <div style="font-size:12px;font-weight:700;color:#c2410c;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px">Beschikbaar per direct</div>
+      <div style="font-size:12px;font-weight:700;color:#c2410c;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px">Beschikbaar per 1 oktober</div>
       <div style="color:#7c3aed;font-size:13px">16–24 uur/week · Regio Amsterdam / Haarlem / Leiden · €125–€140 per uur</div>
     </div>
     <p style="color:#94a3b8;font-size:13px;line-height:1.7;border-top:1px solid #f1f5f9;padding-top:24px;margin:0">
