@@ -1,6 +1,8 @@
 import type { ChatCompletionTool } from 'openai/resources/chat/completions';
 import { sql } from '@/lib/db/neon';
 import type { Audience } from '@/lib/crm/portal-session';
+import { sendEmail } from '@/lib/email/send';
+import { generateDossierChatFinishedEmail } from '@/lib/email/templates/dossier-chat-finished';
 
 export interface DossierQuestion {
   id: string;
@@ -192,9 +194,10 @@ export async function executeCrmChatTool(
     const { summary, nextSteps } = args as { summary?: string; nextSteps?: string };
     if (!summary) return 'Fout: summary is verplicht.';
 
-    await sql`
+    const [summaryRow] = await sql`
       INSERT INTO crm_chat_summaries (project_slug, audience, summary, next_steps)
       VALUES (${projectSlug}, ${audience}, ${summary}, ${nextSteps ?? null})
+      RETURNING created_at
     `;
 
     if (nextSteps) {
@@ -206,6 +209,36 @@ export async function executeCrmChatTool(
         INSERT INTO crm_actions (project_slug, title, owner, source)
         VALUES (${projectSlug}, ${`Vervolgstap uit gesprek met ${audienceLabel}: ${nextSteps}`}, 'vincent', 'chat_summary')
       `;
+    }
+
+    // Best-effort: Vincent wil altijd een bericht zodra een gesprek is
+    // afgerond (met tijdstip), zodat hij nooit zelf hoeft te checken of
+    // een klant/opdrachtgever al klaar is. Mag het gesprek zelf nooit breken.
+    try {
+      const [project] = await sql`SELECT name FROM crm_projects WHERE slug = ${projectSlug}`;
+      const questionRows = await sql`
+        SELECT question, client_answer
+        FROM crm_questions
+        WHERE project_slug = ${projectSlug} AND audience = ${audience}
+        ORDER BY sort_order ASC, created_at ASC
+      `;
+      const email = generateDossierChatFinishedEmail({
+        projectName: project?.name ?? projectSlug,
+        projectSlug,
+        audience,
+        finishedAt: new Date(summaryRow.created_at),
+        summary,
+        nextSteps: nextSteps ?? null,
+        questions: questionRows as unknown as Array<{ question: string; client_answer: string | null }>,
+      });
+      await sendEmail({
+        to: 'v.munster@weareimpact.nl',
+        subject: email.subject,
+        html: email.html,
+        text: email.text,
+      });
+    } catch (error) {
+      console.error('Kon notificatie-mail voor afgerond gesprek niet versturen (non-fatal):', error);
     }
 
     return 'Samenvatting opgeslagen. Gesprek mag afgerond worden.';
