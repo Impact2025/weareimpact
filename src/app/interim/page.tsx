@@ -26,39 +26,61 @@ const rollen = [
   {
     code: '01',
     titel: 'Interim Directeur-Bestuurder',
-    sub: 'Welzijn & Sociaal Domein',
+    sub: 'Transitie & Turnaround',
+    duur: '12–18 maanden',
+    mandaat: 'Rapporteert rechtstreeks aan de Raad van Toezicht; tijdelijk eindverantwoordelijk voor koers, financiën en organisatie.',
     omschrijving:
-      'Voor organisaties die tijdelijk zonder directie zitten of een zware transitie moeten leiden. Volledige bestuurlijke verantwoordelijkheid: financiën, personeel, stakeholders en de relatie met de Raad van Toezicht.',
+      'Voor stichtingen, welzijnsorganisaties en maatschappelijke instellingen die vastlopen door het vertrek van een bestuurder, stroeve bedrijfsvoering, financiële druk of verouderde processen.',
     wanneer: [
-      'Vacature of vertrek in de directie die snel moet worden opgevangen',
-      'Organisatie in transitie die stevige, ervaren leiding nodig heeft',
-      'Raad van Toezicht die iemand zoekt die het stuur echt overneemt',
+      'Rust en stabiliteit in de organisatie, herstel van vertrouwen bij gemeenten en financiers',
+      'Sanering en herinrichting van de bedrijfsvoering en subsidie-/fondsenwervingsprocessen',
+      'Een toekomstbestendige, digitaal ondersteunde organisatie, klaar voor een vaste opvolger',
     ],
+    href: '/interim-manager',
   },
   {
     code: '02',
     titel: 'Kwartiermaker',
-    sub: 'Innovatie & AI',
+    sub: 'Innovatiehubs & Publiek-Private Samenwerkingen',
+    duur: '9–12 maanden bij een hub of PPS vanaf een leeg vel; 3–6 maanden bij een AI-werkwijze binnen een bestaande organisatie',
+    mandaat: 'Onafhankelijk boegbeeld met budget- en projectmandaat, rapporterend aan een stuurgroep of wethouder.',
     omschrijving:
-      'Voor organisaties die een nieuwe werkwijze, afdeling of AI-functie moeten opzetten maar geen blauwdruk hebben. Van visie naar structuur, van idee naar bewezen concept — in 3 tot 6 maanden klaar voor overdracht.',
+      'Voor gemeenten, onderwijsinstellingen en bedrijven die een nieuw initiatief willen starten — een circulaire hub, sociaal innovatielab of regionale samenwerking — waar nog niets bestaat dan een idee en subsidie.',
     wanneer: [
-      'Fusie of reorganisatie waarbij innovatie een nieuwe plek krijgt',
-      'AI-strategie die van papier naar uitvoering moet',
-      'Nieuwe dienst of aanpak die bewezen moet worden',
+      'Van blanco vel naar een operationele entiteit met een levende community en vaste partners, zoals gerealiseerd bij C-Beta',
+      'Een sluitend exploitatiemodel en heldere governance-afspraken tussen overheid en markt',
+      'Overdracht van het operationele beheer aan een vaste locatiemanager',
     ],
     href: '/kwartiermaker-ai-sociaal-domein',
   },
   {
     code: '03',
-    titel: 'Verandermanager',
-    sub: 'Digitale Transformatie',
+    titel: 'Interim Transitiemanager',
+    sub: 'Bedrijfsvoering & Digitalisering (COO a.i.)',
+    duur: '6–12 maanden',
+    mandaat: 'Verantwoordelijk voor de “machinekamer” — bedrijfsvoering, ICT, planning en processen — zonder individuele personeelszorg en verzuim.',
     omschrijving:
-      'Voor organisaties die een systeem hebben ingevoerd maar de adoptie mist. Of die weten dat een verandering nodig is maar vastlopen op weerstand. Draagvlak van binnenuit — met de taal van werkvloer én boardroom.',
+      'Voor zorg- en welzijnsinstellingen die bezwijken onder personeelstekort en administratieve lasten, terwijl de inhoudelijke directie geen tijd of affiniteit heeft om de bedrijfsvoering te moderniseren.',
     wanneer: [
-      'Nieuw platform of systeem dat niet landt bij medewerkers',
-      'Cultuurverandering die vastloopt op angst of weerstand',
-      'Kloof tussen directie en werkvloer die de voortgang blokkeert',
+      'Halvering van de administratieve druk door gerichte procesoptimalisatie en veilige AI-workflows, zoals gerealiseerd bij Stichting de Baan',
+      'Implementatie van moderne systemen voor capaciteits- en vrijwilligersplanning, zoals DAAR.nl',
+      'Meetbare tijdswinst voor de primaire professionals',
     ],
+    href: '/interim-manager',
+  },
+  {
+    code: '04',
+    titel: 'Strategisch Programmamanager',
+    sub: 'Complexe Transities',
+    duur: '12–18 maanden',
+    mandaat: 'Programmaleider met mandaat om over de schotten van afdelingen en organisaties heen te sturen.',
+    omschrijving:
+      'Voor gemeenten en regionale netwerken die een taaie beleidstransitie — bijvoorbeeld hervorming Wmo, Jeugdzorg of inclusiebeleid — daadwerkelijk moeten laten landen in de uitvoeringspraktijk.',
+    wanneer: [
+      'Doorbreekt de impasse tussen beleidsmakers en de werkvloer met pragmatische interventies',
+      'Borging van datagedreven werken en ketensamenwerking tussen zorg, welzijn en overheid',
+    ],
+    href: '/programmamanager-digitale-transformatie',
   },
 ];
 
@@ -97,11 +119,12 @@ const tijdlijn = [
   },
   {
     periode: '2018 – heden',
-    rol: 'Oprichter & Strategic Innovation Partner',
+    rol: 'Oprichter',
     org: 'WeAreImpact',
     locatie: 'Hoofddorp',
     type: 'ondernemer',
     resultaten: [
+      'DAAR.nl: vrijwilligersmanagement & -matching, lancering 1 oktober 2026',
       'Bijeen.app: AI-gestuurde community tool voor welzijn & gemeenten',
       'Iris: eigen AI-assistent voor professionals in het sociaal domein',
       'De Impact Box (2021–2025): inclusief werkgeverschap voor mensen met beperking',
@@ -241,9 +264,9 @@ export default function InterimProfiel() {
 
               <div className="flex flex-wrap gap-x-3 gap-y-1 mb-4">
                 {[
-                  'Interim Directeur-Bestuurder',
-                  'Kwartiermaker Publieke Sector',
-                  'Transitiemanager',
+                  'Interim Directie & Bestuur',
+                  'Kwartiermaken',
+                  'Transitiemanagement',
                 ].map((t, i, arr) => (
                   <span key={t} className="flex items-center gap-3 text-[0.8rem] text-slate-400 font-medium">
                     {t}
@@ -412,7 +435,7 @@ export default function InterimProfiel() {
                   </div>
                   <div>
                     <p className="font-bold text-white text-sm">Vincent van Münster</p>
-                    <p className="text-slate-400 text-xs">Strategic Innovation Partner</p>
+                    <p className="text-slate-400 text-xs">Interim Directeur-Bestuurder</p>
                   </div>
                 </div>
               </div>
@@ -421,7 +444,7 @@ export default function InterimProfiel() {
         </div>
       </section>
 
-      {/* ═══ DRIE ROLLEN ═════════════════════════════════════════════════ */}
+      {/* ═══ VIER ROLLEN ═════════════════════════════════════════════════ */}
       <section className="py-24 bg-[#FDFBF7]">
         <div className="container mx-auto px-6 max-w-4xl">
           <div className="text-center mb-16">
@@ -442,12 +465,21 @@ export default function InterimProfiel() {
                   {rol.code}
                 </span>
                 <div className="relative z-10">
-                  <div className="flex items-center gap-3 mb-4">
+                  <div className="flex items-center gap-3 mb-2 flex-wrap">
                     <span className="inline-block px-3 py-1 bg-orange-100 text-orange-600 rounded-full text-xs font-black uppercase tracking-widest">{rol.code}</span>
                     <h3 className="text-xl font-bold text-slate-900 leading-snug">{rol.titel}</h3>
-                    <span className="text-sm font-semibold text-orange-600 hidden sm:block">&mdash; {rol.sub}</span>
+                    <span className="text-sm font-semibold text-orange-600">&mdash; {rol.sub}</span>
                   </div>
-                  <p className="text-slate-600 leading-relaxed text-[0.925rem] mb-5 max-w-3xl">{rol.omschrijving}</p>
+                  {'duur' in rol && rol.duur && (
+                    <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">{rol.duur}</p>
+                  )}
+                  <p className="text-slate-600 leading-relaxed text-[0.925rem] mb-4 max-w-3xl">{rol.omschrijving}</p>
+                  {'mandaat' in rol && rol.mandaat && (
+                    <p className="text-slate-500 leading-relaxed text-[0.85rem] italic mb-5 max-w-3xl">
+                      <span className="font-semibold not-italic text-slate-700">Mandaat: </span>
+                      {rol.mandaat}
+                    </p>
+                  )}
                   <div className="inline-flex flex-col gap-1.5 mb-5">
                     {rol.wanneer.map((w) => (
                       <div key={w} className="flex items-start gap-2 text-slate-600 text-sm">
@@ -461,7 +493,7 @@ export default function InterimProfiel() {
                       href={rol.href}
                       className="inline-flex items-center gap-1.5 text-sm font-semibold text-orange-600 hover:text-orange-700"
                     >
-                      Meer over {rol.titel.toLowerCase()} AI
+                      Meer over deze rol
                       <ArrowRight size={14} />
                     </Link>
                   )}

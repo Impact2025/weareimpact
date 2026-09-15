@@ -232,7 +232,7 @@ export default function Home() {
 
           <div className="flex flex-wrap justify-center gap-x-3 gap-y-1 mb-6 animate-fade-in-up delay-200">
             {[
-              'Interim Directeur-Bestuurder | Kwartiermaker Publieke Sector | Transitiemanager',
+              'Interim Directie & Bestuur | Kwartiermaken | Transitiemanagement',
             ].map((title, i, arr) => (
               <span key={title} className="flex items-center gap-3 text-[0.8rem] text-slate-400 font-medium">
                 {title}

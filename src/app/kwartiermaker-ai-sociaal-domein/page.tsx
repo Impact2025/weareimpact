@@ -130,6 +130,17 @@ const stats = [
 
 const projects = [
   {
+    id: 'daar',
+    initials: 'DR',
+    color: 'text-rose-600',
+    accent: 'border-rose-400',
+    name: 'DAAR.nl',
+    tagline: 'Vrijwilligersmanagement & -matching',
+    description:
+      'DAAR bundelt vrijwilligerswerving, matching en welzijnsmonitoring in één platform — met de VrijwilligersCheck en de Impact Reserve als kern. Voortgekomen uit mijn ervaring als directeur bij Stichting de Baan, waar ik zag hoe 180 vrijwilligers nog te vaak als bijzaak werden behandeld in plaats van als onmisbaar. Op 1 oktober 2026 lanceren we DAAR voor de hele vrijwilligerswereld.',
+    url: 'https://daar.nl',
+  },
+  {
     id: 'iris',
     initials: 'IR',
     color: 'text-violet-600',
