@@ -111,6 +111,8 @@ Een goede interim-opdracht is geen open einde. Ik werk in vier fasen: een **inta
 ## Gerelateerde artikelen
 
 - [Interim-manager kiezen voor welzijnsorganisaties](/kennisbank/interim-manager-kiezen-welzijn)
+- [De eerste 100 dagen als interim directeur-bestuurder](/kennisbank/eerste-100-dagen-interim-directeur-bestuurder) — dezelfde intake-tot-overdracht-logica, maar dan op bestuurlijk niveau in plaats van projectniveau
+- [Interim-directeur of organisatieadviseur? Het verschil in mandaat](/kennisbank/interim-directeur-versus-organisatieadviseur-mandaat)
 - [Interim AI-consultant voor welzijnsorganisaties: wat kost het?](/blog/interim-ai-consultant-voor-welzijnsorganisaties-wat-kost-het-en-wat-levert-het-op)
 - [AI implementeren in je non-profit: stappenplan van 8 weken](/kennisbank/ai-implementeren-non-profit-stappenplan)
 

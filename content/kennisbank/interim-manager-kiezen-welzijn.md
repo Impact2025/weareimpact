@@ -77,7 +77,7 @@ Let ook op de menselijke kant. In het sociaal domein werk je met bevlogen mensen
 
 ## Interim-manager versus adviesbureau {#versus-adviesbureau}
 
-Een interim-manager zit naast je team, neemt verantwoordelijkheid en levert resultaat. Een adviesbureau levert een rapport en vertrekt weer. Voor operationele veranderingstrajecten — implementatie, reorganisatie, digitalisering — is een interim-manager bijna altijd effectiever. Je betaalt voor resultaat, niet voor uren die in een rapport verdwijnen.
+Een interim-manager zit naast je team, neemt verantwoordelijkheid en levert resultaat. Een adviesbureau levert een rapport en vertrekt weer. Voor operationele veranderingstrajecten — implementatie, reorganisatie, digitalisering — is een interim-manager bijna altijd effectiever. Je betaalt voor resultaat, niet voor uren die in een rapport verdwijnen. Gaat het niet om een operationeel traject maar om een leiderschapsvacuüm in de directie, dan is het onderscheid nog scherper — lees [interim-directeur versus organisatieadviseur: het verschil in mandaat](/kennisbank/interim-directeur-versus-organisatieadviseur-mandaat).
 
 ## Stappenplan voor het kiezen van een interim-manager {#stappenplan}
 
@@ -116,6 +116,12 @@ De grootste valkuil is dat organisaties te lang wachten. 65% van welzijnsorganis
 **Hoe lang blijft een interim-manager gemiddeld?** Dat hangt af van de opdracht: een afgebakend implementatietraject kan in enkele maanden klaar zijn, een reorganisatie of fusie duurt vaak zes tot twaalf maanden. Leg vooraf een duidelijk einddoel vast.
 
 **Wat is het verschil tussen een interim-manager en een interim-projectleider?** Een interim-manager stuurt een team of afdeling integraal aan; een [interim-projectleider](/kennisbank/interim-projectleider-sociaal-domein) trekt één afgebakend project. Voor een AI-implementatie volstaat vaak een projectleider; bij bredere organisatieverandering past een manager beter.
+
+## Gerelateerde artikelen
+
+- [Interim manager sociaal domein](/interim-manager) — de dienstenpagina
+- [De eerste 100 dagen als interim directeur-bestuurder](/kennisbank/eerste-100-dagen-interim-directeur-bestuurder) — praktisch stappenplan voor de start van een interim-opdracht
+- [Interim-directeur of organisatieadviseur? Het verschil in mandaat](/kennisbank/interim-directeur-versus-organisatieadviseur-mandaat) — voor wie twijfelt tussen advies en bestuurlijk mandaat
 
 ## Gerelateerde artikelen
 
