@@ -141,6 +141,8 @@ Ik ben beperkt beschikbaar: maximaal 16-24 uur per week, tarief €125-€140 pe
 
 - [Interim manager sociaal domein](/interim-manager) — de dienstenpagina
 - [Wanneer huur je een interim-directeur in en wanneer een organisatieadviseur?](/kennisbank/interim-directeur-versus-organisatieadviseur-mandaat) — het verschil in mandaat uitgelegd
+- [Waarom een interim-opdracht na 12 tot 18 maanden klaar moet zijn](/kennisbank/duur-interim-opdracht-12-tot-18-maanden) — wat er na de eerste 100 dagen volgt
+- [Productized Interim: software die de verandering blijvend borgt](/kennisbank/productized-interim-software-borgt-verandering)
 - [Interim-manager kiezen voor welzijnsorganisaties](/kennisbank/interim-manager-kiezen-welzijn) — praktische gids bij het selecteren van een interim-manager
 - [Kwartiermaker AI inhuren voor het sociaal domein](/kennisbank/kwartiermaker-ai-sociaal-domein-inhuren) — voor trajecten zonder bestaand kader, in plaats van bestuurlijke overbrugging
 - [Twee jaar directeur bij Stichting de Baan: waarom ik vertrok en wat ik meeneem](/blog/twee-jaar-directeur-bij-stichting-de-baan-waarom-ik-vertrok-en-wat-ik-meeneem) — persoonlijk verhaal over directeurschap in het sociaal domein

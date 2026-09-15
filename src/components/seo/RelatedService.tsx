@@ -82,6 +82,20 @@ const SERVICES: Service[] = [
     ],
   },
   {
+    anchor: 'de Doorbraak Sprint',
+    href: '/doorbraak-sprint',
+    sentence:
+      'Wil je dit niet analyseren maar in één dagdeel daadwerkelijk oplossen? Dat doe ik met {link}.',
+    match: [
+      'doorbraak sprint',
+      'operationele frictie',
+      'tijdlek',
+      'procesautomatisering',
+      'lean werken',
+      'terugkerend werkproces',
+    ],
+  },
+  {
     anchor: 'interim verandermanagement in het sociaal domein',
     href: '/interim-verandermanagement-ai-sociaal-domein',
     sentence:

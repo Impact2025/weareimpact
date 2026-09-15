@@ -96,6 +96,10 @@ Stel jezelf deze vragen in volgorde:
    - Tijdelijk → interim-directeur of interim-manager.
    - Structureel → overweeg een vaste aanstelling of een doorlopend adviestraject, geen interim-oplossing.
 
+5. **Gaat het om de hele organisatie, of om precies één terugkerend werkproces?**
+   - De hele organisatie → interim-directeur of organisatieadviseur, afhankelijk van vraag 1-4.
+   - Eén afgebakend proces dat tijd opslokt → dat is vaak geen bestuurlijk vraagstuk, maar een operationeel vraagstuk. Kijk dan naar [de Doorbraak Sprint](/kennisbank/doorbraak-sprint-operationele-frictie-oplossen): één proces oplossen in één dagdeel, zonder bestuurlijk mandaat nodig te hebben.
+
 ---
 
 ## Waar kwartiermaken tussenin zit
@@ -119,6 +123,8 @@ Twijfel je welk mandaat jouw situatie nodig heeft? Ik ben beperkt beschikbaar: m
 
 - [Interim manager sociaal domein](/interim-manager) — de dienstenpagina
 - [De eerste 100 dagen als interim directeur-bestuurder](/kennisbank/eerste-100-dagen-interim-directeur-bestuurder) — praktisch stappenplan voor de start van een interim-opdracht
+- [Waarom een interim-opdracht na 12 tot 18 maanden klaar moet zijn](/kennisbank/duur-interim-opdracht-12-tot-18-maanden)
+- [De Doorbraak Sprint: één tijdlek oplossen in één dagdeel](/kennisbank/doorbraak-sprint-operationele-frictie-oplossen) — voor een afgebakend proces, zonder bestuurlijk mandaat nodig te hebben
 - [Interim-manager kiezen voor welzijnsorganisaties](/kennisbank/interim-manager-kiezen-welzijn) — praktische gids bij het selecteren van een interim-manager
 - [Kwartiermaker AI inhuren voor het sociaal domein](/kennisbank/kwartiermaker-ai-sociaal-domein-inhuren) — de derde rol: bouwen aan iets nieuws in plaats van bestaande leiding overnemen
 - [Interim verandermanagement AI sociaal domein](/interim-verandermanagement-ai-sociaal-domein) — voor AI-adoptie en verandertrajecten binnen een bestaand kader
