@@ -56,7 +56,10 @@ export async function scoreProspect(
     });
 
     const raw = res.choices[0]?.message?.content ?? '{}';
-    const parsed = JSON.parse(raw);
+    // Sommige providers (bv. Bedrock via OpenRouter) negeren response_format
+    // en wikkelen de JSON alsnog in een ```json-codeblok — die er eerst afstropen.
+    const jsonMatch = raw.match(/\{[\s\S]*\}/);
+    const parsed = JSON.parse(jsonMatch ? jsonMatch[0] : raw);
     const n = Number(parsed.score);
     return {
       score: Number.isFinite(n) ? Math.max(0, Math.min(10, Math.round(n))) : null,
