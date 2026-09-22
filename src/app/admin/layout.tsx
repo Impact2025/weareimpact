@@ -31,6 +31,7 @@ import {
   ClipboardList,
   Rocket,
   FolderOpen,
+  Mic,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import IrisVoiceButton from '@/components/admin/IrisVoiceButton';
@@ -61,6 +62,7 @@ const sidebarItems: SidebarItem[] = [
       { label: 'Contacten', href: '/admin/crm/contacten', icon: Users },
       { label: 'Deals', href: '/admin/crm/deals', icon: Target },
       { label: 'Taken', href: '/admin/crm/taken', icon: CheckSquare },
+      { label: 'Omi Inbox', href: '/admin/omi', icon: Mic },
     ]
   },
   {
