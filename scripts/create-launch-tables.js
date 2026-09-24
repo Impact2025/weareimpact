@@ -18,6 +18,8 @@ async function main() {
   await sql`ALTER TABLE crm_projects ADD COLUMN IF NOT EXISTS probe_url TEXT`;
   await sql`ALTER TABLE crm_projects ADD COLUMN IF NOT EXISTS go_live_date DATE`;
   await sql`ALTER TABLE crm_projects ADD COLUMN IF NOT EXISTS live_at TIMESTAMPTZ`;
+  await sql`ALTER TABLE crm_projects ADD COLUMN IF NOT EXISTS reminders_enabled BOOLEAN NOT NULL DEFAULT FALSE`;
+  await sql`ALTER TABLE crm_projects ADD COLUMN IF NOT EXISTS last_reminder_at TIMESTAMPTZ`;
 
   await sql`ALTER TABLE crm_milestones ADD COLUMN IF NOT EXISTS phase TEXT`;
   await sql`ALTER TABLE crm_milestones ADD COLUMN IF NOT EXISTS owner TEXT NOT NULL DEFAULT 'vincent'`;

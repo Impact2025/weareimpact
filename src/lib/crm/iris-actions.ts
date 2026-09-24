@@ -1,4 +1,5 @@
 // Iris CRM Actions - Functions that Iris can execute for CRM operations
+import { getLaunchBriefing } from '@/lib/launch/briefing';
 import { sql } from '@/lib/db/neon';
 import { formatCurrency, dealStageLabels, taskPriorityLabels, getContactFullName } from './labels';
 import { runDueProfiles } from '@/lib/lead-machine/runProfiles';

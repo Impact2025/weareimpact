@@ -63,7 +63,7 @@ export function summarize(milestones: LaunchMilestone[]): LaunchSummary {
 
 export async function loadMilestones(projectSlug: string): Promise<LaunchMilestone[]> {
   const rows = await sql`
-    SELECT id, title, description, status, due_date, phase, owner, blocking, check_key, client_visible
+    SELECT id, title, description, status, to_char(due_date, 'YYYY-MM-DD') AS due_date, phase, owner, blocking, check_key, client_visible
     FROM crm_milestones
     WHERE project_slug = ${projectSlug}
     ORDER BY sort_order ASC, created_at ASC

@@ -17,7 +17,7 @@ export async function GET(
   const { project: slug } = await params;
 
   const projects = await sql`
-    SELECT slug, name, client_name, template, site_url, probe_url, go_live_date, live_at
+    SELECT slug, name, client_name, template, site_url, probe_url, go_live_date, live_at, reminders_enabled, last_reminder_at
     FROM crm_projects WHERE slug = ${slug}
   `;
   if (projects.length === 0) {
@@ -56,6 +56,9 @@ export async function PATCH(
   }
   if (body.goLiveDate !== undefined) {
     await sql`UPDATE crm_projects SET go_live_date = ${body.goLiveDate || null} WHERE slug = ${slug}`;
+  }
+  if (body.remindersEnabled !== undefined) {
+    await sql`UPDATE crm_projects SET reminders_enabled = ${!!body.remindersEnabled} WHERE slug = ${slug}`;
   }
   return NextResponse.json({ success: true });
 }

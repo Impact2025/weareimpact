@@ -40,6 +40,7 @@ interface Data {
   project: {
     slug: string; name: string; client_name: string | null; template: string | null;
     site_url: string | null; probe_url: string | null; go_live_date: string | null; live_at: string | null;
+    reminders_enabled: boolean; last_reminder_at: string | null;
   };
   milestones: Milestone[];
   checks: Check[];
@@ -225,6 +226,15 @@ export default function LaunchBoardPage() {
                   <Input type="date" value={goLive} onChange={(e) => setGoLive(e.target.value)} className="mt-1" />
                 </label>
               </div>
+              <label className="flex items-center gap-2 text-sm text-slate-700">
+                <input type="checkbox" checked={project.reminders_enabled}
+                  onChange={async (e) => {
+                    await fetch(`${api}/launch`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ remindersEnabled: e.target.checked }) });
+                    load();
+                  }} />
+                Stuur de klant automatisch een herinnering (max 1× per 3 dagen) zolang er taken op hem/haar wachten
+                {project.last_reminder_at && <span className="text-xs text-slate-400">· laatst {fmtDate(project.last_reminder_at)}</span>}
+              </label>
               <div className="flex gap-2">
                 <Button onClick={runChecks} disabled={!siteUrl || busy === 'checks'}>
                   {busy === 'checks' ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Play className="w-4 h-4 mr-2" />}

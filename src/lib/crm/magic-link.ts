@@ -27,7 +27,7 @@ export interface CreateMagicLinkResult {
  * doelgroep de sessie straks geldt) — er zit dus geen doelgroep-informatie in
  * de link die je zou kunnen aanpassen.
  */
-export async function createAndSendMagicLink(
+export async function createMagicLink(
   projectSlug: string,
   audience: Audience,
   email: string,
@@ -43,6 +43,15 @@ export async function createAndSendMagicLink(
 
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.weareimpact.nl';
   const url = `${baseUrl}/portal/${projectSlug}/verify?token=${token}`;
+  return { url, expiresAt };
+}
+
+export async function createAndSendMagicLink(
+  projectSlug: string,
+  audience: Audience,
+  email: string,
+): Promise<CreateMagicLinkResult> {
+  const { url, expiresAt } = await createMagicLink(projectSlug, audience, email);
 
   const projectRows = await sql`SELECT name FROM crm_projects WHERE slug = ${projectSlug}`;
   const projectName = projectRows[0]?.name ?? projectSlug;

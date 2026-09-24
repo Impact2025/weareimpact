@@ -27,6 +27,7 @@ import {
   getMorningBriefing,
   findNewLeads,
 } from '@/lib/crm/iris-actions';
+import { getLaunchBriefing } from '@/lib/launch/briefing';
 import { webSearch, formatSearchResults } from '@/lib/ai/web-search';
 import { analyzeAnalytics, formatAnalytics } from '@/lib/ai/analytics';
 import { writeBlog, formatBlogDraft } from '@/lib/ai/write-blog';
@@ -138,6 +139,14 @@ export const irisTools: ChatCompletionTool[] = [
     function: {
       name: 'get_morning_briefing',
       description: 'Dagelijkse briefing: taken vandaag, achterstallige follow-ups, pipeline, recente wins.',
+      parameters: { type: 'object', properties: {} },
+    },
+  },
+  {
+    type: 'function',
+    function: {
+      name: 'get_launch_briefing',
+      description: 'Status van alle lopende klant-lanceringen (LaunchAssist): voortgang, blokkades, taken die op de klant wachten, falende checks en risicos. Gebruik bij vragen als "hoe staan de lanceringen ervoor" of "waar wacht ik op".',
       parameters: { type: 'object', properties: {} },
     },
   },
@@ -367,6 +376,8 @@ export async function executeTool(name: string, args: Args): Promise<string> {
       // --- CRM ---
       case 'get_morning_briefing':
         return await getMorningBriefing();
+      case 'get_launch_briefing':
+        return await getLaunchBriefing();
       case 'get_pipeline':
         return await getPipelineSummary();
       case 'get_overdue_followups':

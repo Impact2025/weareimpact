@@ -9,6 +9,10 @@
       "schedule": "0 9 * * *"
     },
     {
+      "path": "/api/cron/launch-daily",
+      "schedule": "30 6 * * *"
+    },
+    {
       "path": "/api/cron/send-scheduled-newsletters",
       "schedule": "*/15 * * * *"
     }
