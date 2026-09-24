@@ -35,5 +35,16 @@ export async function POST(
   }
   await sql`UPDATE crm_projects SET template = ${tpl.key} WHERE slug = ${slug}`;
 
+  // Afhankelijkheden koppelen nu alle taken bestaan (op titel, binnen dit project).
+  for (const task of tpl.tasks) {
+    if (!task.after) continue;
+    await sql`
+      UPDATE crm_milestones m SET depends_on = d.id
+      FROM crm_milestones d
+      WHERE m.project_slug = ${slug} AND m.title = ${task.title} AND m.depends_on IS NULL
+        AND d.project_slug = ${slug} AND d.title = ${task.after}
+    `;
+  }
+
   return NextResponse.json({ success: true, added });
 }

@@ -12,6 +12,10 @@ export interface LaunchMilestone {
   blocking: boolean;
   check_key: string | null;
   client_visible: boolean;
+  depends_on: string | null;
+  /** Titel van de taak waar deze nog op wacht; null als er geen (openstaande) afhankelijkheid is. */
+  blocked_by: string | null;
+  completed_at: string | null;
 }
 
 export interface PhaseProgress {
@@ -28,6 +32,7 @@ export interface LaunchSummary {
   ready: boolean;
   waitingOnClient: number;
   overdue: number;
+  blockedTasks: number;
 }
 
 /** Fases in template-volgorde, onbekende fases erachter, "Overig" voor taken zonder fase. */
@@ -57,16 +62,20 @@ export function summarize(milestones: LaunchMilestone[]): LaunchSummary {
     blockers,
     ready: milestones.length > 0 && blockers.length === 0,
     waitingOnClient: milestones.filter((m) => m.owner === 'klant' && m.status !== 'done').length,
+    blockedTasks: milestones.filter((m) => m.status !== 'done' && m.blocked_by).length,
     overdue: milestones.filter((m) => m.status !== 'done' && m.due_date && String(m.due_date).slice(0, 10) < today).length,
   };
 }
 
 export async function loadMilestones(projectSlug: string): Promise<LaunchMilestone[]> {
   const rows = await sql`
-    SELECT id, title, description, status, to_char(due_date, 'YYYY-MM-DD') AS due_date, phase, owner, blocking, check_key, client_visible
-    FROM crm_milestones
-    WHERE project_slug = ${projectSlug}
-    ORDER BY sort_order ASC, created_at ASC
+    SELECT m.id, m.title, m.description, m.status, to_char(m.due_date, 'YYYY-MM-DD') AS due_date, m.phase, m.owner,
+           m.blocking, m.check_key, m.client_visible, m.depends_on, m.completed_at,
+           CASE WHEN d.status IS NOT NULL AND d.status <> 'done' THEN d.title END AS blocked_by
+    FROM crm_milestones m
+    LEFT JOIN crm_milestones d ON d.id = m.depends_on
+    WHERE m.project_slug = ${projectSlug}
+    ORDER BY m.sort_order ASC, m.created_at ASC
   `;
   return rows as unknown as LaunchMilestone[];
 }

@@ -5,7 +5,7 @@ import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import {
   Loader2, Rocket, ArrowLeft, Play, ShieldCheck, ShieldAlert, AlertTriangle, CheckCircle2,
-  Circle, CircleDot, Lock, Plus, Trash2, Users,
+  Circle, CircleDot, Lock, Plus, Trash2, Users, Link2,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -27,6 +27,8 @@ interface Milestone {
   blocking: boolean;
   check_key: string | null;
   client_visible: boolean;
+  depends_on: string | null;
+  blocked_by: string | null;
 }
 
 interface Check {
@@ -91,9 +93,11 @@ export default function LaunchBoardPage() {
   useEffect(() => { load(); }, [load]);
 
   async function patchMilestone(id: string, body: Record<string, unknown>) {
-    await fetch(`${api}/milestones/${id}`, {
+    const res = await fetch(`${api}/milestones/${id}`, {
       method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
     });
+    if (!res.ok) setMessage((await res.json()).error ?? 'Wijzigen mislukt');
+    else setMessage(null);
     load();
   }
 
@@ -292,7 +296,7 @@ export default function LaunchBoardPage() {
                     const StatusIcon = m.status === 'done' ? CheckCircle2 : m.status === 'in_progress' ? CircleDot : Circle;
                     const check = m.check_key ? checkByKey.get(m.check_key) : null;
                     return (
-                      <div key={m.id} className={`bg-white rounded-lg border p-2.5 ${m.status === 'done' ? 'opacity-60' : ''}`}>
+                      <div key={m.id} className={`bg-white rounded-lg border p-2.5 ${m.status === 'done' ? 'opacity-60' : m.blocked_by ? 'bg-slate-50' : ''}`}>
                         <div className="flex items-start gap-2">
                           <button onClick={() => patchMilestone(m.id, { status: NEXT_STATUS[m.status] })} aria-label="Status wijzigen">
                             <StatusIcon className={`w-4 h-4 mt-0.5 ${m.status === 'done' ? 'text-emerald-600' : m.status === 'in_progress' ? 'text-orange-500' : 'text-slate-300'}`} />
@@ -301,6 +305,9 @@ export default function LaunchBoardPage() {
                           <button onClick={() => confirm('Taak verwijderen?') && fetch(`${api}/milestones/${m.id}`, { method: 'DELETE' }).then(load)}
                             className="text-slate-300 hover:text-red-500" aria-label="Verwijderen"><Trash2 className="w-3.5 h-3.5" /></button>
                         </div>
+                        {m.blocked_by && (
+                          <p className="text-[11px] text-slate-500 mt-1 pl-6 flex items-center gap-1"><Link2 className="w-3 h-3" /> Wacht op: {m.blocked_by}</p>
+                        )}
                         <div className="flex flex-wrap items-center gap-1.5 mt-2 pl-6">
                           <button onClick={() => patchMilestone(m.id, { owner: m.owner === 'vincent' ? 'klant' : m.owner === 'klant' ? 'agent' : 'vincent' })}>
                             <Badge className={`${OWNER_STYLE[m.owner].cls} text-[10px]`}>{OWNER_STYLE[m.owner].label}</Badge>
@@ -313,6 +320,11 @@ export default function LaunchBoardPage() {
                           {fmtDate(m.due_date) && <span className="text-[10px] text-slate-500">{fmtDate(m.due_date)}</span>}
                           <input type="date" value={m.due_date ? m.due_date.slice(0, 10) : ''} onChange={(e) => patchMilestone(m.id, { dueDate: e.target.value })}
                             className="w-5 h-5 opacity-40 hover:opacity-100 cursor-pointer" aria-label="Deadline" />
+                          <select value={m.depends_on ?? ''} onChange={(e) => patchMilestone(m.id, { dependsOn: e.target.value })}
+                            className="text-[10px] bg-transparent text-slate-400 max-w-[110px]" aria-label="Afhankelijk van" title="Afhankelijk van">
+                            <option value="">geen afhankelijkheid</option>
+                            {milestones.filter((o) => o.id !== m.id).map((o) => <option key={o.id} value={o.id}>{o.title.slice(0, 40)}</option>)}
+                          </select>
                           <select value={m.phase ?? ''} onChange={(e) => patchMilestone(m.id, { phase: e.target.value })}
                             className="text-[10px] bg-transparent text-slate-400 ml-auto" aria-label="Fase">
                             {PHASES.map((ph) => <option key={ph} value={ph}>{ph}</option>)}

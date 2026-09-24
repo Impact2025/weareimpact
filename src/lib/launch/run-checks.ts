@@ -18,7 +18,7 @@ export async function runAndStoreChecks(
     `;
     if (r.status === 'pass') {
       await sql`
-        UPDATE crm_milestones SET status = 'done', updated_at = NOW()
+        UPDATE crm_milestones SET status = 'done', completed_at = COALESCE(completed_at, NOW()), updated_at = NOW()
         WHERE project_slug = ${slug} AND check_key = ${r.key} AND status <> 'done'
       `;
     }

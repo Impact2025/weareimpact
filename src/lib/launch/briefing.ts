@@ -38,8 +38,10 @@ export async function getLaunchOverviews(): Promise<LaunchOverview[]> {
   const slugs = projects.map((p) => p.slug as string);
   const [milestones, checks] = await Promise.all([
     sql`
-      SELECT project_slug, title, status, to_char(due_date, 'YYYY-MM-DD') AS due_date, phase, owner, blocking, client_visible, updated_at
-      FROM crm_milestones WHERE project_slug = ANY(${slugs})
+      SELECT m.project_slug, m.title, m.status, to_char(m.due_date, 'YYYY-MM-DD') AS due_date, m.phase, m.owner,
+             m.blocking, m.client_visible, m.updated_at,
+             EXISTS (SELECT 1 FROM crm_milestones d WHERE d.id = m.depends_on AND d.status <> 'done') AS blocked
+      FROM crm_milestones m WHERE m.project_slug = ANY(${slugs})
     `,
     sql`SELECT project_slug, check_key, status FROM crm_launch_checks WHERE project_slug = ANY(${slugs})`,
   ]);
@@ -56,7 +58,7 @@ export async function getLaunchOverviews(): Promise<LaunchOverview[]> {
     const blockers = open.filter((m) => m.blocking && m.phase !== 'Nazorg').map((m) => m.title as string);
     const overdue = open.filter((m) => m.due_date && String(m.due_date).slice(0, 10) < today).map((m) => m.title as string);
     const failingChecks = checks.filter((c) => c.project_slug === p.slug && c.status === 'fail').map((c) => c.check_key as string);
-    const clientOpen = open.filter((m) => m.owner === 'klant' && m.client_visible);
+    const clientOpen = open.filter((m) => m.owner === 'klant' && m.client_visible && !m.blocked);
     const stale = clientOpen
       .map((m) => ({ title: m.title as string, days: daysSince(m.updated_at) }))
       .filter((m) => m.days >= STALE_CLIENT_DAYS);

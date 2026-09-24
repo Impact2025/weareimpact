@@ -11,6 +11,7 @@ interface Milestone {
   due_date: string | null;
   phase: string | null;
   owner: string;
+  blocked: boolean;
 }
 
 interface Agreement {
@@ -62,7 +63,7 @@ export default function OverviewClient({ projectSlug, audience }: { projectSlug:
     );
   }
 
-  const yourTurn = milestones.filter((m) => m.owner === 'klant' && m.status !== 'done');
+  const yourTurn = milestones.filter((m) => m.owner === 'klant' && m.status !== 'done' && !m.blocked);
   const phaseOrder: string[] = [];
   for (const m of milestones) {
     const p = m.phase ?? 'Overig';

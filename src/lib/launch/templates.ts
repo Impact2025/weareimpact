@@ -15,6 +15,8 @@ export interface TemplateTask {
   clientVisible?: boolean;
   checkKey?: string;
   description?: string;
+  /** Titel van de taak waar deze op wacht (moet in hetzelfde template staan). */
+  after?: string;
 }
 
 export interface LaunchTemplate {
@@ -37,14 +39,14 @@ const WEBSITE_TECH: TemplateTask[] = [
 
 const INTAKE: TemplateTask[] = [
   { title: 'Intakegesprek gevoerd', phase: 'Intake', owner: 'vincent', blocking: true, clientVisible: true },
-  { title: 'Vragenlijst door klant ingevuld', phase: 'Intake', owner: 'klant', blocking: true, clientVisible: true },
-  { title: 'Scope en afspraken schriftelijk bevestigd', phase: 'Intake', owner: 'vincent', blocking: true, clientVisible: true },
+  { title: 'Vragenlijst door klant ingevuld', phase: 'Intake', owner: 'klant', blocking: true, clientVisible: true, after: 'Intakegesprek gevoerd' },
+  { title: 'Scope en afspraken schriftelijk bevestigd', phase: 'Intake', owner: 'vincent', blocking: true, clientVisible: true, after: 'Vragenlijst door klant ingevuld' },
 ];
 
 const GO_LIVE: TemplateTask[] = [
   { title: 'Klant heeft opleverpunten goedgekeurd', phase: 'Go-live', owner: 'klant', blocking: true, clientVisible: true },
-  { title: 'DNS omgezet en site live', phase: 'Go-live', owner: 'vincent', blocking: true, clientVisible: true },
-  { title: 'Lancering aangekondigd', phase: 'Go-live', owner: 'vincent', clientVisible: true },
+  { title: 'DNS omgezet en site live', phase: 'Go-live', owner: 'vincent', blocking: true, clientVisible: true, after: 'Klant heeft opleverpunten goedgekeurd' },
+  { title: 'Lancering aangekondigd', phase: 'Go-live', owner: 'vincent', clientVisible: true, after: 'DNS omgezet en site live' },
 ];
 
 const AFTERCARE: TemplateTask[] = [
@@ -63,7 +65,7 @@ export const TEMPLATES: LaunchTemplate[] = [
       { title: 'Merk, toon en doelgroep vastgelegd in SKILL.md', phase: 'Content & merk', owner: 'vincent', blocking: true },
       { title: 'Vertical-systeemprompt en -config aangemaakt', phase: 'Content & merk', owner: 'vincent', blocking: true },
       { title: 'Logo en huisstijl aangeleverd', phase: 'Content & merk', owner: 'klant', clientVisible: true },
-      { title: 'Eerste 5 artikelen gegenereerd en gecontroleerd (700–1000 woorden)', phase: 'Content & merk', owner: 'agent', clientVisible: true },
+      { title: 'Eerste 5 artikelen gegenereerd en gecontroleerd (700–1000 woorden)', phase: 'Content & merk', owner: 'agent', clientVisible: true, after: 'Vertical-systeemprompt en -config aangemaakt' },
       ...WEBSITE_TECH,
       { title: 'Vertical-isolatie: geraden slug van andere vertical geeft 404', phase: 'Testen', owner: 'agent', blocking: true, checkKey: 'vertical_isolation' },
       { title: '/api/publish getest met Bearer-key en guard', phase: 'Testen', owner: 'vincent', blocking: true },
@@ -96,7 +98,7 @@ export const TEMPLATES: LaunchTemplate[] = [
       { title: 'Requirements: communitystructuur', phase: 'Content & merk', owner: 'vincent', blocking: true, clientVisible: true },
       { title: 'Organisatie-informatie en feedback aangeleverd', phase: 'Content & merk', owner: 'klant', clientVisible: true },
       { title: 'App-design goedgekeurd', phase: 'Techniek', owner: 'klant', blocking: true, clientVisible: true },
-      { title: 'Registratieformulier en betaalde tickets werken', phase: 'Testen', owner: 'vincent', blocking: true, clientVisible: true },
+      { title: 'Registratieformulier en betaalde tickets werken', phase: 'Testen', owner: 'vincent', blocking: true, clientVisible: true, after: 'App-design goedgekeurd' },
       { title: 'Testronde iOS en Android', phase: 'Testen', owner: 'vincent', blocking: true, clientVisible: true },
       ...GO_LIVE,
       ...AFTERCARE,
@@ -109,9 +111,9 @@ export const TEMPLATES: LaunchTemplate[] = [
     tasks: [
       ...INTAKE,
       { title: 'Sprintbrief ingevuld', phase: 'Content & merk', owner: 'klant', blocking: true, clientVisible: true },
-      { title: 'Diagnose uitgevoerd', phase: 'Techniek', owner: 'vincent', blocking: true, clientVisible: true },
-      { title: 'Doorbraak uitgevoerd', phase: 'Testen', owner: 'vincent', blocking: true, clientVisible: true },
-      { title: 'Borging: 1-A4 SOP opgeleverd', phase: 'Go-live', owner: 'vincent', blocking: true, clientVisible: true },
+      { title: 'Diagnose uitgevoerd', phase: 'Techniek', owner: 'vincent', blocking: true, clientVisible: true, after: 'Sprintbrief ingevuld' },
+      { title: 'Doorbraak uitgevoerd', phase: 'Testen', owner: 'vincent', blocking: true, clientVisible: true, after: 'Diagnose uitgevoerd' },
+      { title: 'Borging: 1-A4 SOP opgeleverd', phase: 'Go-live', owner: 'vincent', blocking: true, clientVisible: true, after: 'Doorbraak uitgevoerd' },
       ...AFTERCARE,
     ],
   },

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { isAdminAuthenticated } from '@/lib/admin-auth';
 import { sql } from '@/lib/db/neon';
+import { createsCycle, openDependencyTitle } from '@/lib/launch/dependencies';
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
@@ -15,14 +16,23 @@ export async function PATCH(
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
   const { project: projectSlug, id } = await params;
-  const { status, clientVisible, phase, owner, blocking, dueDate, title } = await request.json();
+  const { status, clientVisible, phase, owner, blocking, dueDate, title, dependsOn } = await request.json();
 
   if (status !== undefined) {
     if (!VALID_STATUSES.includes(status)) {
       return NextResponse.json({ error: 'Ongeldige status' }, { status: 400 });
     }
+    if (status !== 'todo') {
+      const waitingOn = await openDependencyTitle(projectSlug, id);
+      if (waitingOn) {
+        return NextResponse.json({ error: `Wacht nog op: ${waitingOn}` }, { status: 409 });
+      }
+    }
     await sql`
-      UPDATE crm_milestones SET status = ${status}, updated_at = NOW()
+      UPDATE crm_milestones
+      SET status = ${status},
+          completed_at = CASE WHEN ${status} = 'done' THEN COALESCE(completed_at, NOW()) ELSE NULL END,
+          updated_at = NOW()
       WHERE id = ${id} AND project_slug = ${projectSlug}
     `;
   }
@@ -34,6 +44,16 @@ export async function PATCH(
     `;
   }
 
+  if (dependsOn !== undefined) {
+    if (dependsOn) {
+      const target = await sql`SELECT 1 FROM crm_milestones WHERE id = ${dependsOn} AND project_slug = ${projectSlug}`;
+      if (target.length === 0) return NextResponse.json({ error: 'Onbekende taak' }, { status: 400 });
+      if (await createsCycle(projectSlug, id, dependsOn)) {
+        return NextResponse.json({ error: 'Dat zou een cirkel-afhankelijkheid maken' }, { status: 409 });
+      }
+    }
+    await sql`UPDATE crm_milestones SET depends_on = ${dependsOn || null}, updated_at = NOW() WHERE id = ${id} AND project_slug = ${projectSlug}`;
+  }
   if (phase !== undefined) {
     await sql`UPDATE crm_milestones SET phase = ${phase || null}, updated_at = NOW() WHERE id = ${id} AND project_slug = ${projectSlug}`;
   }

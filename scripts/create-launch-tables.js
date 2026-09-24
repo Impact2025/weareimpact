@@ -26,6 +26,10 @@ async function main() {
   await sql`ALTER TABLE crm_milestones ADD COLUMN IF NOT EXISTS blocking BOOLEAN NOT NULL DEFAULT FALSE`;
   await sql`ALTER TABLE crm_milestones ADD COLUMN IF NOT EXISTS depends_on UUID`;
   await sql`ALTER TABLE crm_milestones ADD COLUMN IF NOT EXISTS check_key TEXT`;
+  await sql`ALTER TABLE crm_milestones ADD COLUMN IF NOT EXISTS completed_at TIMESTAMPTZ`;
+  await sql`UPDATE crm_milestones SET completed_at = updated_at WHERE status = 'done' AND completed_at IS NULL`;
+  await sql`ALTER TABLE crm_projects ADD COLUMN IF NOT EXISTS weekly_enabled BOOLEAN NOT NULL DEFAULT FALSE`;
+  await sql`ALTER TABLE crm_projects ADD COLUMN IF NOT EXISTS last_weekly_at TIMESTAMPTZ`;
 
   await sql`
     CREATE TABLE IF NOT EXISTS crm_launch_checks (

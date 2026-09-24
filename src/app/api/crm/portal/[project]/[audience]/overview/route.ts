@@ -25,10 +25,11 @@ export async function GET(
   // client_visible-gemaakte voortgang.
   const [milestones, agreements, actions] = await Promise.all([
     sql`
-      SELECT id, title, description, status, due_date, phase, owner
-      FROM crm_milestones
-      WHERE project_slug = ${projectSlug} AND client_visible = TRUE
-      ORDER BY sort_order ASC, created_at ASC
+      SELECT m.id, m.title, m.description, m.status, m.due_date, m.phase, m.owner,
+             EXISTS (SELECT 1 FROM crm_milestones d WHERE d.id = m.depends_on AND d.status <> 'done') AS blocked
+      FROM crm_milestones m
+      WHERE m.project_slug = ${projectSlug} AND m.client_visible = TRUE
+      ORDER BY m.sort_order ASC, m.created_at ASC
     `,
     sql`
       SELECT id, title, description, decided_at
