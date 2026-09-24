@@ -15,7 +15,7 @@ export async function PATCH(
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
   const { project: projectSlug, id } = await params;
-  const { status, clientVisible } = await request.json();
+  const { status, clientVisible, phase, owner, blocking, dueDate, title } = await request.json();
 
   if (status !== undefined) {
     if (!VALID_STATUSES.includes(status)) {
@@ -32,6 +32,25 @@ export async function PATCH(
       UPDATE crm_milestones SET client_visible = ${!!clientVisible}, updated_at = NOW()
       WHERE id = ${id} AND project_slug = ${projectSlug}
     `;
+  }
+
+  if (phase !== undefined) {
+    await sql`UPDATE crm_milestones SET phase = ${phase || null}, updated_at = NOW() WHERE id = ${id} AND project_slug = ${projectSlug}`;
+  }
+  if (owner !== undefined) {
+    if (!['vincent', 'klant', 'agent'].includes(owner)) {
+      return NextResponse.json({ error: 'Ongeldige eigenaar' }, { status: 400 });
+    }
+    await sql`UPDATE crm_milestones SET owner = ${owner}, updated_at = NOW() WHERE id = ${id} AND project_slug = ${projectSlug}`;
+  }
+  if (blocking !== undefined) {
+    await sql`UPDATE crm_milestones SET blocking = ${!!blocking}, updated_at = NOW() WHERE id = ${id} AND project_slug = ${projectSlug}`;
+  }
+  if (dueDate !== undefined) {
+    await sql`UPDATE crm_milestones SET due_date = ${dueDate || null}, updated_at = NOW() WHERE id = ${id} AND project_slug = ${projectSlug}`;
+  }
+  if (title !== undefined && String(title).trim()) {
+    await sql`UPDATE crm_milestones SET title = ${String(title).trim()}, updated_at = NOW() WHERE id = ${id} AND project_slug = ${projectSlug}`;
   }
 
   return NextResponse.json({ success: true });

@@ -9,6 +9,8 @@ interface Milestone {
   description: string | null;
   status: 'todo' | 'in_progress' | 'done';
   due_date: string | null;
+  phase: string | null;
+  owner: string;
 }
 
 interface Agreement {
@@ -60,8 +62,53 @@ export default function OverviewClient({ projectSlug, audience }: { projectSlug:
     );
   }
 
+  const yourTurn = milestones.filter((m) => m.owner === 'klant' && m.status !== 'done');
+  const phaseOrder: string[] = [];
+  for (const m of milestones) {
+    const p = m.phase ?? 'Overig';
+    if (!phaseOrder.includes(p)) phaseOrder.push(p);
+  }
+  const showPhases = milestones.some((m) => m.phase);
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+      {yourTurn.length > 0 && (
+        <section style={{ ...cardStyle, borderColor: '#f59e0b', background: '#fffbeb' }}>
+          <h2 style={sectionTitle}>Jouw actie</h2>
+          <ul style={{ margin: 0, paddingLeft: 18 }}>
+            {yourTurn.map((m) => (
+              <li key={m.id} style={{ marginBottom: 4 }}>
+                <strong>{m.title}</strong>
+                {m.due_date && <span style={{ color: '#888', fontSize: 13 }}> · voor {new Date(m.due_date).toLocaleDateString('nl-NL')}</span>}
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      {showPhases && (
+        <section>
+          <h2 style={sectionTitle}>Lancering</h2>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+            {phaseOrder.map((phase) => {
+              const items = milestones.filter((m) => (m.phase ?? 'Overig') === phase);
+              const done = items.filter((m) => m.status === 'done').length;
+              const pct = Math.round((done / items.length) * 100);
+              return (
+                <div key={phase}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 14 }}>
+                    <span>{phase}</span><span style={{ color: '#888' }}>{done}/{items.length}</span>
+                  </div>
+                  <div style={{ height: 6, background: '#e5e7eb', borderRadius: 3, overflow: 'hidden', marginTop: 4 }}>
+                    <div style={{ width: `${pct}%`, height: '100%', background: pct === 100 ? '#10b981' : '#f97316' }} />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </section>
+      )}
+
       {milestones.length > 0 && (
         <section>
           <h2 style={sectionTitle}>Voortgang</h2>

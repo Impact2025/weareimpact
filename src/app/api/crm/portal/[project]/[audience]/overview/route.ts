@@ -25,7 +25,7 @@ export async function GET(
   // client_visible-gemaakte voortgang.
   const [milestones, agreements, actions] = await Promise.all([
     sql`
-      SELECT id, title, description, status, due_date
+      SELECT id, title, description, status, due_date, phase, owner
       FROM crm_milestones
       WHERE project_slug = ${projectSlug} AND client_visible = TRUE
       ORDER BY sort_order ASC, created_at ASC

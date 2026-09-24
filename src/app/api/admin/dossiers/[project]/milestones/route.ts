@@ -15,7 +15,7 @@ export async function GET(
   const { project: projectSlug } = await params;
 
   const milestones = await sql`
-    SELECT id, title, description, prd_section, status, due_date, sort_order, client_visible
+    SELECT id, title, description, prd_section, status, due_date, sort_order, client_visible, phase, owner, blocking, check_key
     FROM crm_milestones
     WHERE project_slug = ${projectSlug}
     ORDER BY sort_order ASC, created_at ASC
@@ -32,7 +32,8 @@ export async function POST(
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
   const { project: projectSlug } = await params;
-  const { title, description, prdSection, dueDate, clientVisible } = await request.json();
+  const { title, description, prdSection, dueDate, clientVisible, phase, owner, blocking } = await request.json();
+  const ownerValue = ['vincent', 'klant', 'agent'].includes(owner) ? owner : 'vincent';
 
   if (!title || !title.trim()) {
     return NextResponse.json({ error: 'title is verplicht' }, { status: 400 });
@@ -44,8 +45,8 @@ export async function POST(
   const nextSort = (maxRows[0]?.max_sort ?? -1) + 1;
 
   await sql`
-    INSERT INTO crm_milestones (project_slug, title, description, prd_section, due_date, sort_order, client_visible)
-    VALUES (${projectSlug}, ${title.trim()}, ${description ?? null}, ${prdSection ?? null}, ${dueDate ?? null}, ${nextSort}, ${!!clientVisible})
+    INSERT INTO crm_milestones (project_slug, title, description, prd_section, due_date, sort_order, client_visible, phase, owner, blocking)
+    VALUES (${projectSlug}, ${title.trim()}, ${description ?? null}, ${prdSection ?? null}, ${dueDate ?? null}, ${nextSort}, ${!!clientVisible}, ${phase ?? null}, ${ownerValue}, ${!!blocking})
   `;
 
   return NextResponse.json({ success: true });

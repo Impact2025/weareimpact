@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'next/navigation';
+import Link from 'next/link';
 import { Plus, Trash2, Send, Loader2, Copy, Check, Eye, EyeOff, ChevronUp, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -369,7 +370,12 @@ export default function DossierDetailPage() {
   return (
     <div className="p-6 max-w-3xl mx-auto space-y-6">
       <div>
-        <h1 className="text-2xl font-bold capitalize">{projectSlug.replace(/-/g, ' ')}</h1>
+        <div className="flex items-center justify-between gap-3">
+          <h1 className="text-2xl font-bold capitalize">{projectSlug.replace(/-/g, ' ')}</h1>
+          <Link href={`/admin/dossiers/${projectSlug}/launch`}>
+            <Button size="sm" variant="outline">Launch-board →</Button>
+          </Link>
+        </div>
         <p className="text-sm text-muted-foreground">
           Het oogje-icoon bepaalt per item of de klant het in het portal te zien krijgt. Standaard
           intern (verborgen) — jij kiest wat gedeeld wordt.

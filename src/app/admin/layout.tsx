@@ -52,6 +52,7 @@ const sidebarItems: SidebarItem[] = [
   { label: 'Dashboard', href: '/admin', icon: LayoutDashboard },
   { label: 'Agenda', href: '/admin/agenda', icon: Calendar },
   { label: 'Sprint Sessies', href: '/admin/sprint', icon: Rocket },
+  { label: 'LaunchAssist', href: '/admin/launch', icon: Rocket },
   { label: 'Klantdossiers', href: '/admin/dossiers', icon: FolderOpen },
   {
     label: 'CRM',
