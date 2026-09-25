@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { isAdminAuthenticated } from '@/lib/admin-auth';
+import { isAdminOrServiceAuthenticated } from '@/lib/admin-auth';
 import { sql } from '@/lib/db/neon';
 
 export const dynamic = 'force-dynamic';
@@ -9,7 +9,7 @@ export async function GET(
   _request: NextRequest,
   { params }: { params: Promise<{ project: string }> },
 ) {
-  if (!(await isAdminAuthenticated())) {
+  if (!(await isAdminOrServiceAuthenticated())) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
   const { project: projectSlug } = await params;
@@ -28,7 +28,7 @@ export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ project: string }> },
 ) {
-  if (!(await isAdminAuthenticated())) {
+  if (!(await isAdminOrServiceAuthenticated())) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
   const { project: projectSlug } = await params;

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { isAdminAuthenticated } from '@/lib/admin-auth';
+import { isAdminAuthenticated, isAdminOrServiceAuthenticated } from '@/lib/admin-auth';
 import { sql } from '@/lib/db/neon';
 import { createsCycle, openDependencyTitle } from '@/lib/launch/dependencies';
 
@@ -12,7 +12,7 @@ export async function PATCH(
   request: NextRequest,
   { params }: { params: Promise<{ project: string; id: string }> },
 ) {
-  if (!(await isAdminAuthenticated())) {
+  if (!(await isAdminOrServiceAuthenticated())) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
   const { project: projectSlug, id } = await params;
