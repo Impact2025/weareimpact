@@ -124,6 +124,8 @@ Ik ben Vincent van Munster, oprichter van WeAreImpact. Ik combineer 25 jaar dire
 
 Wil je een vrijblijvend gesprek over AI in jouw organisatie? <a href="/contact">Plan een koffiemoment</a> — 30 minuten, geen verplichtingen.
 
+Hoe ik zelf werk, en waar je me op kunt toetsen, lees je op mijn pagina als [AI-consultant in het sociaal domein](/ai-consultant-sociaal-domein).
+
 ## Veelgestelde vragen {#faq}
 
 **Wat is het verschil tussen een AI-consultant en een IT-consultant?** Een AI-consultant richt zich specifiek op kunstmatige intelligentie: welke toepassingen passen bij jouw organisatie, hoe implementeer je ze, en hoe zorg je dat medewerkers ze omarmen. Een IT-consultant is breder en richt zich op technologie-infrastructuur. Voor AI in het sociaal domein heb je iemand nodig die beide werelden begrijpt.

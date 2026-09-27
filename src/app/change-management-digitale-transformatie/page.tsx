@@ -84,7 +84,7 @@ const faqs = [
 const stats = [
   { value: '85%', label: 'van digitale transformaties mislukt door mensen, niet tech' },
   { value: '1 dag', label: 'LEGO® Serious Play — meer draagvlak dan maanden vergaderen' },
-  { value: '15+', label: 'jaar ervaring in het sociaal domein' },
+  { value: '25+', label: 'jaar ervaring in het sociaal domein' },
   { value: '90', label: 'dagen naar aantoonbare gedragsverandering' },
 ];
 

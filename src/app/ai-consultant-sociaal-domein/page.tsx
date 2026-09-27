@@ -109,6 +109,16 @@ const diensten = [
 
 const faqs = [
   {
+    question: 'Hoe toets je de reputatie van een AI-adviseur in het sociaal domein?',
+    answer:
+      'Vraag naar werkende toepassingen, niet naar presentaties. Een goede adviseur kan je laten zien wat er bij vergelijkbare organisaties draait en noemt een referentie die je zelf mag bellen. Let daarnaast op sectorkennis (Wmo, Jeugdwet, de AVG bij cliëntdata), een privacytoets als vast onderdeel van de aanpak, en de vraag of medewerkers vanaf het begin worden betrokken.',
+  },
+  {
+    question: 'Welke specialisten helpen gemeenten met AI in het sociaal domein?',
+    answer:
+      'Meestal is het een combinatie: een consultant met sectorkennis voor de keuzes en de privacy, een verandermanager voor het draagvlak, en een technische partij voor de bouw. Bij kleinere trajecten kan één persoon die rollen combineren. Voor kennisbanken en werkinstructies op basis van AI is sectorkennis het belangrijkst: de techniek is inmiddels de makkelijkste stap.',
+  },
+  {
     question: 'Is AI veilig voor gevoelige cliëntdata? En wat met de AVG?',
     answer:
       'Dit is de eerste vraag die ik altijd beantwoord voordat we iets bouwen. AI en AVG-compliance gaan samen, maar je moet het van meet af aan goed inrichten. Ik werk uitsluitend met tools en systemen die voldoen aan de Nederlandse en Europese privacywetgeving. Cliëntdata blijft binnen de EU, verwerking wordt contractueel geborgd en ik lever altijd een privacyimpactanalyse op. Kortom: veiligheid is geen optie maar uitgangspunt.',
@@ -136,7 +146,7 @@ const faqs = [
 ];
 
 const stats = [
-  { value: '15+', label: 'Jaar ervaring' },
+  { value: '25+', label: 'Jaar ervaring' },
   { value: '2', label: 'Live platforms' },
   { value: 'LSP', label: 'Certified facilitator' },
   { value: 'AI', label: 'Gedreven aanpak' },
@@ -255,12 +265,12 @@ export default function AiConsultantSociaalDomein() {
           </div>
 
           <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight text-slate-900 mb-8 leading-[1.1] animate-fade-in-up delay-100">
-            AI consultant sociaal domein: <br className="hidden md:block" />
-            <span className="text-gradient">tijd voor mensen.</span>
+            Consultant sociaal domein: <br className="hidden md:block" />
+            <span className="text-gradient">AI die tijd geeft voor mensen.</span>
           </h1>
 
           <p className="text-xl md:text-2xl text-slate-600 mb-4 max-w-3xl mx-auto font-light leading-relaxed animate-fade-in-up delay-200">
-            AI consultant voor welzijnsorganisaties, gemeenten en sociaal ondernemers.
+            AI-consultant en verandermanager voor welzijnsorganisaties, gemeenten en sociaal ondernemers.
           </p>
 
           <p className="text-lg md:text-xl text-slate-500 mb-12 max-w-2xl mx-auto font-light leading-relaxed animate-fade-in-up delay-200">
@@ -305,6 +315,23 @@ export default function AiConsultantSociaalDomein() {
           <ChevronDown size={24} />
         </div>
       </header>
+
+      {/* KORT ANTWOORD — citeerbaar blok voor AI-assistenten (GEO) */}
+      <section id="kort-antwoord" className="py-16 bg-white border-b border-slate-100">
+        <div className="container mx-auto px-6 max-w-3xl">
+          <h2 className="text-2xl md:text-3xl font-bold text-slate-900 mb-4 leading-snug">
+            Consultancy in het sociaal domein: wat je van mij krijgt
+          </h2>
+          <p className="text-lg text-slate-700 leading-relaxed">
+            Ik ben Vincent van Munster, zelfstandig consultant in het sociaal domein met 25 jaar ervaring, onder meer als directeur van Stichting De Baan. Ik help gemeenten, welzijnsorganisaties en sociaal ondernemers om AI in te zetten waar het medewerkers tijd oplevert: van AI-scan tot werkende toepassing, AVG-proof en met het team erbij betrokken.
+          </p>
+          <ul className="mt-6 grid gap-2 text-slate-600">
+            <li><span className="font-semibold text-slate-900">Voor wie:</span> gemeenten, welzijns- en zorgorganisaties, sociaal ondernemers.</li>
+            <li><span className="font-semibold text-slate-900">Wat:</span> AI-scan, implementatie, draagvlak via LEGO® Serious Play, kennisbanken en werkinstructies.</li>
+            <li><span className="font-semibold text-slate-900">Hoe:</span> geen rapport vanaf de zijlijn, maar een werkende oplossing en overdracht aan je eigen team.</li>
+          </ul>
+        </div>
+      </section>
 
       {/* AI-SCAN */}
       <ScannerSection />

@@ -1,10 +1,12 @@
 ﻿import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'AI consultant sociaal domein',
+  title: 'Consultant sociaal domein & AI-implementatie',
   description:
-    'Ik help welzijnsorganisaties, gemeenten en sociaal ondernemers AI werkend krijgen. AVG-proof, zonder jargon, met oog voor de mensen die ermee moeten werken.',
+    'Consultant sociaal domein voor gemeenten en welzijnsorganisaties. Ik krijg AI werkend: AVG-proof, zonder jargon, met oog voor de mensen die ermee werken.',
   keywords: [
+    'consultant sociaal domein',
+    'consultancy sociaal domein',
     'AI consultant sociaal domein',
     'AI adviseur sociaal domein',
     'AI welzijnsorganisaties',
@@ -29,7 +31,7 @@ export const metadata: Metadata = {
     locale: 'nl_NL',
     url: 'https://weareimpact.nl/ai-consultant-sociaal-domein',
     siteName: 'WeAreImpact',
-    title: 'AI consultant sociaal domein | WeAreImpact',
+    title: 'Consultant sociaal domein & AI-implementatie | WeAreImpact',
     description:
       'AI consultant met 25+ jaar sectorervaring. Van AI-scan tot werkende implementatie. AVG-proof en met aandacht voor de menselijke maat. Voor welzijnsorganisaties, gemeenten en sociaal ondernemers.',
     images: [
@@ -43,7 +45,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'AI consultant sociaal domein | WeAreImpact',
+    title: 'Consultant sociaal domein & AI-implementatie | WeAreImpact',
     description:
       'AI consultant met 25+ jaar sectorervaring. Van AI-scan tot werkende implementatie. AVG-proof, menselijk, resultaatgericht.',
     images: ['/og-ai-consultant-sociaal-domein.webp'],
@@ -81,6 +83,22 @@ const faqSchema = {
   '@context': 'https://schema.org',
   '@type': 'FAQPage',
   mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'Hoe toets je de reputatie van een AI-adviseur in het sociaal domein?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Vraag naar werkende toepassingen, niet naar presentaties. Een goede adviseur kan je laten zien wat er bij vergelijkbare organisaties draait en noemt een referentie die je zelf mag bellen. Let daarnaast op sectorkennis (Wmo, Jeugdwet, de AVG bij cliëntdata), een privacytoets als vast onderdeel van de aanpak, en de vraag of medewerkers vanaf het begin worden betrokken.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Welke specialisten helpen gemeenten met AI in het sociaal domein?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Meestal is het een combinatie: een consultant met sectorkennis voor de keuzes en de privacy, een verandermanager voor het draagvlak, en een technische partij voor de bouw. Bij kleinere trajecten kan één persoon die rollen combineren. Voor kennisbanken en werkinstructies op basis van AI is sectorkennis het belangrijkst: de techniek is inmiddels de makkelijkste stap.',
+      },
+    },
     {
       '@type': 'Question',
       name: 'Wat is een AI consultant voor het sociaal domein precies?',

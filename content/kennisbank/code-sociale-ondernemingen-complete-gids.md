@@ -1,57 +1,61 @@
 ---
 slug: code-sociale-ondernemingen-complete-gids
-title: "Code Sociale Ondernemingen: De Complete Gids"
-subtitle: "Wat het is, hoe je het aanvraagt, en of het de moeite waard is"
-excerpt: "B Corp of Code? In dit artikel leg ik uit wat de Code Sociale Ondernemingen inhoudt, hoe het aanvraagproces werkt via peer review, en voor wie het geschikt is. Met een eerlijke vergelijking met B Corp."
+title: "Code Sociale Ondernemingen: de complete gids"
+subtitle: "De 5 principes, hoe de toetsing werkt, wat het kost en wat het je oplevert"
+excerpt: "De Code Sociale Ondernemingen bestaat sinds de herziening van 2025 uit vijf principes: missie, meting, stakeholders, financiën en transparantie. In deze gids lees je wat ze inhouden, hoe je in het Register komt, wat het kost en wat het oplevert in aanbestedingen."
 category_slug: sociaal-ondernemen
 tags:
   - Code Sociale Ondernemingen
-  - certificering
+  - Register Sociale Ondernemingen
   - sociaal ondernemen
+  - aanbesteden
   - B Corp
-  - Social Enterprise NL
-seo_title: "Code Sociale Ondernemingen 2025 | Aanvragen, Kosten & Vergelijking B Corp"
-seo_description: "Alles over de Code Sociale Ondernemingen: de 5 principes, het peer review proces, kosten, en een eerlijke vergelijking met B Corp. Inclusief zelfevaluatie."
+seo_title: "Code Sociale Ondernemingen: 5 principes, toetsing en kosten"
+seo_description: "De Code Sociale Ondernemingen uitgelegd: de 5 principes sinds 2025, hoe je in het Register komt, wat het kost en wat het oplevert in aanbestedingen."
 seo_keywords:
   - code sociale ondernemingen
-  - code sociale ondernemingen aanvragen
+  - code sociaal ondernemen
+  - register sociale ondernemingen
+  - code sociale ondernemingen principes
   - verschil code sociale ondernemingen b corp
-  - social enterprise certificering
-  - sociaal ondernemen keurmerk
-reading_time: 11
+reading_time: 9
 published_at: "2024-11-04"
 difficulty: intermediate
 lead_magnet_title: "Zelfevaluatie: Ben Je Klaar voor de Code?"
 lead_magnet_description: "20 vragen om te bepalen of jouw organisatie klaar is voor de Code Sociale Ondernemingen. Met tips om je voor te bereiden."
 lead_magnet_type: checklist
 faq_items:
-  - question: "Wat is de Code Sociale Ondernemingen?"
-    answer: "Een keurmerk dat aantoont dat je organisatie voldoet aan criteria voor transparantie, impact en governance. Het vergroot vertrouwen bij stakeholders."
-  - question: "Hoelang duurt het om de Code te behalen?"
-    answer: "Gemiddeld 3-6 maanden voorbereiding, afhankelijk van hoe goed je governance al op orde is. De aanvraag zelf duurt 4-8 weken."
-  - question: "Wat kost het Code-keurmerk?"
-    answer: "De jaarlijkse bijdrage is inkomensafhankelijk, vanaf circa €250 voor kleine organisaties tot €2.500 voor grotere."
+  - question: "Uit hoeveel principes bestaat de Code Sociale Ondernemingen?"
+    answer: "Vijf: missie, meting, stakeholders, financiën en transparantie. Tot de herziening van 2025 waren het er meer, dus oudere artikelen en presentaties noemen vaak nog een ander aantal. Controleer bij twijfel de officiële website van de Code."
+  - question: "Is de Code een keurmerk of een zelfverklaring?"
+    answer: "Geen zelfverklaring. Je aanmelding wordt getoetst aan toelatingscriteria. Een begeleider stelt op basis van een gesprek en je documenten een advies op, en de Review Board beslist of je in het Register Sociale Ondernemingen wordt opgenomen."
+  - question: "Wat kost deelname aan de Code?"
+    answer: "Volgens de aanmeldpagina van de Code betaal je eenmalig €310 aanmeldkosten en daarna €375 deelnamebijdrage per jaar. Controleer de actuele bedragen op de website van de Code voordat je begroot."
+  - question: "Is deelname verplicht?"
+    answer: "Nee, deelname is vrijwillig. Wel verwijzen steeds meer gemeenten en fondsen naar de Code in hun inkoopvoorwaarden, waardoor opname in het Register in aanbestedingen voordeel kan opleveren."
+  - question: "Wat is het verschil met B Corp?"
+    answer: "De Code eist dat maatschappelijke impact het bestaansdoel is. Bij B Corp is impact één van de doelen. B Corp is internationaal en werkt met een scoresysteem; de Code is Nederlands en werkt met toelatingscriteria per principe."
+  - question: "Geldt de Code ook voor stichtingen?"
+    answer: "Ja. De Code is bedoeld voor organisaties die maatschappelijke impact vooropstellen, ongeacht rechtsvorm: stichting, coöperatie of bv."
 author_name: Vincent van Munster
-author_title: "Sociaal Ondernemer | Social Enterprise NL netwerk"
+author_title: "Sociaal ondernemer en oud-directeur Stichting De Baan"
 ---
 
-"Ben je B Corp gecertificeerd?"
+Met de Code Sociale Ondernemingen laat je zien dat je maatschappelijke missie geen marketing is. Het is geen vrijblijvende belofte: je aanmelding wordt getoetst, en bij goedkeuring kom je in het Register Sociale Ondernemingen. Voor gemeenten en fondsen is dat register een manier om te zien met wie ze te maken hebben.
 
-Het is een vraag die ik vaak krijg. Mijn antwoord: "Nee, wij kozen voor de Code Sociale Ondernemingen."
-
-In dit artikel leg ik uit wat de Code is, waarom we daarvoor kozen, en of het voor jouw organisatie ook past. Inclusief een eerlijke vergelijking met B Corp - want beide hebben hun plek.
+Eén punt gaat vaak mis: de Code is in 2025 herzien. Veel artikelen, en tot voor kort ook deze gids, spreken nog over andere principes of een ander aantal. Sinds de herziening zijn het er vijf, en die staan hieronder.
 
 ---
 
 ## Inhoudsopgave
 
 1. [Wat is de Code Sociale Ondernemingen?](#wat-is-code)
-2. [De 5 principes uitgelegd](#principes)
-3. [Code vs. B Corp: eerlijke vergelijking](#vergelijking)
-4. [Het aanvraagproces: peer review](#aanvraag)
-5. [Kosten en tijdsinvestering](#kosten)
-6. [Voordelen van de Code](#voordelen)
-7. [Nadelen en kritiek](#nadelen)
+2. [De 5 principes](#principes)
+3. [Hoe de toetsing werkt](#toetsing)
+4. [Wat het kost](#kosten)
+5. [Wat het oplevert in aanbestedingen](#aanbestedingen)
+6. [Impact meetbaar maken: waar het vastloopt](#impact-meten)
+7. [Code of B Corp?](#vergelijking)
 8. [Voor wie is de Code geschikt?](#voor-wie)
 9. [Veelgestelde vragen](#faq)
 
@@ -59,416 +63,160 @@ In dit artikel leg ik uit wat de Code is, waarom we daarvoor kozen, en of het vo
 
 ## Wat is de Code Sociale Ondernemingen? {#wat-is-code}
 
-De Code Sociale Ondernemingen is een Nederlands keurmerk voor organisaties waarbij **maatschappelijke impact het primaire doel** is.
+De Code Sociale Ondernemingen is een Nederlandse gedragscode voor organisaties waarbij **maatschappelijke impact het bestaansdoel** is. Organisaties die aan de toelatingscriteria voldoen, worden opgenomen in het Register Sociale Ondernemingen.
 
-### De kern in één zin:
-
-> "Bij een sociale onderneming staat impact centraal - winst is het middel, niet het doel."
-
-### Wie staat erachter?
-
-De Code is een initiatief van **Social Enterprise NL**, de brancheorganisatie voor sociale ondernemingen in Nederland. Het is geen overheidsinstelling of commerciële certificeerder - het komt uit de sector zelf.
-
-### Wat maakt het uniek?
-
-1. **Impact-first eis**: Je moet kunnen aantonen dat maatschappelijke impact je primaire doel is - niet "één van de doelen"
-2. **Peer review**: Andere sociale ondernemers beoordelen je aanvraag
-3. **Nederlands**: Specifiek ontwikkeld voor de Nederlandse context
-4. **Sector-gedreven**: Geen externe auditors, maar collega-ondernemers
-
-### Enkele cijfers
-
-- **400+** organisaties zijn Code-drager (2024)
-- **5** principes waarop je wordt beoordeeld
-- **3** jaar geldigheid per certificering
-- **€395-€945** jaarlijkse bijdrage (afhankelijk van omzet)
+Sociaal ondernemen heeft in Nederland geen wettelijke definitie. Iedere organisatie kan zich sociaal noemen, zonder bewijs. Dat maakt het voor inkopers lastig: hoe weet je dat belastinggeld bijdraagt aan maatschappelijke impact en niet alleen aan een goed verhaal? De Code is daar het antwoord op. Het tegengaan van *impact washing* is een expliciet motief.
 
 ---
 
-## De 5 principes uitgelegd {#principes}
+## De 5 principes {#principes}
 
-De Code is gebaseerd op 5 principes. Je moet op elk principe aantonen hoe jouw organisatie hieraan voldoet.
+Sinds de herziening van 2025 kent de Code vijf principes. Per principe gelden toelatingscriteria, en voor grotere organisaties zijn die zwaarder.
 
-### Principe 1: Impact Gedreven
+| Principe | Waar het om gaat | Voorbeeld van een toelatingscriterium |
+|----------|------------------|---------------------------------------|
+| **1. Missie** | De missie is helder omschreven en geborgd | Missie, visie en strategie zijn uitgewerkt en in de statuten vastgelegd |
+| **2. Meting** | Je meet welke impact je behaalt | Jaarlijkse impactrapportage, op een vastgesteld niveau van het Impactpad |
+| **3. Stakeholders** | Missie en impact bespreek je met belanghebbenden | Stakeholders zijn in kaart gebracht en betrokken bij de impactevaluatie |
+| **4. Financiën** | In het financieel beleid staat de missie voorop | Terughoudend winstuitkeringsbeleid en een gematigd beloningsbeleid |
+| **5. Transparantie** | Informatie is toegankelijk | Belangrijke documenten en jaarstukken staan binnen zes maanden online |
 
-**De eis:** Maatschappelijke impact is de primaire drijfveer van de organisatie.
+De volgorde is geen toeval. Principe 1 en 2 dragen de rest: zonder heldere missie valt er niets te meten, en zonder meting is transparantie een lege huls. In mijn ervaring struikelen organisaties zelden over principe 1. Ze struikelen over principe 2.
 
-**Wat dat betekent:**
-- Je missie is expliciet maatschappelijk
-- Impact staat in je statuten of kernwaarden
-- Beslissingen worden primair getoetst aan impact, niet aan winst
-
-**Voorbeeldvraag:**
-> "Hoe zou je reageren als een zeer winstgevende klus je missie zou ondermijnen?"
-
-Het antwoord moet zijn: "Die klus doen we niet."
-
-### Principe 2: Stakeholder Betrokkenheid
-
-**De eis:** Belanghebbenden hebben een stem in de organisatie.
-
-**Wat dat betekent:**
-- Je betrekt doelgroepen bij beslissingen
-- Medewerkers en vrijwilligers hebben inspraak
-- Je bent transparant naar stakeholders
-
-**Voorbeeldvraag:**
-> "Hoe betrek je je doelgroep bij het ontwikkelen van nieuwe diensten?"
-
-### Principe 3: Winst ter Ondersteuning van Missie
-
-**De eis:** Winst wordt primair ingezet voor de maatschappelijke missie.
-
-**Wat dat betekent:**
-- Winst wordt grotendeels geherinvesteerd
-- Dividendbeleid (als je een BV bent) is beperkt
-- Financiële groei dient de impact, niet andersom
-
-**Let op:** Dit betekent niet "geen winst maken" - maar wel dat winst een middel is, geen doel.
-
-### Principe 4: Transparantie
-
-**De eis:** De organisatie is open over bedrijfsvoering en impact.
-
-**Wat dat betekent:**
-- Jaarverslag of impactrapportage is beschikbaar
-- Je deelt zowel successen als uitdagingen
-- Financiële hoofdlijnen zijn inzichtelijk
-
-### Principe 5: Duurzaam en Verantwoord
-
-**De eis:** De organisatie opereert duurzaam en ethisch.
-
-**Wat dat betekent:**
-- Aandacht voor milieu-impact
-- Eerlijke arbeidsvoorwaarden
-- Integriteit in alle zakelijke relaties
+> **Wat neem je mee:** de vijf principes zijn missie, meting, stakeholders, financiën en transparantie. Lees de actuele toelatingscriteria altijd op de [officiële website van de Code](https://codesocialeondernemingen.nl/het-register/toelatingscriteria/).
 
 ---
 
-## Code vs. B Corp: eerlijke vergelijking {#vergelijking}
+## Hoe de toetsing werkt {#toetsing}
 
-De meest gestelde vraag: "Wat is beter, de Code of B Corp?"
+Dit is waar de Code zich onderscheidt van een keurmerk dat je jezelf kunt toekennen. Aanmelden is niet hetzelfde als opgenomen worden. Volgens de aanmeldpagina van de Code loopt het zo:
 
-Het eerlijke antwoord: het hangt af van je situatie.
+1. Je vult het aanmeldformulier in.
+2. Team Code neemt contact met je op.
+3. Je tekent een intentieverklaring en betaalt de aanmeldkosten. Je status wordt "in aanvraag".
+4. Je vult een online vragenlijst in en levert documenten aan.
+5. Een begeleider voert een gesprek met je en schrijft een advies.
+6. De begeleider legt het advies voor aan de Review Board.
+7. De Review Board beslist.
+8. Bij goedkeuring word je deelnemer in het Register.
 
-### Overzichtstabel
+**Tip:** wees concreet. Een missie in de statuten en een impactrapportage die je kunt laten zien, zeggen meer dan een mooie tekst in de vragenlijst.
+
+---
+
+## Wat het kost {#kosten}
+
+Volgens de aanmeldpagina van de Code betaal je:
+
+| Onderdeel | Bedrag |
+|-----------|--------|
+| Aanmeldkosten (eenmalig) | €310 |
+| Deelnamebijdrage (per jaar) | €375 |
+
+Controleer de actuele bedragen op de website van de Code voordat je begroot. De grootste investering zit meestal niet in de bijdrage, maar in de tijd die het kost om je impactmeting en je stukken op orde te krijgen.
+
+---
+
+## Wat het oplevert in aanbestedingen {#aanbestedingen}
+
+Het effect is concreet. Gemeenten en fondsen kunnen in hun inkoopvoorwaarden naar de Code verwijzen als toetsingskader, en ondernemers die in het Register zijn opgenomen kunnen in inkooptrajecten een streepje voor krijgen. Een aanbestedende dienst kan bijvoorbeeld vragen om een onderbouwing van je maatschappelijke impact langs de principes van de Code.
+
+Praktisch betekent dat: doe je regelmatig mee aan aanbestedingen bij gemeenten, dan is opname in het Register geen ideologische keuze maar een commerciële. Doe je dat niet, dan is het vooral een instrument om je eigen organisatie scherp te houden. Ook een prima reden, maar een andere.
+
+Meer over hoe social return werkt in aanbestedingen lees je in [SROI en aanbestedingen 2026](/kennisbank/sroi-aanbesteding-sociale-onderneming-2026).
+
+---
+
+## Impact meetbaar maken: waar het vastloopt {#impact-meten}
+
+Principe 2 vraagt dat je meet welke impact je behaalt. Daar wringt het bij de meeste organisaties waar ik kom. Niet omdat ze niet willen meten, maar omdat de data versnipperd is: in de hoofden van medewerkers, in losse Excel-bestanden, in verslagen die niemand meer terugleest.
+
+Ik werkte met een welzijnsorganisatie die aan de meeste principes voldeed, maar haar maatschappelijke resultaten niet aantoonbaar kon maken. De uitkomsten van cliëntgesprekken zaten verspreid over de systemen van drie verschillende coördinatoren. Het handmatig doornemen daarvan kostte structureel tijd die niemand had, dus gebeurde het niet. En zonder die analyse geen bewijs.
+
+Samen hebben we een AI-assistent gebouwd die die gesprekken analyseert en de uitkomsten samenvat. Daardoor werd zichtbaar wat cliënten daadwerkelijk bereikten: van eenzaamheid naar sociale contacten, van uitval naar deelname. De rapportage ging niet langer over of het proces goed was gevolgd, maar over wat er was veranderd voor mensen.
+
+Dat is uiteindelijk waar de Code op aanstuurt: niet voldoen aan de letter, maar invulling geven aan de bedoeling. Wil je dit zelf opzetten, lees dan [impact meten zonder Excel-drama](/kennisbank/impact-meten-zonder-excel-drama).
+
+---
+
+## Code of B Corp? {#vergelijking}
+
+De meest gestelde vraag. Het eerlijke antwoord: het hangt af van wat je kern is.
 
 | Aspect | Code Sociale Ondernemingen | B Corp |
 |--------|---------------------------|--------|
-| **Oorsprong** | Nederland | VS (internationaal) |
-| **Focus** | Impact MOET primair zijn | Impact mag "één van de doelen" zijn |
-| **Beoordeling** | Peer review (collega's) | Puntensysteem + verificatie |
-| **Kosten** | €395-€945/jaar | €1.000-€50.000/jaar |
-| **Bekendheid NL** | Groeiend in sociale sector | Breder bekend |
-| **Bekendheid internationaal** | Beperkt | Groot |
-| **Geschikt voor** | Sociale ondernemingen | Elk bedrijf met impact-ambitie |
-| **Geldigheid** | 3 jaar | 3 jaar |
-
-### Wanneer Code?
-
-✅ Je bent een **sociale onderneming** waarbij impact écht voorop staat
-✅ Je opereert **primair in Nederland**
-✅ Je wilt **aansluiten bij de sociale ondernemers-community**
-✅ Je hebt een **beperkt budget**
-✅ Je waardeert **peer review** boven externe audit
-
-### Wanneer B Corp?
-
-✅ Je bent een **regulier bedrijf** dat verduurzaamt
-✅ Je opereert **internationaal**
-✅ Je wilt **brede herkenning** (ook buiten de sociale sector)
-✅ Je kunt de **hogere kosten** dragen
-✅ Je wilt een **puntensysteem** om voortgang te meten
-
-### Mijn perspectief
-
-> "B Corp is geweldig voor bedrijven die impact willen toevoegen aan hun business. De Code is voor organisaties waar impact de business ís."
-
-Beide zijn legitiem. De vraag is: wat is jouw kern?
-
----
-
-## Het aanvraagproces: peer review {#aanvraag}
-
-Het aanvraagproces voor de Code is uniek door het peer review systeem.
-
-### Stap 1: Voorbereiden
-
-**Tijdsinvestering:** 4-8 uur
-
-- Verzamel documentatie (statuten, jaarverslag, impactgegevens)
-- Reflecteer op de 5 principes: hoe pas jij ze toe?
-- Bekijk voorbeelden van andere Code-dragers
-
-### Stap 2: Aanmelden
-
-**Tijdsinvestering:** 1-2 uur
-
-- Ga naar [socialeondernemingscode.nl](https://www.socialeondernemingscode.nl)
-- Maak een account aan
-- Vul de basisgegevens in
-
-### Stap 3: Vragenlijst invullen
-
-**Tijdsinvestering:** 4-8 uur
-
-Per principe beantwoord je vragen zoals:
-- Wat is je maatschappelijke missie?
-- Hoe meet je je impact?
-- Hoe betrek je stakeholders?
-- Wat is je winstbestemmingsbeleid?
-- Hoe waarborg je transparantie?
-
-**Tip:** Wees concreet en eerlijk. Reviewers prikken door vage antwoorden heen.
-
-### Stap 4: Peer Review
-
-**Doorlooptijd:** 4-8 weken
-
-Twee collega-sociale ondernemers (Code-dragers) beoordelen je aanvraag:
-- Ze lezen je antwoorden
-- Ze kunnen aanvullende vragen stellen
-- Ze voeren een gesprek met je (telefonisch of video)
-- Ze geven onafhankelijk een oordeel
-
-### Stap 5: Besluit
-
-Na de review zijn er drie uitkomsten:
-1. **Goedgekeurd**: Je wordt Code-drager
-2. **Aanvulling nodig**: Je krijgt feedback en kunt aanvullen
-3. **Afgewezen**: Je voldoet (nog) niet aan de criteria
-
-Bij goedkeuring ontvang je:
-- Het Code-drager logo
-- Vermelding op de website
-- Toegang tot het netwerk
-
-### Stap 6: Jaarlijkse vernieuwing
-
-Elk jaar:
-- Bevestig je dat je nog aan de principes voldoet
-- Betaal je de jaarlijkse bijdrage
-- Elke 3 jaar: volledige her-review
-
----
-
-## Kosten en tijdsinvestering {#kosten}
-
-### Financiële kosten (2024/2025)
-
-De bijdrage is omzetafhankelijk:
-
-| Jaaromzet | Jaarlijkse bijdrage |
-|-----------|---------------------|
-| < €100.000 | €395 |
-| €100.000 - €500.000 | €595 |
-| €500.000 - €2.000.000 | €745 |
-| > €2.000.000 | €945 |
-
-**Vergelijk met B Corp:** €1.000 tot €50.000 per jaar, afhankelijk van omzet.
-
-### Tijdsinvestering
-
-| Fase | Uren |
-|------|------|
-| Voorbereiding | 4-8 |
-| Aanmelding | 1-2 |
-| Vragenlijst | 4-8 |
-| Review gesprek | 1-2 |
-| **Totaal eerste keer** | **10-20 uur** |
-| **Jaarlijkse update** | **2-4 uur** |
-
-### Verborgen kosten?
-
-Nee, er zijn geen verrassingen. Wat je ziet is wat je betaalt. Wel kan het zijn dat de reflectie op de principes leidt tot aanpassingen in je organisatie - maar dat is een investering, geen kost.
-
----
-
-## Voordelen van de Code {#voordelen}
-
-### 1. Erkenning en geloofwaardigheid
-
-Het Code-drager logo signaleert aan:
-- Potentiële klanten: "Dit is een serieuze sociale onderneming"
-- Financiers: "Impact is echt het doel, niet marketing"
-- Partners: "We delen dezelfde waarden"
-
-### 2. Toegang tot netwerk
-
-Code-dragers krijgen toegang tot:
-- Social Enterprise NL evenementen
-- Kennisdeling met andere sociale ondernemers
-- Samenwerkingsmogelijkheden
-
-### 3. Reflectie en verbetering
-
-Het aanvraagproces dwingt je om na te denken over:
-- Is impact echt mijn kern?
-- Betrek ik stakeholders voldoende?
-- Ben ik transparant genoeg?
-
-Die reflectie alleen al is waardevol.
-
-### 4. Voorkeurspositie bij fondsen
-
-Sommige fondsen en subsidieverstrekkers geven voorkeur aan Code-dragers. Het bespaart hen due diligence.
-
-### 5. Benchmark
-
-Door het peer review proces krijg je feedback van ervaren sociale ondernemers. Gratis advies, eigenlijk.
-
----
-
-## Nadelen en kritiek {#nadelen}
-
-Ik geloof in eerlijkheid. Dit zijn de beperkingen:
-
-### 1. Beperkte bekendheid
-
-Buiten de sociale sector kent bijna niemand de Code. "Ik ben Code-drager" krijgt vaak een lege blik.
-
-**Versus B Corp:** Bredere herkenning, ook bij consumenten.
-
-### 2. Geen internationaal equivalent
-
-Als je internationaal opereert, moet je uitleggen wat de Code is. Er is geen directe vergelijking.
-
-### 3. Subjectiviteit peer review
-
-Het peer review systeem is mooi, maar ook kwetsbaar:
-- Reviewers kunnen verschillende standaarden hanteren
-- Persoonlijke chemie kan meespelen
-- Geen harde puntenscore om op terug te vallen
-
-### 4. Geen impact-verificatie
-
-De Code vraagt naar je impactbeleid, maar verifieert niet je daadwerkelijke impact. Je kunt zeggen dat je 70.000 geluksmomenten creëert - de Code checkt die claim niet.
-
-### 5. Vrijwillige bijdrage aansprakelijkheid
-
-Als Code-drager ben je niet juridisch anders dan een regulier bedrijf. Het is een keurmerk, geen rechtsvorm.
+| **Oorsprong** | Nederland | Internationaal |
+| **Positie van impact** | Impact is het bestaansdoel | Impact is één van de doelen |
+| **Beoordeling** | Toelatingscriteria per principe, besluit door de Review Board | Scoresysteem met verificatie |
+| **Bekendheid** | Vooral in de Nederlandse sociale sector en bij inkopers | Breder, ook internationaal |
+| **Geschikt voor** | Organisaties waar impact de business ís | Bedrijven die impact aan hun business toevoegen |
+
+Je kunt ook allebei doen: de Code voor de Nederlandse sociale sector en aanbestedingen, B Corp voor internationale herkenning. Dat kost wel twee keer tijd en geld.
 
 ---
 
 ## Voor wie is de Code geschikt? {#voor-wie}
 
-### Ideale kandidaten
+**Past goed bij:**
+- stichtingen met eigen inkomsten naast subsidie of fondsen;
+- bv's met een maatschappelijke kern die dat willen borgen;
+- coöperaties met een sociale missie;
+- sociale ondernemingen die regelmatig inschrijven op gemeentelijke aanbestedingen.
 
-✅ **Stichtingen met commerciële activiteiten**
-Je hebt een maatschappelijke missie én genereert eigen inkomsten.
+**Past minder goed bij:**
+- reguliere bedrijven die willen verduurzamen (kijk naar B Corp of ISO 26000);
+- organisaties die vooral internationaal werken;
+- organisaties waar winst eerlijk gezegd toch het primaire doel is.
 
-✅ **BV's met maatschappelijke kern**
-Je bent juridisch een BV, maar impact staat voorop.
-
-✅ **Coöperaties met sociale missie**
-Je combineert gedeeld eigenaarschap met maatschappelijke doelen.
-
-✅ **Scale-ups met impact-DNA**
-Je groeit, maar wilt je missie vasthouden.
-
-### Minder geschikt
-
-❌ **Reguliere bedrijven die willen verduurzamen**
-→ Kijk naar B Corp of ISO 26000
-
-❌ **Organisaties die primair internationaal opereren**
-→ B Corp heeft meer internationale herkenning
-
-❌ **Zeer kleine organisaties (< €50.000 omzet)**
-→ De investering weegt mogelijk niet op tegen de baten
-
-❌ **Organisaties waar winst wel degelijk het primaire doel is**
-→ Wees eerlijk: de Code is niet voor jou
+Twijfel je? De Code heeft een [zelftest](https://codesocialeondernemingen.nl/zelftest/) waarmee je in een paar minuten ziet waar je staat.
 
 ---
 
 ## Veelgestelde vragen {#faq}
 
-### Kan ik én Code-drager én B Corp zijn?
+### Uit hoeveel principes bestaat de Code Sociale Ondernemingen?
 
-Ja, dat kan. Sommige organisaties kiezen voor beide: de Code voor de Nederlandse sociale sector, B Corp voor internationale herkenning. Maar het kost wel twee keer tijd en geld.
+Vijf: missie, meting, stakeholders, financiën en transparantie. Tot de herziening van 2025 waren het er meer, dus oudere artikelen en presentaties noemen vaak nog een ander aantal.
 
-### Hoe lang duurt het aanvraagproces?
+### Is de Code een keurmerk of een zelfverklaring?
 
-Gemiddeld 2-3 maanden van start tot goedkeuring. Dat kan sneller als je goed voorbereid bent, of langer als er aanvullingen nodig zijn.
+Geen zelfverklaring. Een begeleider stelt op basis van een gesprek en je documenten een advies op, en de Review Board beslist of je in het Register wordt opgenomen.
 
-### Kan ik worden afgewezen?
+### Wat kost deelname?
 
-Ja. Ongeveer 10-15% van de aanvragen wordt niet direct goedgekeurd. Meestal krijg je de kans om aan te vullen. Definitieve afwijzing is zeldzaam maar mogelijk als je niet aan de basisprincipes voldoet.
+Volgens de aanmeldpagina eenmalig €310 aanmeldkosten en €375 deelnamebijdrage per jaar. Controleer de actuele bedragen op de website van de Code.
 
-### Wat als mijn situatie verandert na goedkeuring?
+### Is deelname verplicht?
 
-Grote wijzigingen (bijv. wijziging in winstbestemming) moet je melden. Bij de driejaarlijkse her-review wordt je opnieuw beoordeeld.
+Nee. De Code zegt er zelf nadrukkelijk bij dat een sociale onderneming die niet deelneemt daarmee niet per definitie minder goed is. Maar in een aanbesteding is opname in het Register wél iets wat je kunt laten zien, en een eigen verklaring niet.
 
-### Is de Code verplicht om sociaal ondernemer te zijn?
+### Geldt de Code ook voor stichtingen?
 
-Nee. Je kunt een uitstekende sociale onderneming zijn zonder Code. De Code is een keurmerk, geen vereiste.
+Ja, ongeacht rechtsvorm: stichting, coöperatie of bv.
 
-### Wie zijn de peer reviewers?
+### Hoe verhoudt de Code zich tot de PSO-prestatieladder?
 
-Ervaren Code-dragers die zijn getraind in het reviewproces. Ze worden gematcht op basis van sector en beschikbaarheid - niet op persoonlijke relaties.
-
-### Kan ik de Code gebruiken in mijn marketing?
-
-Ja, als Code-drager mag je het logo gebruiken en jezelf "Code-drager" noemen. Er zijn richtlijnen voor correct gebruik.
-
----
-
-## Checklist: Ben je er klaar voor?
-
-Voordat je aanvraagt, beantwoord deze vragen:
-
-### Impact-gedreven
-- [ ] Staat impact expliciet in je missie/statuten?
-- [ ] Kies je voor impact boven winst als dat conflict oplevert?
-- [ ] Kun je je impact beschrijven en (enigszins) meten?
-
-### Stakeholder betrokkenheid
-- [ ] Betrek je je doelgroep bij beslissingen?
-- [ ] Hebben medewerkers/vrijwilligers een stem?
-- [ ] Is er een vorm van klachten- of feedbackmechanisme?
-
-### Winstbestemming
-- [ ] Wordt winst primair geherinvesteerd in de missie?
-- [ ] Is er een beperking op dividend/winstuitkering?
-- [ ] Kun je je financiële keuzes uitleggen in impacttermen?
-
-### Transparantie
-- [ ] Heb je een jaarverslag of impactrapportage?
-- [ ] Deel je financiële hoofdlijnen?
-- [ ] Ben je open over zowel successen als uitdagingen?
-
-### Duurzaam en verantwoord
-- [ ] Let je op milieu-impact in je operatie?
-- [ ] Zijn arbeidsvoorwaarden eerlijk?
-- [ ] Werk je alleen met integere partners?
-
-**Score:**
-- 13-15 vinkjes: Je bent er klaar voor
-- 9-12 vinkjes: Bijna, werk aan de missende punten
-- < 9 vinkjes: Investeer eerst in je basis
+Ze vullen elkaar aan. De PSO meet in hoeverre je mensen met een afstand tot de arbeidsmarkt in dienst hebt. De Code kijkt breder naar missie, impactmeting, stakeholders, financiën en transparantie. Je kunt aan beide voldoen.
 
 ---
 
 ## Volgende stappen
 
-1. **Doe de zelfevaluatie** (download hieronder)
-2. **Bekijk andere Code-dragers** op de website
-3. **Praat met een Code-drager** in je netwerk
-4. **Start de aanvraag** als je er klaar voor bent
+1. Doe de [zelftest van de Code](https://codesocialeondernemingen.nl/zelftest/).
+2. Leg je missie vast in je statuten, als dat nog niet zo is.
+3. Zorg dat je impactmeting op orde is: dat is waar de meeste aanvragen op vastlopen.
+4. Meld je aan via de [website van de Code](https://codesocialeondernemingen.nl/het-register/aanmelden/).
 
-Wil je sparren over of de Code bij jou past? Neem contact op.
-
+Wil je sparren over je impactmeting of over de vraag of de Code bij je organisatie past? [Neem contact op](/contact).
 
 ---
 
 ## Gerelateerde artikelen
 
+- [SROI en aanbestedingen 2026: zo win je overheidsopdrachten](/kennisbank/sroi-aanbesteding-sociale-onderneming-2026)
 - [Sociaal ondernemen starten: de realistische checklist](/kennisbank/sociaal-ondernemen-starten-checklist)
 - [Business Model Canvas voor sociale ondernemingen](/kennisbank/social-enterprise-businessmodel-canvas)
-- [Van top-down naar inside-out: cultuurverandering in welzijnsorganisaties](/kennisbank/cultuurverandering-top-down-inside-out)
 
 ---
 
-*Dit artikel is geschreven door Vincent van Munster, sociaal ondernemer en lid van het Social Enterprise NL netwerk. WeAreImpact ondersteunt organisaties bij het professionaliseren van hun sociale onderneming.*
+*Dit artikel is geschreven door Vincent van Munster, sociaal ondernemer en oud-directeur van Stichting De Baan. Bijgewerkt in september 2026 na de herziening van de Code.*

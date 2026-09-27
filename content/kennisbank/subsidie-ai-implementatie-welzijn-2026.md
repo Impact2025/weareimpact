@@ -117,6 +117,8 @@ De grootste valkuil komt ná de toekenning. Subsidiegeld financiert vrijwel alti
 
 **Wil je hulp bij je subsidieaanvraag?** Neem contact op via [WeAreImpact.nl](https://weareimpact.nl) — we helpen je de juiste pot te vinden en je aanvraag waterdicht te maken. Of bereken eerst je impact met de [impact calculator](/impact-calculator).
 
+Heb je de subsidie rond en zoek je iemand voor de uitvoering? Zo werk ik als [AI-consultant in het sociaal domein](/ai-consultant-sociaal-domein).
+
 ## Veelgestelde vragen
 
 **Welke subsidie is het meest kansrijk voor een kleine welzijnsorganisatie?** Kijk eerst provinciaal en gemeentelijk — die potjes zijn laagdrempeliger en sneller rond dan Europese regelingen. Vaak kun je met een plan van één A4'tje al aanspraak maken op een gemeentelijk digitaliseringsbudget.

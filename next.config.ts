@@ -98,6 +98,10 @@ const nextConfig: NextConfig = {
       { source: '/blog/hoe-een-programmamanager-digitale-transformatie-impact-creee', destination: '/programmamanager-digitale-transformatie', permanent: true },
       { source: '/blog/9-beste-partners-voor-ai-oplossingen-in-het-sociale-domein-i', destination: '/blog/welke-specialisten-helpen-gemeenten-met-ai-implementatie-in', permanent: true },
       { source: '/blog/zeven-ai-partners-die-bewezen-hebben-in-het-sociaal-domein-t', destination: '/blog/welke-specialisten-helpen-gemeenten-met-ai-implementatie-in', permanent: true },
+      // Ronde 3b (week 2): het Code-blog en de kennisbankgids streden om "code sociale
+      // ondernemingen". De gids (sterkste positie) is herschreven met de juiste principes
+      // van na de herziening van 2025 en de unieke blogsecties (toetsing, aanbestedingen).
+      { source: '/blog/code-sociaal-ondernemen-wat-het-is-en-hoe-wij-het-toepassen', destination: '/kennisbank/code-sociale-ondernemingen-complete-gids', permanent: true },
       // Tikfout-slug die nog in GSC stond (404).
       { source: '/blog/impact-als-gewonde-hoe-je-een-datagedreven-werkcultuur-in-h', destination: '/blog/impact-als-gewoonte-hoe-je-een-datagedreven-werkcultuur-in-h', permanent: true },
       // Doorgelekte pipeline-prompt als slug; de DB-slug wordt na deploy hernoemd.

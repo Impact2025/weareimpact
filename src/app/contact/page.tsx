@@ -160,7 +160,7 @@ export default function ContactPage() {
                         <div className="text-xs text-slate-500">Reactietijd</div>
                       </div>
                       <div className="text-center border-l border-slate-200">
-                        <div className="text-2xl font-bold text-slate-900">15+</div>
+                        <div className="text-2xl font-bold text-slate-900">25+</div>
                         <div className="text-xs text-slate-500">Jaar ervaring</div>
                       </div>
                     </div>

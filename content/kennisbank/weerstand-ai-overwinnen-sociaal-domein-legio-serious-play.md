@@ -99,6 +99,8 @@ Een goede sessie is het begin, niet het einde. Plan een korte check-in na 2-3 we
 
 Wie deze drie vermijdt, ontdekt dat de meeste weerstand oplosbaar is — niet door harder te duwen, maar door de mens serieus te nemen.
 
+Hoe ik weerstand in een groter veranderproces aanpak, lees je bij [change management bij digitale transformatie](/change-management-digitale-transformatie).
+
 ## Veelgestelde vragen {#faq}
 
 **Werkt LEGO Serious Play ook bij een sceptisch team dat er niets in ziet?** Juist dan werkt het goed — deelnemers hoeven niet overtuigd te zijn voordat ze meedoen, de scepsis verdwijnt vaak tijdens de sessie zelf.

@@ -85,7 +85,7 @@ const faqs = [
 ];
 
 const stats = [
-  { value: '15+', label: 'Jaar ervaring' },
+  { value: '25+', label: 'Jaar ervaring' },
   { value: '2', label: 'Live platforms' },
   { value: 'LSP', label: 'Certified facilitator' },
   { value: 'AI', label: 'Gedreven aanpak' },

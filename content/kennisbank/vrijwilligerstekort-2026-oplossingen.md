@@ -242,6 +242,8 @@ Als je wilt dat ik meekijk naar de vrijwilligersstrategie van jouw organisatie, 
 
 ---
 
+Vraagt het tekort om een andere koers voor je hele organisatie, en ontbreekt daar tijdelijk de leiding voor? Dan stap ik in als [interim-directeur in het sociaal domein](/interim-manager).
+
 ## Gerelateerde artikelen
 
 - [180 vrijwilligers beheren zonder chaos: mijn systeem](/kennisbank/180-vrijwilligers-beheren-systeem)

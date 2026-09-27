@@ -86,7 +86,7 @@ const faqs = [
 const stats = [
   { value: '57%', label: 'van gemeenten heeft geen AI-strategie' },
   { value: '85%', label: 'van AI-projecten schalen niet' },
-  { value: '15+', label: 'jaar in het sociaal domein' },
+  { value: '25+', label: 'jaar in het sociaal domein' },
   { value: '90', label: 'dagen naar zichtbaar resultaat' },
 ];
 

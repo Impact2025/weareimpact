@@ -359,6 +359,8 @@ Deel tijdwinst en voorbeelden breed. Succes is aanstekelijk.
 
 ---
 
+Wil je dit stappenplan niet alleen doorlopen? Als [consultant in het sociaal domein](/ai-consultant-sociaal-domein) begeleid ik non-profits van AI-scan tot werkende toepassing.
+
 ## Veelgestelde vragen {#faq}
 
 ### Hoeveel kost dit?
