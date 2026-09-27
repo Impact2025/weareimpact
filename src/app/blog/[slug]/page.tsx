@@ -26,7 +26,7 @@ function isHtml(content: string): boolean {
 // als absolute URL met target="_blank" en rel="... nofollow". Dan geven interne
 // links geen linkwaarde door. Hier worden ze relatief gemaakt en ontdaan van
 // target/rel, ongeacht hoe de content is opgeslagen.
-const OWN_DOMAIN_LINK = /<a([^>]*?)href="https?:\/\/(?:www\.)?weareimpact\.nl(\/[^"]*)?"([^>]*)>/gi;
+const OWN_DOMAIN_LINK = /<a\b([^>]*?)href="https?:\/\/(?:www\.)?weareimpact\.nl(\/[^"]*)?"([^>]*)>/gi;
 
 function fixInternalLinks(html: string): string {
   return html.replace(OWN_DOMAIN_LINK, (_m, before: string, path: string | undefined, after: string) => {
