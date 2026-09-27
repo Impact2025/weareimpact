@@ -19,6 +19,9 @@ interface Project {
   slug: string;
   name: string;
   client_name: string | null;
+  company_id: string | null;
+  company_name: string | null;
+  live_at: string | null;
   open_count: string;
   answered_count: string;
 }
@@ -95,13 +98,19 @@ export default function DossiersPage() {
                     <CardTitle className="text-base">{p.name}</CardTitle>
                   </div>
                   <div className="flex gap-2">
+                    {p.live_at && <Badge className="bg-green-100 text-green-700">Live</Badge>}
+                    {!p.company_id && (
+                      <Badge variant="outline" className="border-amber-300 text-amber-700">
+                        Niet gekoppeld aan CRM
+                      </Badge>
+                    )}
                     <Badge variant="outline">{p.open_count} open</Badge>
                     <Badge variant="secondary">{p.answered_count} beantwoord</Badge>
                   </div>
                 </CardHeader>
-                {p.client_name && (
+                {(p.client_name || p.company_name) && (
                   <CardContent className="pt-0 text-sm text-muted-foreground">
-                    {p.client_name}
+                    {[p.company_name, p.client_name].filter(Boolean).join(' · ')}
                   </CardContent>
                 )}
               </Card>

@@ -11,12 +11,13 @@ export async function GET() {
   }
 
   const projects = await sql`
-    SELECT p.slug, p.name, p.client_name, p.created_at,
+    SELECT p.slug, p.name, p.client_name, p.created_at, p.company_id, co.name AS company_name, p.live_at,
       COUNT(q.id) FILTER (WHERE q.status = 'open') AS open_count,
       COUNT(q.id) FILTER (WHERE q.status = 'answered') AS answered_count
     FROM crm_projects p
     LEFT JOIN crm_questions q ON q.project_slug = p.slug
-    GROUP BY p.slug, p.name, p.client_name, p.created_at
+    LEFT JOIN companies co ON co.id = p.company_id
+    GROUP BY p.slug, p.name, p.client_name, p.created_at, p.company_id, co.name, p.live_at
     ORDER BY p.created_at DESC
   `;
 

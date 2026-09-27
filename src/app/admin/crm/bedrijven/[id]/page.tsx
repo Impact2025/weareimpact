@@ -19,6 +19,7 @@ import {
   CheckSquare,
   MessageSquare,
   FolderOpen,
+  History,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -44,7 +45,9 @@ import {
   CreateTaskDialog,
   LogActivityDialog,
 } from '@/components/crm';
+import { CompanyJourney } from '@/components/crm/CompanyJourney';
 import { industryLabels, companySizeLabels, formatDate } from '@/lib/crm/labels';
+import type { CompanyJourney as Journey } from '@/lib/crm/journey';
 import type { Company, Contact, Deal, Activity, CrmTask } from '@/lib/crm/types';
 
 interface CompanyDossier {
@@ -58,6 +61,7 @@ interface CompanyDossier {
 
 interface CompanyDetailData {
   company: Company;
+  journey: Journey;
   dossiers: CompanyDossier[];
   contacts: Contact[];
   deals: Deal[];
@@ -142,7 +146,7 @@ export default function CompanyDetailPage({ params }: { params: Promise<{ id: st
     );
   }
 
-  const { company, contacts, deals, activities, tasks, dossiers } = data;
+  const { company, contacts, deals, activities, tasks, dossiers, journey } = data;
 
   return (
     <div className="space-y-6">
@@ -178,6 +182,8 @@ export default function CompanyDetailPage({ params }: { params: Promise<{ id: st
           </Button>
         </div>
       </div>
+
+      <CompanyJourney journey={journey} />
 
       {/* Company Info Card */}
       <div className="grid gap-6 lg:grid-cols-3">
@@ -261,7 +267,7 @@ export default function CompanyDetailPage({ params }: { params: Promise<{ id: st
         {/* Tabs */}
         <div className="lg:col-span-2">
           <Tabs defaultValue="contacts">
-            <TabsList className="grid w-full grid-cols-5">
+            <TabsList className="grid w-full grid-cols-6">
               <TabsTrigger value="contacts" className="flex items-center gap-1">
                 <Users size={14} />
                 <span className="hidden sm:inline">Contacten</span>
@@ -285,6 +291,10 @@ export default function CompanyDetailPage({ params }: { params: Promise<{ id: st
               <TabsTrigger value="activities" className="flex items-center gap-1">
                 <MessageSquare size={14} />
                 <span className="hidden sm:inline">Activiteit</span>
+              </TabsTrigger>
+              <TabsTrigger value="origin" className="flex items-center gap-1">
+                <History size={14} />
+                <span className="hidden sm:inline">Herkomst</span>
               </TabsTrigger>
             </TabsList>
 
@@ -422,6 +432,58 @@ export default function CompanyDetailPage({ params }: { params: Promise<{ id: st
                   <ActivityTimeline activities={activities} showEntity={false} />
                 </CardContent>
               </Card>
+            </TabsContent>
+
+            {/* Herkomst Tab */}
+            <TabsContent value="origin" className="mt-4 space-y-6">
+              <div>
+                <h3 className="font-medium mb-1">Hoe kwam dit bedrijf binnen</h3>
+                <p className="text-sm text-slate-500 mb-3">
+                  Formulieren, scans, downloads en boekingen van de e-mailadressen van de contactpersonen.
+                </p>
+                {journey.origins.length > 0 ? (
+                  <div className="space-y-2">
+                    {journey.origins.map((origin, i) => (
+                      <Card key={i}>
+                        <CardContent className="py-3 flex items-start justify-between gap-3">
+                          <div className="min-w-0">
+                            <p className="text-sm font-medium text-slate-900">
+                              {origin.label}
+                              <span className="font-normal text-slate-400"> · {formatDate(origin.createdAt)}</span>
+                            </p>
+                            {origin.summary && <p className="text-sm text-slate-600 line-clamp-2">{origin.summary}</p>}
+                            {origin.email && <p className="text-xs text-slate-400">{origin.email}</p>}
+                          </div>
+                          <Badge variant="outline" className="shrink-0">{origin.status}</Badge>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-sm text-slate-500">Geen formulier of boeking gevonden — handmatig of via Lead Machine toegevoegd.</p>
+                )}
+              </div>
+
+              {journey.sprints.length > 0 && (
+                <div>
+                  <h3 className="font-medium mb-3">Sprintsessies</h3>
+                  <div className="space-y-2">
+                    {journey.sprints.map((sprint) => (
+                      <Link key={`${sprint.dealId}-${sprint.sprintSlug}`} href={`/admin/sprint/${sprint.dealId}`} className="block">
+                        <Card className="hover:border-orange-300 transition-colors">
+                          <CardContent className="py-3 flex items-center justify-between gap-3">
+                            <div>
+                              <p className="text-sm font-medium text-slate-900">{sprint.sprintSlug}</p>
+                              <p className="text-xs text-slate-500">{sprint.dealTitle}</p>
+                            </div>
+                            <Badge variant="outline">{sprint.status}</Badge>
+                          </CardContent>
+                        </Card>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              )}
             </TabsContent>
           </Tabs>
         </div>

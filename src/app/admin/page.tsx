@@ -11,6 +11,7 @@ import {
 } from '@/components/ui/card';
 import { Users, FileText, Brain, MessageSquare, TrendingUp, TrendingDown, Loader2, RefreshCw, BarChart3, Target, Send, Mail } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import KlantreisOverview from '@/components/admin/KlantreisOverview';
 
 interface DashboardStats {
   visitors: {
@@ -201,7 +202,7 @@ export default function AdminDashboard() {
         <div>
           <h1 className="text-3xl font-bold text-slate-900">Dashboard</h1>
           <p className="text-slate-500 mt-1">
-            Welkom terug! Hier is een overzicht van je website.
+            Welkom terug! Eerst je klanten, daarna de website.
           </p>
         </div>
         <Button onClick={fetchStats} variant="outline" size="sm">
@@ -209,6 +210,8 @@ export default function AdminDashboard() {
           Vernieuwen
         </Button>
       </div>
+
+      <KlantreisOverview />
 
       {/* Stats Grid */}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
@@ -235,42 +238,6 @@ export default function AdminDashboard() {
             </CardContent>
           </Card>
         ))}
-      </div>
-
-      {/* Leads Overview */}
-      <div className="grid gap-6 lg:grid-cols-4">
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-slate-500">Nieuwe Leads</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-blue-600">{stats.leadsOverview.new}</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-slate-500">Gecontacteerd</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-yellow-600">{stats.leadsOverview.contacted}</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-slate-500">Gekwalificeerd</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-purple-600">{stats.leadsOverview.qualified}</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-slate-500">Conversies</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-green-600">{stats.leadsOverview.converted}</div>
-          </CardContent>
-        </Card>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
@@ -333,18 +300,16 @@ export default function AdminDashboard() {
               </div>
             </Link>
             <Link
-              href="/admin/leads"
+              href="/admin/inbox"
               className="flex items-center gap-4 p-4 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors"
             >
               <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
                 <Brain size={24} className="text-orange-600" />
               </div>
               <div>
-                <p className="font-bold text-slate-900">Bekijk AI Leads</p>
+                <p className="font-bold text-slate-900">Binnenkomende leads</p>
                 <p className="text-sm text-slate-500">
-                  {stats.leadsOverview.new > 0
-                    ? `${stats.leadsOverview.new} nieuwe leads wachten`
-                    : 'Scan resultaten en contactgegevens'}
+                  Alle formulieren, scans en downloads op één plek
                 </p>
               </div>
             </Link>

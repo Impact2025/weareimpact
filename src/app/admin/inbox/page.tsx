@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import Link from 'next/link';
-import { Inbox, Loader2, RefreshCw, ArrowRight, X, Undo2, Mail, Phone, Building2 } from 'lucide-react';
+import { Inbox, Loader2, RefreshCw, ArrowRight, X, Undo2, Mail, Phone, Building2, CalendarClock, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -35,6 +35,20 @@ function age(createdAt: string) {
   return `${Math.round(ms / (24 * HOUR))} d`;
 }
 
+interface PendingBooking {
+  id: string;
+  type: string;
+  startTime: string;
+  slotPassed: boolean;
+  name: string;
+  email: string;
+  organization: string | null;
+  notes: string | null;
+  createdAt: string;
+  approveUrl: string;
+  rejectUrl: string;
+}
+
 function itemKey(item: InboxItem) {
   return `${item.source}:${item.sourceId}`;
 }
@@ -47,6 +61,7 @@ export default function InboxPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [busyKey, setBusyKey] = useState<string | null>(null);
+  const [bookings, setBookings] = useState<PendingBooking[]>([]);
 
   const [converting, setConverting] = useState<InboxItem | null>(null);
   const [createDeal, setCreateDeal] = useState(true);
@@ -71,9 +86,29 @@ export default function InboxPage() {
     }
   }, [status]);
 
+  const loadBookings = useCallback(() => {
+    fetch('/api/admin/bookings')
+      .then((res) => (res.ok ? res.json() : { bookings: [] }))
+      .then((data) => setBookings(data.bookings ?? []))
+      .catch(() => {});
+  }, []);
+
   useEffect(() => {
     load();
-  }, [load]);
+    loadBookings();
+  }, [load, loadBookings]);
+
+  // Zelfde endpoint als de knoppen in de notificatiemail: regelt agenda,
+  // bevestigingsmail aan de klant en (bij goedkeuren) de deal.
+  async function respondBooking(booking: PendingBooking, url: string) {
+    setBusyKey(`booking:${booking.id}`);
+    try {
+      await fetch(url);
+    } finally {
+      setBusyKey(null);
+      loadBookings();
+    }
+  }
 
   const sourceCounts = useMemo(() => {
     const counts: Partial<Record<InboxSource, number>> = {};
@@ -139,7 +174,15 @@ export default function InboxPage() {
             Alle leads uit formulieren, scans en downloads op één plek. Zet ze door naar het CRM of wijs ze af.
           </p>
         </div>
-        <Button variant="outline" size="sm" onClick={load} disabled={loading}>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => {
+            load();
+            loadBookings();
+          }}
+          disabled={loading}
+        >
           <RefreshCw size={16} className={loading ? 'animate-spin mr-2' : 'mr-2'} />
           Vernieuwen
         </Button>
@@ -166,6 +209,65 @@ export default function InboxPage() {
           <span className="text-sm text-red-600 ml-2">{overdue} wachten langer dan 48 uur</span>
         )}
       </div>
+
+      {status === 'open' && bookings.length > 0 && (
+        <Card className="border-orange-200">
+          <CardContent className="pt-6 space-y-3">
+            <div className="flex items-center gap-2">
+              <CalendarClock size={18} className="text-orange-600" />
+              <h2 className="font-semibold">Boekingen wachten op goedkeuring ({bookings.length})</h2>
+            </div>
+            <p className="text-sm text-slate-500">
+              Goedkeuren zet de afspraak in je agenda, mailt de klant en maakt de deal aan. Afwijzen stuurt de klant een
+              afwijzingsmail.
+            </p>
+            {bookings.map((booking) => {
+              const busy = busyKey === `booking:${booking.id}`;
+              return (
+                <div
+                  key={booking.id}
+                  className="flex flex-col md:flex-row md:items-center gap-3 rounded-lg border border-slate-200 p-3"
+                >
+                  <div className="flex-1 min-w-0">
+                    <p className="font-medium text-slate-900">
+                      {booking.type} · {booking.organization || booking.name}
+                    </p>
+                    <p className="text-sm text-slate-500">
+                      {booking.name} · {booking.email}
+                    </p>
+                    <p className={`text-xs ${booking.slotPassed ? 'text-red-600 font-medium' : 'text-slate-500'}`}>
+                      Tijdslot{' '}
+                      {new Date(booking.startTime).toLocaleString('nl-NL', {
+                        weekday: 'short',
+                        day: 'numeric',
+                        month: 'short',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                      })}
+                      {booking.slotPassed && ' — al verstreken, liever afwijzen en opnieuw laten boeken'}
+                    </p>
+                  </div>
+                  <div className="flex gap-2 shrink-0">
+                    <Button
+                      size="sm"
+                      variant={booking.slotPassed ? 'outline' : 'default'}
+                      onClick={() => respondBooking(booking, booking.approveUrl)}
+                      disabled={busy}
+                    >
+                      {busy ? <Loader2 size={14} className="mr-1 animate-spin" /> : <Check size={14} className="mr-1" />}
+                      {booking.slotPassed ? 'Toch goedkeuren' : 'Goedkeuren'}
+                    </Button>
+                    <Button size="sm" variant="outline" onClick={() => respondBooking(booking, booking.rejectUrl)} disabled={busy}>
+                      <X size={14} className="mr-1" />
+                      Afwijzen
+                    </Button>
+                  </div>
+                </div>
+              );
+            })}
+          </CardContent>
+        </Card>
+      )}
 
       {items.length > 0 && (
         <div className="flex flex-wrap gap-2">

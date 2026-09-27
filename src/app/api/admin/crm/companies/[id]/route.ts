@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { sql } from '@/lib/db/neon';
+import { getCompanyJourney } from '@/lib/crm/journey';
 
 export const dynamic = 'force-dynamic';
 
@@ -64,7 +65,10 @@ export async function GET(
       ORDER BY created_at DESC
     `;
 
+    const journey = await getCompanyJourney(id);
+
     return NextResponse.json({
+      journey,
       dossiers: dossiers.map((p: Record<string, unknown>) => ({
         slug: p.slug,
         name: p.name,

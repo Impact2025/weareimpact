@@ -189,6 +189,18 @@ export async function dismissInboxItem(source: InboxSource, sourceId: string): P
   `;
 }
 
+// Herkomst van een bedrijf: alle inbox-items (open of afgehandeld) van de
+// e-mailadressen van zijn contactpersonen.
+export async function inboxItemsForEmails(emails: string[]): Promise<InboxItem[]> {
+  const normalized = emails.filter(Boolean).map((e) => e.toLowerCase());
+  if (normalized.length === 0) return [];
+  const rows = await sql.query(
+    `${SELECT_ITEMS} WHERE LOWER(s.email) = ANY($1) ORDER BY s.created_at ASC`,
+    [normalized],
+  );
+  return (rows as Record<string, unknown>[]).map(mapRow);
+}
+
 export async function reopenInboxItem(source: InboxSource, sourceId: string): Promise<void> {
   await sql`DELETE FROM inbox_triage WHERE source = ${source} AND source_id = ${sourceId}`;
 }

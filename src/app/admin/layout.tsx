@@ -48,55 +48,78 @@ interface SidebarItem {
   subItems?: { label: string; href: string; icon: React.ComponentType<{ size?: number }> }[];
 }
 
-const sidebarItems: SidebarItem[] = [
-  { label: 'Praat met Iris', href: '/admin/iris', icon: Sparkles },
-  { label: 'Dashboard', href: '/admin', icon: LayoutDashboard },
-  { label: 'Binnenkomend', href: '/admin/inbox', icon: Inbox },
-  { label: 'Agenda', href: '/admin/agenda', icon: Calendar },
-  { label: 'Sprint Sessies', href: '/admin/sprint', icon: Rocket },
-  { label: 'LaunchAssist', href: '/admin/launch', icon: Rocket },
-  { label: 'Klantdossiers', href: '/admin/dossiers', icon: FolderOpen },
+// Gegroepeerd langs de klantreis: eerst wat vandaag telt, dan binnenhalen →
+// verkopen → leveren, daarna marketing en bronnen.
+const sidebarSections: { title?: string; items: SidebarItem[] }[] = [
   {
-    label: 'CRM',
-    href: '/admin/crm',
-    icon: Briefcase,
-    subItems: [
-      { label: 'Bedrijven', href: '/admin/crm/bedrijven', icon: Building2 },
-      { label: 'Contacten', href: '/admin/crm/contacten', icon: Users },
-      { label: 'Deals', href: '/admin/crm/deals', icon: Target },
-      { label: 'Taken', href: '/admin/crm/taken', icon: CheckSquare },
-      { label: 'Omi Inbox', href: '/admin/omi', icon: Mic },
-    ]
-  },
-  {
-    label: 'SEO Intelligence',
-    href: '/admin/seo',
-    icon: BarChart2,
-    subItems: [
-      { label: 'Prestaties', href: '/admin/seo', icon: BarChart2 },
-      { label: 'CTR Booster', href: '/admin/seo?tab=ctr-booster', icon: Zap },
-      { label: 'Keywords', href: '/admin/seo?tab=keywords', icon: Search },
-      { label: 'Content audit', href: '/admin/seo/content-audit', icon: ClipboardList },
-      { label: '404-log', href: '/admin/seo/404-logs', icon: AlertTriangle },
+    items: [
+      { label: 'Praat met Iris', href: '/admin/iris', icon: Sparkles },
+      { label: 'Dashboard', href: '/admin', icon: LayoutDashboard },
+      { label: 'Agenda', href: '/admin/agenda', icon: Calendar },
     ],
   },
   {
-    label: 'Lead Machine',
-    href: '/admin/lead-machine',
-    icon: Magnet,
-    subItems: [
-      { label: 'Zoeken', href: '/admin/lead-machine', icon: Search },
-      { label: 'Opgeslagen', href: '/admin/lead-machine?tab=saved', icon: ListChecks },
+    title: 'Klanten',
+    items: [
+      { label: 'Binnenkomend', href: '/admin/inbox', icon: Inbox },
+      {
+        label: 'CRM',
+        href: '/admin/crm',
+        icon: Briefcase,
+        subItems: [
+          { label: 'Bedrijven', href: '/admin/crm/bedrijven', icon: Building2 },
+          { label: 'Contacten', href: '/admin/crm/contacten', icon: Users },
+          { label: 'Deals', href: '/admin/crm/deals', icon: Target },
+          { label: 'Taken', href: '/admin/crm/taken', icon: CheckSquare },
+          { label: 'Omi Inbox', href: '/admin/omi', icon: Mic },
+        ],
+      },
+      { label: 'Sprint Sessies', href: '/admin/sprint', icon: Rocket },
+      { label: 'Klantdossiers', href: '/admin/dossiers', icon: FolderOpen },
+      { label: 'LaunchAssist', href: '/admin/launch', icon: Rocket },
     ],
   },
-  { label: 'Blog Posts', href: '/admin/blog', icon: FileText },
-  { label: 'Kennisbank', href: '/admin/kennisbank', icon: BookOpen },
-  { label: 'Social', href: '/admin/social', icon: Share2 },
-  { label: 'AI Scanner Leads', href: '/admin/leads', icon: Brain },
-  { label: 'Contact Berichten', href: '/admin/contact', icon: Mail },
-  { label: 'Nieuwsbrieven', href: '/admin/newsletter', icon: Send },
-  { label: 'Chat Logs', href: '/admin/chats', icon: MessageSquare },
-  { label: 'Instellingen', href: '/admin/settings', icon: Settings },
+  {
+    title: 'Leadbronnen',
+    items: [
+      {
+        label: 'Lead Machine',
+        href: '/admin/lead-machine',
+        icon: Magnet,
+        subItems: [
+          { label: 'Zoeken', href: '/admin/lead-machine', icon: Search },
+          { label: 'Opgeslagen', href: '/admin/lead-machine?tab=saved', icon: ListChecks },
+        ],
+      },
+      { label: 'AI Scanner Leads', href: '/admin/leads', icon: Brain },
+      { label: 'Contact Berichten', href: '/admin/contact', icon: Mail },
+      { label: 'Chat Logs', href: '/admin/chats', icon: MessageSquare },
+    ],
+  },
+  {
+    title: 'Marketing',
+    items: [
+      {
+        label: 'SEO Intelligence',
+        href: '/admin/seo',
+        icon: BarChart2,
+        subItems: [
+          { label: 'Prestaties', href: '/admin/seo', icon: BarChart2 },
+          { label: 'CTR Booster', href: '/admin/seo?tab=ctr-booster', icon: Zap },
+          { label: 'Keywords', href: '/admin/seo?tab=keywords', icon: Search },
+          { label: 'Content audit', href: '/admin/seo/content-audit', icon: ClipboardList },
+          { label: '404-log', href: '/admin/seo/404-logs', icon: AlertTriangle },
+        ],
+      },
+      { label: 'Blog Posts', href: '/admin/blog', icon: FileText },
+      { label: 'Kennisbank', href: '/admin/kennisbank', icon: BookOpen },
+      { label: 'Social', href: '/admin/social', icon: Share2 },
+      { label: 'Nieuwsbrieven', href: '/admin/newsletter', icon: Send },
+    ],
+  },
+  {
+    items: [{ label: 'Instellingen', href: '/admin/settings', icon: Settings }],
+  },
 ];
 
 export default function AdminLayout({
@@ -255,91 +278,102 @@ export default function AdminLayout({
           sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
         }`}
       >
-        <nav className="p-4 space-y-1">
-          {sidebarItems.map((item) => {
-            const isActive = pathname === item.href || (item.href !== '/admin' && pathname.startsWith(item.href));
-            const isExpanded = expandedMenus.includes(item.href);
-            const hasSubItems = item.subItems && item.subItems.length > 0;
+        <nav className="p-4 space-y-1 h-full overflow-y-auto">
+          {sidebarSections.map((section, sectionIndex) => (
+            <div key={section.title ?? sectionIndex} className={sectionIndex > 0 ? 'pt-3' : ''}>
+              {section.title && (
+                <p className="px-4 pb-1 text-xs font-semibold uppercase tracking-wide text-slate-400">
+                  {section.title}
+                </p>
+              )}
+              <div className="space-y-1">
+                {section.items.map((item) => {
+                  const isActive = pathname === item.href || (item.href !== '/admin' && pathname.startsWith(item.href));
+                  const isExpanded = expandedMenus.includes(item.href);
+                  const hasSubItems = item.subItems && item.subItems.length > 0;
 
-            return (
-              <div key={item.href}>
-                {hasSubItems ? (
-                  <>
-                    <button
-                      onClick={() => toggleMenu(item.href)}
-                      className={`w-full flex items-center justify-between px-4 py-3 rounded-lg transition-colors ${
-                        isActive
-                          ? 'bg-orange-100 text-orange-700'
-                          : 'text-slate-600 hover:bg-slate-100'
-                      }`}
-                    >
-                      <div className="flex items-center gap-3">
-                        <item.icon size={20} />
-                        <span className="font-medium">{item.label}</span>
-                      </div>
-                      <ChevronDown
-                        size={16}
-                        className={`transition-transform ${isExpanded ? 'rotate-180' : ''}`}
-                      />
-                    </button>
-                    {isExpanded && (
-                      <div className="ml-4 mt-1 space-y-1 border-l-2 border-slate-200 pl-4">
+                  return (
+                    <div key={item.href}>
+                      {hasSubItems ? (
+                        <>
+                          <button
+                            onClick={() => toggleMenu(item.href)}
+                            className={`w-full flex items-center justify-between px-4 py-3 rounded-lg transition-colors ${
+                              isActive
+                                ? 'bg-orange-100 text-orange-700'
+                                : 'text-slate-600 hover:bg-slate-100'
+                            }`}
+                          >
+                            <div className="flex items-center gap-3">
+                              <item.icon size={20} />
+                              <span className="font-medium">{item.label}</span>
+                            </div>
+                            <ChevronDown
+                              size={16}
+                              className={`transition-transform ${isExpanded ? 'rotate-180' : ''}`}
+                            />
+                          </button>
+                          {isExpanded && (
+                            <div className="ml-4 mt-1 space-y-1 border-l-2 border-slate-200 pl-4">
+                              <Link
+                                href={item.href}
+                                onClick={() => setSidebarOpen(false)}
+                                className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors ${
+                                  pathname === item.href
+                                    ? 'bg-orange-100 text-orange-700'
+                                    : 'text-slate-600 hover:bg-slate-100'
+                                }`}
+                              >
+                                <LayoutDashboard size={16} />
+                                <span>Overzicht</span>
+                              </Link>
+                              {item.subItems?.map((subItem) => {
+                                // Compare only pathname, ignore query params
+                                const isSubActive = pathname === subItem.href.split('?')[0];
+                                return (
+                                  <Link
+                                    key={subItem.href}
+                                    href={subItem.href}
+                                    onClick={() => setSidebarOpen(false)}
+                                    className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors ${
+                                      isSubActive
+                                        ? 'bg-orange-100 text-orange-700'
+                                        : 'text-slate-600 hover:bg-slate-100'
+                                    }`}
+                                  >
+                                    <subItem.icon size={16} />
+                                    <span>{subItem.label}</span>
+                                  </Link>
+                                );
+                              })}
+                            </div>
+                          )}
+                        </>
+                      ) : (
                         <Link
                           href={item.href}
                           onClick={() => setSidebarOpen(false)}
-                          className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors ${
-                            pathname === item.href
+                          className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
+                            isActive
                               ? 'bg-orange-100 text-orange-700'
                               : 'text-slate-600 hover:bg-slate-100'
                           }`}
                         >
-                          <LayoutDashboard size={16} />
-                          <span>Overzicht</span>
+                          <item.icon size={20} />
+                          <span className="font-medium">{item.label}</span>
+                          {item.href === '/admin/inbox' && openInbox != null && openInbox > 0 && (
+                            <span className="ml-auto text-xs font-semibold bg-orange-600 text-white rounded-full px-2 py-0.5">
+                              {openInbox}
+                            </span>
+                          )}
                         </Link>
-                        {item.subItems?.map((subItem) => {
-                          // Compare only pathname, ignore query params
-                          const isSubActive = pathname === subItem.href.split('?')[0];
-                          return (
-                            <Link
-                              key={subItem.href}
-                              href={subItem.href}
-                              onClick={() => setSidebarOpen(false)}
-                              className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors ${
-                                isSubActive
-                                  ? 'bg-orange-100 text-orange-700'
-                                  : 'text-slate-600 hover:bg-slate-100'
-                              }`}
-                            >
-                              <subItem.icon size={16} />
-                              <span>{subItem.label}</span>
-                            </Link>
-                          );
-                        })}
-                      </div>
-                    )}
-                  </>
-                ) : (
-                  <Link
-                    href={item.href}
-                    onClick={() => setSidebarOpen(false)}
-                    className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
-                      isActive
-                        ? 'bg-orange-100 text-orange-700'
-                        : 'text-slate-600 hover:bg-slate-100'
-                    }`}
-                  >
-                    <item.icon size={20} />
-                    <span className="font-medium">{item.label}</span>
-                    {item.href === '/admin/inbox' && openInbox != null && openInbox > 0 && (
-                      <span className="ml-auto text-xs font-semibold bg-orange-600 text-white rounded-full px-2 py-0.5">
-                        {openInbox}
-                      </span>
-                    )}
-                  </Link>
-                )}
+                      )}
+                    </div>
+                  );
+                })}
               </div>
-            );
-          })}
+            </div>
+          ))}
         </nav>
       </aside>
 
