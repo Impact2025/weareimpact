@@ -462,3 +462,24 @@ CREATE INDEX IF NOT EXISTS idx_crm_tasks_deal ON crm_tasks(deal_id);
 CREATE INDEX IF NOT EXISTS idx_crm_tasks_status ON crm_tasks(status);
 CREATE INDEX IF NOT EXISTS idx_crm_tasks_due_date ON crm_tasks(due_date);
 CREATE INDEX IF NOT EXISTS idx_crm_tasks_created ON crm_tasks(created_at DESC);
+
+-- =============================================
+-- KLANTREIS: INBOX + DOSSIER ↔ CRM
+-- =============================================
+
+-- Afhandeling van leads uit alle bronnen (ai_scan_leads, contact_submissions,
+-- intake_submissions, …) in de centrale inbox. Geen rij = nog open.
+CREATE TABLE IF NOT EXISTS inbox_triage (
+  source TEXT NOT NULL,
+  source_id TEXT NOT NULL,
+  status TEXT NOT NULL CHECK (status IN ('converted', 'dismissed')),
+  contact_id UUID REFERENCES contacts(id) ON DELETE SET NULL,
+  deal_id UUID REFERENCES deals(id) ON DELETE SET NULL,
+  handled_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  PRIMARY KEY (source, source_id)
+);
+
+ALTER TABLE crm_projects ADD COLUMN IF NOT EXISTS company_id UUID REFERENCES companies(id) ON DELETE SET NULL;
+ALTER TABLE crm_projects ADD COLUMN IF NOT EXISTS deal_id UUID REFERENCES deals(id) ON DELETE SET NULL;
+CREATE INDEX IF NOT EXISTS idx_crm_projects_company ON crm_projects(company_id);
+CREATE INDEX IF NOT EXISTS idx_crm_projects_deal ON crm_projects(deal_id);

@@ -1,13 +1,8 @@
 import { sql } from '@/lib/db/neon';
 import { BOOKING_TYPES, BookingTypeSlug } from '@/lib/google-calendar';
+import { ensureCompanyAndContact, type LeadPerson } from './ensureContact';
 
-interface BookingCustomer {
-  name: string;
-  email: string;
-  phone?: string | null;
-  organization?: string | null;
-  website?: string | null;
-}
+type BookingCustomer = LeadPerson & { name: string };
 
 // Wordt aangeroepen bij het goedkeuren van een sprint-boeking
 // (api/booking/respond) — legt company/contact/deal vast zodat de
@@ -20,38 +15,7 @@ export async function ensureDealForBooking(params: {
   const { bookingType, customer } = params;
   const type = BOOKING_TYPES[bookingType];
   const orgName = customer.organization?.trim() || customer.name;
-
-  let companyId: string;
-  const existingCompany = customer.organization
-    ? await sql`SELECT id FROM companies WHERE name ILIKE ${customer.organization.trim()} LIMIT 1`
-    : [];
-
-  if (existingCompany.length > 0) {
-    companyId = existingCompany[0].id as string;
-  } else {
-    const inserted = await sql`
-      INSERT INTO companies (name, website, email, phone)
-      VALUES (${orgName}, ${customer.website || null}, ${customer.email}, ${customer.phone || null})
-      RETURNING id
-    `;
-    companyId = inserted[0].id as string;
-  }
-
-  const existingContact = await sql`
-    SELECT id FROM contacts WHERE email = ${customer.email} LIMIT 1
-  `;
-  let contactId: string;
-  if (existingContact.length > 0) {
-    contactId = existingContact[0].id as string;
-  } else {
-    const [firstName, ...rest] = customer.name.trim().split(' ');
-    const inserted = await sql`
-      INSERT INTO contacts (company_id, first_name, last_name, email, phone, source, is_primary)
-      VALUES (${companyId}, ${firstName}, ${rest.join(' ') || null}, ${customer.email}, ${customer.phone || null}, 'sprint-booking', true)
-      RETURNING id
-    `;
-    contactId = inserted[0].id as string;
-  }
+  const { companyId, contactId } = await ensureCompanyAndContact(customer, 'sprint-booking');
 
   const insertedDeal = await sql`
     INSERT INTO deals (company_id, contact_id, title, value, stage, probability, description, source)

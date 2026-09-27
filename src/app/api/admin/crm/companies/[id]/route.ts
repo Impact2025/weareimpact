@@ -56,7 +56,23 @@ export async function GET(
       ORDER BY t.due_date ASC NULLS LAST, t.created_at DESC
     `;
 
+    // Klantdossiers (levering / LaunchAssist)
+    const dossiers = await sql`
+      SELECT slug, name, deal_id, go_live_date, live_at, created_at
+      FROM crm_projects
+      WHERE company_id = ${id}
+      ORDER BY created_at DESC
+    `;
+
     return NextResponse.json({
+      dossiers: dossiers.map((p: Record<string, unknown>) => ({
+        slug: p.slug,
+        name: p.name,
+        dealId: p.deal_id,
+        goLiveDate: p.go_live_date,
+        liveAt: p.live_at,
+        createdAt: p.created_at,
+      })),
       company: {
         id: c.id,
         name: c.name,

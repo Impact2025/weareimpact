@@ -1,12 +1,15 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import {
   Briefcase,
   Plus,
   Loader2,
   RefreshCw,
   GripVertical,
+  FolderOpen,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -24,6 +27,8 @@ export default function DealsPage() {
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   const [draggingDeal, setDraggingDeal] = useState<string | null>(null);
   const [dragOverStage, setDragOverStage] = useState<string | null>(null);
+  const [startingDossier, setStartingDossier] = useState<string | null>(null);
+  const router = useRouter();
 
   const fetchDeals = useCallback(async () => {
     setLoading(true);
@@ -114,6 +119,19 @@ export default function DealsPage() {
       fetchDeals();
     } catch (err) {
       console.error('Failed to mark deal as won:', err);
+    }
+  };
+
+  const handleStartDossier = async (dealId: string) => {
+    setStartingDossier(dealId);
+    try {
+      const res = await fetch(`/api/admin/crm/deals/${dealId}/dossier`, { method: 'POST' });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Kon dossier niet starten');
+      router.push(`/admin/dossiers/${data.slug}`);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Kon dossier niet starten');
+      setStartingDossier(null);
     }
   };
 
@@ -272,13 +290,39 @@ export default function DealsPage() {
               <div className="space-y-2">
                 {deals
                   .filter((d) => d.stage === 'won')
-                  .slice(0, 3)
+                  // Deals zonder dossier eerst: die wachten nog op de start van de levering
+                  .sort((a, b) => Number(Boolean(a.dossierSlug)) - Number(Boolean(b.dossierSlug)))
+                  .slice(0, 6)
                   .map((deal) => (
-                    <div key={deal.id} className="flex justify-between items-center text-sm">
-                      <span className="text-slate-700">{deal.title}</span>
-                      <span className="font-medium text-green-600">
-                        {formatCurrency(deal.value)}
-                      </span>
+                    <div key={deal.id} className="flex justify-between items-center gap-2 text-sm">
+                      <span className="text-slate-700 truncate">{deal.title}</span>
+                      <div className="flex items-center gap-2 shrink-0">
+                        <span className="font-medium text-green-600">
+                          {formatCurrency(deal.value)}
+                        </span>
+                        {deal.dossierSlug ? (
+                          <Link href={`/admin/dossiers/${deal.dossierSlug}`}>
+                            <Button variant="outline" size="sm" className="h-7 text-xs">
+                              <FolderOpen size={12} className="mr-1" />
+                              Dossier
+                            </Button>
+                          </Link>
+                        ) : (
+                          <Button
+                            size="sm"
+                            className="h-7 text-xs"
+                            onClick={() => handleStartDossier(deal.id)}
+                            disabled={startingDossier === deal.id}
+                          >
+                            {startingDossier === deal.id ? (
+                              <Loader2 size={12} className="mr-1 animate-spin" />
+                            ) : (
+                              <FolderOpen size={12} className="mr-1" />
+                            )}
+                            Start dossier
+                          </Button>
+                        )}
+                      </div>
                     </div>
                   ))}
               </div>

@@ -18,6 +18,7 @@ import {
   Briefcase,
   CheckSquare,
   MessageSquare,
+  FolderOpen,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -46,8 +47,18 @@ import {
 import { industryLabels, companySizeLabels, formatDate } from '@/lib/crm/labels';
 import type { Company, Contact, Deal, Activity, CrmTask } from '@/lib/crm/types';
 
+interface CompanyDossier {
+  slug: string;
+  name: string;
+  dealId: string | null;
+  goLiveDate: string | null;
+  liveAt: string | null;
+  createdAt: string;
+}
+
 interface CompanyDetailData {
   company: Company;
+  dossiers: CompanyDossier[];
   contacts: Contact[];
   deals: Deal[];
   activities: Activity[];
@@ -131,7 +142,7 @@ export default function CompanyDetailPage({ params }: { params: Promise<{ id: st
     );
   }
 
-  const { company, contacts, deals, activities, tasks } = data;
+  const { company, contacts, deals, activities, tasks, dossiers } = data;
 
   return (
     <div className="space-y-6">
@@ -250,7 +261,7 @@ export default function CompanyDetailPage({ params }: { params: Promise<{ id: st
         {/* Tabs */}
         <div className="lg:col-span-2">
           <Tabs defaultValue="contacts">
-            <TabsList className="grid w-full grid-cols-4">
+            <TabsList className="grid w-full grid-cols-5">
               <TabsTrigger value="contacts" className="flex items-center gap-1">
                 <Users size={14} />
                 <span className="hidden sm:inline">Contacten</span>
@@ -260,6 +271,11 @@ export default function CompanyDetailPage({ params }: { params: Promise<{ id: st
                 <Briefcase size={14} />
                 <span className="hidden sm:inline">Deals</span>
                 <Badge variant="secondary" className="ml-1 h-5 px-1.5">{deals.length}</Badge>
+              </TabsTrigger>
+              <TabsTrigger value="dossiers" className="flex items-center gap-1">
+                <FolderOpen size={14} />
+                <span className="hidden sm:inline">Dossiers</span>
+                <Badge variant="secondary" className="ml-1 h-5 px-1.5">{dossiers.length}</Badge>
               </TabsTrigger>
               <TabsTrigger value="tasks" className="flex items-center gap-1">
                 <CheckSquare size={14} />
@@ -317,6 +333,46 @@ export default function CompanyDetailPage({ params }: { params: Promise<{ id: st
                   <CardContent className="py-8 text-center text-slate-500">
                     <Briefcase size={32} className="mx-auto mb-2 opacity-50" />
                     <p>Nog geen deals</p>
+                  </CardContent>
+                </Card>
+              )}
+            </TabsContent>
+
+            {/* Dossiers Tab */}
+            <TabsContent value="dossiers" className="mt-4">
+              <div className="mb-4">
+                <h3 className="font-medium">Klantdossiers</h3>
+                <p className="text-sm text-slate-500">
+                  Start een dossier vanuit een gewonnen deal in de pipeline, of koppel een bestaand dossier op de dossierpagina.
+                </p>
+              </div>
+              {dossiers.length > 0 ? (
+                <div className="space-y-2">
+                  {dossiers.map((dossier) => (
+                    <Link key={dossier.slug} href={`/admin/dossiers/${dossier.slug}`} className="block">
+                      <Card className="hover:border-orange-300 transition-colors">
+                        <CardContent className="py-4 flex items-center justify-between gap-3">
+                          <div>
+                            <p className="font-medium text-slate-900">{dossier.name}</p>
+                            <p className="text-xs text-slate-500">Gestart {formatDate(dossier.createdAt)}</p>
+                          </div>
+                          {dossier.liveAt ? (
+                            <Badge className="bg-green-100 text-green-700">Live</Badge>
+                          ) : dossier.goLiveDate ? (
+                            <Badge variant="outline">Go-live {formatDate(dossier.goLiveDate)}</Badge>
+                          ) : (
+                            <Badge variant="outline">In opbouw</Badge>
+                          )}
+                        </CardContent>
+                      </Card>
+                    </Link>
+                  ))}
+                </div>
+              ) : (
+                <Card>
+                  <CardContent className="py-8 text-center text-slate-500">
+                    <FolderOpen size={32} className="mx-auto mb-2 opacity-50" />
+                    <p>Nog geen klantdossier</p>
                   </CardContent>
                 </Card>
               )}

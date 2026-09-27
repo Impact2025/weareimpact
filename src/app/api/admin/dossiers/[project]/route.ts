@@ -15,9 +15,12 @@ export async function GET(
   const { project: projectSlug } = await params;
 
   const rows = await sql`
-    SELECT slug, name, client_name, intake_notes
-    FROM crm_projects
-    WHERE slug = ${projectSlug}
+    SELECT p.slug, p.name, p.client_name, p.intake_notes, p.company_id, p.deal_id,
+      co.name AS company_name, d.title AS deal_title, d.stage AS deal_stage
+    FROM crm_projects p
+    LEFT JOIN companies co ON co.id = p.company_id
+    LEFT JOIN deals d ON d.id = p.deal_id
+    WHERE p.slug = ${projectSlug}
   `;
   if (rows.length === 0) {
     return NextResponse.json({ error: 'Project niet gevonden' }, { status: 404 });
@@ -34,11 +37,19 @@ export async function PATCH(
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
   const { project: projectSlug } = await params;
-  const { intakeNotes } = await request.json();
+  const body = await request.json();
 
-  await sql`
-    UPDATE crm_projects SET intake_notes = ${intakeNotes ?? null} WHERE slug = ${projectSlug}
-  `;
+  if ('intakeNotes' in body) {
+    await sql`
+      UPDATE crm_projects SET intake_notes = ${body.intakeNotes ?? null} WHERE slug = ${projectSlug}
+    `;
+  }
+  // Koppeling met het CRM; null ontkoppelt
+  if ('companyId' in body) {
+    await sql`
+      UPDATE crm_projects SET company_id = ${body.companyId || null} WHERE slug = ${projectSlug}
+    `;
+  }
 
   return NextResponse.json({ success: true });
 }

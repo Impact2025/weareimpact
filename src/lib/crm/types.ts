@@ -53,6 +53,7 @@ export interface Deal {
   // Joined fields
   companyName?: string;
   contactName?: string;
+  dossierSlug?: string | null;
 }
 
 export type DealStage = 'lead' | 'qualified' | 'proposal' | 'negotiation' | 'won' | 'lost';

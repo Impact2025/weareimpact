@@ -32,6 +32,7 @@ import {
   Rocket,
   FolderOpen,
   Mic,
+  Inbox,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import IrisVoiceButton from '@/components/admin/IrisVoiceButton';
@@ -50,6 +51,7 @@ interface SidebarItem {
 const sidebarItems: SidebarItem[] = [
   { label: 'Praat met Iris', href: '/admin/iris', icon: Sparkles },
   { label: 'Dashboard', href: '/admin', icon: LayoutDashboard },
+  { label: 'Binnenkomend', href: '/admin/inbox', icon: Inbox },
   { label: 'Agenda', href: '/admin/agenda', icon: Calendar },
   { label: 'Sprint Sessies', href: '/admin/sprint', icon: Rocket },
   { label: 'LaunchAssist', href: '/admin/launch', icon: Rocket },
@@ -105,8 +107,18 @@ export default function AdminLayout({
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
   const [expandedMenus, setExpandedMenus] = useState<string[]>([]);
+  const [openInbox, setOpenInbox] = useState<number | null>(null);
   const pathname = usePathname();
   const router = useRouter();
+
+  // Teller bij "Binnenkomend": ververst bij elke navigatie binnen admin
+  useEffect(() => {
+    if (pathname === '/admin/login') return;
+    fetch('/api/admin/inbox?count=1')
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => setOpenInbox(data?.open ?? null))
+      .catch(() => {});
+  }, [pathname]);
 
   // Auto-expand menus based on current path
   useEffect(() => {
@@ -318,6 +330,11 @@ export default function AdminLayout({
                   >
                     <item.icon size={20} />
                     <span className="font-medium">{item.label}</span>
+                    {item.href === '/admin/inbox' && openInbox != null && openInbox > 0 && (
+                      <span className="ml-auto text-xs font-semibold bg-orange-600 text-white rounded-full px-2 py-0.5">
+                        {openInbox}
+                      </span>
+                    )}
                   </Link>
                 )}
               </div>

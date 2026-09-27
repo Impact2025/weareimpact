@@ -80,7 +80,17 @@ export async function GET(request: NextRequest) {
       contactName: d.contact_name,
     }));
 
-    return NextResponse.json({ deals: transformedDeals, total, limit, offset });
+    const dealIds = transformedDeals.map((d) => d.id);
+    const dossiers = dealIds.length
+      ? await sql`SELECT deal_id, slug FROM crm_projects WHERE deal_id = ANY(${dealIds})`
+      : [];
+    const dossierByDeal = new Map(dossiers.map((r) => [r.deal_id, r.slug as string]));
+    const dealsWithDossier = transformedDeals.map((d) => ({
+      ...d,
+      dossierSlug: dossierByDeal.get(d.id) ?? null,
+    }));
+
+    return NextResponse.json({ deals: dealsWithDossier, total, limit, offset });
   } catch (error) {
     console.error('Deals GET error:', error);
     return NextResponse.json({ error: 'Failed to fetch deals', deals: [] }, { status: 500 });

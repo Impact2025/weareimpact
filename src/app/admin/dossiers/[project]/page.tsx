@@ -128,13 +128,29 @@ export default function DossierDetailPage() {
   const [copied, setCopied] = useState(false);
 
   const [intakeNotes, setIntakeNotes] = useState('');
+  const [crmLink, setCrmLink] = useState<{
+    companyId: string | null;
+    companyName: string | null;
+    dealId: string | null;
+    dealTitle: string | null;
+  } | null>(null);
+  const [companies, setCompanies] = useState<{ id: string; name: string }[] | null>(null);
+  const [linkingCompany, setLinkingCompany] = useState(false);
   const [savingNotes, setSavingNotes] = useState(false);
   const [notesSaved, setNotesSaved] = useState(false);
 
   const load = useCallback(() => {
     fetch(`/api/admin/dossiers/${projectSlug}`)
       .then((res) => res.json())
-      .then((data) => setIntakeNotes(data.project?.intake_notes ?? ''));
+      .then((data) => {
+        setIntakeNotes(data.project?.intake_notes ?? '');
+        setCrmLink({
+          companyId: data.project?.company_id ?? null,
+          companyName: data.project?.company_name ?? null,
+          dealId: data.project?.deal_id ?? null,
+          dealTitle: data.project?.deal_title ?? null,
+        });
+      });
     fetch(`/api/admin/dossiers/${projectSlug}/questions`)
       .then((res) => res.json())
       .then((data) => setQuestions(data.questions ?? []));
@@ -362,6 +378,33 @@ export default function DossierDetailPage() {
     }
   }
 
+  useEffect(() => {
+    if (!crmLink || crmLink.companyId || companies) return;
+    fetch('/api/admin/crm/companies?limit=500')
+      .then((res) => res.json())
+      .then((data) =>
+        setCompanies(
+          (data.companies ?? [])
+            .map((c: { id: string; name: string }) => ({ id: c.id, name: c.name }))
+            .sort((a: { name: string }, b: { name: string }) => a.name.localeCompare(b.name)),
+        ),
+      );
+  }, [crmLink, companies]);
+
+  async function linkCompany(companyId: string | null) {
+    setLinkingCompany(true);
+    try {
+      await fetch(`/api/admin/dossiers/${projectSlug}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ companyId }),
+      });
+      load();
+    } finally {
+      setLinkingCompany(false);
+    }
+  }
+
   async function deleteAction(id: string) {
     await fetch(`/api/admin/dossiers/${projectSlug}/actions/${id}`, { method: 'DELETE' });
     load();
@@ -376,6 +419,43 @@ export default function DossierDetailPage() {
             <Button size="sm" variant="outline">Launch-board →</Button>
           </Link>
         </div>
+        {crmLink && (
+          <div className="flex flex-wrap items-center gap-2 text-sm mt-1 mb-2">
+            <span className="text-muted-foreground">CRM:</span>
+            {crmLink.companyId ? (
+              <>
+                <Link href={`/admin/crm/bedrijven/${crmLink.companyId}`} className="text-orange-600 hover:underline">
+                  {crmLink.companyName}
+                </Link>
+                {crmLink.dealTitle && (
+                  <span className="text-muted-foreground">· deal &ldquo;{crmLink.dealTitle}&rdquo;</span>
+                )}
+                {!crmLink.dealId && (
+                  <button
+                    onClick={() => linkCompany(null)}
+                    disabled={linkingCompany}
+                    className="text-xs text-muted-foreground hover:text-red-600"
+                  >
+                    ontkoppelen
+                  </button>
+                )}
+              </>
+            ) : (
+              <Select onValueChange={(value) => linkCompany(value)} disabled={linkingCompany || !companies}>
+                <SelectTrigger className="h-8 w-64">
+                  <SelectValue placeholder={companies ? 'Koppel aan bedrijf…' : 'Bedrijven laden…'} />
+                </SelectTrigger>
+                <SelectContent>
+                  {companies?.map((company) => (
+                    <SelectItem key={company.id} value={company.id}>
+                      {company.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
+          </div>
+        )}
         <p className="text-sm text-muted-foreground">
           Het oogje-icoon bepaalt per item of de klant het in het portal te zien krijgt. Standaard
           intern (verborgen) — jij kiest wat gedeeld wordt.
