@@ -20,11 +20,11 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL('https://weareimpact.nl'),
   title: {
-    default: 'AI Consultant Sociaal Domein | Vincent van Munster — WeAreImpact',
+    default: 'Interim-directeur sociaal domein | Vincent van Munster',
     template: '%s | WeAreImpact',
   },
   description:
-    'AI consultant voor welzijnsorganisaties, gemeenten en sociaal ondernemers. ✓ Geen rapport en wegwezen ✓ 15+ jaar sociaal domein ✓ LEGO® Serious Play facilitator. Gratis kennismakingsgesprek.',
+    'Interim-directeur en kwartiermaker voor welzijn, zorg en gemeenten. 25+ jaar directie-ervaring, ex-directeur Stichting De Baan. Snel inzetbaar bij vacature of transitie.',
   // LET OP: dit is de canonical van de homepage. Next.js erft `alternates` naar
   // elke route die er zelf geen definieert — die pagina verklaart dan de
   // homepage als origineel en wordt door Google niet geïndexeerd.
@@ -34,21 +34,17 @@ export const metadata: Metadata = {
     canonical: 'https://weareimpact.nl',
   },
   keywords: [
-    'AI consultant sociaal domein',
-    'AI consulent sociaal domein',
-    'AI consultant welzijn',
-    'AI consulent welzijn',
-    'AI consultant gemeente',
-    'AI consulent gemeente',
-    'digitale transformatie sociaal domein',
-    'AI implementatie welzijn',
-    'AI strategie gemeente',
+    'interim directeur sociaal domein',
+    'interim-directeur welzijn',
+    'interim directeur-bestuurder',
+    'kwartiermaker sociaal domein',
+    'interim manager sociaal domein',
+    'transitiemanager welzijn',
+    'programmamanager digitale transformatie',
+    'AI in het sociaal domein',
     'LEGO Serious Play facilitator',
     'Vincent van Munster',
     'WeAreImpact',
-    'AI non-profit',
-    'AI zorg implementatie',
-    'sociaal ondernemer AI',
   ],
   authors: [{ name: 'Vincent van Munster', url: 'https://weareimpact.nl' }],
   creator: 'Vincent van Munster',
@@ -58,23 +54,23 @@ export const metadata: Metadata = {
     locale: 'nl_NL',
     url: 'https://weareimpact.nl',
     siteName: 'WeAreImpact',
-    title: 'AI Consultant Sociaal Domein | Vincent van Munster — WeAreImpact',
+    title: 'Interim-directeur sociaal domein | Vincent van Munster',
     description:
-      'AI consultant voor welzijnsorganisaties, gemeenten en sociaal ondernemers. 15+ jaar in het sociaal domein. Geen rapport en wegwezen — iemand die naast je staat totdat het werkt.',
+      'Interim-directeur en kwartiermaker voor welzijn, zorg en gemeenten. 25+ jaar directie-ervaring. Geen adviesrapport vanaf de zijlijn: iemand die aan het roer stapt.',
     images: [
       {
         url: '/og-homepage.webp',
         width: 1200,
         height: 630,
-        alt: 'Vincent van Munster — AI Consultant WeAreImpact',
+        alt: 'Vincent van Munster — interim-directeur sociaal domein',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'AI Consultant Sociaal Domein | Vincent van Munster — WeAreImpact',
+    title: 'Interim-directeur sociaal domein | Vincent van Munster',
     description:
-      'AI consultant voor welzijnsorganisaties, gemeenten en sociaal ondernemers. 15+ jaar in het sociaal domein. Gratis kennismakingsgesprek.',
+      'Interim-directeur en kwartiermaker voor welzijn, zorg en gemeenten. 25+ jaar directie-ervaring. Gratis kennismakingsgesprek.',
     images: ['/og-homepage.webp'],
   },
   icons: {
@@ -108,9 +104,9 @@ export default function RootLayout({
     '@context': 'https://schema.org',
     '@type': 'Person',
     name: 'Vincent van Munster',
-    jobTitle: 'AI Consultant & Digitale Transformatie Specialist',
+    jobTitle: 'Interim-directeur & kwartiermaker sociaal domein',
     description:
-      'AI consultant voor welzijnsorganisaties, gemeenten en sociaal ondernemers. 15+ jaar ervaring in het sociaal domein. Gecertificeerd LEGO® Serious Play facilitator.',
+      'Interim-directeur en kwartiermaker voor welzijnsorganisaties, gemeenten en sociaal ondernemers. 25+ jaar directie-ervaring in het sociaal domein, ex-directeur Stichting De Baan. Gecertificeerd LEGO® Serious Play facilitator.',
     url: 'https://weareimpact.nl',
     image: 'https://weareimpact.nl/vincent-van-munster.webp',
     sameAs: [

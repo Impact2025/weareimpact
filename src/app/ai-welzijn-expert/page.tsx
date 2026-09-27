@@ -10,7 +10,7 @@ import { Contact } from '@/components/sections/Contact';
 export const metadata = {
   title: 'AI Welzijn Expert | AI-implementatie voor Welzijn & Gemeenten',
   description:
-    'AI-implementatie met een sociaal hart. ✓ Welzijnsorganisaties ✓ Gemeenten ✓ Non-profit. Vincent van Munster: 15+ jaar sociaal domein, gecertificeerd LEGO® Serious Play facilitator.',
+    'AI-implementatie met een sociaal hart. ✓ Welzijnsorganisaties ✓ Gemeenten ✓ Non-profit. Vincent van Munster: 25+ jaar sociaal domein, gecertificeerd LEGO® Serious Play facilitator.',
   keywords: [
     'AI welzijn expert',
     'AI implementatie welzijnsorganisatie',

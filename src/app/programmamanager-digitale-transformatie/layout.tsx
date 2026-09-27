@@ -3,7 +3,7 @@
 export const metadata: Metadata = {
   title: 'Programmamanager digitale transformatie inhuren',
   description:
-    'Ik ben zelfstandig programmamanager digitale transformatie in het sociaal domein. 15 jaar ervaring, zichtbaar resultaat binnen 90 dagen. Geen bureau ertussen.',
+    'Ik ben zelfstandig programmamanager digitale transformatie in het sociaal domein. 25 jaar ervaring, zichtbaar resultaat binnen 90 dagen. Geen bureau ertussen.',
   keywords: [
     'programmamanager digitale transformatie',
     'digitale transformatie gemeente',
@@ -28,7 +28,7 @@ export const metadata: Metadata = {
     siteName: 'WeAreImpact',
     title: 'Programmamanager digitale transformatie inhuren | WeAreImpact',
     description:
-      'Zelfstandig programmamanager digitale transformatie voor gemeenten, zorg en welzijn. 15 jaar in het sociale domein, zichtbaar resultaat binnen 90 dagen.',
+      'Zelfstandig programmamanager digitale transformatie voor gemeenten, zorg en welzijn. 25 jaar in het sociale domein, zichtbaar resultaat binnen 90 dagen.',
     images: [
       {
         url: '/og-programmamanager-digitale-transformatie.webp',
@@ -106,7 +106,7 @@ const faqSchema = {
       name: 'Kan Vincent als interim programmamanager digitale transformatie werken?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Ja. Vincent kan zowel als extern adviseur als interim programmamanager worden ingezet, afhankelijk van de behoefte van de organisatie. Met 15+ jaar ervaring in het sociaal domein en hands-on AI-kennis is hij direct inzetbaar.',
+        text: 'Ja. Vincent kan zowel als extern adviseur als interim programmamanager worden ingezet, afhankelijk van de behoefte van de organisatie. Met 25+ jaar ervaring in het sociaal domein en hands-on AI-kennis is hij direct inzetbaar.',
       },
     },
   ],

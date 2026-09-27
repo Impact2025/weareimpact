@@ -264,7 +264,7 @@ export default function AiConsultantSociaalDomein() {
           </p>
 
           <p className="text-lg md:text-xl text-slate-500 mb-12 max-w-2xl mx-auto font-light leading-relaxed animate-fade-in-up delay-200">
-            Met 15 jaar sectorervaring — niet als buitenstaander, maar als iemand die weet hoe het écht werkt.
+            Met 25 jaar sectorervaring — niet als buitenstaander, maar als iemand die weet hoe het écht werkt.
           </p>
 
           <div className="flex flex-col md:flex-row gap-4 justify-center items-center animate-fade-in-up delay-300 flex-wrap">
@@ -582,7 +582,7 @@ export default function AiConsultantSociaalDomein() {
               <span className="text-orange-400 font-bold">LEGO&reg; Serious Play</span> facilitator.
             </p>
             <p className="text-slate-400 text-lg mb-6 leading-relaxed max-w-2xl">
-              Ik werk al meer dan 15 jaar in het sociale domein — als directeur, als bouwer, als sociaal ondernemer. Ik ken organisaties van binnenuit. Ik heb gezien waar het misgaat: op de werkvloer, in bestuurskamers en in de kloof tussen ambitie en dagelijkse praktijk.
+              Ik werk al meer dan 25 jaar in het sociale domein — als directeur, als bouwer, als sociaal ondernemer. Ik ken organisaties van binnenuit. Ik heb gezien waar het misgaat: op de werkvloer, in bestuurskamers en in de kloof tussen ambitie en dagelijkse praktijk.
             </p>
             <p className="text-slate-400 text-lg mb-8 leading-relaxed max-w-2xl">
               Ik combineer die sectorkennis met hands-on AI-expertise die de meeste consultants niet hebben: ik bouw het zelf. Mijn AI-assistent Iris draait al bij professionals in het sociaal domein. Ik gebruik het zelf. En ik help jou het te begrijpen en verantwoord in te zetten.

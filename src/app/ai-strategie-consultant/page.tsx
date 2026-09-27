@@ -374,7 +374,7 @@ export default function AIStrategieConsultant() {
               <span className="text-orange-400 font-bold">LEGO&reg; Serious Play</span> facilitator.
             </p>
             <p className="text-slate-400 text-lg mb-8 leading-relaxed max-w-2xl">
-              Ik werk al meer dan 15 jaar in het sociale domein. Ik heb platforms gebouwd die dagelijks impact maken voor gemeenten en stichtingen. Ik weet wat er speelt op de werkvloer, wat er misgaat in bestuurskamers en waarom goede initiatieven vaak stranden. Ik combineer dat met hands-on kennis van AI die de meeste consultants niet hebben — ik bouw het zelf en gebruik het zelf.
+              Ik werk al meer dan 25 jaar in het sociale domein. Ik heb platforms gebouwd die dagelijks impact maken voor gemeenten en stichtingen. Ik weet wat er speelt op de werkvloer, wat er misgaat in bestuurskamers en waarom goede initiatieven vaak stranden. Ik combineer dat met hands-on kennis van AI die de meeste consultants niet hebben — ik bouw het zelf en gebruik het zelf.
             </p>
             <div className="p-6 bg-slate-800 rounded-2xl border-l-4 border-orange-500 italic text-slate-300 mb-10 max-w-2xl text-left">
               &ldquo;Ik ben geen snelle jongen met een mooi deck. Ik ben iemand die begrijpt waar jij voor staat, en die naast je staat totdat het werkt.&rdquo;

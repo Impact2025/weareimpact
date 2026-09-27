@@ -95,7 +95,7 @@ const faqSchema = {
       name: 'Hoe snel kun je starten met een interim opdracht?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Na een vrijblijvend kennismakingsgesprek kan ik binnen enkele dagen starten. Omdat ik al 15+ jaar in de sector werk, is er geen uitgebreide inwerktijd nodig. Ik ken de wetten, de spelers, en de valkuilen. Dat scheelt weken op de doorlooptijd van jouw project.',
+        text: 'Na een vrijblijvend kennismakingsgesprek kan ik binnen enkele dagen starten. Omdat ik al 25+ jaar in de sector werk, is er geen uitgebreide inwerktijd nodig. Ik ken de wetten, de spelers, en de valkuilen. Dat scheelt weken op de doorlooptijd van jouw project.',
       },
     },
   ],

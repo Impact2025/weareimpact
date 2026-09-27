@@ -22,17 +22,33 @@ function isHtml(content: string): boolean {
   return /<(p|div|h[1-6]|ul|ol|li|strong|em|a|img|blockquote|pre|code)[^>]*>/i.test(content);
 }
 
+// De Tiptap-editor (en de AgentOS-pijplijn) schrijven links naar het eigen domein
+// als absolute URL met target="_blank" en rel="... nofollow". Dan geven interne
+// links geen linkwaarde door. Hier worden ze relatief gemaakt en ontdaan van
+// target/rel, ongeacht hoe de content is opgeslagen.
+const OWN_DOMAIN_LINK = /<a([^>]*?)href="https?:\/\/(?:www\.)?weareimpact\.nl(\/[^"]*)?"([^>]*)>/gi;
+
+function fixInternalLinks(html: string): string {
+  return html.replace(OWN_DOMAIN_LINK, (_m, before: string, path: string | undefined, after: string) => {
+    const attrs = `${before} ${after}`
+      .replace(/\s(target|rel)="[^"]*"/gi, '')
+      .replace(/\s+/g, ' ')
+      .trim();
+    return `<a href="${path || '/'}"${attrs ? ` ${attrs}` : ''}>`;
+  });
+}
+
 // Convert content to HTML (handles both markdown and HTML)
 function contentToHtml(content: string): string {
   if (!content) return '';
 
   // If already HTML, return as is
   if (isHtml(content)) {
-    return content;
+    return fixInternalLinks(content);
   }
 
   // Convert markdown to HTML
-  return marked.parse(content, { async: false }) as string;
+  return fixInternalLinks(marked.parse(content, { async: false }) as string);
 }
 
 // Pull question/answer pairs out of a post's FAQ section so we can emit FAQPage schema.

@@ -395,6 +395,52 @@ export default function ProgrammamanagerDigitaleTransformatie() {
         </div>
       </section>
 
+      {/* ZZP, INTERIM OF VAST (samengevoegd uit de blog "inhuren: zzp, interim of vast", die nu hierheen redirect) */}
+      <section id="zzp-interim-vast" className="py-24 bg-[#FDFBF7]">
+        <div className="container mx-auto px-6 max-w-4xl">
+          <div className="text-center mb-12">
+            <p className="text-sm font-bold tracking-widest text-orange-600 uppercase mb-4">Inhuren of aannemen</p>
+            <h2 className="text-4xl md:text-5xl font-bold text-slate-900 leading-tight">
+              Programmamanager digitale transformatie: zzp, interim of vast?
+            </h2>
+          </div>
+          <p className="text-slate-600 leading-relaxed mb-10 max-w-3xl mx-auto text-center">
+            &ldquo;Moeten we iemand vast aannemen, of huren we dit in?&rdquo; Die vraag hoor ik bij bijna elke gemeente of welzijnsorganisatie die een transformatie start. Het antwoord hangt minder af van budget dan van de fase waarin het traject zit.
+          </p>
+          <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white">
+            <table className="w-full text-left text-[0.925rem] min-w-[640px]">
+              <thead className="bg-slate-50 text-slate-900">
+                <tr>
+                  <th className="p-4 font-bold">Vorm</th>
+                  <th className="p-4 font-bold">Past bij</th>
+                  <th className="p-4 font-bold">Risico</th>
+                </tr>
+              </thead>
+              <tbody className="text-slate-600">
+                <tr className="border-t border-slate-100">
+                  <td className="p-4 font-semibold text-slate-900">Zzp&apos;er</td>
+                  <td className="p-4">Afgebakende, kortlopende opdracht met een duidelijk eindresultaat.</td>
+                  <td className="p-4">Bij ziekte of einde contract valt de kennis in één keer weg. Voor een meerjarig traject vaak te dun.</td>
+                </tr>
+                <tr className="border-t border-slate-100">
+                  <td className="p-4 font-semibold text-slate-900">Interim</td>
+                  <td className="p-4">Organisatiebrede transformatie die nu start. Vanaf dag één inzetbaar, zonder langdurige verplichting.</td>
+                  <td className="p-4">Zonder overdrachtsplan vertrekt de kennis met de interimmer. Bouw de overdracht daarom vanaf dag één in.</td>
+                </tr>
+                <tr className="border-t border-slate-100">
+                  <td className="p-4 font-semibold text-slate-900">Vast</td>
+                  <td className="p-4">De fase na de transformatie: structureel beheer en doorontwikkeling van wat er staat.</td>
+                  <td className="p-4">Te vroeg aannemen, voordat helder is wat de rol inhoudt, geeft een mismatch zodra het eerste project af is.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p className="text-slate-600 leading-relaxed mt-8 max-w-3xl mx-auto">
+            Zelf werk ik als interim programmamanager, voor €125 tot €140 per uur en bewust 16 tot 24 uur per week. Het grootste risico is zelden de keuze voor een vorm, maar het ontbreken van een expliciet overdrachtsplan. Daarom plan ik de overdracht aan een vaste medewerker of team vanaf de start.
+          </p>
+        </div>
+      </section>
+
       {/* IMPACT CALCULATOR TEASER */}
       <section id="calculator-teaser" className="py-24 bg-slate-900 text-white relative overflow-hidden">
         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(#fb923c 1px, transparent 1px)', backgroundSize: '30px 30px' }} />
@@ -470,7 +516,7 @@ export default function ProgrammamanagerDigitaleTransformatie() {
               <span className="text-orange-400 font-bold">LEGO&reg; Serious Play</span> facilitator.
             </p>
             <p className="text-slate-400 text-lg mb-6 leading-relaxed max-w-2xl">
-              Ik werk al meer dan 15 jaar in het sociale domein, als directeur, als bouwer, als iemand die organisaties van binnenuit kent. Ik heb digitale transformaties begeleid bij gemeenten en stichtingen. Ik weet wat er speelt op de werkvloer, wat er misgaat in bestuurskamers en waarom goede programma's vastlopen.
+              Ik werk al meer dan 25 jaar in het sociale domein, als directeur, als bouwer, als iemand die organisaties van binnenuit kent. Ik heb digitale transformaties begeleid bij gemeenten en stichtingen. Ik weet wat er speelt op de werkvloer, wat er misgaat in bestuurskamers en waarom goede programma's vastlopen.
             </p>
             <p className="text-slate-400 text-lg mb-8 leading-relaxed max-w-2xl">
               Ik combineer dat met hands-on kennis van AI die de meeste adviseurs niet hebben. Ik bouw het zelf. Ik gebruik het zelf. En ik help jou het in te zetten als versneller van jouw transformatieprogramma.

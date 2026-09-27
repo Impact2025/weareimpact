@@ -3,7 +3,7 @@
 export const metadata: Metadata = {
   title: 'AI strategie consultant sociaal domein',
   description:
-    'Een AI-strategie die op één A4 past en die je team meteen snapt. Voor gemeenten, welzijn en non-profit. 15 jaar in het sociale domein, geen jargon, geen dikke rapporten.',
+    'Een AI-strategie die op één A4 past en die je team meteen snapt. Voor gemeenten, welzijn en non-profit. 25 jaar in het sociale domein, geen jargon, geen dikke rapporten.',
   keywords: [
     'AI strategie consultant',
     'AI strategie gemeente',
@@ -28,7 +28,7 @@ export const metadata: Metadata = {
     siteName: 'WeAreImpact',
     title: 'AI strategie consultant sociaal domein | WeAreImpact',
     description:
-      'Van losse AI-experimenten naar een strategie die beklijft. Roadmap op 1 A4, AI Governance Framework en begeleiding door specialist met 15+ jaar sociaal domein.',
+      'Van losse AI-experimenten naar een strategie die beklijft. Roadmap op 1 A4, AI Governance Framework en begeleiding door specialist met 25+ jaar sociaal domein.',
     images: [
       {
         url: '/og-ai-strategie-consultant.webp',

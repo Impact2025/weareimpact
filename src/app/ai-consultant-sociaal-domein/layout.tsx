@@ -31,7 +31,7 @@ export const metadata: Metadata = {
     siteName: 'WeAreImpact',
     title: 'AI consultant sociaal domein | WeAreImpact',
     description:
-      'AI consultant met 15+ jaar sectorervaring. Van AI-scan tot werkende implementatie. AVG-proof en met aandacht voor de menselijke maat. Voor welzijnsorganisaties, gemeenten en sociaal ondernemers.',
+      'AI consultant met 25+ jaar sectorervaring. Van AI-scan tot werkende implementatie. AVG-proof en met aandacht voor de menselijke maat. Voor welzijnsorganisaties, gemeenten en sociaal ondernemers.',
     images: [
       {
         url: '/og-ai-consultant-sociaal-domein.webp',
@@ -45,7 +45,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'AI consultant sociaal domein | WeAreImpact',
     description:
-      'AI consultant met 15+ jaar sectorervaring. Van AI-scan tot werkende implementatie. AVG-proof, menselijk, resultaatgericht.',
+      'AI consultant met 25+ jaar sectorervaring. Van AI-scan tot werkende implementatie. AVG-proof, menselijk, resultaatgericht.',
     images: ['/og-ai-consultant-sociaal-domein.webp'],
   },
 };

@@ -3,7 +3,7 @@ import type { Metadata } from 'next';
 export const metadata: Metadata = {
   title: 'AI Welzijn Expert | Vincent van Munster - WeAreImpact',
   description:
-    'AI expert voor de welzijnssector. ✓ 15+ jaar ervaring ✓ Praktische AI-implementatie ✓ LEGO® Serious Play ✓ AVG-proof. Voor organisaties die AI willen laten werken.',
+    'AI expert voor de welzijnssector. ✓ 25+ jaar ervaring ✓ Praktische AI-implementatie ✓ LEGO® Serious Play ✓ AVG-proof. Voor organisaties die AI willen laten werken.',
   keywords: [
     'AI welzijn expert',
     'AI welzijnsorganisaties',
@@ -21,13 +21,13 @@ export const metadata: Metadata = {
     url: 'https://weareimpact.nl/ai-welzijn-expert',
     siteName: 'WeAreImpact',
     title: 'AI Welzijn Expert | WeAreImpact',
-    description: 'AI expert met 15+ jaar ervaring in het sociaal domein. Van AI-scan tot werkende implementatie, altijd met oog voor de menselijke maat.',
+    description: 'AI expert met 25+ jaar ervaring in het sociaal domein. Van AI-scan tot werkende implementatie, altijd met oog voor de menselijke maat.',
     images: [{ url: '/og-ai-welzijn-expert.webp', width: 1200, height: 630, alt: 'AI Welzijn Expert — Vincent van Munster | WeAreImpact' }],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'AI Welzijn Expert | WeAreImpact',
-    description: 'AI expert met 15+ jaar ervaring in het sociaal domein. Praktisch, AVG-proof, mensgericht.',
+    description: 'AI expert met 25+ jaar ervaring in het sociaal domein. Praktisch, AVG-proof, mensgericht.',
     images: ['/og-ai-welzijn-expert.webp'],
   },
 };

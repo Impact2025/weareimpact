@@ -87,6 +87,22 @@ const nextConfig: NextConfig = {
       { source: '/blog/eindredactionele-check-outreach-e-mails-en-gastblog-concepte', destination: '/blog', permanent: true },
       { source: '/blog/seo-optimalisatie-structured-data-meta-amp-interne-links-vo', destination: '/kennisbank/ai-consulent-sociaal-domein', permanent: true },
 
+      // Kannibalisatie-consolidatie ronde 3 (2026-09-27, SEO-plan Q4 week 1):
+      // vijf URL's streden om "programmamanager digitale transformatie" en vijf
+      // om "beste partners voor AI in het sociaal domein". De programmamanager-
+      // blogs gaan naar de dienstpagina (vergelijking zzp/interim/vast is daar
+      // als sectie opgenomen); de twee partner-listicles stonden al op draft en
+      // gaven 404 terwijl ze op positie 3-4 rankten.
+      { source: '/blog/programma-manager-digitale-transformatie-inhuren-voor-uw-gem', destination: '/programmamanager-digitale-transformatie', permanent: true },
+      { source: '/blog/programmamanager-digitale-transformatie-inhuren-zzp-interim-vast', destination: '/programmamanager-digitale-transformatie', permanent: true },
+      { source: '/blog/hoe-een-programmamanager-digitale-transformatie-impact-creee', destination: '/programmamanager-digitale-transformatie', permanent: true },
+      { source: '/blog/9-beste-partners-voor-ai-oplossingen-in-het-sociale-domein-i', destination: '/blog/welke-specialisten-helpen-gemeenten-met-ai-implementatie-in', permanent: true },
+      { source: '/blog/zeven-ai-partners-die-bewezen-hebben-in-het-sociaal-domein-t', destination: '/blog/welke-specialisten-helpen-gemeenten-met-ai-implementatie-in', permanent: true },
+      // Tikfout-slug die nog in GSC stond (404).
+      { source: '/blog/impact-als-gewonde-hoe-je-een-datagedreven-werkcultuur-in-h', destination: '/blog/impact-als-gewoonte-hoe-je-een-datagedreven-werkcultuur-in-h', permanent: true },
+      // Doorgelekte pipeline-prompt als slug; de DB-slug wordt na deploy hernoemd.
+      { source: '/blog/herschrijf-het-artikel-kunstmatige-intelligentie-in-de-zorg-hoe-je-impact-boeken', destination: '/blog/kunstmatige-intelligentie-in-de-zorg-impact-zonder-vertrouwen-te-verliezen', permanent: true },
+
       // ============================================================
       // 404-oplossing (GSC-melding 2026-08-02): expliciete redirects
       // voor oude WordPress/slug-URLs die nergens meer bestonden en

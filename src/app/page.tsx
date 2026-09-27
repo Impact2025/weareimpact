@@ -217,14 +217,17 @@ export default function Home() {
             Beschikbaar voor opdrachten per 1 oktober
           </div>
 
-          <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight text-slate-900 mb-8 leading-[1.1] animate-fade-in-up delay-100">
+          {/* De slogan is visueel de kop, maar de H1 is de regel eronder: die bevat
+              het zoekwoord waar de homepage op moet ranken (interim-directeur
+              sociaal domein). Visuele stijl van beide regels is ongewijzigd. */}
+          <p className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight text-slate-900 mb-8 leading-[1.1] animate-fade-in-up delay-100">
             Ik verbind mensen, <br className="hidden md:block" />
             <span className="text-gradient">teams en technologie.</span>
-          </h1>
-
-          <p className="text-xl md:text-2xl text-slate-600 mb-4 max-w-3xl mx-auto font-light leading-relaxed animate-fade-in-up delay-200">
-            Interim-directeur en transformatieleider voor welzijnsorganisaties, gemeenten en sociaal ondernemers.
           </p>
+
+          <h1 className="text-xl md:text-2xl text-slate-600 mb-4 max-w-3xl mx-auto font-light leading-relaxed animate-fade-in-up delay-200">
+            Interim-directeur en kwartiermaker in het sociaal domein, voor welzijnsorganisaties, gemeenten en sociaal ondernemers.
+          </h1>
 
           <p className="text-lg md:text-xl text-slate-500 mb-6 max-w-2xl mx-auto font-light leading-relaxed animate-fade-in-up delay-200">
             Geen dikke adviesrapporten vanaf de zijlijn. Wel een ervaren interim-leider die aan het roer stapt, rust brengt in complexe situaties en teams duurzaam in beweging zet.
