@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { isAdminAuthenticated } from '@/lib/admin-auth';
 import { sql } from '@/lib/db/neon';
 import { loadMilestones, summarize } from '@/lib/launch/summary';
+import { scheduleNazorgMilestones } from '@/lib/crm/aftercare';
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
@@ -25,5 +26,7 @@ export async function POST(
   }
 
   await sql`UPDATE crm_projects SET live_at = COALESCE(live_at, NOW()) WHERE slug = ${slug}`;
-  return NextResponse.json({ success: true });
+  // Nazorg start: deadlines voor de Nazorg-milestones vanaf de livedatum
+  const scheduled = await scheduleNazorgMilestones(slug);
+  return NextResponse.json({ success: true, nazorgScheduled: scheduled });
 }

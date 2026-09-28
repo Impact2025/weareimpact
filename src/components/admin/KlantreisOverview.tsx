@@ -40,7 +40,7 @@ export default function KlantreisOverview() {
           <CardTitle className="text-lg">Klantreis</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 sm:gap-1">
+          <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-6 gap-2">
             {data.funnel.map((stage, index) => (
               <Link
                 key={stage.key}
@@ -55,7 +55,7 @@ export default function KlantreisOverview() {
                 {index < data.funnel.length - 1 && (
                   <ChevronRight
                     size={14}
-                    className="hidden md:block absolute -right-2.5 top-1/2 -translate-y-1/2 text-slate-300 bg-white rounded-full z-10"
+                    className="hidden xl:block absolute -right-2.5 top-1/2 -translate-y-1/2 text-slate-300 bg-white rounded-full z-10"
                   />
                 )}
               </Link>

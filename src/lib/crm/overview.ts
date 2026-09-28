@@ -5,7 +5,7 @@ import { countOpenInbox, listInbox } from './inbox';
 // en wat vraagt vandaag actie.
 
 export interface FunnelStage {
-  key: 'inbox' | 'pipeline' | 'sprint' | 'levering' | 'live';
+  key: 'inbox' | 'pipeline' | 'sprint' | 'levering' | 'live' | 'nazorg';
   label: string;
   count: number;
   detail: string | null;
@@ -27,6 +27,10 @@ export interface KlantreisOverview {
 }
 
 const STALE_DAYS = 14;
+const DAY = 24 * 60 * 60 * 1000;
+// Nazorgvenster: tevredenheid vragen vanaf dag 14, kwartaalcheck vanaf dag 90
+const FEEDBACK_AFTER_DAYS = 14;
+const CHECKIN_AFTER_DAYS = 90;
 
 function formatEuro(value: number) {
   return new Intl.NumberFormat('nl-NL', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(value);
@@ -44,6 +48,8 @@ export async function getKlantreisOverview(): Promise<KlantreisOverview> {
     wonWithoutDossier,
     overdueTasks,
     overdueActions,
+    delivered,
+    avgScore,
   ] = await Promise.all([
     countOpenInbox(),
     listInbox('open', 500),
@@ -81,7 +87,10 @@ export async function getKlantreisOverview(): Promise<KlantreisOverview> {
     sql`
       SELECT d.id, d.title
       FROM deals d
-      WHERE d.stage = 'won' AND NOT EXISTS (SELECT 1 FROM crm_projects p WHERE p.deal_id = d.id)
+      WHERE d.stage = 'won'
+        AND NOT EXISTS (SELECT 1 FROM crm_projects p WHERE p.deal_id = d.id)
+        -- Een sprint-deal wordt via de sprint geleverd, niet via een dossier
+        AND NOT EXISTS (SELECT 1 FROM sprint_sessions s WHERE s.deal_id = d.id)
       ORDER BY d.updated_at DESC
     `,
     sql`
@@ -94,6 +103,32 @@ export async function getKlantreisOverview(): Promise<KlantreisOverview> {
       WHERE a.owner = 'vincent' AND a.status = 'open' AND a.due_date < CURRENT_DATE
       ORDER BY a.due_date ASC
       LIMIT 5
+    `,
+    // Opgeleverde klanten (live dossier of afgeronde sprint) met hun nazorgstand
+    sql`
+      WITH delivered AS (
+        SELECT company_id, live_at AS delivered_at FROM crm_projects
+        WHERE live_at IS NOT NULL AND company_id IS NOT NULL
+        UNION ALL
+        SELECT d.company_id, COALESCE(s.completed_at, s.updated_at)
+        FROM sprint_sessions s JOIN deals d ON d.id = s.deal_id
+        WHERE s.status = 'afgerond' AND d.company_id IS NOT NULL
+      ), per_company AS (
+        SELECT company_id, MAX(delivered_at) AS delivered_at FROM delivered GROUP BY company_id
+      )
+      SELECT pc.company_id, co.name, pc.delivered_at,
+        (SELECT MAX(sent_at) FROM crm_feedback f WHERE f.company_id = pc.company_id) AS last_sent,
+        (SELECT row_to_json(x) FROM (
+          SELECT score, answered_at FROM crm_feedback f
+          WHERE f.company_id = pc.company_id AND answered_at IS NOT NULL
+          ORDER BY answered_at DESC LIMIT 1
+        ) x) AS last_answer,
+        EXISTS (SELECT 1 FROM deals d WHERE d.company_id = pc.company_id AND d.created_at > pc.delivered_at) AS new_deal
+      FROM per_company pc JOIN companies co ON co.id = pc.company_id
+    `,
+    sql`
+      SELECT ROUND(AVG(score)::numeric, 1)::float AS avg, COUNT(*)::int AS n
+      FROM crm_feedback WHERE answered_at > NOW() - INTERVAL '12 months'
     `,
   ]);
 
@@ -142,6 +177,15 @@ export async function getKlantreisOverview(): Promise<KlantreisOverview> {
       detail: null,
       alert: false,
       href: '/admin/launch',
+    },
+    {
+      key: 'nazorg',
+      label: 'Nazorg',
+      count: delivered.filter((c) => Date.now() - new Date(c.delivered_at as string).getTime() < CHECKIN_AFTER_DAYS * DAY)
+        .length,
+      detail: avgScore[0].n > 0 ? `gem. ${String(avgScore[0].avg).replace('.', ',')}/10` : null,
+      alert: avgScore[0].n > 0 && avgScore[0].avg < 7,
+      href: '/admin/crm/bedrijven',
     },
   ];
 
@@ -203,6 +247,38 @@ export async function getKlantreisOverview(): Promise<KlantreisOverview> {
       severity: 'normal',
     });
   }
+  for (const c of delivered) {
+    const deliveredAt = new Date(c.delivered_at as string);
+    const days = Math.floor((Date.now() - deliveredAt.getTime()) / DAY);
+    const answer = c.last_answer as { score: number; answered_at: string } | null;
+    const answeredAfter = answer && new Date(answer.answered_at) >= deliveredAt;
+    const sentAfter = c.last_sent && new Date(c.last_sent as string) >= deliveredAt;
+    const href = `/admin/crm/bedrijven/${c.company_id}`;
+
+    if (answeredAfter && answer.score <= 6 && Date.now() - new Date(answer.answered_at).getTime() < 30 * DAY) {
+      todos.unshift({
+        text: `Lage tevredenheid bij ${c.name}: ${answer.score}/10`,
+        detail: 'Bel de klant — er staat een taak klaar',
+        href,
+        severity: 'high',
+      });
+    } else if (days >= FEEDBACK_AFTER_DAYS && !answeredAfter && !sentAfter) {
+      todos.push({
+        text: `Vraag om feedback: ${c.name}`,
+        detail: `${days} dagen opgeleverd, nog geen tevredenheid gemeten`,
+        href,
+        severity: 'normal',
+      });
+    } else if (days >= CHECKIN_AFTER_DAYS && days < 365 && !c.new_deal) {
+      todos.push({
+        text: `Kwartaalcheck: ${c.name}`,
+        detail: `${days} dagen opgeleverd — bespreek wat de volgende stap kan zijn`,
+        href,
+        severity: 'normal',
+      });
+    }
+  }
+
   if (d.unlinked > 0) {
     todos.push({
       text: `${d.unlinked} dossier(s) nog niet gekoppeld aan een bedrijf`,

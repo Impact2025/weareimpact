@@ -483,3 +483,25 @@ ALTER TABLE crm_projects ADD COLUMN IF NOT EXISTS company_id UUID REFERENCES com
 ALTER TABLE crm_projects ADD COLUMN IF NOT EXISTS deal_id UUID REFERENCES deals(id) ON DELETE SET NULL;
 CREATE INDEX IF NOT EXISTS idx_crm_projects_company ON crm_projects(company_id);
 CREATE INDEX IF NOT EXISTS idx_crm_projects_deal ON crm_projects(deal_id);
+
+-- =============================================
+-- NAZORG: TEVREDENHEID + SPRINT-AFRONDING
+-- =============================================
+
+-- Tevredenheidsvraag (0-10) na livegang of afgeronde sprint; token-link in de mail.
+CREATE TABLE IF NOT EXISTS crm_feedback (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  token TEXT NOT NULL UNIQUE,
+  company_id UUID REFERENCES companies(id) ON DELETE CASCADE,
+  contact_id UUID REFERENCES contacts(id) ON DELETE SET NULL,
+  project_slug TEXT REFERENCES crm_projects(slug) ON DELETE SET NULL,
+  deal_id UUID REFERENCES deals(id) ON DELETE SET NULL,
+  email TEXT NOT NULL,
+  score INTEGER CHECK (score BETWEEN 0 AND 10),
+  comment TEXT,
+  sent_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  answered_at TIMESTAMPTZ
+);
+CREATE INDEX IF NOT EXISTS idx_crm_feedback_company ON crm_feedback(company_id);
+
+ALTER TABLE sprint_sessions ADD COLUMN IF NOT EXISTS completed_at TIMESTAMPTZ;

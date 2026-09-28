@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { sql } from '@/lib/db/neon';
 import { isAdminAuthenticated } from '@/lib/admin-auth';
 import { getSprintTitle } from '@/lib/intake/sprintbrief-questions';
+import { onSprintCompleted } from '@/lib/crm/aftercare';
 
 export const dynamic = 'force-dynamic';
 
@@ -114,6 +115,7 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
 
     if (status) {
       await sql`UPDATE sprint_sessions SET status = ${status}, updated_at = NOW() WHERE deal_id = ${dealId}`;
+      if (status === 'afgerond') await onSprintCompleted(dealId);
     }
 
     return NextResponse.json({ success: true });

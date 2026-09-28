@@ -124,7 +124,7 @@ export default function CompanyDetailPage({ params }: { params: Promise<{ id: st
     fetchData();
   };
 
-  if (loading) {
+  if (loading && !data) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
         <Loader2 size={40} className="animate-spin text-orange-600" />
@@ -183,7 +183,7 @@ export default function CompanyDetailPage({ params }: { params: Promise<{ id: st
         </div>
       </div>
 
-      <CompanyJourney journey={journey} />
+      <CompanyJourney journey={journey} companyId={id} onChanged={fetchData} />
 
       {/* Company Info Card */}
       <div className="grid gap-6 lg:grid-cols-3">

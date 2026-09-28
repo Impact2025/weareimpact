@@ -1,11 +1,12 @@
 import { sql } from '@/lib/db/neon';
 import { inboxItemsForEmails } from './inbox';
 import { INBOX_SOURCES } from './inbox-sources';
+import { getCompanyFeedback, type CompanyFeedback } from './aftercare';
 
 // Klantreis per bedrijf: van eerste binnenkomst tot livegang, samengesteld
-// uit inbox/boekingen, deals, sprint-sessies en klantdossiers.
+// uit inbox/boekingen, deals, sprint-sessies, klantdossiers en nazorg.
 
-export type JourneyStepKey = 'binnen' | 'deal' | 'sprint' | 'dossier' | 'live';
+export type JourneyStepKey = 'binnen' | 'deal' | 'sprint' | 'dossier' | 'live' | 'nazorg';
 export type JourneyStepState = 'done' | 'current' | 'todo' | 'skipped';
 
 export interface JourneyStep {
@@ -38,6 +39,9 @@ export interface CompanyJourney {
   nextAction: { text: string; href: string | null } | null;
   origins: JourneyOrigin[];
   sprints: JourneySprint[];
+  feedback: CompanyFeedback;
+  // Opgeleverd (live dossier of afgeronde sprint): tevredenheid vragen kan
+  delivered: boolean;
 }
 
 const STAGE_ORDER = ['lead', 'qualified', 'proposal', 'negotiation', 'won'];
@@ -65,7 +69,7 @@ export async function getCompanyJourney(companyId: string): Promise<CompanyJourn
     sql`SELECT email FROM contacts WHERE company_id = ${companyId} AND email IS NOT NULL`,
     sql`SELECT id, title, stage, updated_at FROM deals WHERE company_id = ${companyId} ORDER BY updated_at DESC`,
     sql`
-      SELECT s.deal_id, d.title AS deal_title, s.sprint_slug, s.status, s.updated_at
+      SELECT s.deal_id, d.title AS deal_title, s.sprint_slug, s.status, s.updated_at, s.completed_at
       FROM sprint_sessions s JOIN deals d ON d.id = s.deal_id
       WHERE d.company_id = ${companyId}
       ORDER BY s.updated_at DESC
@@ -83,7 +87,7 @@ export async function getCompanyJourney(companyId: string): Promise<CompanyJourn
   ]);
 
   const emails = contacts.map((c) => (c.email as string).toLowerCase());
-  const [inboxItems, bookings] = await Promise.all([
+  const [inboxItems, bookings, feedback, dealsCreated] = await Promise.all([
     inboxItemsForEmails(emails),
     emails.length
       ? sql`
@@ -92,6 +96,8 @@ export async function getCompanyJourney(companyId: string): Promise<CompanyJourn
           ORDER BY created_at ASC
         `
       : Promise.resolve([] as Record<string, unknown>[]),
+    getCompanyFeedback(companyId),
+    sql`SELECT created_at FROM deals WHERE company_id = ${companyId}`,
   ]);
 
   const origins: JourneyOrigin[] = [
@@ -122,7 +128,18 @@ export async function getCompanyJourney(companyId: string): Promise<CompanyJourn
   const dossier = dossiers[0];
   const liveDossier = dossiers.find((d) => d.live_at);
   const sprint = sprints[0];
+  const doneSprint = sprints.find((s) => s.status === 'afgerond');
   const first = origins[0];
+
+  // Opgeleverd = live dossier, of (zonder dossier) een afgeronde sprint
+  const deliveredAt: Date | null = liveDossier
+    ? new Date(liveDossier.live_at as string)
+    : doneSprint
+      ? new Date((doneSprint.completed_at ?? doneSprint.updated_at) as string)
+      : null;
+  const daysSinceDelivery = deliveredAt ? Math.floor((Date.now() - deliveredAt.getTime()) / 86400000) : null;
+  const feedbackAfterDelivery =
+    deliveredAt && feedback.answeredAt && new Date(feedback.answeredAt) >= deliveredAt;
 
   const steps: JourneyStep[] = [
     {
@@ -154,36 +171,58 @@ export async function getCompanyJourney(companyId: string): Promise<CompanyJourn
     {
       key: 'dossier',
       label: 'Dossier',
-      state: dossier ? (liveDossier ? 'done' : 'current') : 'todo',
+      state: dossier ? (liveDossier ? 'done' : 'current') : doneSprint ? 'skipped' : 'todo',
       detail: dossier
         ? dossier.milestones_total > 0
           ? `${dossier.milestones_done}/${dossier.milestones_total} milestones`
           : 'Gestart'
-        : null,
+        : doneSprint
+          ? 'Niet van toepassing'
+          : null,
       href: dossier ? `/admin/dossiers/${dossier.slug}` : null,
     },
     {
       key: 'live',
       label: 'Live',
-      state: liveDossier ? 'done' : 'todo',
+      state: deliveredAt ? 'done' : 'todo',
       detail: liveDossier
         ? fmt(liveDossier.live_at as string)
-        : dossier?.go_live_date
-          ? `Gepland ${fmt(dossier.go_live_date as string)}`
-          : null,
+        : doneSprint
+          ? `Sprint afgerond ${fmt(deliveredAt)}`
+          : dossier?.go_live_date
+            ? `Gepland ${fmt(dossier.go_live_date as string)}`
+            : null,
       href: dossier ? `/admin/dossiers/${(liveDossier ?? dossier).slug}/launch` : null,
+    },
+    {
+      key: 'nazorg',
+      label: 'Nazorg',
+      state: !deliveredAt ? 'todo' : feedbackAfterDelivery ? 'done' : 'current',
+      detail: feedbackAfterDelivery
+        ? `Score ${feedback.latestScore}/10`
+        : feedback.pendingSince
+          ? `Feedback gevraagd ${fmt(feedback.pendingSince)}`
+          : deliveredAt
+            ? `Dag ${daysSinceDelivery}`
+            : null,
+      href: null,
     },
   ];
 
   const openInbox = inboxItems.filter((i) => i.status === 'open').length;
   let nextAction: CompanyJourney['nextAction'] = null;
-  if (bookings.some((b) => b.status === 'pending')) {
+  const newDealSinceDelivery =
+    deliveredAt && dealsCreated.some((d) => new Date(d.created_at as string) > deliveredAt);
+
+  if (feedbackAfterDelivery && feedback.latestScore != null && feedback.latestScore <= 6) {
+    nextAction = { text: `Tevredenheid ${feedback.latestScore}/10 — bel de klant.`, href: '/admin/crm/taken' };
+  } else if (bookings.some((b) => b.status === 'pending')) {
     nextAction = { text: 'Boeking wacht op goedkeuring.', href: '/admin/inbox' };
   } else if (openInbox > 0) {
     nextAction = { text: `${openInbox} lead(s) van dit bedrijf staan nog open in Binnenkomend.`, href: '/admin/inbox' };
   } else if (!bestDeal) {
     nextAction = { text: 'Nog geen actieve deal — maak er een aan als er kans is.', href: null };
-  } else if (wonDeal && !dossier) {
+  } else if (wonDeal && !dossier && !doneSprint) {
     nextAction = { text: 'Deal gewonnen — start het klantdossier vanuit de pipeline.', href: '/admin/crm/deals' };
   } else if (
     dossier &&
@@ -195,6 +234,10 @@ export async function getCompanyJourney(companyId: string): Promise<CompanyJourn
       text: 'Geplande go-live-datum is verstreken — check het launch-board.',
       href: `/admin/dossiers/${dossier.slug}/launch`,
     };
+  } else if (deliveredAt && daysSinceDelivery! >= 14 && !feedbackAfterDelivery && !feedback.pendingSince) {
+    nextAction = { text: `${daysSinceDelivery} dagen opgeleverd — vraag om feedback.`, href: null };
+  } else if (deliveredAt && daysSinceDelivery! >= 90 && !newDealSinceDelivery) {
+    nextAction = { text: 'Kwartaalcheck: bespreek wat de volgende stap kan zijn.', href: null };
   }
 
   return {
@@ -208,5 +251,7 @@ export async function getCompanyJourney(companyId: string): Promise<CompanyJourn
       status: s.status as string,
       updatedAt: s.updated_at as string,
     })),
+    feedback,
+    delivered: Boolean(deliveredAt),
   };
 }
