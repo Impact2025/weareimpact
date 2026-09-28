@@ -44,6 +44,8 @@ Stop. Voordat je een developer belt, moet je drie vragen beantwoorden:
 
 In dit artikel neem ik je mee door de beslisboom die ik zelf heb doorlopen.
 
+Dit artikel hoort bij mijn overzicht over het [vrijwilligerstekort en wat je eraan doet](/kennisbank/vrijwilligerstekort-2026-oplossingen).
+
 ---
 
 ## Inhoudsopgave

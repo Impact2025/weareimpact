@@ -43,6 +43,8 @@ Niet omdat ze het niet meer leuk vond. Maar omdat ze was uitgeleerd.
 
 Dit gesprek leidde tot een experiment dat onze vrijwilligersretentie met 23% verhoogde.
 
+Dit artikel hoort bij mijn overzicht over het [vrijwilligerstekort en wat je eraan doet](/kennisbank/vrijwilligerstekort-2026-oplossingen).
+
 ---
 
 ## Inhoudsopgave

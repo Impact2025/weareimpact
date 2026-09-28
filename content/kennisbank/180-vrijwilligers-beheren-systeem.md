@@ -43,6 +43,8 @@ Het antwoord: **systematiseren**. Niet door meer te controleren, maar door slimm
 
 In dit artikel deel ik het complete systeem dat we bouwden.
 
+Dit artikel hoort bij mijn overzicht over het [vrijwilligerstekort en wat je eraan doet](/kennisbank/vrijwilligerstekort-2026-oplossingen).
+
 ---
 
 ## Inhoudsopgave

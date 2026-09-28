@@ -41,6 +41,8 @@ Bij Stichting de Baan werkten we met 180 vrijwilligers. Elke maand kwamen er nie
 
 In dit artikel deel ik wat ik heb geleerd over vrijwilligers vinden én houden.
 
+Dit artikel hoort bij mijn overzicht over het [vrijwilligerstekort en wat je eraan doet](/kennisbank/vrijwilligerstekort-2026-oplossingen).
+
 ---
 
 ## Inhoudsopgave

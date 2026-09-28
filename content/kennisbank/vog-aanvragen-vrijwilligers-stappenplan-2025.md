@@ -39,6 +39,8 @@ Bij onze organisatie werken we met 180 vrijwilligers die in contact komen met kw
 
 > "De VOG is geen wantrouwen naar je vrijwilligers, het is bescherming voor je doelgroep. Dat verschil in framing maakt alles uit."
 
+Dit artikel hoort bij mijn overzicht over het [vrijwilligerstekort en wat je eraan doet](/kennisbank/vrijwilligerstekort-2026-oplossingen).
+
 ---
 
 ## Inhoudsopgave

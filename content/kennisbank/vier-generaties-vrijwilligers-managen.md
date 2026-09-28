@@ -41,6 +41,8 @@ Deze verzuchting hoor ik vaak. Voor het eerst in de geschiedenis werken vier gen
 
 In dit artikel deel ik wat ik leerde van het managen van een vrijwilligersteam van 18 tot 78 jaar.
 
+Dit artikel hoort bij mijn overzicht over het [vrijwilligerstekort en wat je eraan doet](/kennisbank/vrijwilligerstekort-2026-oplossingen).
+
 ---
 
 ## Inhoudsopgave

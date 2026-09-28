@@ -54,6 +54,8 @@ Vrijwilligersorganisaties die digitaliseren zien **40% minder uitval van vrijwil
 
 > Als innovatiemanager help ik organisaties om digitale transformatie soepel te laten verlopen. Het geheim? Beginnen bij de vrijwilligers, niet bij de technologie.
 
+Dit artikel hoort bij mijn overzicht over het [vrijwilligerstekort en wat je eraan doet](/kennisbank/vrijwilligerstekort-2026-oplossingen).
+
 ## Inhoudsopgave
 
 1. [Stap 1: creëer draagvlak](#stap-1)

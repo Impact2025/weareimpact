@@ -1,7 +1,7 @@
 ---
 slug: vrijwilligerstekort-2026-oplossingen
 title: "Vrijwilligerstekort 2026: oorzaken, cijfers en 8 bewezen oplossingen"
-subtitle: "De vraag naar vrijwilligers steeg met 11,5% — het aanbod daalde met 19%. Dit is hoe je toch genoeg mensen vindt."
+subtitle: "Meer vacatures, minder nieuwe aanmeldingen en een doelgroep die zich anders wil binden. Dit is hoe je toch genoeg mensen vindt."
 excerpt: "In 2026 is het vrijwilligerstekort in Nederland een stille crisis geworden. Meer vraag, minder aanbod, en een doelgroep die zich anders wil binden. Dit artikel geeft je cijfers, context én 8 concrete aanpakken die vandaag al werken."
 category_slug: vrijwilligers
 tags:
@@ -26,7 +26,7 @@ lead_magnet_description: "Inclusief 10 e-mail templates, LinkedIn-wervingsstrate
 lead_magnet_type: toolkit
 faq_items:
   - question: "Hoe erg is het vrijwilligerstekort in Nederland in 2026?"
-    answer: "Serieus. De vraag naar vrijwilligers steeg met 11,5% terwijl het aanbod van nieuwe vrijwilligers daalde met 19%. Dat betekent dat er structureel meer open plekken zijn dan mensen die ze willen invullen."
+    answer: "Het wisselt per organisatie. Volgens CBS deed in 2024 ongeveer de helft van de 15-plussers vrijwilligerswerk, bijna weer het niveau van voor corona. Tegelijk zag vrijwilligersplatform NLvoorelkaar in 2023 11,5% meer vacatures en 19% minder nieuwe aanmeldingen dan in 2022. Mensen willen dus nog steeds helpen, maar organisaties met vaste, langdurige rollen vinden steeds moeilijker mensen."
   - question: "Waarom willen jongeren minder vrijwilligerswerk doen?"
     answer: "Jongeren willen vrijwilligeren — maar op hun eigen voorwaarden. Ze willen flexibel inzetbaar zijn, concreet zien wat hun bijdrage doet, en niet vastzitten aan een jarenlang bestuurlidmaatschap. Organisaties die dat bieden, hebben geen tekort."
   - question: "Werkt AI echt bij vrijwilligerswerving?"
@@ -63,14 +63,17 @@ In dit artikel zet ik de cijfers neer, leg ik uit wat er echt speelt, en geef ik
 
 Laten we beginnen met de feiten, want ik vind dat je als organisatie recht hebt op helderheid.
 
-Uit landelijk onderzoek komen deze cijfers naar voren:
+Eerst het goede nieuws, want dat wordt vaak vergeten. Volgens het CBS deed in 2024 **49,5% van de mensen van 15 jaar en ouder** vrijwilligerswerk. Dat is bijna weer het niveau van voor corona; in 2021 was het nog 38,9%. Nederland is dus niet minder behulpzaam geworden.
 
-- **11,5% meer** vrijwilligersvragen en vacatures in 2023 ten opzichte van 2022
+En toch ervaren organisaties een tekort. Dat zie je terug in de cijfers van vrijwilligersplatform NLvoorelkaar over 2023:
+
+- **11,5% meer** vrijwilligersvragen en vacatures dan in 2022
 - **19% minder** nieuwe vrijwilligers die zich registreerden in datzelfde jaar
-- **52% van nieuwe vrijwilligers** is jonger dan 40 — en die groep wil het anders dan hun ouders
-- De vergrijzing van het vrijwilligersbestand zet door: de vaste kern is gemiddeld ouder dan ooit
+- **52% van de nieuwe vrijwilligers** is 40 jaar of jonger, en die groep wil het anders dan hun ouders
 
-Die kloof tussen vraag en aanbod is in 2024 en 2025 verder gegroeid. In 2026 praten we niet meer over een trend — we praten over een structureel probleem.
+Het CBS ziet daarnaast dat minder mensen regelmatig vrijwilligerswerk doen en juist meer mensen incidenteel: in 2024 deed 40% van de vrijwilligers het incidenteel. De vaste kern waar veel welzijnsorganisaties op draaien, wordt ouder en groeit niet vanzelf aan.
+
+Dat is de kern van het tekort: er zijn genoeg mensen die willen helpen, maar ze passen steeds minder in de vaste, langdurige rollen die wij aanbieden.
 
 En dan heb ik het nog niet over de onzichtbare kant: vrijwilligers die formeel "actief" zijn, maar al maanden niets meer doen. Die zijn ook niet weg via een officieel afscheid — ze zijn gewoon gestopt.
 
@@ -102,7 +105,7 @@ In mijn werk zie ik drie groepen die structureel worden gemist in de vrijwillige
 
 ### Groep 1: Gen Z (18-26 jaar) — de micro-vrijwilligers
 
-Ze zijn solidair, maatschappelijk betrokken, maar allergisch voor bureaucratie en langdurige verplichtingen. Ze willen helpen op hun voorwaarden: een paar uur, concreet, zichtbaar resultaat.
+Ze zijn solidair, maatschappelijk betrokken, maar allergisch voor bureaucratie en langdurige verplichtingen. Ze willen helpen op hun voorwaarden: een paar uur, concreet, zichtbaar resultaat. Hoe je verschillende generaties naast elkaar laat werken, beschrijf ik in [vier generaties vrijwilligers managen](/kennisbank/vier-generaties-vrijwilligers-managen).
 
 **Wat werkt:**
 - Werving via Instagram en TikTok, niet via Facebook
@@ -158,13 +161,13 @@ Veel potentiële vrijwilligers twijfelen omdat ze bang zijn voor langdurige verp
 
 ### 4. Investeer in onboarding — de eerste 2 weken zijn allesbepalend
 
-De meeste uitval bij vrijwilligers vindt plaats in de eerste maand. Dat is geen toeval: ze voelen zich niet welkom, weten niet wat ze moeten doen, of missen verbinding met de rest van het team. Een goede onboarding — een buddy, een introductiegesprek, een welkomstmoment — is je beste retentieinvestering.
+De meeste uitval bij vrijwilligers vindt plaats in de eerste maand. Dat is geen toeval: ze voelen zich niet welkom, weten niet wat ze moeten doen, of missen verbinding met de rest van het team. Een goede onboarding — een buddy, een introductiegesprek, een welkomstmoment — is je beste retentieinvestering. Hoe je dat aanpakt, lees je in [vrijwilligers werven die blijven](/kennisbank/vrijwilligers-werven-die-blijven).
 
 ### 5. Activeer slapende vrijwilligers vóór je nieuwe werft
 
 In elke vrijwilligersadministratie die ik bekijk, zitten mensen die ooit ja hebben gezegd maar al maanden inactief zijn. Dat zijn geen verloren gevallen — dat zijn mensen die een reden nodig hebben om terug te komen. Een persoonlijk berichtje ("We missen je, is alles goed?") is vaak genoeg.
 
-Dit klinkt simpel, maar het wordt zelden gedaan. Nieuwe werven is zichtbaarder en voelt actiever. Reactiveren is effectiever.
+Dit klinkt simpel, maar het wordt zelden gedaan. Nieuwe werven is zichtbaarder en voelt actiever. Reactiveren is effectiever. En wie tijdelijk minder te doen heeft, kun je ook uitlenen in plaats van kwijtraken: dat is het idee achter de [Impact Reserve](/kennisbank/impact-reserve-vrijwilligers-uitlenen).
 
 ### 6. Zoek partners op voor gezamenlijke werving
 
@@ -244,11 +247,35 @@ Als je wilt dat ik meekijk naar de vrijwilligersstrategie van jouw organisatie, 
 
 Vraagt het tekort om een andere koers voor je hele organisatie, en ontbreekt daar tijdelijk de leiding voor? Dan stap ik in als [interim-directeur in het sociaal domein](/interim-manager).
 
-## Gerelateerde artikelen
+## Alles over vrijwilligers: verder lezen per vraag {#verder-lezen}
 
+**Werven en matchen**
+- [Vrijwilligers werven die blijven](/kennisbank/vrijwilligers-werven-die-blijven)
+- [De VrijwilligersCheck: talenten matchen in plaats van gaten vullen](/kennisbank/vrijwilligerscheck-talenten-matchen)
+- [Vier generaties vrijwilligers managen](/kennisbank/vier-generaties-vrijwilligers-managen)
+- [Vrijwillig maar niet vrijblijvend: 8 aanpakken die wel werken](/blog/vrijwillig-maar-niet-vrijblijvend-8-praktische-aanpakken)
+- [4 trends in vrijwilligerswerk in 2026](/blog/4-trends-in-vrijwilligerswerk-2026-doe-mee)
+
+**Behouden en waarderen**
+- [De Impact Reserve: vrijwilligers behouden door ze uit te lenen](/kennisbank/impact-reserve-vrijwilligers-uitlenen)
+- [Nationale Vrijwilligersdag: waarom deze dag ertoe doet](/kennisbank/vrijwilligersdag-waarom-deze-dag-ertoe-doet-en-wat-jij-ermee-kunt)
+
+**Regels en beleid**
+- [Vrijwilligersvergoeding 2026: bedragen, regels en valkuilen](/kennisbank/vrijwilligersvergoeding-2026-bedragen-regels)
+- [Vrijwilligersbeleid opstellen: stappenplan en voorbeeld](/kennisbank/vrijwilligersbeleid-opstellen-stappenplan-voorbeeld)
+- [VOG aanvragen voor vrijwilligers: gratis stappenplan](/kennisbank/vog-aanvragen-vrijwilligers-stappenplan-2025)
+
+**Organisatie en digitaal**
 - [180 vrijwilligers beheren zonder chaos: mijn systeem](/kennisbank/180-vrijwilligers-beheren-systeem)
-- [De VrijwilligersCheck: hoe je talenten matcht in plaats van gaten vult](/kennisbank/vrijwilligerscheck-talenten-matchen)
-- [De Impact Reserve: hoe je vrijwilligers behoudt door ze uit te lenen](/kennisbank/impact-reserve-vrijwilligers-uitlenen)
+- [Vrijwilligersplatform bouwen of kopen: een beslisboom](/kennisbank/vrijwilligersplatform-bouwen-of-kopen)
+- [Vrijwilligersorganisatie en digitale transformatie](/kennisbank/vrijwilligersorganisatie-digitale-transformatie)
+- [De werkdrukparadox: waarom vrijwilligerscoördinatoren verdrinken in spreadsheets](/blog/de-werkdrukparadox-waarom-vrijwilligersco-rdinatoren-verdrinken-in-spreadsheets-en-hoe-we-dat-nu-herstellen)
+
+## Bronnen
+
+- CBS, [Helft 15-plussers deed in 2024 vrijwilligerswerk](https://www.cbs.nl/nl-nl/nieuws/2025/19/helft-15-plussers-deed-in-2024-vrijwilligerswerk) (7 mei 2025)
+- CBS, [Vrijwilligerswerk 2024: samenvatting en conclusie](https://www.cbs.nl/nl-nl/longread/rapportages/2025/vrijwilligerswerk-2024/4-samenvatting-en-conclusie)
+- NLvoorelkaar, *Trends vrijwillige inzet 2024* (e-book, februari 2024)
 
 ---
 

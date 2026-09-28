@@ -43,6 +43,8 @@ Dat is zonde, want goed vrijwilligersbeleid maakt het leven makkelijker. Het gee
 
 In dit artikel laat ik zien hoe je beleid schrijft dat mensen daadwerkelijk gebruiken.
 
+Dit artikel hoort bij mijn overzicht over het [vrijwilligerstekort en wat je eraan doet](/kennisbank/vrijwilligerstekort-2026-oplossingen).
+
 ---
 
 ## Inhoudsopgave

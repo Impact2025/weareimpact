@@ -43,6 +43,8 @@ Bij Stichting de Baan draaiden we dit om. We ontwikkelden de VrijwilligersCheck:
 
 Het resultaat: **35% hogere retentie** en vrijwilligers die gemiddeld 2 jaar langer blijven.
 
+Dit artikel hoort bij mijn overzicht over het [vrijwilligerstekort en wat je eraan doet](/kennisbank/vrijwilligerstekort-2026-oplossingen).
+
 ---
 
 ## Inhoudsopgave
