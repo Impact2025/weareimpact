@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { sql } from '@/lib/db/neon';
-import { pingIndexNow, pingGoogleIndexingAPI } from '@/lib/indexing';
+import { pingIndexNow } from '@/lib/indexing';
 import { isAdminAuthenticated } from '@/lib/admin-auth';
 
 export const dynamic = 'force-dynamic';
@@ -176,7 +176,7 @@ export async function POST(request: NextRequest) {
 
     if (status === 'published') {
       const fullUrl = `${SITE_URL}/blog/${post.slug}`;
-      void Promise.allSettled([pingIndexNow([fullUrl]), pingGoogleIndexingAPI(fullUrl)]);
+      void pingIndexNow([fullUrl]);
     }
 
     return NextResponse.json({
@@ -279,7 +279,7 @@ export async function PUT(request: NextRequest) {
 
     if (updates.status === 'published' || result[0].status === 'published') {
       const fullUrl = `${SITE_URL}/blog/${result[0].slug}`;
-      void Promise.allSettled([pingIndexNow([fullUrl]), pingGoogleIndexingAPI(fullUrl)]);
+      void pingIndexNow([fullUrl]);
     }
 
     return NextResponse.json({ post: result[0] });

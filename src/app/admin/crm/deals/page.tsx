@@ -15,6 +15,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { DealCard, CreateDealDialog } from '@/components/crm';
+import { NewQuoteButton } from '@/components/finance/NewQuoteButton';
 import { formatCurrency, dealStageLabels, dealStageColors } from '@/lib/crm/labels';
 import type { Deal, DealStage } from '@/lib/crm/types';
 
@@ -241,6 +242,9 @@ export default function DealsPage() {
                       deal={deal}
                       isDragging={draggingDeal === deal.id}
                     />
+                    <div className="mt-1">
+                      <NewQuoteButton dealId={deal.id} label="Offerte maken" variant="outline" size="sm" />
+                    </div>
                     {/* Quick actions for negotiation stage */}
                     {stage === 'negotiation' && (
                       <div className="flex gap-1 mt-1">

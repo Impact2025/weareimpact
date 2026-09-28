@@ -22,6 +22,7 @@ export interface SendEmailOptions {
   from?: string;
   replyTo?: string;
   headers?: Record<string, string>;
+  attachments?: { filename: string; content: Buffer }[];
 }
 
 export async function sendEmail(options: SendEmailOptions): Promise<{
@@ -51,6 +52,7 @@ export async function sendEmail(options: SendEmailOptions): Promise<{
       text: options.text,
       replyTo: options.replyTo || 'v.munster@weareimpact.nl',
       headers: options.headers,
+      attachments: options.attachments,
     });
 
     if (result.error) {

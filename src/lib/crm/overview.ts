@@ -1,5 +1,6 @@
 import { sql } from '@/lib/db/neon';
 import { countOpenInbox, listInbox } from './inbox';
+import { getFinanceOverview } from '@/lib/finance/overview';
 
 // Dashboard-overzicht van de klantreis: hoeveel klanten staan in welke fase,
 // en wat vraagt vandaag actie.
@@ -50,6 +51,7 @@ export async function getKlantreisOverview(): Promise<KlantreisOverview> {
     overdueActions,
     delivered,
     avgScore,
+    finance,
   ] = await Promise.all([
     countOpenInbox(),
     listInbox('open', 500),
@@ -91,6 +93,7 @@ export async function getKlantreisOverview(): Promise<KlantreisOverview> {
         AND NOT EXISTS (SELECT 1 FROM crm_projects p WHERE p.deal_id = d.id)
         -- Een sprint-deal wordt via de sprint geleverd, niet via een dossier
         AND NOT EXISTS (SELECT 1 FROM sprint_sessions s WHERE s.deal_id = d.id)
+        AND COALESCE(d.source, '') NOT LIKE 'sprint:%'
       ORDER BY d.updated_at DESC
     `,
     sql`
@@ -130,6 +133,8 @@ export async function getKlantreisOverview(): Promise<KlantreisOverview> {
       SELECT ROUND(AVG(score)::numeric, 1)::float AS avg, COUNT(*)::int AS n
       FROM crm_feedback WHERE answered_at > NOW() - INTERVAL '12 months'
     `,
+    // Offertes en facturen: een storing hier mag het dashboard niet breken
+    getFinanceOverview().catch(() => null),
   ]);
 
   const overdueInbox = openItems.filter(
@@ -213,6 +218,14 @@ export async function getKlantreisOverview(): Promise<KlantreisOverview> {
       detail: 'Start het dossier vanuit de pipeline',
       href: '/admin/crm/deals',
       severity: 'high',
+    });
+  }
+  for (const a of finance?.actions ?? []) {
+    todos.push({
+      text: a.text,
+      detail: a.kind === 'invoice' && a.tone === 'red' ? 'Stuur een herinnering of boek de betaling' : null,
+      href: a.kind === 'quote' ? `/admin/finance/offertes/${a.id}` : `/admin/finance/facturen/${a.id}`,
+      severity: a.tone === 'blue' ? 'normal' : 'high',
     });
   }
   if (d.late > 0) {

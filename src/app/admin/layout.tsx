@@ -33,6 +33,7 @@ import {
   FolderOpen,
   Mic,
   Inbox,
+  Receipt,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import IrisVoiceButton from '@/components/admin/IrisVoiceButton';
@@ -75,6 +76,7 @@ const sidebarSections: { title?: string; items: SidebarItem[] }[] = [
         ],
       },
       { label: 'Sprint Sessies', href: '/admin/sprint', icon: Rocket },
+      { label: 'Financiën', href: '/admin/finance', icon: Receipt },
       { label: 'Klantdossiers', href: '/admin/dossiers', icon: FolderOpen },
       { label: 'LaunchAssist', href: '/admin/launch', icon: Rocket },
     ],

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
 import { createHash, timingSafeEqual } from 'crypto';
 import { sql } from '@/lib/db/neon';
-import { pingIndexNow, pingGoogleIndexingAPI } from '@/lib/indexing';
+import { pingIndexNow } from '@/lib/indexing';
 import { generateAndPostSocials, type SocialRunReport } from '@/lib/social/service';
 import { isAdminAuthenticated } from '@/lib/admin-auth';
 import { guardArticle } from '@/lib/content-guard';
@@ -204,11 +204,9 @@ export async function POST(request: NextRequest) {
       revalidatePath(`/blog/${renameFrom.trim()}`);
     }
 
-    // Zoekmachines pingen (parallel, fouten loggen maar blokkeren niet)
-    const [indexNowResult, googleResult] = await Promise.allSettled([
-      pingIndexNow([url]),
-      pingGoogleIndexingAPI(url),
-    ]);
+    // Zoekmachines pingen via IndexNow (fouten loggen maar blokkeren niet).
+    // Geen Google Indexing API: die is alleen bedoeld voor vacatures en livestreams.
+    const [indexNowResult] = await Promise.allSettled([pingIndexNow([url])]);
 
     // Social posts genereren + automatisch plaatsen waar tokens bestaan
     let socialReport: SocialRunReport[] = [];
@@ -240,7 +238,6 @@ export async function POST(request: NextRequest) {
       source,
       indexing: {
         indexnow: indexNowResult.status === 'fulfilled' ? 'ok' : 'fout',
-        google: googleResult.status === 'fulfilled' ? 'ok' : 'fout',
       },
       socials: socialReport,
       socialError,

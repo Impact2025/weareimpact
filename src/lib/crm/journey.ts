@@ -2,11 +2,12 @@ import { sql } from '@/lib/db/neon';
 import { inboxItemsForEmails } from './inbox';
 import { INBOX_SOURCES } from './inbox-sources';
 import { getCompanyFeedback, type CompanyFeedback } from './aftercare';
+import { getFinanceSummary } from '@/lib/finance/journey';
 
 // Klantreis per bedrijf: van eerste binnenkomst tot livegang, samengesteld
 // uit inbox/boekingen, deals, sprint-sessies, klantdossiers en nazorg.
 
-export type JourneyStepKey = 'binnen' | 'deal' | 'sprint' | 'dossier' | 'live' | 'nazorg';
+export type JourneyStepKey = 'binnen' | 'deal' | 'geld' | 'sprint' | 'dossier' | 'live' | 'nazorg';
 export type JourneyStepState = 'done' | 'current' | 'todo' | 'skipped';
 
 export interface JourneyStep {
@@ -87,7 +88,7 @@ export async function getCompanyJourney(companyId: string): Promise<CompanyJourn
   ]);
 
   const emails = contacts.map((c) => (c.email as string).toLowerCase());
-  const [inboxItems, bookings, feedback, dealsCreated] = await Promise.all([
+  const [inboxItems, bookings, feedback, dealsCreated, money] = await Promise.all([
     inboxItemsForEmails(emails),
     emails.length
       ? sql`
@@ -98,6 +99,7 @@ export async function getCompanyJourney(companyId: string): Promise<CompanyJourn
       : Promise.resolve([] as Record<string, unknown>[]),
     getCompanyFeedback(companyId),
     sql`SELECT created_at FROM deals WHERE company_id = ${companyId}`,
+    getFinanceSummary(companyId).catch(() => null),
   ]);
 
   const origins: JourneyOrigin[] = [
@@ -161,6 +163,13 @@ export async function getCompanyJourney(companyId: string): Promise<CompanyJourn
       href: '/admin/crm/deals',
     },
     {
+      key: 'geld',
+      label: 'Financiën',
+      state: money?.state ?? 'todo',
+      detail: money?.detail ?? null,
+      href: money?.href ?? '/admin/finance',
+    },
+    {
       key: 'sprint',
       label: 'Sprint',
       // Niet elk traject loopt via een sprint; met een dossier en zonder sprint is de stap overgeslagen
@@ -216,6 +225,8 @@ export async function getCompanyJourney(companyId: string): Promise<CompanyJourn
 
   if (feedbackAfterDelivery && feedback.latestScore != null && feedback.latestScore <= 6) {
     nextAction = { text: `Tevredenheid ${feedback.latestScore}/10 — bel de klant.`, href: '/admin/crm/taken' };
+  } else if (money?.attention) {
+    nextAction = money.attention;
   } else if (bookings.some((b) => b.status === 'pending')) {
     nextAction = { text: 'Boeking wacht op goedkeuring.', href: '/admin/inbox' };
   } else if (openInbox > 0) {

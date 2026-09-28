@@ -43,7 +43,7 @@ export function PageViewTracker() {
   const { consent } = useCookieConsent();
 
   useEffect(() => {
-    if (pathname.startsWith('/admin')) return;
+    if (pathname.startsWith('/admin') || pathname.startsWith('/offerte') || pathname.startsWith('/factuur')) return;
 
     const visitorId = getVisitorId();
     if (!visitorId) return;

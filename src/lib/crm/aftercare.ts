@@ -47,6 +47,13 @@ export async function onSprintCompleted(dealId: string): Promise<void> {
     UPDATE sprint_sessions SET completed_at = COALESCE(completed_at, NOW())
     WHERE deal_id = ${dealId}
   `;
+  // Oplevering: zet de factuurtermijn "bij oplevering" klaar. Mag het afronden nooit blokkeren.
+  try {
+    const { onDelivered } = await import('@/lib/finance/flow');
+    await onDelivered(dealId);
+  } catch (err) {
+    console.error('Facturatie na sprint-afronding mislukt:', err);
+  }
   const [deal] = await sql`SELECT company_id, contact_id, title FROM deals WHERE id = ${dealId}`;
   if (!deal) return;
 

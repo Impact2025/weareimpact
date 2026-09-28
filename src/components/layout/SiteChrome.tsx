@@ -11,7 +11,7 @@ import { CookieBanner } from '@/components/cookie-consent';
 // dat hoort daar niet en overlapt content (zie screenshot-feedback: titel
 // viel weg achter de navbar). /admin laten we bewust ongemoeid: dat gedrag
 // stond hier al zo en is nu niet gemeld als kapot.
-const BARE_PREFIXES = ['/portal'];
+const BARE_PREFIXES = ['/portal', '/offerte', '/factuur'];
 
 export function SiteChrome({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();

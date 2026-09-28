@@ -9,7 +9,8 @@ const GA_MEASUREMENT_ID = 'G-Q8Q67SKTJV';
 
 // Interne paden die nooit als publieksverkeer geteld mogen worden.
 // Zonder dit domineren admin-sessies de statistieken (zie weekrapport 2026-W30).
-const INTERNAL_PATH_PREFIXES = ['/admin', '/api'];
+// /offerte en /factuur bevatten een privé-token in de URL: nooit naar analytics.
+const INTERNAL_PATH_PREFIXES = ['/admin', '/api', '/offerte', '/factuur'];
 
 export const isInternalPath = (path: string) =>
   INTERNAL_PATH_PREFIXES.some((prefix) => path === prefix || path.startsWith(`${prefix}/`));

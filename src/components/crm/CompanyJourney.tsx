@@ -54,7 +54,7 @@ export function CompanyJourney({
   return (
     <Card>
       <CardContent className="pt-6 space-y-4">
-        <ol className="grid grid-cols-6 gap-1">
+        <ol className="grid grid-cols-7 gap-1">
           {journey.steps.map((step, index) => {
             const style = STATE_STYLES[step.state];
             const body = (
