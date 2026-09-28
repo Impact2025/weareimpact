@@ -1,4 +1,5 @@
 import { google } from 'googleapis';
+import { amsterdamDateTime, amsterdamParts, amsterdamStartOfDay } from '@/lib/time/amsterdam';
 
 // Booking types configuration
 export const BOOKING_TYPES = {
@@ -109,55 +110,45 @@ async function getBusyTimes(startDate: Date, endDate: Date): Promise<{ start: Da
   }
 }
 
-// Generate time slots for a day
+// Generate time slots for one Amsterdam calendar day (kantooruren zijn Nederlandse tijd)
 function generateTimeSlots(
-  date: Date,
+  day: { year: number; month: number; day: number; weekday: number },
   duration: number,
   busyTimes: { start: Date; end: Date }[]
 ): { start: string; end: string; available: boolean }[] {
   const slots: { start: string; end: string; available: boolean }[] = [];
 
   // Skip weekends
-  if (BUSINESS_HOURS.daysOff.includes(date.getDay())) {
+  if (BUSINESS_HOURS.daysOff.includes(day.weekday)) {
     return slots;
   }
 
-  // Set to start of business day
-  const dayStart = new Date(date);
-  dayStart.setHours(BUSINESS_HOURS.start, 0, 0, 0);
-
-  const dayEnd = new Date(date);
-  dayEnd.setHours(BUSINESS_HOURS.end, 0, 0, 0);
+  const dayStart = amsterdamDateTime(day.year, day.month, day.day, BUSINESS_HOURS.start);
+  const dayEnd = amsterdamDateTime(day.year, day.month, day.day, BUSINESS_HOURS.end);
 
   // Don't generate slots for past times, en houd minimaal 2 dagen voorbereidingstijd aan
-  const earliestAllowed = new Date(Date.now() + MIN_NOTICE_HOURS * 60 * 60 * 1000);
-  const slotStart = new Date(Math.max(dayStart.getTime(), earliestAllowed.getTime()));
+  const earliestAllowed = Date.now() + MIN_NOTICE_HOURS * 60 * 60 * 1000;
 
-  // Round up to next 30 minute interval
-  const minutes = slotStart.getMinutes();
-  if (minutes > 0 && minutes <= 30) {
-    slotStart.setMinutes(30, 0, 0);
-  } else if (minutes > 30) {
-    slotStart.setHours(slotStart.getHours() + 1, 0, 0, 0);
-  }
+  // Round up to next 30 minute interval (NL wijkt hele uren af van UTC, dus dit valt op :00/:30)
+  const HALF_HOUR = 30 * 60000;
+  let slotStart = Math.ceil(Math.max(dayStart.getTime(), earliestAllowed) / HALF_HOUR) * HALF_HOUR;
 
   // Generate slots
-  while (slotStart.getTime() + duration * 60000 <= dayEnd.getTime()) {
-    const slotEnd = new Date(slotStart.getTime() + duration * 60000);
+  while (slotStart + duration * 60000 <= dayEnd.getTime()) {
+    const start = new Date(slotStart);
+    const end = new Date(slotStart + duration * 60000);
 
     // Check if slot conflicts with any busy time
-    const isAvailable = !busyTimes.some((busy) => {
-      return slotStart < busy.end && slotEnd > busy.start;
-    });
+    const isAvailable = !busyTimes.some((busy) => start < busy.end && end > busy.start);
 
     slots.push({
-      start: slotStart.toISOString(),
-      end: slotEnd.toISOString(),
+      start: start.toISOString(),
+      end: end.toISOString(),
       available: isAvailable,
     });
 
     // Move to next slot (30-minute intervals)
-    slotStart.setMinutes(slotStart.getMinutes() + 30);
+    slotStart += HALF_HOUR;
   }
 
   return slots;
@@ -177,11 +168,8 @@ export async function getAvailableSlots(
     throw new Error(`Invalid booking type: ${bookingType}`);
   }
 
-  const startDate = new Date();
-  startDate.setHours(0, 0, 0, 0);
-
-  const endDate = new Date(startDate);
-  endDate.setDate(endDate.getDate() + weeksAhead * 7);
+  const startDate = amsterdamStartOfDay(new Date());
+  const endDate = amsterdamStartOfDay(new Date(), weeksAhead * 7);
 
   // Get busy times for the date range
   const busyTimes = await getBusyTimes(startDate, endDate);
@@ -193,22 +181,21 @@ export async function getAvailableSlots(
     slots: { start: string; end: string; available: boolean }[];
   }[] = [];
 
-  const currentDate = new Date(startDate);
   const dayNames = ['Zondag', 'Maandag', 'Dinsdag', 'Woensdag', 'Donderdag', 'Vrijdag', 'Zaterdag'];
+  const today = amsterdamParts(startDate);
 
-  while (currentDate < endDate) {
-    const slots = generateTimeSlots(currentDate, type.duration, busyTimes);
+  for (let i = 0; i < weeksAhead * 7; i++) {
+    const day = amsterdamParts(amsterdamDateTime(today.year, today.month, today.day + i, 12));
+    const slots = generateTimeSlots(day, type.duration, busyTimes);
     const availableSlots = slots.filter((s) => s.available);
 
     if (availableSlots.length > 0) {
       days.push({
-        date: currentDate.toISOString().split('T')[0],
-        dayName: `${dayNames[currentDate.getDay()]} ${currentDate.getDate()}/${currentDate.getMonth() + 1}`,
+        date: `${day.year}-${String(day.month + 1).padStart(2, '0')}-${String(day.day).padStart(2, '0')}`,
+        dayName: `${dayNames[day.weekday]} ${day.day}/${day.month + 1}`,
         slots: availableSlots,
       });
     }
-
-    currentDate.setDate(currentDate.getDate() + 1);
   }
 
   return days;
@@ -290,15 +277,12 @@ export async function blockTimeRecurring(data: {
 
   const weeksCount = data.weeksCount || 13;
 
-  // Find the next occurrence of the requested day of week
-  const now = new Date();
-  const firstOccurrence = new Date(now);
-  firstOccurrence.setHours(data.startHour, data.startMinute, 0, 0);
-  const daysUntilTarget = (data.dayOfWeek - now.getDay() + 7) % 7 || 7;
-  firstOccurrence.setDate(firstOccurrence.getDate() + daysUntilTarget);
-
-  const firstEnd = new Date(firstOccurrence);
-  firstEnd.setHours(data.endHour, data.endMinute, 0, 0);
+  // Find the next occurrence of the requested day of week (Nederlandse tijd)
+  const today = amsterdamParts(new Date());
+  const daysUntilTarget = (data.dayOfWeek - today.weekday + 7) % 7 || 7;
+  const targetDay = today.day + daysUntilTarget;
+  const firstOccurrence = amsterdamDateTime(today.year, today.month, targetDay, data.startHour, data.startMinute);
+  const firstEnd = amsterdamDateTime(today.year, today.month, targetDay, data.endHour, data.endMinute);
 
   const dayNames = ['SU', 'MO', 'TU', 'WE', 'TH', 'FR', 'SA'];
   const rrule = `RRULE:FREQ=WEEKLY;COUNT=${weeksCount};BYDAY=${dayNames[data.dayOfWeek]}`;
@@ -443,11 +427,9 @@ export async function getEventsForDate(date: Date): Promise<{
   const calendar = getCalendarClient();
   const calendarId = process.env.GOOGLE_CALENDAR_ID || 'primary';
 
-  const startOfDay = new Date(date);
-  startOfDay.setHours(0, 0, 0, 0);
-
-  const endOfDay = new Date(date);
-  endOfDay.setHours(23, 59, 59, 999);
+  // De Amsterdamse kalenderdag waarin `date` valt
+  const startOfDay = amsterdamStartOfDay(date);
+  const endOfDay = new Date(amsterdamStartOfDay(date, 1).getTime() - 1);
 
   try {
     const response = await calendar.events.list({

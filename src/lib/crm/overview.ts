@@ -199,7 +199,7 @@ export async function getKlantreisOverview(): Promise<KlantreisOverview> {
   for (const b of pendingBookings) {
     todos.push({
       text: `Boeking ${b.booking_type} van ${b.customer_organization || b.customer_name} wacht op goedkeuring`,
-      detail: `Sinds ${new Date(b.created_at as string).toLocaleDateString('nl-NL')}`,
+      detail: `Sinds ${new Date(b.created_at as string).toLocaleDateString('nl-NL', { timeZone: 'Europe/Amsterdam' })}`,
       href: '/admin/inbox',
       severity: 'high',
     });
@@ -255,7 +255,7 @@ export async function getKlantreisOverview(): Promise<KlantreisOverview> {
   for (const deal of staleDeals) {
     todos.push({
       text: `Deal staat stil zonder volgende stap: ${deal.title}`,
-      detail: `Laatst bijgewerkt ${new Date(deal.updated_at as string).toLocaleDateString('nl-NL')} — plan een taak`,
+      detail: `Laatst bijgewerkt ${new Date(deal.updated_at as string).toLocaleDateString('nl-NL', { timeZone: 'Europe/Amsterdam' })} — plan een taak`,
       href: deal.company_id ? `/admin/crm/bedrijven/${deal.company_id}` : '/admin/crm/deals',
       severity: 'normal',
     });

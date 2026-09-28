@@ -354,6 +354,7 @@ export default async function KennisbankPage() {
                           <Calendar size={12} />
                           {article.published_at
                             ? new Date(article.published_at).toLocaleDateString('nl-NL', {
+                                timeZone: 'Europe/Amsterdam',
                                 day: 'numeric',
                                 month: 'long',
                                 year: 'numeric',

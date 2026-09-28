@@ -189,6 +189,7 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
                       <Calendar size={12} />
                       {post.published_at
                         ? new Date(post.published_at).toLocaleDateString('nl-NL', {
+                            timeZone: 'Europe/Amsterdam',
                             day: 'numeric',
                             month: 'long',
                             year: 'numeric',

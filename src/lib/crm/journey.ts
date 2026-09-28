@@ -62,7 +62,7 @@ const BOOKING_STATUS: Record<string, string> = {
 
 function fmt(date: string | Date | null | undefined) {
   if (!date) return null;
-  return new Date(date).toLocaleDateString('nl-NL', { day: 'numeric', month: 'short', year: 'numeric' });
+  return new Date(date).toLocaleDateString('nl-NL', { timeZone: 'Europe/Amsterdam', day: 'numeric', month: 'short', year: 'numeric' });
 }
 
 export async function getCompanyJourney(companyId: string): Promise<CompanyJourney> {

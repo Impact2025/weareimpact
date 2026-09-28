@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAvailableSlots, BOOKING_TYPES, BookingTypeSlug } from '@/lib/google-calendar';
+import { amsterdamDateTime, amsterdamParts } from '@/lib/time/amsterdam';
 
 export const dynamic = 'force-dynamic';
 
@@ -42,28 +43,24 @@ function generateFallbackSlots(duration: number) {
   const dayNames = ['Zondag', 'Maandag', 'Dinsdag', 'Woensdag', 'Donderdag', 'Vrijdag', 'Zaterdag'];
   const monthNames = ['jan', 'feb', 'mrt', 'apr', 'mei', 'jun', 'jul', 'aug', 'sep', 'okt', 'nov', 'dec'];
 
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
+  const today = amsterdamParts(new Date());
 
   // Minimaal 2 dagen voorbereidingstijd (zelfde regel als de echte Google Calendar-planning)
   for (let i = 2; i <= 14; i++) {
-    const date = new Date(today);
-    date.setDate(date.getDate() + i);
+    const day = amsterdamParts(amsterdamDateTime(today.year, today.month, today.day + i, 12));
 
-    const dayOfWeek = date.getDay();
     // Skip weekends
-    if (dayOfWeek === 0 || dayOfWeek === 6) continue;
+    if (day.weekday === 0 || day.weekday === 6) continue;
 
     const slots: { start: string; end: string; available: boolean }[] = [];
+    const dayEnd = amsterdamDateTime(day.year, day.month, day.day, 17);
 
-    // Generate slots from 9 AM to 5 PM
+    // Generate slots from 9 AM to 5 PM (Nederlandse tijd)
     for (let hour = 9; hour < 17; hour++) {
-      const slotStart = new Date(date);
-      slotStart.setHours(hour, 0, 0, 0);
-
+      const slotStart = amsterdamDateTime(day.year, day.month, day.day, hour);
       const slotEnd = new Date(slotStart.getTime() + duration * 60000);
 
-      if (slotEnd.getHours() <= 17) {
+      if (slotEnd <= dayEnd) {
         slots.push({
           start: slotStart.toISOString(),
           end: slotEnd.toISOString(),
@@ -74,8 +71,8 @@ function generateFallbackSlots(duration: number) {
 
     if (slots.length > 0) {
       days.push({
-        date: date.toISOString().split('T')[0],
-        dayName: `${dayNames[dayOfWeek]} ${date.getDate()} ${monthNames[date.getMonth()]}`,
+        date: `${day.year}-${String(day.month + 1).padStart(2, '0')}-${String(day.day).padStart(2, '0')}`,
+        dayName: `${dayNames[day.weekday]} ${day.day} ${monthNames[day.month]}`,
         slots,
       });
     }

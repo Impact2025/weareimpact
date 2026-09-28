@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { isAdminAuthenticated } from '@/lib/admin-auth';
 import { getEventsForDate } from '@/lib/google-calendar';
+import { amsterdamDateString, amsterdamDateTime, amsterdamParts } from '@/lib/time/amsterdam';
 
 export const dynamic = 'force-dynamic';
 
@@ -27,12 +28,13 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const weekStartParam = searchParams.get('weekStart');
 
-    const start = weekStartParam ? new Date(`${weekStartParam}T00:00:00`) : new Date();
+    // Rekenen in Nederlandse tijd: de server draait in UTC.
+    const base = amsterdamParts(
+      weekStartParam ? new Date(`${weekStartParam}T12:00:00Z`) : new Date(),
+    );
     // Shift to Monday of that week.
-    const day = start.getDay(); // 0=Sun..6=Sat
-    const diff = day === 0 ? -6 : 1 - day;
-    start.setDate(start.getDate() + diff);
-    start.setHours(0, 0, 0, 0);
+    const diff = base.weekday === 0 ? -6 : 1 - base.weekday;
+    const todayStr = amsterdamDateString(new Date());
 
     const week: Array<{
       date: string;
@@ -51,11 +53,9 @@ export async function GET(request: NextRequest) {
     }> = [];
 
     for (let i = 0; i < 7; i++) {
-      const date = new Date(start);
-      date.setDate(start.getDate() + i);
-      const dateStr = date.toISOString().split('T')[0];
-      const isToday =
-        dateStr === new Date().toISOString().split('T')[0];
+      const date = amsterdamDateTime(base.year, base.month, base.day + diff + i, 12);
+      const dateStr = amsterdamDateString(date);
+      const isToday = dateStr === todayStr;
 
       const result = await getEventsForDate(date);
       const events = (result.success ? result.events : []).map((e) => ({
@@ -71,7 +71,7 @@ export async function GET(request: NextRequest) {
       week.push({
         date: dateStr,
         dayName: DAY_NAMES[i],
-        dayNumber: date.getDate(),
+        dayNumber: amsterdamParts(date).day,
         isToday,
         events,
       });

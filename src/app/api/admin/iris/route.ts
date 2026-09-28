@@ -5,6 +5,7 @@ import type {
 import { isAdminAuthenticated } from '@/lib/admin-auth';
 import { getOpenRouter, DEFAULT_MODELS } from '@/lib/ai/openrouter';
 import { irisTools, executeTool } from '@/lib/ai/agent/tools';
+import { amsterdamDateString, amsterdamParts } from '@/lib/time/amsterdam';
 
 export const dynamic = 'force-dynamic';
 // Node runtime required: tools use googleapis (Calendar + GA4) and the Neon driver.
@@ -16,8 +17,8 @@ const MAX_TOOL_ROUNDS = 6;
 
 function buildSystemPrompt(): string {
   const now = new Date();
-  const today = now.toISOString().split('T')[0];
-  const dayName = ['zondag', 'maandag', 'dinsdag', 'woensdag', 'donderdag', 'vrijdag', 'zaterdag'][now.getDay()];
+  const today = amsterdamDateString(now);
+  const dayName = ['zondag', 'maandag', 'dinsdag', 'woensdag', 'donderdag', 'vrijdag', 'zaterdag'][amsterdamParts(now).weekday];
 
   return `Je bent Iris, de persoonlijke AI-assistent en business partner van Vincent van Munster (WeAreImpact). Je praat DIRECT met Vincent zelf, niet met een klant.
 

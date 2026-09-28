@@ -31,6 +31,7 @@ import { getLaunchBriefing } from '@/lib/launch/briefing';
 import { webSearch, formatSearchResults } from '@/lib/ai/web-search';
 import { analyzeAnalytics, formatAnalytics } from '@/lib/ai/analytics';
 import { writeBlog, formatBlogDraft } from '@/lib/ai/write-blog';
+import { amsterdamDateTime, amsterdamParts } from '@/lib/time/amsterdam';
 
 // ---------------------------------------------------------------------------
 // Small formatting helpers (Dutch dates/times)
@@ -43,19 +44,20 @@ const MONTHS = [
 ];
 
 function formatDateDutch(date: Date): string {
-  return `${DAYS[date.getDay()]} ${date.getDate()} ${MONTHS[date.getMonth()]}`;
+  const p = amsterdamParts(date);
+  return `${DAYS[p.weekday]} ${p.day} ${MONTHS[p.month]}`;
 }
 
 function formatTime(iso: string): string {
-  return new Date(iso).toLocaleTimeString('nl-NL', { hour: '2-digit', minute: '2-digit' });
+  return new Date(iso).toLocaleTimeString('nl-NL', { timeZone: 'Europe/Amsterdam', hour: '2-digit', minute: '2-digit' });
 }
 
-// Parse a YYYY-MM-DD string into a local Date at midnight. Returns null if invalid.
+// Parse a YYYY-MM-DD string into midnight of that day in Dutch time. Returns null if invalid.
 function parseISODate(s?: string): Date | null {
   if (!s) return null;
   const m = s.match(/^(\d{4})-(\d{2})-(\d{2})$/);
   if (!m) return null;
-  const d = new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]));
+  const d = amsterdamDateTime(Number(m[1]), Number(m[2]) - 1, Number(m[3]));
   return isNaN(d.getTime()) ? null : d;
 }
 
@@ -335,17 +337,11 @@ export async function executeTool(name: string, args: Args): Promise<string> {
         };
 
         const fullDay = args.fullDay !== false && !args.startTime;
-        const start = new Date(date);
-        const end = new Date(date);
-        if (fullDay) {
-          start.setHours(9, 0, 0, 0);
-          end.setHours(17, 0, 0, 0);
-        } else {
-          const s = parseHM(args.startTime, 9);
-          const e = parseHM(args.endTime, 17);
-          start.setHours(s.h, s.m, 0, 0);
-          end.setHours(e.h, e.m, 0, 0);
-        }
+        const s = fullDay ? { h: 9, m: 0 } : parseHM(args.startTime, 9);
+        const e = fullDay ? { h: 17, m: 0 } : parseHM(args.endTime, 17);
+        const day = amsterdamParts(date);
+        const start = amsterdamDateTime(day.year, day.month, day.day, s.h, s.m);
+        const end = amsterdamDateTime(day.year, day.month, day.day, e.h, e.m);
 
         const result = await blockTime({
           title,

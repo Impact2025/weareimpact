@@ -23,9 +23,10 @@ export function generateBookingRequestNotificationEmail(data: BookingRequestNoti
 } {
   const date = new Date(data.startTime);
   const formattedDate = date.toLocaleDateString('nl-NL', {
+    timeZone: 'Europe/Amsterdam',
     weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
   });
-  const formattedTime = date.toLocaleTimeString('nl-NL', { hour: '2-digit', minute: '2-digit' });
+  const formattedTime = date.toLocaleTimeString('nl-NL', { timeZone: 'Europe/Amsterdam', hour: '2-digit', minute: '2-digit' });
 
   const subject = `Boekingsaanvraag: ${data.bookingType} met ${data.customerName}`;
   // Escapen want dit is vrije tekst van de bezoeker (in tegenstelling tot naam/

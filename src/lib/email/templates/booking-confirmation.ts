@@ -16,12 +16,14 @@ export function generateBookingConfirmationEmail(data: BookingConfirmationData):
 } {
   const date = new Date(data.startTime);
   const formattedDate = date.toLocaleDateString('nl-NL', {
+    timeZone: 'Europe/Amsterdam',
     weekday: 'long',
     day: 'numeric',
     month: 'long',
     year: 'numeric',
   });
   const formattedTime = date.toLocaleTimeString('nl-NL', {
+    timeZone: 'Europe/Amsterdam',
     hour: '2-digit',
     minute: '2-digit',
   });

@@ -81,7 +81,7 @@ export async function POST(request: NextRequest) {
 
       return NextResponse.json({
         success: true,
-        message: `Nieuwsbrief gepland voor ${new Date(scheduled_at).toLocaleString('nl-NL')}`,
+        message: `Nieuwsbrief gepland voor ${new Date(scheduled_at).toLocaleString('nl-NL', { timeZone: 'Europe/Amsterdam' })}`,
       });
     } else {
       return NextResponse.json(

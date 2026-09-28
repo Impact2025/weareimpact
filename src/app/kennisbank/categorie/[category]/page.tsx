@@ -347,6 +347,7 @@ export default async function CategoryPage({ params }: Props) {
                       <Calendar size={12} />
                       {article.published_at
                         ? new Date(article.published_at).toLocaleDateString('nl-NL', {
+                            timeZone: 'Europe/Amsterdam',
                             day: 'numeric',
                             month: 'long',
                             year: 'numeric',

@@ -6,7 +6,7 @@ function esc(value: string): string {
 }
 
 function fmt(date: string): string {
-  return new Date(date).toLocaleDateString('nl-NL', { day: 'numeric', month: 'long' });
+  return new Date(date).toLocaleDateString('nl-NL', { timeZone: 'Europe/Amsterdam', day: 'numeric', month: 'long' });
 }
 
 /** Naar de klant: wat staat er bij jou open, met een verse inloglink voor het portaal. */

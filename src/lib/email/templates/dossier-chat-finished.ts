@@ -30,6 +30,7 @@ export function generateDossierChatFinishedEmail(data: DossierChatFinishedData):
   text: string;
 } {
   const formattedDateTime = data.finishedAt.toLocaleString('nl-NL', {
+    timeZone: 'Europe/Amsterdam',
     weekday: 'long',
     day: 'numeric',
     month: 'long',

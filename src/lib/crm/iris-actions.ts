@@ -3,6 +3,7 @@ import { getLaunchBriefing } from '@/lib/launch/briefing';
 import { sql } from '@/lib/db/neon';
 import { formatCurrency, dealStageLabels, taskPriorityLabels, getContactFullName } from './labels';
 import { runDueProfiles } from '@/lib/lead-machine/runProfiles';
+import { amsterdamDateString, amsterdamParts } from '@/lib/time/amsterdam';
 
 export interface CrmContext {
   pipelineSummary: string;
@@ -65,7 +66,7 @@ export async function getPipelineSummary(): Promise<string> {
 // Get overdue follow-ups
 export async function getOverdueFollowups(): Promise<string> {
   try {
-    const today = new Date().toISOString().split('T')[0];
+    const today = amsterdamDateString(new Date());
 
     const overdueTasks = await sql`
       SELECT
@@ -109,7 +110,7 @@ export async function getOverdueFollowups(): Promise<string> {
 // Get today's tasks
 export async function getTodayTasks(): Promise<string> {
   try {
-    const today = new Date().toISOString().split('T')[0];
+    const today = amsterdamDateString(new Date());
 
     const tasks = await sql`
       SELECT
@@ -205,7 +206,7 @@ export async function getCompanyInfo(companyName: string): Promise<string> {
     if (activities.length > 0) {
       info += '\nLaatste activiteiten:\n';
       for (const activity of activities) {
-        const date = new Date(activity.created_at as string).toLocaleDateString('nl-NL');
+        const date = new Date(activity.created_at as string).toLocaleDateString('nl-NL', { timeZone: 'Europe/Amsterdam' });
         info += `- ${activity.subject} (${date})\n`;
       }
     }
@@ -294,6 +295,7 @@ export async function createFollowupTask(
     `;
 
     const dateFormatted = new Date(dueDateStr).toLocaleDateString('nl-NL', {
+      timeZone: 'Europe/Amsterdam',
       weekday: 'long',
       day: 'numeric',
       month: 'long',
@@ -313,7 +315,7 @@ export async function createFollowupTask(
 // Morning briefing
 export async function getMorningBriefing(): Promise<string> {
   try {
-    const today = new Date().toISOString().split('T')[0];
+    const today = amsterdamDateString(new Date());
     const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
 
     // Get various stats
@@ -387,7 +389,7 @@ export async function getMorningBriefing(): Promise<string> {
 }
 
 function getGreeting(): string {
-  const hour = new Date().getHours();
+  const hour = amsterdamParts(new Date()).hour;
   if (hour < 12) return 'Goedemorgen';
   if (hour < 17) return 'Goedemiddag';
   return 'Goedenavond';

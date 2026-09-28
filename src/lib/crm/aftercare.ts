@@ -71,7 +71,7 @@ export async function onSprintCompleted(dealId: string): Promise<void> {
   await sql`
     INSERT INTO crm_activities (company_id, contact_id, deal_id, type, subject, description)
     VALUES (${deal.company_id}, ${deal.contact_id}, ${dealId}, 'note', 'Sprint afgerond — nazorg gestart',
-      ${`14 dagen nazorg tot ${due.toLocaleDateString('nl-NL')}.`})
+      ${`14 dagen nazorg tot ${due.toLocaleDateString('nl-NL', { timeZone: 'Europe/Amsterdam' })}.`})
   `;
 }
 

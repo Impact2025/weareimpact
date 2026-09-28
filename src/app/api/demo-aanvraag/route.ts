@@ -57,7 +57,7 @@ Gewenste datum: ${trimmedDesiredDate || "niet opgegeven"}`.trim()},
 
     // Stuur notificatie naar Vincent
     const datum = trimmedDesiredDate 
-      ? new Date(trimmedDesiredDate).toLocaleDateString("nl-NL", { day: "numeric", month: "short", year: "numeric" })
+      ? new Date(trimmedDesiredDate).toLocaleDateString("nl-NL", { timeZone: "Europe/Amsterdam", day: "numeric", month: "short", year: "numeric" })
       : "nader te bepalen";
 
     await sendEmail({

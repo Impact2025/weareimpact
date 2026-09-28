@@ -115,6 +115,7 @@ export function formatCurrency(value: number | undefined | null): string {
 export function formatDate(dateString: string | undefined | null): string {
   if (!dateString) return '-';
   return new Date(dateString).toLocaleDateString('nl-NL', {
+    timeZone: 'Europe/Amsterdam',
     day: 'numeric',
     month: 'short',
     year: 'numeric',
