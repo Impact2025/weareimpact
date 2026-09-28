@@ -93,7 +93,7 @@ async function followUps(n, org, d0, companyId, contactId) {
 await task({
   title: 'Beslis: datum en plek kennissessie vrijwilligersorganisaties',
   due: '2026-10-02', priority: 'high',
-  description: `Nodig vóór 6 okt: de partnermails van golf 1 noemen de sessie. Voorstel: do 19 nov 15:30-17:00, Hoofddorp, met VrijwilligersCentrale Haarlemmermeer. Beslis ook: oprichtersaanbod ja/nee, telefoonnummer in de handtekening, LinkedIn op dag 1. ${DRAAIBOEK}#beslissen`,
+  description: `Nodig vóór 6 okt: de partnermails van golf 1 noemen de sessie. Voorstel: do 19 nov 15:30-17:00, Hoofddorp, met VrijwilligersCentrale Haarlemmermeer. Beslis ook: oprichtersaanbod ja/nee, LinkedIn op dag 1. ${DRAAIBOEK}#beslissen`,
 });
 
 // --- Golf 1: opvolging bij de bestaande taken
