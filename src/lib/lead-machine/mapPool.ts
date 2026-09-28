@@ -54,15 +54,18 @@ export async function mapPool<T, R>(
       if (signal?.aborted) return;
       if (timeBudgetMs && Date.now() - startedAt > timeBudgetMs) return;
 
-      // Global rate limit: ensure minDelayMs since the previous task started.
-      const now = Date.now();
-      const wait = minDelayMs - (now - lastStart);
+      // Global rate limit: reserve the next start slot *before* sleeping, so
+      // workers that wake together don't all start at once.
+      const slot = Math.max(Date.now(), lastStart + minDelayMs);
+      lastStart = slot;
+      const wait = slot - Date.now();
       if (wait > 0) await sleep(wait);
       if (signal?.aborted) return;
       if (timeBudgetMs && Date.now() - startedAt > timeBudgetMs) return;
 
-      const task = queue.shift()!;
-      lastStart = Date.now();
+      // Another worker may have drained the queue while we slept.
+      const task = queue.shift();
+      if (!task) return;
 
       let attempt = 0;
       while (true) {

@@ -1,167 +1,243 @@
-const EMAIL_RE = /\b[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,6}\b/g;
-const PHONE_RE = /(?:tel:|href=["']tel:)?(\+31|0031|0)[- .]?[1-9][0-9]{1,2}[- .]?[0-9]{6,8}/g;
-
-const SKIP_EMAIL_PATTERNS = ['@sentry.', '@w3.org', '@example.', '@schema.', 'noreply@', 'no-reply@'];
+// Website-verrijking: bezoek de homepage van een organisatie (niet de diepe
+// link waarop we haar vonden) en zo nodig de contactpagina, en haal daar
+// contactgegevens, KvK, adres en een tekstuittreksel voor de AI-kwalificatie uit.
+//
+// Bronnen in volgorde van betrouwbaarheid: schema.org JSON-LD → mailto:/tel:
+// → regex op zichtbare tekst. Alleen mailadressen op het eigen domein tellen:
+// het adres van een platform of webbouwer is nooit het adres van de organisatie.
 
 import { mapPool } from './mapPool';
+import { emailBelongsToDomain, homepageOf, hostnameOf, registrableDomain } from './domain';
+import { rankEmails } from './emailPolicy';
 
-// Dutch chamber-of-commerce + VAT numbers — extracted straight from the org's
-// own footer so we can dedupe on the real KVK identity instead of the hostname.
-const KVK_RE = /\b(\d{8})\b/g;
-const BTW_RE = /\bNL\d{9}B\d{2}\b/i;
+const UA = 'Mozilla/5.0 (compatible; WeAreImpactBot/1.0; +https://weareimpact.nl)';
 
-// A contact *person* (not a role/function). Heuristic only — fills contactPerson
-// so outreach can address a human instead of info@.
-const PERSON_RE = /\b([A-ZÀ-Ý][a-zÀ-ÿ]+(?:[- ][A-ZÀ-Ý][a-zÀ-ÿ]+){1,2})\b/g;
-const PERSON_CONTEXT_RE =
-  /(contact|ontmoet|onze?\s+(collega|medewerker|specialist|consulent|adviseur|team)|namens|door\s+|:|<h\d[^>]*>\s*contact)/i;
-
-function isValidEmail(email: string): boolean {
-  if (email.length > 80) return false;
-  if (/\.(png|jpg|gif|svg|css|js|woff)$/i.test(email)) return false;
-  return !SKIP_EMAIL_PATTERNS.some((p) => email.includes(p));
-}
-
-function normalizePhone(raw: string): string {
-  const digits = raw.replace(/\D/g, '');
-  if (digits.startsWith('31')) return `+${digits}`;
-  if (digits.startsWith('0')) return `+31${digits.slice(1)}`;
-  return raw;
-}
+const EMAIL_RE = /\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,12}\b/g;
+// NL-nummers: +31 / 0031 / 0 gevolgd door 9 cijfers, met gangbare scheidingstekens.
+const PHONE_RE = /(?:\+31|0031|\b0)[\s.-]?(?:\(0\)[\s.-]?)?[1-9](?:[\s.-]?\d){8}\b/g;
+const KVK_RE = /(?:kvk|k\.v\.k\.|kamer\s+van\s+koophandel)[^0-9]{0,20}(\d{8})\b/i;
+const POSTCODE_CITY_RE = /\b(\d{4}\s?[A-Z]{2})\s+([A-Z][a-zA-Zëéèïü'\- ]{2,30}?)(?=[\s,.<|]|$)/;
+const CONTACT_HINTS = ['contact', 'contactgegevens', 'bereikbaarheid', 'over-ons', 'overons', 'wie-zijn-wij', 'colofon'];
 
 export interface ContactInfo {
+  finalUrl?: string;       // homepage na redirects
   email?: string;
+  emailCandidates?: string[];
   phone?: string;
   kvkNumber?: string;
+  address?: string;
+  postalCode?: string;
+  city?: string;
   contactPerson?: string;
+  title?: string;          // <title> van de homepage — beste bron voor de naam
+  description?: string;    // meta description
+  pageText?: string;       // uittreksel voor de AI-kwalificatie
+  schemaName?: string;     // naam uit JSON-LD Organization
+  reachable: boolean;
 }
 
-const GENERIC_EMAIL_RE = /^(info|contact|administratie|secretariaat|welzijn|receptie|aanmelden|hallo|hello)@/i;
-
-function emailMatchesSite(email: string, siteHost: string): boolean {
-  const domain = email.split('@')[1]?.toLowerCase();
-  if (!domain || !siteHost) return false;
-  // zorg.nl ↔ @zorg.nl, jeugd.zorg.nl ↔ @zorg.nl, zorg.nl ↔ @mail.zorg.nl
-  return domain === siteHost || siteHost.endsWith(`.${domain}`) || domain.endsWith(`.${siteHost}`);
+export function normalizePhone(raw: string): string {
+  const digits = raw.replace(/\D/g, '');
+  if (digits.startsWith('0031')) return `+31${digits.slice(4)}`;
+  if (digits.startsWith('31') && digits.length === 11) return `+${digits}`;
+  if (digits.startsWith('0') && digits.length === 10) return `+31${digits.slice(1)}`;
+  return raw.trim();
 }
 
-// Voorkeursvolgorde: generiek adres op eigen domein > eigen domein > generiek
-// elders > rest. Voorkomt dat we het mailadres van de webbouwer in de footer
-// aanschrijven in plaats van de organisatie zelf.
-function pickBestEmail(candidates: string[], siteHost: string): string | undefined {
-  const rank = (e: string) =>
-    (emailMatchesSite(e, siteHost) ? 0 : 2) + (GENERIC_EMAIL_RE.test(e) ? 0 : 1);
-  return [...candidates].sort((a, b) => rank(a) - rank(b))[0];
+function decodeEntities(s: string): string {
+  return s
+    .replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"').replace(/&#0?39;/g, "'").replace(/&nbsp;/g, ' ')
+    .replace(/&#(\d+);/g, (_, n) => String.fromCharCode(Number(n)));
 }
 
-// Heuristic person extraction: scan for a name near contact-context wording.
-// Returns the first plausible two/three-word capitalized name, or undefined.
-function extractContactPerson(html: string): string | undefined {
-  // Only look at the tail of the page (footer) where contact blocks live.
-  const tail = html.length > 6000 ? html.slice(-6000) : html;
-  const ctxMatches = Array.from(tail.matchAll(new RegExp(PERSON_CONTEXT_RE.source, 'gi')));
-  // Candidate regions: 120 chars after each contact-context hit.
-  const regions: string[] = [];
-  for (const m of ctxMatches) {
-    const start = m.index ?? 0;
-    regions.push(tail.slice(start, start + 160));
+export function htmlToText(html: string): string {
+  return decodeEntities(
+    html
+      .replace(/<(script|style|noscript|svg|iframe)[\s\S]*?<\/\1>/gi, ' ')
+      .replace(/<!--[\s\S]*?-->/g, ' ')
+      .replace(/<br\s*\/?>|<\/(p|div|li|h\d|tr|section|footer|header)>/gi, '\n')
+      .replace(/<[^>]+>/g, ' '),
+  )
+    .replace(/[ \t]+/g, ' ')
+    .replace(/\n\s*\n+/g, '\n')
+    .trim();
+}
+
+async function fetchHtml(url: string, timeoutMs = 9_000): Promise<{ html: string; url: string } | null> {
+  const res = await fetch(url, {
+    signal: AbortSignal.timeout(timeoutMs),
+    headers: { 'User-Agent': UA, Accept: 'text/html,application/xhtml+xml', 'Accept-Language': 'nl-NL,nl;q=0.9' },
+    redirect: 'follow',
+  });
+  if (!res.ok) {
+    // 5xx en 429 zijn tijdelijk → gooien zodat mapPool opnieuw probeert.
+    if (res.status >= 500 || res.status === 429) throw new Error(`HTTP ${res.status}`);
+    return null;
   }
-  // Fall back to the whole tail if no context found.
-  if (regions.length === 0) regions.push(tail);
+  const type = res.headers.get('content-type') ?? '';
+  if (type && !type.includes('html')) return null;
+  const html = (await res.text()).slice(0, 600_000);
+  return { html, url: res.url || url };
+}
 
-  for (const region of regions) {
-    const names = Array.from(region.matchAll(PERSON_RE)).map((m) => m[1].trim());
-    for (const name of names) {
-      const parts = name.split(/\s+/);
-      if (parts.length < 2) continue; // need at least first + last
-      // Skip if it looks like a function title rather than a person.
-      if (/^(de|het|onze|uw|een|team|afdeling|organisatie|stichting|vereniging)$/i.test(parts[0])) continue;
-      // Skip pure role words in the second token.
-      if (/^(team|afdeling|zorg|welzijn|advies|contact|service|client|centrum|nl)$/i.test(parts[1])) continue;
-      return name;
+// ── JSON-LD (schema.org Organization / LocalBusiness / NGO) ──────────────────
+
+interface SchemaOrg {
+  name?: string; email?: string; telephone?: string;
+  address?: { streetAddress?: string; postalCode?: string; addressLocality?: string } | string;
+}
+
+function extractJsonLd(html: string): SchemaOrg | null {
+  const blocks = Array.from(html.matchAll(/<script[^>]+application\/ld\+json[^>]*>([\s\S]*?)<\/script>/gi));
+  for (const [, body] of blocks) {
+    let data: unknown;
+    try { data = JSON.parse(body.trim()); } catch { continue; }
+    const nodes: unknown[] = [];
+    const walk = (n: unknown) => {
+      if (Array.isArray(n)) n.forEach(walk);
+      else if (n && typeof n === 'object') {
+        nodes.push(n);
+        const g = (n as Record<string, unknown>)['@graph'];
+        if (g) walk(g);
+      }
+    };
+    walk(data);
+    for (const node of nodes as Array<Record<string, unknown>>) {
+      const type = String(node['@type'] ?? '');
+      if (/Organization|LocalBusiness|NGO|GovernmentOrganization|MedicalOrganization|Corporation/i.test(type)) {
+        return node as SchemaOrg;
+      }
+    }
+  }
+  return null;
+}
+
+// ── Contactpersoon (voorzichtige heuristiek) ─────────────────────────────────
+// Alleen een naam direct naast een expliciete rol; liever niets dan een
+// verzonnen 'contactpersoon' die in de aanhef van een koude mail belandt.
+const ROLE_RE = /(directeur|bestuurder|manager|coördinator|coordinator|teamleider|voorzitter|secretaris|adviseur|projectleider|beleidsmedewerker)/i;
+const NAME_RE = /\b([A-Z][a-zà-ÿ]+(?:\s(?:van|de|der|den|ter|ten|het|in 't|van der|van den|de la))?\s[A-Z][a-zà-ÿ]+(?:-[A-Z][a-zà-ÿ]+)?)\b/;
+
+function extractContactPerson(text: string): string | undefined {
+  for (const line of text.split('\n')) {
+    if (line.length > 160 || !ROLE_RE.test(line)) continue;
+    const m = line.match(NAME_RE);
+    if (m && !/^(Stichting|Vereniging|Gemeente|Team|Onze|Over|Contact)\b/.test(m[1])) {
+      const role = line.match(ROLE_RE)?.[1];
+      return role ? `${m[1]} (${role.toLowerCase()})` : m[1];
     }
   }
   return undefined;
 }
 
-export async function scrapeContactInfo(websiteUrl: string): Promise<ContactInfo> {
-  if (!websiteUrl) return {};
-
-  const url = websiteUrl.startsWith('http') ? websiteUrl : `https://${websiteUrl}`;
-
-  try {
-    const res = await fetch(url, {
-      signal: AbortSignal.timeout(8_000),
-      headers: { 'User-Agent': 'Mozilla/5.0 (compatible; WeAreImpactBot/1.0; +https://weareimpact.nl)' },
-      redirect: 'follow',
-    });
-
-    if (!res.ok) return {};
-
-    const html = await res.text();
-
-    let siteHost = '';
+function findContactUrl(html: string, baseUrl: string): string | undefined {
+  const baseHost = hostnameOf(baseUrl);
+  for (const m of html.matchAll(/<a\b[^>]*href=["']([^"'#]+)["'][^>]*>([\s\S]{0,120}?)<\/a>/gi)) {
+    const href = m[1];
+    const label = htmlToText(m[2]).toLowerCase();
+    const h = href.toLowerCase();
+    if (!CONTACT_HINTS.some((k) => h.includes(k) || label.includes(k))) continue;
     try {
-      siteHost = new URL(res.url || url).hostname.replace(/^www\./, '').toLowerCase();
-    } catch { /* siteHost blijft leeg — ranking valt terug op generiek-eerst */ }
-
-    // mailto: links zijn het betrouwbaarst — die kandidaten eerst verzamelen
-    const mailtos = Array.from(html.matchAll(/mailto:([a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,6})/g))
-      .map((m) => m[1]);
-    const candidates = Array.from(new Set([...mailtos, ...(html.match(EMAIL_RE) ?? [])])).filter(isValidEmail);
-    const email = pickBestEmail(candidates, siteHost);
-
-    let phone: string | undefined;
-    const phoneMatches = html.match(PHONE_RE);
-    if (phoneMatches?.[0]) {
-      phone = normalizePhone(phoneMatches[0].replace(/[^+\d]/g, ''));
-    }
-
-    // KVK: the 8-digit number in a "KvK" context; BTW as confirmation.
-    let kvkNumber: string | undefined;
-    const kvkCtx = html.match(/kvk[^0-9]{0,12}(\d{8})/i) || html.match(/kamer\s+van\s+koophandel[^0-9]{0,12}(\d{8})/i);
-    if (kvkCtx?.[1]) {
-      kvkNumber = kvkCtx[1];
-    } else {
-      // No explicit label — fall back to any 8-digit run that also has a BTW nearby.
-      const btw = html.match(BTW_RE);
-      if (btw) {
-        const btwDigits = btw[0].replace(/[^0-9]/g, '').slice(0, 9);
-        const run = Array.from(html.matchAll(KVK_RE)).map((m) => m[1]).find((n) => btwDigits.startsWith(n));
-        if (run) kvkNumber = run;
-      }
-    }
-
-    // Contact person (best-effort heuristic)
-    const contactPerson = extractContactPerson(html);
-
-    return { email, phone, kvkNumber, contactPerson };
-  } catch {
-    return {};
+      const full = new URL(href, baseUrl).toString();
+      if (hostnameOf(full) === baseHost && full.replace(/\/$/, '') !== baseUrl.replace(/\/$/, '')) return full;
+    } catch { /* ongeldige href */ }
   }
+  return undefined;
 }
 
-// Scrape a batch with bounded concurrency + politeness delay + backoff.
-// Deliberately polite: 2 concurrent requests max, 350ms between starts, so we
-// never hammer a host or trip anti-bot on the discovered sites.
+function harvest(html: string, into: ContactInfo, emails: Set<string>) {
+  const schema = extractJsonLd(html);
+  if (schema) {
+    into.schemaName ??= schema.name?.trim();
+    if (schema.email) emails.add(schema.email.replace(/^mailto:/i, '').trim().toLowerCase());
+    if (schema.telephone && !into.phone) into.phone = normalizePhone(schema.telephone);
+    const a = schema.address;
+    if (a && typeof a === 'object') {
+      into.address ??= a.streetAddress?.trim();
+      into.postalCode ??= a.postalCode?.trim().toUpperCase();
+      into.city ??= a.addressLocality?.trim();
+    }
+  }
+
+  for (const m of html.matchAll(/mailto:([^"'?\s>]+)/gi)) {
+    try { emails.add(decodeURIComponent(m[1]).trim().toLowerCase()); } catch { /* kapotte encoding */ }
+  }
+  if (!into.phone) {
+    const tel = html.match(/href=["']tel:([^"']+)["']/i);
+    if (tel) into.phone = normalizePhone(tel[1]);
+  }
+
+  const text = htmlToText(html);
+  for (const e of text.match(EMAIL_RE) ?? []) emails.add(e.toLowerCase());
+  if (!into.phone) {
+    const p = text.match(PHONE_RE)?.[0];
+    if (p) into.phone = normalizePhone(p);
+  }
+  if (!into.kvkNumber) into.kvkNumber = text.match(KVK_RE)?.[1];
+  if (!into.postalCode || !into.city) {
+    const pc = text.match(POSTCODE_CITY_RE);
+    if (pc) {
+      into.postalCode ??= pc[1].replace(/\s/, ' ').toUpperCase();
+      into.city ??= pc[2].trim();
+    }
+  }
+  into.contactPerson ??= extractContactPerson(text);
+  return text;
+}
+
+export async function scrapeOrganisation(websiteUrl: string): Promise<ContactInfo> {
+  const home = homepageOf(websiteUrl);
+  if (!home) return { reachable: false };
+
+  const page = await fetchHtml(home);
+  if (!page) return { reachable: false };
+
+  const info: ContactInfo = { reachable: true, finalUrl: page.url };
+  const emails = new Set<string>();
+
+  info.title = htmlToText(page.html.match(/<title[^>]*>([\s\S]*?)<\/title>/i)?.[1] ?? '').slice(0, 200) || undefined;
+  info.description = decodeEntities(
+    page.html.match(/<meta[^>]+name=["']description["'][^>]+content=["']([^"']*)["']/i)?.[1]
+    ?? page.html.match(/<meta[^>]+property=["']og:description["'][^>]+content=["']([^"']*)["']/i)?.[1] ?? '',
+  ).slice(0, 400) || undefined;
+
+  const homeText = harvest(page.html, info, emails);
+
+  // Contactpagina als er nog iets wezenlijks ontbreekt.
+  const siteDomain = registrableDomain(page.url) ?? '';
+  const hasOwnEmail = [...emails].some((e) => emailBelongsToDomain(e, siteDomain));
+  let contactText = '';
+  if (!hasOwnEmail || !info.phone || !info.city) {
+    const contactUrl = findContactUrl(page.html, page.url);
+    if (contactUrl) {
+      try {
+        const cp = await fetchHtml(contactUrl, 7_000);
+        if (cp) contactText = harvest(cp.html, info, emails);
+      } catch { /* contactpagina is bonus */ }
+    }
+  }
+
+  const ranked = rankEmails([...emails], siteDomain);
+  info.emailCandidates = ranked.slice(0, 5);
+  info.email = ranked[0];
+  info.pageText = `${homeText.slice(0, 3500)}\n${contactText.slice(0, 1000)}`.trim();
+  return info;
+}
+
+// Beleefd in batch: beperkt gelijktijdig, vaste pauze tussen starts, retries bij 5xx.
 export async function scrapeMany(
-  items: Array<{ key: string; website?: string }>,
-  concurrency = 2,
-  minDelayMs = 350,
+  items: Array<{ key: string; website: string }>,
+  opts: { concurrency?: number; timeBudgetMs?: number } = {},
 ): Promise<Map<string, ContactInfo>> {
-  const result = new Map<string, ContactInfo>();
-  const entries = items.filter((i) => i.website);
-
-  const outs = await mapPool(
-    entries,
-    async (item) => await scrapeContactInfo(item.website as string),
-    { concurrency, minDelayMs, retries: 2, backoffMs: 500, maxBackoffMs: 3000 },
-  );
-
-  entries.forEach((item, i) => {
-    result.set(item.key, outs[i] ?? {});
+  const outs = await mapPool(items, (item) => scrapeOrganisation(item.website), {
+    concurrency: opts.concurrency ?? 4,
+    minDelayMs: 200,
+    retries: 1,
+    backoffMs: 700,
+    timeBudgetMs: opts.timeBudgetMs,
   });
-  // Ensure keys without a website still exist (empty info)
-  for (const item of items) if (!result.has(item.key)) result.set(item.key, {});
-  return result;
+  const map = new Map<string, ContactInfo>();
+  items.forEach((item, i) => map.set(item.key, outs[i] ?? { reachable: false }));
+  return map;
 }

@@ -1,74 +1,98 @@
-export interface KvkOrganization {
-  kvkNumber: string;
-  name: string;
-  city?: string;
-  postalCode?: string;
-  address?: string;
-  website?: string;
-  sbiCode?: string;
-  sbiDescription?: string;
-}
+import type { Segment } from './scorer';
+
+export type LeadSource = 'search' | 'directory' | 'vacancy' | 'manual';
+
+export type LeadStatus =
+  | 'new' | 'contacted' | 'replied' | 'meeting' | 'qualified'
+  | 'converted' | 'lost' | 'archived' | 'rejected';
 
 export interface ProspectLead {
   id: string;
   tenantId: string;
   kvkNumber?: string;
   name: string;
-  tradeName?: string;
-  sbiCode?: string;
-  sbiDescription?: string;
+  domain?: string;
   address?: string;
   city?: string;
   postalCode?: string;
   website?: string;
   email?: string;
+  emailCandidates?: string[];
   phone?: string;
   contactPerson?: string;
   aiScore?: number;
   aiRationale?: string;
-  status: 'new' | 'contacted' | 'qualified' | 'converted' | 'archived';
+  orgType?: string;
+  segment?: Segment;
+  summary?: string;
+  hooks: string[];
+  signal?: string;
+  source?: LeadSource;
+  sourceUrl?: string;
+  status: LeadStatus;
   starred: boolean;
   notes?: string;
-  listId?: string;
   crmCompanyId?: string;
-  scrapedAt?: string;
-  scoredAt?: string;
+  unsubscribed?: boolean;
+  firstContactedAt?: string;
+  lastContactedAt?: string;
+  repliedAt?: string;
+  meetingAt?: string;
+  wonAt?: string;
+  lostReason?: string;
   createdAt: string;
   updatedAt: string;
 }
 
-export interface LeadList {
-  id: string;
-  tenantId: string;
+// Eén beoordeelde organisatie uit een zoekrun.
+export interface SearchResult {
+  domain: string;          // registreerbaar domein — de stabiele sleutel
   name: string;
-  description?: string;
-  sbiCodes: string[];
-  regions: string[];
-  totalCount: number;
-  scoredCount: number;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface SearchResult extends KvkOrganization {
+  website: string;         // homepage
   email?: string;
+  emailCandidates?: string[];
   phone?: string;
-  domain?: string;        // canonical hostname (www-stripped) — the stable key
-  scrapedKvk?: string;    // KVK extracted from the org's own footer during scrape
-  contactPerson?: string; // best-effort human contact (see scraper)
+  kvkNumber?: string;
+  address?: string;
+  postalCode?: string;
+  city?: string;
+  contactPerson?: string;
   aiScore?: number;
   aiRationale?: string;
+  orgType?: string;
+  segment?: Segment;
+  summary?: string;
+  hooks: string[];
+  source: LeadSource;
+  sourceUrl?: string;      // zoekresultaat, overzichtspagina of vacature
+  signal?: string;
+  snippet?: string;
   alreadySaved?: boolean;
 }
 
-export const SBI_PRESETS = [
-  { code: '88990', label: 'Maatschappelijke dienstverlening' },
-  { code: '88100', label: 'Thuiszorg & ouderenzorg' },
-  { code: '84110', label: 'Gemeenten & overheid' },
-  { code: '94990', label: 'Verenigingen & stichtingen' },
-  { code: '88910', label: 'Kinderopvang' },
-  { code: '87901', label: 'Verzorgings- en verpleeghuizen' },
-  { code: '85599', label: 'Overig onderwijs' },
-  { code: '88320', label: 'Sociaal raadsliedenwerk' },
-  { code: '86921', label: 'Huisartsenpraktijken' },
-] as const;
+export type RejectStage = 'filter' | 'bekend' | 'website' | 'kwalificatie' | 'drempel';
+
+export interface RejectedResult {
+  name: string;
+  url: string;
+  reason: string;
+  stage: RejectStage;
+}
+
+export interface SearchRunStats {
+  searched: number;        // ruwe zoekresultaten
+  directories: number;     // overzichtspagina's uitgeklapt
+  candidates: number;      // unieke organisaties na filter
+  known: number;           // al opgeslagen / in CRM / eerder afgewezen
+  evaluated: number;       // gescraped + gekwalificeerd
+  accepted: number;
+}
+
+export interface SearchRunResult {
+  results: SearchResult[];
+  rejected: RejectedResult[];
+  stats: SearchRunStats;
+  provider: string;
+  errors: string[];
+  freshCandidates: number; // nieuwe kandidaten vóór de cap — stuurt de profielcursor
+}

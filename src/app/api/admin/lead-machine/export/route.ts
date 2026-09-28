@@ -27,13 +27,13 @@ export async function GET(request: NextRequest) {
 
     const rows = status && status !== 'all'
       ? await sql`SELECT * FROM prospect_leads WHERE tenant_id = 'weareimpact' AND status = ${status} ORDER BY ai_score DESC NULLS LAST, created_at DESC`
-      : await sql`SELECT * FROM prospect_leads WHERE tenant_id = 'weareimpact' ORDER BY ai_score DESC NULLS LAST, created_at DESC`;
+      : await sql`SELECT * FROM prospect_leads WHERE tenant_id = 'weareimpact' AND status <> 'rejected' ORDER BY ai_score DESC NULLS LAST, created_at DESC`;
 
-    const headers = ['Naam', 'Stad', 'SBI-code', 'SBI-omschrijving', 'E-mail', 'Telefoon', 'Website', 'AI-score', 'AI-toelichting', 'Status', 'KVK-nummer', 'Aangemaakt'];
+    const headers = ['Naam', 'Stad', 'Soort', 'Segment', 'E-mail', 'Telefoon', 'Contactpersoon', 'Website', 'Score', 'Onderbouwing', 'Samenvatting', 'Signaal', 'Bron', 'Status', 'KvK-nummer', 'Aangemaakt'];
     const lines = [
       headers.join(','),
       ...rows.map((r: Record<string, unknown>) =>
-        [r.name, r.city, r.sbi_code, r.sbi_description, r.email, r.phone, r.website, r.ai_score, r.ai_rationale, r.status, r.kvk_number, r.created_at]
+        [r.name, r.city, r.org_type, r.segment, r.email, r.phone, r.contact_person, r.website, r.ai_score, r.ai_rationale, r.summary, r.signal, r.source, r.status, r.kvk_number, r.created_at]
           .map(escape)
           .join(','),
       ),

@@ -1,159 +1,130 @@
-// Generic organization discovery — uses Brave Search API when available,
-// falls back to DuckDuckGo HTML scraping (works locally, often blocked on cloud).
+// Web-discovery: Brave Search API (betrouwbaar vanaf Vercel), met DuckDuckGo-HTML
+// als noodgreep (werkt lokaal, vaak geblokkeerd vanaf cloud-IP's).
+//
+// Belangrijk verschil met de eerste versie: fouten worden NIET meer ingeslikt.
+// Op 28 sep 2026 gaf de cron 0 resultaten na ±10 s (= Brave-timeout) en niemand
+// kon zien waarom. Elke aanroep geeft nu terug welke provider werkte en welke
+// fout de andere gaf, en dat komt in lead_search_runs.
 
 export interface DiscoveryResult {
-  name: string;
+  title: string;
   url: string;
-  domain: string;
   snippet?: string;
 }
 
-const SKIP_DOMAINS = [
-  'wikipedia.', 'facebook.com', 'linkedin.com', 'twitter.com', 'x.com',
-  'instagram.com', 'youtube.com', 'nos.nl', 'ad.nl', 'nu.nl', 'rtl.nl',
-];
-
-function isOrgUrl(domain: string) {
-  return !SKIP_DOMAINS.some((s) => domain.includes(s));
+export interface DiscoveryOutcome {
+  results: DiscoveryResult[];
+  provider: 'brave' | 'duckduckgo' | 'none';
+  errors: string[];
 }
 
-// ── Brave Search API ─────────────────────────────────────────────────────────
+const BRAVE_URL = 'https://api.search.brave.com/res/v1/web/search';
 
-async function discoverViaBrave(query: string, maxResults: number): Promise<DiscoveryResult[]> {
+// Brave (vrij/basis-abonnement) staat 1 verzoek per seconde toe. Signaal-runs
+// doen meerdere zoekacties achter elkaar; zonder deze rem volgt een 429.
+let lastBraveCall = 0;
+async function braveThrottle() {
+  const wait = 1100 - (Date.now() - lastBraveCall);
+  if (wait > 0) await new Promise((r) => setTimeout(r, wait));
+  lastBraveCall = Date.now();
+}
+
+async function braveOnce(query: string, count: number, offset: number): Promise<DiscoveryResult[]> {
   const apiKey = process.env.BRAVE_SEARCH_API_KEY;
-  if (!apiKey) return [];
-
-  const results: DiscoveryResult[] = [];
-  const seen = new Set<string>();
-  const perPage = Math.min(maxResults, 20);
-
-  try {
-    const qs = new URLSearchParams({
-      q: query,
-      count: String(perPage),
-      country: 'nl',
-      search_lang: 'nl',
-      text_decorations: '0',
-    });
-
-    const res = await fetch(`https://api.search.brave.com/res/v1/web/search?${qs}`, {
-      headers: {
-        'Accept': 'application/json',
-        'Accept-Encoding': 'gzip',
-        'X-Subscription-Token': apiKey,
-      },
-      signal: AbortSignal.timeout(10_000),
-    });
-
-    if (!res.ok) return [];
-
-    const data = await res.json() as {
-      web?: { results?: Array<{ title: string; url: string; description?: string }> };
-    };
-
-    for (const item of data.web?.results ?? []) {
-      let domain: string;
-      try { domain = new URL(item.url).hostname.replace(/^www\./, ''); } catch { continue; }
-      if (!isOrgUrl(domain) || seen.has(domain)) continue;
-      seen.add(domain);
-      results.push({
-        name: item.title,
-        url: item.url,
-        domain,
-        snippet: item.description?.slice(0, 300),
-      });
-      if (results.length >= maxResults) break;
-    }
-  } catch {
-    // fall through to DDG
+  if (!apiKey) throw new Error('BRAVE_SEARCH_API_KEY ontbreekt');
+  await braveThrottle();
+  const qs = new URLSearchParams({
+    q: query,
+    count: String(Math.min(count, 20)),
+    offset: String(Math.min(offset, 9)),
+    country: 'nl',
+    search_lang: 'nl',
+    text_decorations: '0',
+  });
+  const res = await fetch(`${BRAVE_URL}?${qs}`, {
+    headers: { Accept: 'application/json', 'Accept-Encoding': 'gzip', 'X-Subscription-Token': apiKey },
+    signal: AbortSignal.timeout(15_000),
+  });
+  if (!res.ok) {
+    const body = (await res.text().catch(() => '')).slice(0, 160);
+    throw new Error(`Brave HTTP ${res.status}${body ? `: ${body}` : ''}`);
   }
-
-  return results;
+  const data = await res.json() as { web?: { results?: Array<{ title: string; url: string; description?: string }> } };
+  return (data.web?.results ?? []).map((r) => ({ title: r.title, url: r.url, snippet: r.description?.slice(0, 300) }));
 }
 
-// ── DuckDuckGo HTML fallback ─────────────────────────────────────────────────
+async function discoverViaBrave(query: string, count: number, offset: number): Promise<DiscoveryResult[]> {
+  try {
+    return await braveOnce(query, count, offset);
+  } catch (err) {
+    // Eén herkansing bij rate limit of time-out (vrij abonnement: 1 req/s).
+    const msg = String(err);
+    if (/429|timeout|aborted/i.test(msg)) {
+      await new Promise((r) => setTimeout(r, 1500));
+      return braveOnce(query, count, offset);
+    }
+    throw err;
+  }
+}
 
-const DDG_HTML = 'https://html.duckduckgo.com/html/';
+// ── DuckDuckGo HTML ──────────────────────────────────────────────────────────
 
-function decodeHtmlEntities(s: string): string {
+function decode(s: string): string {
   return s
     .replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>')
-    .replace(/&quot;/g, '"').replace(/&#039;/g, "'")
-    .replace(/&middot;/g, '·').replace(/&nbsp;/g, ' ')
+    .replace(/&quot;/g, '"').replace(/&#0?39;/g, "'").replace(/&nbsp;/g, ' ')
     .replace(/<[^>]+>/g, '').trim();
 }
 
-function parseDdgHtml(html: string): DiscoveryResult[] {
-  const results: DiscoveryResult[] = [];
-  const seen = new Set<string>();
-  const blocks = html.split(/(?=<div class="result(?:\s[^"]*)?"\s)/);
-
-  for (const block of blocks) {
-    const uddgMatch = block.match(/uddg=([^&"'\s]+)/);
-    if (!uddgMatch) continue;
+async function discoverViaDDG(query: string, count: number, offset: number): Promise<DiscoveryResult[]> {
+  const qs = new URLSearchParams({ q: query });
+  if (offset > 0) qs.set('s', String(offset * 25));
+  const res = await fetch(`https://html.duckduckgo.com/html/?${qs}`, {
+    headers: {
+      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36',
+      Accept: 'text/html', 'Accept-Language': 'nl-NL,nl;q=0.9',
+    },
+    signal: AbortSignal.timeout(12_000),
+  });
+  if (!res.ok) throw new Error(`DuckDuckGo HTTP ${res.status}`);
+  const html = await res.text();
+  const out: DiscoveryResult[] = [];
+  for (const block of html.split(/(?=<div class="result(?:\s[^"]*)?"\s)/)) {
+    const u = block.match(/uddg=([^&"'\s]+)/);
+    if (!u) continue;
     let url: string;
-    try { url = decodeURIComponent(uddgMatch[1]); } catch { continue; }
+    try { url = decodeURIComponent(u[1]); } catch { continue; }
     if (!url.startsWith('http')) continue;
-    let domain: string;
-    try { domain = new URL(url).hostname.replace(/^www\./, ''); } catch { continue; }
-    if (!isOrgUrl(domain) || seen.has(domain)) continue;
-    seen.add(domain);
-    const titleMatch = block.match(/class="result__a"[^>]*>([\s\S]*?)<\/a>/);
-    const name = titleMatch ? decodeHtmlEntities(titleMatch[1]) : domain;
-    const snippetMatch = block.match(/class="result__snippet"[^>]*>([\s\S]*?)<\/a>/);
-    const snippet = snippetMatch ? decodeHtmlEntities(snippetMatch[1]).slice(0, 300) : undefined;
-    results.push({ name, url, domain, snippet });
+    const title = decode(block.match(/class="result__a"[^>]*>([\s\S]*?)<\/a>/)?.[1] ?? '');
+    const snippet = decode(block.match(/class="result__snippet"[^>]*>([\s\S]*?)<\/a>/)?.[1] ?? '').slice(0, 300);
+    out.push({ title, url, snippet: snippet || undefined });
+    if (out.length >= count) break;
   }
-
-  return results;
+  if (out.length === 0 && /anomaly|captcha|blocked/i.test(html)) throw new Error('DuckDuckGo blokkeert dit IP');
+  return out;
 }
 
-async function discoverViaDDG(query: string, maxResults: number): Promise<DiscoveryResult[]> {
-  const pages = Math.ceil(Math.min(maxResults, 30) / 10);
-  const allResults: DiscoveryResult[] = [];
-  const seen = new Set<string>();
+// ── Publiek ──────────────────────────────────────────────────────────────────
 
-  for (let page = 0; page < pages; page++) {
-    try {
-      const qs = new URLSearchParams({ q: query });
-      if (page > 0) qs.set('s', String(page * 25));
-
-      const res = await fetch(`${DDG_HTML}?${qs}`, {
-        headers: {
-          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-          Accept: 'text/html,application/xhtml+xml',
-          'Accept-Language': 'nl-NL,nl;q=0.9',
-        },
-        signal: AbortSignal.timeout(12_000),
-      });
-
-      if (!res.ok) break;
-      const html = await res.text();
-      const pageResults = parseDdgHtml(html);
-
-      for (const r of pageResults) {
-        if (!seen.has(r.domain)) { seen.add(r.domain); allResults.push(r); }
-      }
-      if (pageResults.length < 5) break;
-    } catch {
-      break;
-    }
-  }
-
-  return allResults.slice(0, maxResults);
-}
-
-// ── Public entry point ───────────────────────────────────────────────────────
-
-export async function discoverOrganizations(
-  query: string,
-  maxResults = 10,
-): Promise<DiscoveryResult[]> {
-  // Prefer Brave when key is configured (reliable from cloud/Vercel)
+// offset = resultaatpagina (0 = eerste). Profielen schuiven die per run door,
+// zodat een wekelijkse zoekopdracht niet elke week dezelfde top 10 teruggeeft.
+export async function discover(query: string, count = 20, offset = 0): Promise<DiscoveryOutcome> {
+  const errors: string[] = [];
   if (process.env.BRAVE_SEARCH_API_KEY) {
-    const results = await discoverViaBrave(query, maxResults);
-    if (results.length > 0) return results;
+    try {
+      const results = await discoverViaBrave(query, count, offset);
+      return { results, provider: 'brave', errors };
+    } catch (err) {
+      errors.push(String(err instanceof Error ? err.message : err).slice(0, 200));
+    }
+  } else {
+    errors.push('BRAVE_SEARCH_API_KEY ontbreekt');
   }
-  // Fallback: DDG HTML (works locally, often blocked from cloud IPs)
-  return discoverViaDDG(query, maxResults);
+  try {
+    const results = await discoverViaDDG(query, count, offset);
+    return { results, provider: 'duckduckgo', errors };
+  } catch (err) {
+    errors.push(String(err instanceof Error ? err.message : err).slice(0, 200));
+  }
+  return { results: [], provider: 'none', errors };
 }

@@ -60,11 +60,22 @@ export async function POST(request: NextRequest) {
       return htmlResponse('Link niet gevonden', 'Deze afmeldlink is niet (meer) geldig.', 404);
     }
 
-    await sql`
+    const lead = await sql`
       UPDATE prospect_leads
-      SET unsubscribed = TRUE, unsubscribed_at = NOW(), status = 'archived', updated_at = NOW()
+      SET unsubscribed = TRUE, unsubscribed_at = NOW(), status = 'lost',
+          lost_at = COALESCE(lost_at, NOW()), lost_reason = 'afgemeld', updated_at = NOW()
       WHERE id = ${leadId}
+      RETURNING domain
     `;
+    // Domein in het grootboek: ook na verwijderen van de lead nooit opnieuw aandragen.
+    const domain = lead[0]?.domain as string | undefined;
+    if (domain) {
+      await sql`
+        INSERT INTO lead_seen (key, kind, outcome, reason)
+        VALUES (${domain}, 'domain', 'afgemeld', 'ontvanger meldde zich af')
+        ON CONFLICT (tenant_id, key) DO UPDATE SET outcome = 'afgemeld', reason = EXCLUDED.reason, created_at = NOW()
+      `.catch(() => {});
+    }
     // Cancel any queued/draft outreach so nothing else goes out
     await sql`
       UPDATE lead_outreach
