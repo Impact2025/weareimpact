@@ -11,8 +11,8 @@ tags:
   - transparantie
   - algoritme registratie
   - sociaal domein
-seo_title: "Algoritmeregister voor Gemeenten | Stappenplan AI Act Verplichting"
-seo_description: "Het algoritmeregister is nu vrijwillig en wordt straks verplicht. Zo registreer je AI in het sociaal domein, en wat het uitstel van de AI Act tot december 2027 betekent."
+seo_title: "Algoritmeregister gemeenten: 5 stappen"
+seo_description: "Is het algoritmeregister verplicht voor gemeenten? Nu nog vrijwillig, straks niet. Registreer je AI in 5 stappen en lees wat het AI Act-uitstel tot december 2027 betekent."
 seo_keywords:
   - algoritmeregister gemeente
   - ai act gemeente

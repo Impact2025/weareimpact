@@ -10,8 +10,8 @@ tags:
   - sociaal ondernemen
   - aanbesteden
   - B Corp
-seo_title: "Code Sociale Ondernemingen: 5 principes, toetsing en kosten"
-seo_description: "De Code Sociale Ondernemingen uitgelegd: de 5 principes sinds 2025, hoe je in het Register komt, wat het kost en wat het oplevert in aanbestedingen."
+seo_title: "Code Sociale Ondernemingen: eisen en kosten"
+seo_description: "Wat is de Code Sociale Ondernemingen? De 5 principes, hoe de toetsing door de Review Board werkt, wat het kost (€310 + €375 per jaar) en wat het oplevert."
 seo_keywords:
   - code sociale ondernemingen
   - code sociaal ondernemen

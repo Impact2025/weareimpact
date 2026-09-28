@@ -10,7 +10,7 @@ tags:
   - vrijwilligersmanagement
   - "2026"
   - non-profit
-seo_title: "Vrijwilligerstekort 2026: Oorzaken en 8 Bewezen Oplossingen"
+seo_title: "Vrijwilligerstekort 2026: 8 oplossingen"
 seo_description: "Het vrijwilligerstekort in 2026 is een stille crisis. Minder aanbod, meer vraag. Lees wat er speelt en ontdek 8 oplossingen die vandaag werken."
 seo_keywords:
   - vrijwilligerstekort 2026
