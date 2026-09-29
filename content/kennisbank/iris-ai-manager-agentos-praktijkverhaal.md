@@ -1,7 +1,7 @@
 ---
 slug: iris-ai-manager-agentos-praktijkverhaal
 title: "Iris, mijn AI-manager: hoe AgentOS mij elke dag tijd teruggeeft"
-subtitle: "Geen chatbot die wat terugkletst, maar een manager die zes agents aanstuurt — en nooit iets doet zonder mijn akkoord"
+subtitle: "Geen chatbot die wat terugkletst, maar een manager die een team van agents aanstuurt — en nooit iets doet zonder mijn akkoord"
 excerpt: "Een jaar bouwen, finetunen en testen in de praktijk. Dit is hoe Iris — mijn zelfgebouwde AI-manager — dossiers structureert, risico's signaleert en mijn mailbox leegmaakt, terwijl ik de volledige regie houd."
 category_slug: ai-tech
 tags:
@@ -12,7 +12,7 @@ tags:
   - human-in-the-loop
   - AI-implementatie
 seo_title: "Iris: mijn AI-manager | AgentOS in de praktijk | Vincent van Munster"
-seo_description: "Hoe ik AgentOS bouwde met Iris als AI-manager over zes agents: content, SEO, mail, agenda, klantenservice en research. Altijd human-in-the-loop, nooit automatisch live."
+seo_description: "Hoe ik AgentOS bouwde met Iris als AI-manager over een team van agents: content, SEO, mail, agenda, klantenservice en research. Altijd human-in-the-loop, nooit automatisch live."
 seo_keywords:
   - AI-manager
   - AgentOS
@@ -28,7 +28,7 @@ lead_magnet_description: "De opzet achter Iris en AgentOS in een stappenplan: va
 lead_magnet_type: toolkit
 faq_items:
   - question: "Wat is een AI-manager precies?"
-    answer: "Een AI-manager is geen los hulpmiddel maar een laag daarboven: het is het systeem dat meerdere gespecialiseerde AI-agents aanstuurt, hun werk beoordeelt en het resultaat klaarzet voor een mens. Bij Iris betekent dat: zes agents doen het werk, Iris coördineert, en niets gaat de deur uit zonder mijn goedkeuring."
+    answer: "Een AI-manager is geen los hulpmiddel maar een laag daarboven: het is het systeem dat meerdere gespecialiseerde AI-agents aanstuurt, hun werk beoordeelt en het resultaat klaarzet voor een mens. Bij Iris betekent dat: de agents doen het werk, Iris coördineert, en niets gaat de deur uit zonder mijn goedkeuring."
   - question: "Is Iris een chatbot?"
     answer: "Nee. Een chatbot wacht op een vraag en geeft een antwoord. Iris werkt continu op de achtergrond: ze structureert dossiers, signaleert risico's en bereidt werk voor, ook als niemand haar iets vraagt. Je kúnt met haar praten, maar dat is niet haar hoofdfunctie."
   - question: "Publiceert Iris zelfstandig content of stuurt ze zelf mails?"
@@ -50,7 +50,7 @@ Dat is geen marketingtekst. Dat is wat Iris zelf zegt over hoe ze werkt. Na een 
 ## Inhoudsopgave
 
 1. [Waarom ik geen chatbot wilde, maar een manager](#waarom-manager)
-2. [Hoe AgentOS is opgebouwd: Iris en de zes agents](#agentos-opbouw)
+2. [Hoe AgentOS is opgebouwd: Iris en de agents](#agentos-opbouw)
 3. [Het goedkeuringswachtrij-principe: hoe human-in-the-loop echt werkt](#goedkeuringswachtrij)
 4. [Wat het oplevert: de cijfers achter een jaar praktijk](#cijfers)
 5. [Waarom ik dit vanuit management bouw, niet vanuit tech](#25-jaar-ondernemerschap)
@@ -67,9 +67,9 @@ Ik wilde iets anders. Geen verzameling losse hulpmiddelen, maar één manager di
 
 Dat is het verschil tussen een la vol gereedschap en iemand die het gereedschap voor je klaarlegt, in de juiste volgorde, met een korte toelichting waarom.
 
-## Hoe AgentOS is opgebouwd: Iris en de zes agents {#agentos-opbouw}
+## Hoe AgentOS is opgebouwd: Iris en de agents {#agentos-opbouw}
 
-Iris is de AI-manager van wat ik AgentOS noem. Zij stuurt zes gespecialiseerde agents aan die elke dag werk verzetten:
+Iris is de AI-manager van wat ik AgentOS noem. Zij stuurt gespecialiseerde agents aan die elke dag werk verzetten:
 
 | Agent | Wat hij doet |
 |---|---|
@@ -132,7 +132,7 @@ Meer over hoe je dat human-in-the-loop-mechanisme zelf inricht, lees je in [Huma
 
 ## Hulp nodig?
 
-Per 1 september ben ik weer beschikbaar voor interim- en adviesopdrachten. Wil je onderzoeken hoe een systeem als Iris binnen jouw welzijns- of zorgorganisatie past? Plan een vrijblijvend gesprek via [WeAreImpact.nl](https://weareimpact.nl) — of app rechtstreeks met Iris via [de Iris-pagina](/iris).
+Ik ben weer beschikbaar voor interim- en adviesopdrachten. Wil je onderzoeken hoe een systeem als Iris binnen jouw welzijns- of zorgorganisatie past? Plan een vrijblijvend gesprek via [WeAreImpact.nl](https://weareimpact.nl) — of app rechtstreeks met Iris via [de Iris-pagina](/iris).
 
 ---
 

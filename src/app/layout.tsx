@@ -20,11 +20,11 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL('https://weareimpact.nl'),
   title: {
-    default: 'Interim-directeur sociaal domein | Vincent van Munster',
+    default: 'Procesversneller: AI aan het werk in één dagdeel | Vincent van Munster',
     template: '%s | WeAreImpact',
   },
   description:
-    'Interim-directeur en kwartiermaker voor welzijn, zorg en gemeenten. 25+ jaar directie-ervaring, ex-directeur Stichting De Baan. Snel inzetbaar bij vacature of transitie.',
+    'Vincent van Munster zet AI binnen een dagdeel aan het werk in jouw organisatie. Vaste prijs, een mens controleert alles. Voor sociale en duurzame ondernemers. Ook beschikbaar als interim-kwartiermaker.',
   // LET OP: dit is de canonical van de homepage. Next.js erft `alternates` naar
   // elke route die er zelf geen definieert — die pagina verklaart dan de
   // homepage als origineel en wordt door Google niet geïndexeerd.
@@ -54,23 +54,23 @@ export const metadata: Metadata = {
     locale: 'nl_NL',
     url: 'https://weareimpact.nl',
     siteName: 'WeAreImpact',
-    title: 'Interim-directeur sociaal domein | Vincent van Munster',
+    title: 'Procesversneller: AI aan het werk in één dagdeel | Vincent van Munster',
     description:
-      'Interim-directeur en kwartiermaker voor welzijn, zorg en gemeenten. 25+ jaar directie-ervaring. Geen adviesrapport vanaf de zijlijn: iemand die aan het roer stapt.',
+      'Geen adviesrapport, maar een werkend proces: AI binnen een dagdeel aan het werk in jouw organisatie. 25+ jaar ondernemerservaring. Vaste prijs, gratis intake.',
     images: [
       {
         url: '/og-homepage.webp',
         width: 1200,
         height: 630,
-        alt: 'Vincent van Munster — interim-directeur sociaal domein',
+        alt: 'Vincent van Munster — Procesversneller en interim-kwartiermaker',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Interim-directeur sociaal domein | Vincent van Munster',
+    title: 'Procesversneller: AI aan het werk in één dagdeel | Vincent van Munster',
     description:
-      'Interim-directeur en kwartiermaker voor welzijn, zorg en gemeenten. 25+ jaar directie-ervaring. Gratis kennismakingsgesprek.',
+      'AI binnen een dagdeel aan het werk in jouw organisatie. Vaste prijs, gratis intake.',
     images: ['/og-homepage.webp'],
   },
   icons: {
@@ -104,9 +104,9 @@ export default function RootLayout({
     '@context': 'https://schema.org',
     '@type': 'Person',
     name: 'Vincent van Munster',
-    jobTitle: 'Interim-directeur & kwartiermaker sociaal domein',
+    jobTitle: 'Procesversneller & interim-kwartiermaker',
     description:
-      'Interim-directeur en kwartiermaker voor welzijnsorganisaties, gemeenten en sociaal ondernemers. 25+ jaar directie-ervaring in het sociaal domein, ex-directeur Stichting De Baan. Gecertificeerd LEGO® Serious Play facilitator.',
+      'Procesversneller en interim-kwartiermaker voor sociale en duurzame ondernemers en organisaties in het sociaal domein. 25+ jaar ondernemerservaring, oprichter van WeAreImpact, ex-directeur Stichting De Baan. Gecertificeerd LEGO® Serious Play facilitator.',
     url: 'https://weareimpact.nl',
     image: 'https://weareimpact.nl/vincent-van-munster.webp',
     sameAs: [
@@ -118,7 +118,7 @@ export default function RootLayout({
       name: 'WeAreImpact',
       url: 'https://weareimpact.nl',
     },
-    foundingDate: '2014',
+    foundingDate: '2016',
     knowsAbout: [
       'AI Strategie',
       'Digitale Transformatie',

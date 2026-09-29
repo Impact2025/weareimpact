@@ -244,7 +244,7 @@ export default function InterimProfiel() {
               {/* status badge */}
               <div className="inline-flex items-center gap-3 px-5 py-2.5 rounded-full bg-white border border-slate-100 shadow-sm text-sm mb-8 hover:border-orange-200 transition-colors cursor-default">
                 <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse shrink-0" />
-                <span className="font-bold text-slate-900">Beschikbaar per 1 oktober</span>
+                <span className="font-bold text-slate-900">Nu beschikbaar</span>
                 <span className="w-1.5 h-1.5 bg-orange-400 rounded-full shrink-0" />
                 <span className="text-slate-500 font-medium text-xs">16–24 uur · €125–€140/u</span>
               </div>
@@ -784,7 +784,7 @@ export default function InterimProfiel() {
             <div className="flex flex-wrap items-center justify-center gap-3 mb-6 relative z-10">
               <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-green-50 border border-green-200 text-green-700 text-xs font-bold">
                 <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-                Beschikbaar per 1 oktober
+                Nu beschikbaar
               </div>
               <span className="text-slate-400 text-sm">16–24 uur/week · €125–€140/u · Amsterdam / Haarlem / Leiden</span>
             </div>

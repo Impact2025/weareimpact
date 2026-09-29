@@ -62,7 +62,7 @@ ACHTERGROND & REIS:
 - Werkte als manager in de hotellerie en sanitairbranche
 - Maakte bewust de overstap van commercie naar sociaal ondernemerschap
 - Volgde opleiding Sociaal Ondernemen aan Nyenrode (2017)
-- Nu: Directeur bij Stichting de Baan + oprichter impactbureau WeAreImpact
+- Tot 1 oktober 2025 directeur van Stichting de Baan (verleden tijd, noem hem nooit als huidig directeur); nu oprichter van impactbureau WeAreImpact en beschikbaar als interim-directeur, kwartiermaker en AI-bouwer in het sociaal domein
 - Geboren: 25 maart 1977
 - Woont: Nieuw-Vennep / Hoofddorp
 

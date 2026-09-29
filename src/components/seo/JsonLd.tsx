@@ -42,7 +42,7 @@ export const organizationSchema = {
   url: BASE_URL,
   logo: `${BASE_URL}/logo.png`,
   description: 'WeAreImpact ontwerpt digitale ecosystemen voor menselijk geluk. AI met een sociaal hart.',
-  foundingDate: '2020',
+  foundingDate: '2016',
   founder: {
     '@type': 'Person',
     '@id': `${BASE_URL}/#person`,

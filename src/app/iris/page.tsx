@@ -110,7 +110,7 @@ export default function IrisPage() {
             </h1>
 
             <p className="text-lg md:text-xl text-slate-600 mb-8 max-w-xl font-light leading-relaxed">
-              Geen chatbot die wat terugkletst. Iris stuurt 14 gespecialiseerde agents aan, onthoudt wat er speelt, en neemt zo de administratieve rompslomp weg die jou weghoudt van de mensen om wie het gaat.
+              Geen chatbot die wat terugkletst. Iris stuurt een team van gespecialiseerde agents aan, onthoudt wat er speelt, en neemt zo de administratieve rompslomp weg die jou weghoudt van de mensen om wie het gaat.
             </p>
 
             <div className="flex flex-wrap gap-4">
@@ -185,12 +185,12 @@ export default function IrisPage() {
         </div>
       </section>
 
-      {/* DE 14 AGENTS */}
+      {/* DE AGENTS */}
       <section className="py-24 bg-slate-50">
         <div className="container mx-auto px-6 max-w-6xl">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-slate-900 mb-4">
-              De 14 agents die Iris aanstuurt
+              De agents die Iris aanstuurt
             </h2>
             <p className="text-lg text-slate-500 max-w-2xl mx-auto font-light">
               Geen los AI-abonnement per taak, maar één team met vaste rollen. Iris verdeelt het werk, elke agent doet zijn eigen ding, elke dag opnieuw. Dit team runt vandaag WeAreImpact zelf; bij een implementatie bij jouw organisatie bouw ik een vergelijkbaar team toegespitst op jouw processen: dossiers, rapportage, verantwoording.
@@ -243,7 +243,7 @@ export default function IrisPage() {
                 Eén geheugen voor het hele team
               </h2>
               <p className="text-slate-300 leading-relaxed font-light">
-                In de meeste organisaties zit de kennis in het hoofd van één persoon. Zodra die persoon vakantie heeft, druk is of vertrekt, staat het werk stil. Bij Iris zit die kennis in een gedeelde kennisbank waar alle 14 agents uit putten: casuïstiek, merkstem, eerdere beslissingen, wat wel en niet werkte.
+                In de meeste organisaties zit de kennis in het hoofd van één persoon. Zodra die persoon vakantie heeft, druk is of vertrekt, staat het werk stil. Bij Iris zit die kennis in een gedeelde kennisbank waar alle agents uit putten: casuïstiek, merkstem, eerdere beslissingen, wat wel en niet werkte.
               </p>
             </div>
             <div className="space-y-4">
@@ -388,7 +388,7 @@ export default function IrisPage() {
         <div className="container mx-auto px-6 max-w-3xl text-center">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-50 border border-emerald-100 text-emerald-700 text-sm font-semibold mb-6">
             <Calendar size={14} />
-            Interim beschikbaar per 1 oktober
+            Interim nu beschikbaar
           </div>
           <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-slate-900 mb-4">
             Ook zo'n systeem voor jouw organisatie?

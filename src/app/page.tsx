@@ -61,8 +61,8 @@ const faqs = [
 ];
 
 const stats = [
-  { value: '27+', label: 'Jaar ondernemerschap' },
-  { value: '100.000+', label: 'Geluksmomenten gerealiseerd' },
+  { value: '25+', label: 'Jaar ondernemerschap' },
+  { value: '70.000+', label: 'Geluksmomenten per jaar bij De Baan' },
   { value: '6', label: 'Gemeenten als partner' },
   { value: 'LSP', label: 'Certified facilitator' },
 ];
@@ -95,7 +95,7 @@ const timeline = [
     points: [
       'Directeur Stichting de Baan geweest: 700 deelnemers en 180 vrijwilligers',
       'Zelf de 60% administratie ervaren die ten koste ging van de mensen',
-      'WeAreImpact (opgericht 2016): minder regeldruk door AI, meer tijd voor de mens',
+      'In 2016 richtte ik WeAreImpact op: minder regeldruk door AI, meer tijd voor de mens',
     ],
   },
 ];
@@ -107,9 +107,9 @@ const projects = [
     color: 'text-violet-600',
     accent: 'border-violet-400',
     name: 'Iris & AgentOS',
-    tagline: 'Mijn AI-manager met 15 gespecialiseerde agents',
+    tagline: 'Mijn AI-manager met een team van gespecialiseerde agents',
     description:
-      'Geen losse chatbot, maar een team dat dagelijks repeterend werk overneemt op mijn eigen, afgeschermde infrastructuur. Iris stuurt 15 agents aan die meedenken, schrijven, redigeren, mail sorteren en de markt in de gaten houden, met een schrijver en een criticus die altijd twee verschillende agents zijn. Iris heeft een structureel geheugen dat aan mijn eigen kennisbank gekoppeld is, dus kennis blijft geborgd ook als ik met vakantie ben. Elke inschatting die het systeem maakt, toetst het later aan wat er echt is gebeurd, zodat het advies elke maand scherper wordt. En er gaat nooit iets de deur uit zonder mijn definitieve goedkeuring.',
+      'Geen losse chatbot, maar een team dat dagelijks repeterend werk overneemt op mijn eigen, afgeschermde infrastructuur. Iris stuurt een team van gespecialiseerde agents aan die meedenken, schrijven, redigeren, mail sorteren en de markt in de gaten houden, met een schrijver en een criticus die altijd twee verschillende agents zijn. Iris heeft een structureel geheugen dat aan mijn eigen kennisbank gekoppeld is, dus kennis blijft geborgd ook als ik met vakantie ben. Elke inschatting die het systeem maakt, toetst het later aan wat er echt is gebeurd, zodat het advies elke maand scherper wordt. En er gaat nooit iets de deur uit zonder mijn definitieve goedkeuring.',
     url: '/iris',
   },
   {
@@ -208,13 +208,13 @@ export default function Home() {
             <span className="font-bold text-slate-900">Vincent van Munster</span>
             <span className="w-1.5 h-1.5 bg-orange-400 rounded-full" />
             <span className="text-slate-600 font-medium tracking-wide uppercase text-xs">
-              Interim Directeur &amp; Kwartiermaker Sociaal Domein
+              Procesversneller &amp; Interim-kwartiermaker
             </span>
           </div>
 
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-medium mb-6 animate-fade-in-up">
             <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
-            Beschikbaar voor opdrachten per 1 oktober
+            Nu beschikbaar voor opdrachten
           </div>
 
           {/* De slogan is visueel de kop, maar de H1 is de regel eronder: die bevat
@@ -226,16 +226,16 @@ export default function Home() {
           </p>
 
           <h1 className="text-xl md:text-2xl text-slate-600 mb-4 max-w-3xl mx-auto font-light leading-relaxed animate-fade-in-up delay-200">
-            Interim-directeur en kwartiermaker in het sociaal domein, voor welzijnsorganisaties, gemeenten en sociaal ondernemers.
+            Procesversneller: ik zet AI binnen een dagdeel aan het werk in jouw organisatie.
           </h1>
 
           <p className="text-lg md:text-xl text-slate-500 mb-6 max-w-2xl mx-auto font-light leading-relaxed animate-fade-in-up delay-200">
-            Geen dikke adviesrapporten vanaf de zijlijn. Wel een ervaren interim-leider die aan het roer stapt, rust brengt in complexe situaties en teams duurzaam in beweging zet.
+            Geen adviesrapport, maar een werkend proces tegen een vaste prijs, met een mens die alles controleert. Voor sociale en duurzame ondernemers en organisaties in het sociaal domein. Ook beschikbaar als interim-kwartiermaker.
           </p>
 
           <div className="flex flex-wrap justify-center gap-x-3 gap-y-1 mb-6 animate-fade-in-up delay-200">
             {[
-              'Interim Directie & Bestuur | Kwartiermaken | Transitiemanagement',
+              'Procesversneller | Interim-kwartiermaker | AI-implementatie',
             ].map((title, i, arr) => (
               <span key={title} className="flex items-center gap-3 text-[0.8rem] text-slate-400 font-medium">
                 {title}
@@ -372,9 +372,9 @@ export default function Home() {
           </div>
           <div className="grid md:grid-cols-3 gap-8">
             {[
+              { code: 'SO', title: 'Sociale en duurzame ondernemers', text: 'Voor ondernemers die iets bouwen wat écht werkt en geen tijd hebben voor een dik adviesrapport. Eén dagdeel, één proces, een vaste prijs.' },
               { code: 'WZ', title: 'Welzijn en zorg', text: 'Voor directeuren en managers in de welzijns- en zorgsector die weten dat AI kansen biedt, maar niet weten waar te beginnen. Of die al begonnen zijn, maar merken dat het niet landt in de organisatie.' },
               { code: 'GM', title: 'Gemeenten', text: 'Voor gemeenten die technologie willen inzetten die de menselijke maat versterkt, niet ondermijnt.' },
-              { code: 'SO', title: 'Sociaal ondernemers', text: 'Voor sociaal ondernemers die willen bouwen aan iets wat écht werkt, en iemand zoeken die dat ook begrijpt.' },
             ].map((item) => (
               <div key={item.code} className="bg-white rounded-3xl p-8 border border-slate-100 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
                 <div className="w-10 h-10 bg-orange-50 rounded-2xl flex items-center justify-center mb-6">
@@ -495,7 +495,7 @@ export default function Home() {
               Ik begon in 1999 als commercieel internetondernemer en bouwde tientallen websites en webshops. In 2009 startte ik mijn eerste datingsite voor mensen met een beperking, de eerste kiem voor wat later maatschappelijke impact zou worden. Vaderschap in 2014 werd een kantelpunt: ik werd sociaal ondernemer, met vallen en opstaan, en leerde de harde les dat impact een ijzersterke bedrijfsvoering vereist.
             </p>
             <p className="text-slate-400 text-lg mb-6 leading-relaxed max-w-2xl">
-              Als directeur van Stichting de Baan stond ik zelf 60% van mijn tijd kwijt aan spreadsheets en verantwoording, tijd die niet naar de 700 deelnemers en 180 vrijwilligers ging voor wie ik was begonnen. Ik werkte samen met fondsen als het Oranje Fonds en Rabobank Foundation, en met gemeenten als Utrecht, Haarlem, Amsterdam, Haarlemmermeer, Heemstede en Bloemendaal. Over al mijn projecten samen leverden de vrijwilligers die ik ondersteunde inmiddels meer dan 100.000 geluksmomenten op.
+              Als directeur van Stichting de Baan stond ik zelf 60% van mijn tijd kwijt aan spreadsheets en verantwoording, tijd die niet naar de 700 deelnemers en 180 vrijwilligers ging voor wie ik was begonnen. Ik werkte samen met fondsen als het Oranje Fonds en Rabobank Foundation, en met gemeenten als Utrecht, Haarlem, Amsterdam, Haarlemmermeer, Heemstede en Bloemendaal. Bij De Baan leverden de vrijwilligers die ik ondersteunde ruim 70.000 geluksmomenten per jaar op.
             </p>
             <p className="text-slate-400 text-lg mb-8 leading-relaxed max-w-2xl">
               Die frustratie is precies waarom WeAreImpact bestaat. Ik combineer die 25+ jaar praktijkervaring met een hands-on kennis van AI die de meeste consultants niet hebben. Ik bouw het zelf. Ik gebruik het zelf. En ik help jou het te begrijpen en te benutten.

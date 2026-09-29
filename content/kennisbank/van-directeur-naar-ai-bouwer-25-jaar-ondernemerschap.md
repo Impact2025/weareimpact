@@ -41,7 +41,7 @@ author_title: "Strategic Innovation Partner, WeAreImpact"
 
 > "Ik bouw geen technologie omdat het kan. Ik bouw technologie omdat er ergens een mens is die er tijd, aandacht of verbinding door terugkrijgt."
 
-Mensen die Iris zien — mijn AI-manager die dagelijks zes agents aanstuurt — denken vaak dat ze naar een tech-project kijken. Dat klopt niet. Ze kijken naar het sluitstuk van 25 jaar ondernemerschap. Dit is die lijn.
+Mensen die Iris zien — mijn AI-manager die dagelijks een team van gespecialiseerde agents aanstuurt — denken vaak dat ze naar een tech-project kijken. Dat klopt niet. Ze kijken naar het sluitstuk van 25 jaar ondernemerschap. Dit is die lijn.
 
 ---
 
@@ -105,7 +105,7 @@ Beide platforms delen dezelfde onderliggende overtuiging als Iris: AI is er niet
 
 ## Waarom dit de fundering is onder Iris {#fundering-iris}
 
-Iris — mijn AI-manager die zes agents aanstuurt binnen AgentOS — is geen losstaand tech-experiment. Ze is de optelsom van 25 jaar patroonherkenning: welk werk lekt tijd weg, welke groep mensen wordt over het hoofd gezien, en hoe bouw je iets dat mensen ook echt vertrouwen genoeg vinden om te gebruiken.
+Iris — mijn AI-manager die een team van gespecialiseerde agents aanstuurt binnen AgentOS — is geen losstaand tech-experiment. Ze is de optelsom van 25 jaar patroonherkenning: welk werk lekt tijd weg, welke groep mensen wordt over het hoofd gezien, en hoe bouw je iets dat mensen ook echt vertrouwen genoeg vinden om te gebruiken.
 
 Dat vertrouwen is precies waarom Iris nooit zelfstandig publiceert, mailt of beslist zonder mijn goedkeuring. Niet omdat de techniek dat niet zou aankunnen, maar omdat ik uit 25 jaar ervaring weet dat vertrouwen breekbaar is en langzaam wordt opgebouwd — net als bij Philia, net als bij Stichting de Baan.
 
@@ -120,7 +120,7 @@ Dat vertrouwen is precies waarom Iris nooit zelfstandig publiceert, mailt of bes
 
 ## Hulp nodig?
 
-Wil je AI inzetten in jouw welzijns- of zorgorganisatie, maar dan vanuit dezelfde overtuiging — mens eerst, techniek als middel? Ik ben per 1 september weer beschikbaar voor interim- en adviesopdrachten. Plan een vrijblijvend gesprek via [WeAreImpact.nl](https://weareimpact.nl), of maak kennis met Iris via [de Iris-pagina](/iris).
+Wil je AI inzetten in jouw welzijns- of zorgorganisatie, maar dan vanuit dezelfde overtuiging — mens eerst, techniek als middel? Ik ben weer beschikbaar voor interim- en adviesopdrachten. Plan een vrijblijvend gesprek via [WeAreImpact.nl](https://weareimpact.nl), of maak kennis met Iris via [de Iris-pagina](/iris).
 
 ---
 

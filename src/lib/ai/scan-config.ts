@@ -141,8 +141,8 @@ export function getChallenge(sector: string, challenge: string): ChallengeInfo |
 export const SECTOR_EXPERTISE: Record<string, string> = {
   zorg: `
 Vincent's expertise in Zorg & Welzijn:
-- Directeur van Stichting de Baan (sociale werkvoorziening)
-- Coördineert 180 vrijwilligers en 700 deelnemers
+- Tot oktober 2025 directeur van Stichting de Baan (welzijnsorganisatie)
+- Leidde een organisatie met 180 vrijwilligers en 700+ deelnemers
 - Heeft succesvol fondsen geworven voor vastgoed en verduurzaming
 - Begrijpt de spanning tussen administratiedruk en cliënttijd
 - Weet hoe je met beperkte middelen maximale impact creëert`,
