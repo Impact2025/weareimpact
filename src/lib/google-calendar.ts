@@ -1,5 +1,6 @@
 import { google } from 'googleapis';
 import { amsterdamDateTime, amsterdamParts, amsterdamStartOfDay } from '@/lib/time/amsterdam';
+import { sql } from '@/lib/db/neon';
 
 // Booking types configuration
 export const BOOKING_TYPES = {
@@ -84,11 +85,31 @@ function getCalendarClient() {
   return google.calendar({ version: 'v3', auth });
 }
 
-// Get busy times from Google Calendar
-async function getBusyTimes(startDate: Date, endDate: Date): Promise<{ start: Date; end: Date }[]> {
-  const calendar = getCalendarClient();
-  const calendarId = process.env.GOOGLE_CALENDAR_ID || 'primary';
+// Openstaande aanvragen (nog niet door Vincent goedgekeurd) staan nog niet in
+// Google Calendar, maar het moment is wel gereserveerd. Zonder dit kunnen
+// twee bellers of bezoekers hetzelfde moment krijgen aangeboden.
+async function getPendingRequestBusy(startDate: Date, endDate: Date): Promise<{ start: Date; end: Date }[]> {
+  try {
+    const rows = await sql`
+      SELECT start_time, end_time FROM booking_requests
+      WHERE status = 'pending' AND start_time < ${endDate.toISOString()} AND end_time > ${startDate.toISOString()}
+    `;
+    return rows.map((r) => ({ start: new Date(r.start_time as string), end: new Date(r.end_time as string) }));
+  } catch {
+    return []; // tabel bestaat nog niet: er zijn dan ook geen aanvragen
+  }
+}
 
+// Get busy times from Google Calendar. Met `strict` gooit een Google-fout door
+// in plaats van "alles vrij" te melden (de telefoon-AI mag dan niets aanbieden).
+async function getBusyTimes(
+  startDate: Date,
+  endDate: Date,
+  opts: { strict?: boolean } = {},
+): Promise<{ start: Date; end: Date }[]> {
+  const pending = await getPendingRequestBusy(startDate, endDate);
+  const calendar = getCalendarClient(); // gooit bij ontbrekende credentials (website valt dan terug op mock-slots)
+  const calendarId = process.env.GOOGLE_CALENDAR_ID || 'primary';
   try {
     const response = await calendar.freebusy.query({
       requestBody: {
@@ -98,16 +119,47 @@ async function getBusyTimes(startDate: Date, endDate: Date): Promise<{ start: Da
       },
     });
 
-    const busyTimes = response.data.calendars?.[calendarId]?.busy || [];
+    const calendarData = response.data.calendars?.[calendarId];
+    if (opts.strict && (!calendarData || calendarData.errors?.length)) {
+      throw new Error(`freebusy gaf geen bruikbaar antwoord voor ${calendarId}`);
+    }
+    const busyTimes = calendarData?.busy || [];
 
-    return busyTimes.map((busy) => ({
-      start: new Date(busy.start!),
-      end: new Date(busy.end!),
-    }));
+    return [
+      ...busyTimes.map((busy) => ({ start: new Date(busy.start!), end: new Date(busy.end!) })),
+      ...pending,
+    ];
   } catch (error) {
     console.error('Error fetching busy times:', error);
-    return [];
+    if (opts.strict) throw error;
+    return pending;
   }
+}
+
+/** Is Vincent nu bezet? Geeft alleen het eindtijdstip terug, nooit de titel van een afspraak. */
+export async function getVincentBusyNow(): Promise<{ busy: boolean; until?: Date }> {
+  const now = new Date();
+  const busy = await getBusyTimes(now, new Date(now.getTime() + 12 * 3600 * 1000), { strict: true });
+  let until = now;
+  let current = busy.find((b) => b.start <= now && b.end > now);
+  if (!current) return { busy: false };
+  // Aaneengesloten afspraken samenvoegen tot één "bezet tot".
+  while (current) {
+    until = current.end;
+    const end: Date = current.end;
+    current = busy.find((b) => b.start <= end && b.end > end);
+  }
+  return { busy: true, until };
+}
+
+/** Is dit exacte moment nog vrij voor dit afspraaktype? (her-validatie vlak voor het vastleggen) */
+export async function isSlotStillFree(bookingType: BookingTypeSlug, startISO: string): Promise<boolean> {
+  const start = new Date(startISO);
+  if (Number.isNaN(start.getTime())) return false;
+  const day = amsterdamParts(start);
+  const days = await getAvailableSlots(bookingType, 3, { strict: true });
+  const key = `${day.year}-${String(day.month + 1).padStart(2, '0')}-${String(day.day).padStart(2, '0')}`;
+  return days.some((d) => d.date === key && d.slots.some((s) => new Date(s.start).getTime() === start.getTime()));
 }
 
 // Generate time slots for one Amsterdam calendar day (kantooruren zijn Nederlandse tijd)
@@ -157,7 +209,8 @@ function generateTimeSlots(
 // Get available slots for a booking type
 export async function getAvailableSlots(
   bookingType: BookingTypeSlug,
-  weeksAhead: number = 2
+  weeksAhead: number = 2,
+  opts: { strict?: boolean } = {},
 ): Promise<{
   date: string;
   dayName: string;
@@ -172,7 +225,7 @@ export async function getAvailableSlots(
   const endDate = amsterdamStartOfDay(new Date(), weeksAhead * 7);
 
   // Get busy times for the date range
-  const busyTimes = await getBusyTimes(startDate, endDate);
+  const busyTimes = await getBusyTimes(startDate, endDate, opts);
 
   // Generate slots for each day
   const days: {
