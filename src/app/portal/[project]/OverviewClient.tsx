@@ -12,6 +12,7 @@ interface Milestone {
   phase: string | null;
   owner: string;
   blocked: boolean;
+  completed_at: string | null;
 }
 
 interface Agreement {
@@ -42,15 +43,53 @@ export default function OverviewClient({ projectSlug, audience }: { projectSlug:
     actions: Action[];
   } | null>(null);
 
+  const [failed, setFailed] = useState(false);
+  // Moment van het vorige bezoek (per browser); wat daarna klaar kwam krijgt een "Nieuw"-label.
+  const [lastSeen, setLastSeen] = useState<number | null>(null);
+
   useEffect(() => {
+    const key = `portal-last-seen:${projectSlug}`;
+    try {
+      const stored = window.localStorage.getItem(key);
+      setLastSeen(stored ? Number(stored) : null);
+    } catch {
+      // localStorage kan geblokkeerd zijn; dan geen "Nieuw"-labels.
+    }
+
     fetch(`/api/crm/portal/${projectSlug}/${audience}/overview`)
-      .then((res) => res.json())
-      .then(setData);
+      .then((res) => {
+        if (!res.ok) throw new Error(String(res.status));
+        return res.json();
+      })
+      .then((json) => {
+        setData(json);
+        try {
+          window.localStorage.setItem(key, String(Date.now()));
+        } catch {
+          // negeren
+        }
+      })
+      .catch(() => setFailed(true));
   }, [projectSlug, audience]);
+
+  if (failed) {
+    return (
+      <p style={{ color: '#666' }}>
+        Je sessie is verlopen. Open de link uit je laatste mail opnieuw, of vraag Vincent om een nieuwe inloglink.
+      </p>
+    );
+  }
 
   if (!data) {
     return <p style={{ color: '#666' }}>Bezig met laden…</p>;
   }
+
+  const isNew = (m: Milestone) =>
+    lastSeen !== null && m.status === 'done' && m.completed_at !== null && new Date(m.completed_at).getTime() > lastSeen;
+  const recentlyDone = data.milestones
+    .filter((m) => m.status === 'done' && m.completed_at)
+    .sort((a, b) => new Date(b.completed_at as string).getTime() - new Date(a.completed_at as string).getTime())
+    .slice(0, 6);
 
   const { milestones, agreements, actions } = data;
   const nothingShared = milestones.length === 0 && agreements.length === 0 && actions.length === 0;
@@ -110,6 +149,28 @@ export default function OverviewClient({ projectSlug, audience }: { projectSlug:
         </section>
       )}
 
+      {recentlyDone.length > 0 && (
+        <section>
+          <h2 style={sectionTitle}>Recent afgerond</h2>
+          <ol style={{ listStyle: 'none', margin: 0, padding: 0, borderLeft: '2px solid #d1fae5' }}>
+            {recentlyDone.map((m) => (
+              <li key={m.id} style={{ position: 'relative', padding: '0 0 12px 16px' }}>
+                <span
+                  style={{
+                    position: 'absolute', left: -6, top: 5, width: 10, height: 10,
+                    borderRadius: '50%', background: '#10b981',
+                  }}
+                />
+                <div style={{ fontSize: 12, color: '#888' }}>{fmtDone(m.completed_at as string)}</div>
+                <div style={{ fontWeight: 600, fontSize: 14 }}>
+                  {m.title} {isNew(m) && <span style={newBadge}>Nieuw</span>}
+                </div>
+              </li>
+            ))}
+          </ol>
+        </section>
+      )}
+
       {milestones.length > 0 && (
         <section>
           <h2 style={sectionTitle}>Voortgang</h2>
@@ -117,6 +178,10 @@ export default function OverviewClient({ projectSlug, audience }: { projectSlug:
             {milestones.map((m) => (
               <div key={m.id} style={cardStyle}>
                 <span style={badgeStyle(m.status)}>{STATUS_LABELS[m.status]}</span>
+                {isNew(m) && <span style={{ ...newBadge, marginLeft: 6 }}>Nieuw</span>}
+                {m.status === 'done' && m.completed_at && (
+                  <span style={{ color: '#888', fontSize: 12, marginLeft: 8 }}>{fmtDone(m.completed_at)}</span>
+                )}
                 <p style={{ margin: '6px 0 0', fontWeight: 600 }}>{m.title}</p>
                 {m.description && <p style={{ margin: '4px 0 0', color: '#555', fontSize: 14 }}>{m.description}</p>}
               </div>
@@ -167,6 +232,19 @@ export default function OverviewClient({ projectSlug, audience }: { projectSlug:
     </div>
   );
 }
+
+function fmtDone(date: string): string {
+  return new Date(date).toLocaleDateString('nl-NL', { timeZone: 'Europe/Amsterdam', day: 'numeric', month: 'long' });
+}
+
+const newBadge: React.CSSProperties = {
+  background: '#fff4e0',
+  color: '#a35b00',
+  fontSize: 11,
+  fontWeight: 700,
+  padding: '2px 6px',
+  borderRadius: 6,
+};
 
 const sectionTitle: React.CSSProperties = {
   fontSize: 16,

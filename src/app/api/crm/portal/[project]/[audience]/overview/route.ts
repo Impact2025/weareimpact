@@ -25,7 +25,7 @@ export async function GET(
   // client_visible-gemaakte voortgang.
   const [milestones, agreements, actions] = await Promise.all([
     sql`
-      SELECT m.id, m.title, m.description, m.status, m.due_date, m.phase, m.owner,
+      SELECT m.id, m.title, m.description, m.status, m.due_date, m.phase, m.owner, m.completed_at,
              EXISTS (SELECT 1 FROM crm_milestones d WHERE d.id = m.depends_on AND d.status <> 'done') AS blocked
       FROM crm_milestones m
       WHERE m.project_slug = ${projectSlug} AND m.client_visible = TRUE
