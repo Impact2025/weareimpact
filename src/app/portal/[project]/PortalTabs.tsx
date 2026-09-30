@@ -4,9 +4,10 @@ import { useState } from 'react';
 import type { Audience } from '@/lib/crm/portal-session';
 import ChatClient from './ChatClient';
 import OverviewClient from './OverviewClient';
+import V2Client from './V2Client';
 
 export default function PortalTabs({ projectSlug, audience }: { projectSlug: string; audience: Audience }) {
-  const [tab, setTab] = useState<'chat' | 'overview'>('chat');
+  const [tab, setTab] = useState<'chat' | 'overview' | 'v2'>('chat');
 
   return (
     <div>
@@ -17,11 +18,16 @@ export default function PortalTabs({ projectSlug, audience }: { projectSlug: str
         <button onClick={() => setTab('overview')} style={tabButtonStyle(tab === 'overview')}>
           Voortgang
         </button>
+        <button onClick={() => setTab('v2')} style={tabButtonStyle(tab === 'v2')}>
+          V2
+        </button>
       </div>
       {tab === 'chat' ? (
         <ChatClient projectSlug={projectSlug} audience={audience} />
-      ) : (
+      ) : tab === 'overview' ? (
         <OverviewClient projectSlug={projectSlug} audience={audience} />
+      ) : (
+        <V2Client />
       )}
     </div>
   );
