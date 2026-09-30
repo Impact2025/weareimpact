@@ -142,10 +142,47 @@ ${renderFooter(opts.footerNote)}
 }
 
 /** Shared signature block. */
-export function emailSignature(): string {
+/**
+ * Vaste handtekening van Vincent, gelijk aan de handtekening in Outlook: groet, logo met
+ * woordmerk en slogan, oranje lijn, naam en contactregels. Outlook-safe (tabellen, inline stijlen).
+ * Geef `false` mee als de mail zelf al een afsluitende groet heeft ("Tot snel,").
+ */
+export function emailSignature(greeting: string | false = 'Hartelijke groet,'): string {
+  const rows: [string, string][] = [
+    ['T', '06 - 144 709 77'],
+    ['E', `<a href="mailto:v.munster@weareimpact.nl" style="color: #0f172a; text-decoration: none;">v.munster@weareimpact.nl</a>`],
+    ['W', `<a href="${WEB_BASE}" style="color: #0f172a; text-decoration: none;">weareimpact.nl</a>`],
+    ['L', '<a href="https://www.linkedin.com/in/vincent-van-m%C3%BCnster" style="color: #0f172a; text-decoration: none;">in/vincent-van-münster</a>'],
+  ];
+  const contact = rows
+    .map(
+      ([k, v]) => `
+                  <tr>
+                    <td style="padding: 1px 14px 1px 0; font-size: 13px; line-height: 1.5; color: #0f172a; width: 16px;">${k}</td>
+                    <td style="padding: 1px 0; font-size: 13px; line-height: 1.5; color: #0f172a;">${v}</td>
+                  </tr>`,
+    )
+    .join('');
   return `
-              <p style="margin: 28px 0 0; font-size: 16px; line-height: 1.6; color: #0f172a;">
-                <strong>Vincent van Munster</strong><br>
-                <span style="color: #ea580c; font-weight: 600;">WeAreImpact.nl</span>
-              </p>`;
+              ${greeting ? `<p style="margin: 28px 0 14px; font-size: 16px; line-height: 1.6; color: #0f172a;">${greeting}</p>` : '<div style="height: 14px; line-height: 14px;">&nbsp;</div>'}
+              <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="border-collapse: collapse; font-family: ${FONT_STACK};">
+                <tr>
+                  <td style="padding: 0 14px 0 0; vertical-align: middle;">
+                    <img src="${WEB_BASE}/WeAreImpact_hart.png" alt="WeAreImpact" width="52" height="47" style="display: block; width: 52px; height: 47px;" />
+                  </td>
+                  <td style="vertical-align: middle;">
+                    <div style="font-size: 26px; line-height: 1.1; font-weight: 700; color: #0f172a;">WeAre<span style="color: #ea580c;">Impact</span></div>
+                    <div style="margin-top: 4px; font-size: 13px; line-height: 1.3; font-style: italic; color: #0f172a;">AI &amp; Innovatie met een sociaal hart.</div>
+                  </td>
+                </tr>
+              </table>
+              <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="420" style="border-collapse: collapse; margin: 14px 0 16px; max-width: 100%;">
+                <tr>
+                  <td width="88" height="2" style="width: 88px; height: 2px; line-height: 2px; font-size: 2px; background-color: #ea580c;">&nbsp;</td>
+                  <td height="2" style="height: 2px; line-height: 2px; font-size: 2px; background-color: #e2e8f0;">&nbsp;</td>
+                </tr>
+              </table>
+              <p style="margin: 0 0 6px; font-family: ${FONT_STACK}; font-size: 17px; line-height: 1.3; font-weight: 700; color: #0f172a;">Vincent van Munster</p>
+              <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="border-collapse: collapse; font-family: ${FONT_STACK};">${contact}
+              </table>`;
 }

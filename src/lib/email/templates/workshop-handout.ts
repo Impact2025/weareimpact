@@ -45,7 +45,7 @@ export function generateWorkshopHandoutEmail(data: WorkshopHandoutData): {
               <p style="margin: 0 0 8px; font-size: 16px; line-height: 1.6; color: #334155;">
                 Tot snel,
               </p>
-              ${emailSignature()}
+              ${emailSignature(false)}
   `.trim();
 
   const html = emailShell({
