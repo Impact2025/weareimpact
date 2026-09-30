@@ -16,7 +16,7 @@ export async function PATCH(
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
   const { project: projectSlug, id } = await params;
-  const { status, clientVisible, phase, owner, blocking, dueDate, title, dependsOn } = await request.json();
+  const { status, clientVisible, phase, owner, blocking, dueDate, title, dependsOn, description } = await request.json();
 
   if (status !== undefined) {
     if (!VALID_STATUSES.includes(status)) {
@@ -68,6 +68,9 @@ export async function PATCH(
   }
   if (dueDate !== undefined) {
     await sql`UPDATE crm_milestones SET due_date = ${dueDate || null}, updated_at = NOW() WHERE id = ${id} AND project_slug = ${projectSlug}`;
+  }
+  if (description !== undefined) {
+    await sql`UPDATE crm_milestones SET description = ${String(description).trim() || null}, updated_at = NOW() WHERE id = ${id} AND project_slug = ${projectSlug}`;
   }
   if (title !== undefined && String(title).trim()) {
     await sql`UPDATE crm_milestones SET title = ${String(title).trim()}, updated_at = NOW() WHERE id = ${id} AND project_slug = ${projectSlug}`;
