@@ -13,6 +13,8 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { CHECK_LABELS } from '@/lib/launch/checks';
 import { PHASES } from '@/lib/launch/templates';
+import { formatEuro } from '@/lib/finance/money';
+import { INVOICE_STATUS_LABEL, QUOTE_STATUS_LABEL, TRIGGER_LABEL, type InvoiceStatus, type QuoteStatus, type ScheduleTrigger } from '@/lib/finance/types';
 
 type Status = 'todo' | 'in_progress' | 'done';
 type Owner = 'vincent' | 'klant' | 'agent';
@@ -55,6 +57,10 @@ interface Data {
     overdue: number;
   };
   templates: { key: string; label: string; description: string; taskCount: number }[];
+  finance: {
+    quotes: { id: string; reference: string; title: string; status: string; sentAt: string | null; viewedAt: string | null; viewCount: number; acceptedAt: string | null; validUntil: string }[];
+    invoices: { id: string; number: string | null; termLabel: string | null; trigger: string | null; status: string; totalCents: number; issuedOn: string | null; dueOn: string | null }[];
+  };
 }
 
 const OWNER_STYLE: Record<Owner, { label: string; cls: string }> = {
@@ -158,6 +164,8 @@ export default function LaunchBoardPage() {
   const { project, milestones, summary, checks } = data;
   const empty = milestones.length === 0;
   const checkByKey = new Map(checks.map((c) => [c.check_key, c]));
+  const finance = data.finance ?? { quotes: [], invoices: [] };
+  const waitingForDelivery = finance.invoices.some((i) => i.trigger === 'oplevering' && i.status === 'concept');
 
   return (
     <div className="max-w-full">
@@ -199,6 +207,61 @@ export default function LaunchBoardPage() {
       </div>
 
       {message && <p className="text-sm text-slate-600 mb-3">{message}</p>}
+
+      {/* Offerte en facturen */}
+      <Card className="mb-6"><CardContent className="p-4">
+        <div className="flex items-center justify-between mb-3">
+          <h2 className="font-semibold text-slate-900 text-sm">Offerte en facturen</h2>
+          <Link href="/admin/finance" className="text-xs text-slate-500 underline">Financiën</Link>
+        </div>
+        {finance.quotes.length === 0 ? (
+          <p className="text-sm text-slate-500">
+            Nog geen offerte aan dit dossier gekoppeld. Kies het dossier in de offerte onder <em>Klantdossier</em>.
+          </p>
+        ) : (
+          <div className="space-y-4">
+            {finance.quotes.map((q) => (
+              <div key={q.id}>
+                <div className="flex flex-wrap items-center gap-2 text-sm">
+                  <Link href={`/admin/finance/offertes/${q.id}`} className="font-medium text-slate-900 underline">{q.reference}</Link>
+                  <span className="text-slate-500">{q.title}</span>
+                  <Badge className={q.status === 'akkoord' ? 'bg-emerald-100 text-emerald-700' : q.status === 'afgewezen' || q.status === 'verlopen' ? 'bg-red-100 text-red-700' : q.status === 'concept' ? 'bg-slate-100 text-slate-600' : 'bg-blue-100 text-blue-700'}>
+                    {QUOTE_STATUS_LABEL[q.status as QuoteStatus] ?? q.status}
+                  </Badge>
+                  <span className="text-xs text-slate-500">
+                    {q.sentAt ? `verstuurd ${new Date(q.sentAt).toLocaleDateString('nl-NL', { day: 'numeric', month: 'short' })}` : 'nog niet verstuurd'}
+                    {q.viewCount > 0 ? ` · ${q.viewCount}× bekeken` : ''}
+                    {q.acceptedAt ? ` · akkoord ${new Date(q.acceptedAt).toLocaleDateString('nl-NL', { day: 'numeric', month: 'short' })}` : ''}
+                    {!q.acceptedAt && q.sentAt ? ` · geldig tot ${new Date(q.validUntil).toLocaleDateString('nl-NL', { day: 'numeric', month: 'short' })}` : ''}
+                  </span>
+                </div>
+              </div>
+            ))}
+            {finance.invoices.length > 0 ? (
+              <div className="divide-y rounded-lg border">
+                {finance.invoices.map((i) => (
+                  <div key={i.id} className="flex flex-wrap items-center gap-x-3 gap-y-1 px-3 py-2 text-sm">
+                    <Link href={`/admin/finance/facturen/${i.id}`} className="font-medium text-slate-900 underline">{i.number ?? 'Concept'}</Link>
+                    <span className="text-slate-600 flex-1 min-w-[160px]">{i.termLabel ?? 'Factuur'}</span>
+                    <span className="text-xs text-slate-400">{TRIGGER_LABEL[i.trigger as ScheduleTrigger] ?? ''}</span>
+                    <span className="tabular-nums text-slate-700">{formatEuro(i.totalCents)}</span>
+                    <Badge className={i.status === 'betaald' ? 'bg-emerald-100 text-emerald-700' : i.status === 'achterstallig' ? 'bg-red-100 text-red-700' : i.status === 'verzonden' ? 'bg-blue-100 text-blue-700' : 'bg-slate-100 text-slate-600'}>
+                      {INVOICE_STATUS_LABEL[i.status as InvoiceStatus] ?? i.status}
+                    </Badge>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-xs text-slate-500">De facturen worden aangemaakt zodra de klant akkoord geeft.</p>
+            )}
+            {waitingForDelivery && (
+              <p className="text-xs text-slate-500">
+                De factuur bij oplevering wordt klaargezet als taak zodra je op <strong>Go live</strong> klikt.
+              </p>
+            )}
+          </div>
+        )}
+      </CardContent></Card>
 
       {empty ? (
         <Card><CardContent className="p-6">

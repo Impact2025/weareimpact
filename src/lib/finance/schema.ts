@@ -57,6 +57,8 @@ async function create() {
     )`;
   // Persoonlijk bericht bovenaan de mail waarmee de offerte wordt verstuurd.
   await sql`ALTER TABLE quotes ADD COLUMN IF NOT EXISTS cover_note TEXT NOT NULL DEFAULT ''`;
+  // Bestaand klantdossier (launch) waar deze offerte bij hoort; wordt bij verzenden aan de deal gekoppeld.
+  await sql`ALTER TABLE quotes ADD COLUMN IF NOT EXISTS link_slug TEXT`;
   await sql`CREATE INDEX IF NOT EXISTS idx_quotes_deal ON quotes(deal_id)`;
   await sql`CREATE INDEX IF NOT EXISTS idx_quotes_company ON quotes(company_id)`;
   await sql`CREATE INDEX IF NOT EXISTS idx_quotes_status ON quotes(status)`;

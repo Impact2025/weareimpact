@@ -128,6 +128,8 @@ export interface Quote {
   subtitle: string;
   /** Persoonlijk bericht boven de standaardtekst van de verzendmail (optioneel). */
   coverNote: string;
+  /** Slug van het bestaande klantdossier (launch) waaraan deze offerte wordt gekoppeld. */
+  linkSlug: string | null;
   dealId: string | null;
   companyId: string | null;
   contactId: string | null;

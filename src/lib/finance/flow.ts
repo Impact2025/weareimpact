@@ -13,6 +13,7 @@ import { computeTotals, lineNetCents, formatEuro, formatInvoiceNumber } from './
 import { invoiceLinesFor } from './plan';
 import { getFinanceSettings } from './settings';
 import { renderInvoicePdf, renderQuotePdf } from './pdf';
+import { linkDossierToDeal } from './link';
 import {
   getInvoice,
   getQuote,
@@ -154,6 +155,14 @@ export async function sendQuote(id: string): Promise<Quote> {
   }
 
   await logEvent('quote', id, 'verzonden', { to: quote.client.invoiceEmail });
+  // Bestaand klantdossier koppelen aan de deal, zodat launch, go-live en facturatie bij elkaar horen.
+  if (quote.linkSlug && dealId) {
+    try {
+      await linkDossierToDeal(quote.linkSlug, dealId, quote.companyId);
+    } catch (err) {
+      console.error('Dossier koppelen mislukt:', err);
+    }
+  }
   await crmActivity(
     { companyId: quote.companyId, contactId: quote.contactId, dealId },
     `Offerte verstuurd: ${quote.reference}`,

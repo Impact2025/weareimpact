@@ -3,6 +3,7 @@ import { isAdminAuthenticated } from '@/lib/admin-auth';
 import { sql } from '@/lib/db/neon';
 import { loadMilestones, summarize } from '@/lib/launch/summary';
 import { TEMPLATES } from '@/lib/launch/templates';
+import { loadProjectFinance } from '@/lib/finance/link';
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
@@ -24,15 +25,17 @@ export async function GET(
     return NextResponse.json({ error: 'Project niet gevonden' }, { status: 404 });
   }
 
-  const [milestones, checks] = await Promise.all([
+  const [milestones, checks, finance] = await Promise.all([
     loadMilestones(slug),
     sql`SELECT check_key, status, detail, checked_at FROM crm_launch_checks WHERE project_slug = ${slug}`,
+    loadProjectFinance(slug).catch(() => ({ quotes: [], invoices: [] })),
   ]);
 
   return NextResponse.json({
     project: projects[0],
     milestones,
     checks,
+    finance,
     summary: summarize(milestones),
     templates: TEMPLATES.map((t) => ({ key: t.key, label: t.label, description: t.description, taskCount: t.tasks.length })),
   });

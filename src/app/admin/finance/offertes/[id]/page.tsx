@@ -41,9 +41,10 @@ export default function QuoteEditorPage({ params }: { params: Promise<{ id: stri
   const [dirty, setDirty] = useState(false);
   const [confirmSend, setConfirmSend] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [dossiers, setDossiers] = useState<{ slug: string; name: string }[]>([]);
 
   const [f, setF] = useState<{
-    reference: string; title: string; subtitle: string; coverNote: string; issuedOn: string; validUntil: string; vatRate: number;
+    reference: string; title: string; subtitle: string; coverNote: string; linkSlug: string | null; issuedOn: string; validUntil: string; vatRate: number;
     client: Party; sections: QuoteSection[]; lines: EditLine[]; schedule: ScheduleItem[];
   } | null>(null);
 
@@ -58,7 +59,7 @@ export default function QuoteEditorPage({ params }: { params: Promise<{ id: stri
       setEvents(data.events);
       setInvoices(data.invoices);
       setProblems(data.problems);
-      setF({ reference: q.reference, title: q.title, subtitle: q.subtitle, coverNote: q.coverNote, issuedOn: q.issuedOn, validUntil: q.validUntil, vatRate: q.vatRate, client: q.client, sections: q.sections, lines: toEditLines(q.lines), schedule: q.schedule });
+      setF({ reference: q.reference, title: q.title, subtitle: q.subtitle, coverNote: q.coverNote, linkSlug: q.linkSlug, issuedOn: q.issuedOn, validUntil: q.validUntil, vatRate: q.vatRate, client: q.client, sections: q.sections, lines: toEditLines(q.lines), schedule: q.schedule });
       setDirty(false);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Laden mislukt');
@@ -68,6 +69,9 @@ export default function QuoteEditorPage({ params }: { params: Promise<{ id: stri
   }, [id]);
 
   useEffect(() => { load(); }, [load]);
+  useEffect(() => {
+    fetch('/api/admin/dossiers').then((r) => r.json()).then((d) => setDossiers(d.projects ?? [])).catch(() => {});
+  }, []);
 
   const locked = quote ? quote.status !== 'concept' : true;
   const lines = useMemo(() => (f ? fromEditLines(f.lines) : []), [f]);
@@ -257,6 +261,18 @@ export default function QuoteEditorPage({ params }: { params: Promise<{ id: stri
               value={f.coverNote}
               onChange={(e) => patch({ coverNote: e.target.value })}
             />
+          </Panel>
+
+          <Panel title="Klantdossier" hint="Optioneel. Koppel de offerte aan een bestaand dossier (launch). Bij versturen worden dossier, deal en facturatie aan elkaar gekoppeld, zodat de go-live de factuur bij oplevering klaarzet.">
+            <select
+              className={field}
+              disabled={locked}
+              value={f.linkSlug ?? ''}
+              onChange={(e) => patch({ linkSlug: e.target.value || null })}
+            >
+              <option value="">Geen, maak een nieuw dossier bij akkoord</option>
+              {dossiers.map((d) => <option key={d.slug} value={d.slug}>{d.name}</option>)}
+            </select>
           </Panel>
 
           <Panel title="Opdrachtgever" hint="Wordt bij het bedrijf onthouden voor de volgende offerte.">
