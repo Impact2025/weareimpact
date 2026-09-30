@@ -113,17 +113,7 @@ export default function OverviewClient({ projectSlug, audience }: { projectSlug:
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
       {yourTurn.length > 0 && (
-        <section style={{ ...cardStyle, borderColor: '#f59e0b', background: '#fffbeb' }}>
-          <h2 style={sectionTitle}>Jouw actie</h2>
-          <ul style={{ margin: 0, paddingLeft: 18 }}>
-            {yourTurn.map((m) => (
-              <li key={m.id} style={{ marginBottom: 4 }}>
-                <strong>{m.title}</strong>
-                {m.due_date && <span style={{ color: '#888', fontSize: 13 }}> · voor {new Date(m.due_date).toLocaleDateString('nl-NL')}</span>}
-              </li>
-            ))}
-          </ul>
-        </section>
+        <YourTurn items={yourTurn} />
       )}
 
       {showPhases && (
@@ -230,6 +220,100 @@ export default function OverviewClient({ projectSlug, audience }: { projectSlug:
         </section>
       )}
     </div>
+  );
+}
+
+const VISIBLE_ACTIONS = 3;
+
+function dueInfo(due: string | null): { label: string; bg: string; fg: string } | null {
+  if (!due) return null;
+  const day = (d: Date) => new Date(d.toLocaleDateString('en-CA', { timeZone: 'Europe/Amsterdam' })).getTime();
+  const diff = Math.round((day(new Date(due)) - day(new Date())) / 86400000);
+  const date = new Date(due).toLocaleDateString('nl-NL', { timeZone: 'Europe/Amsterdam', day: 'numeric', month: 'short' });
+  if (diff < 0) return { label: `Verlopen · ${date}`, bg: '#fee2e2', fg: '#b91c1c' };
+  if (diff === 0) return { label: 'Vandaag', bg: '#ffedd5', fg: '#c2410c' };
+  if (diff === 1) return { label: 'Morgen', bg: '#ffedd5', fg: '#c2410c' };
+  return { label: `Voor ${date}`, bg: '#f1f2f6', fg: '#555' };
+}
+
+function YourTurn({ items }: { items: Milestone[] }) {
+  const [expanded, setExpanded] = useState(false);
+  const sorted = [...items].sort((a, b) => {
+    if (a.due_date && b.due_date) return new Date(a.due_date).getTime() - new Date(b.due_date).getTime();
+    if (a.due_date) return -1;
+    if (b.due_date) return 1;
+    return 0;
+  });
+  const shown = expanded ? sorted : sorted.slice(0, VISIBLE_ACTIONS);
+  const hidden = sorted.length - shown.length;
+
+  return (
+    <section
+      style={{
+        background: '#fff',
+        border: '1px solid #fde3b4',
+        borderLeft: '4px solid #f59e0b',
+        borderRadius: 12,
+        boxShadow: '0 1px 3px rgba(16,24,40,0.06)',
+        overflow: 'hidden',
+      }}
+    >
+      <header style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 16px 10px' }}>
+        <div>
+          <h2 style={{ fontSize: 16, fontWeight: 700, color: '#1a1a2e', margin: 0 }}>Jouw actie</h2>
+          <p style={{ margin: '2px 0 0', fontSize: 13, color: '#777' }}>Hier wachten we op jou</p>
+        </div>
+        <span style={{ background: '#fff4e0', color: '#a35b00', fontWeight: 700, fontSize: 13, padding: '3px 10px', borderRadius: 999 }}>
+          {items.length} {items.length === 1 ? 'punt' : 'punten'}
+        </span>
+      </header>
+      <ul style={{ listStyle: 'none', margin: 0, padding: 0 }}>
+        {shown.map((m, i) => {
+          const due = dueInfo(m.due_date);
+          return (
+            <li
+              key={m.id}
+              style={{ display: 'flex', gap: 12, alignItems: 'flex-start', padding: '12px 16px', borderTop: '1px solid #f1f2f6' }}
+            >
+              <span
+                style={{
+                  flex: '0 0 auto', width: 24, height: 24, borderRadius: '50%', background: '#fff4e0', color: '#a35b00',
+                  fontSize: 12, fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: 1,
+                }}
+              >
+                {i + 1}
+              </span>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ fontSize: 15, fontWeight: 600, color: '#1a1a2e', lineHeight: 1.4 }}>{m.title}</div>
+                {m.description && <div style={{ fontSize: 13, color: '#666', marginTop: 3, lineHeight: 1.5 }}>{m.description}</div>}
+                {due && (
+                  <span
+                    style={{
+                      display: 'inline-block', marginTop: 6, fontSize: 12, fontWeight: 600,
+                      background: due.bg, color: due.fg, padding: '2px 8px', borderRadius: 999,
+                    }}
+                  >
+                    {due.label}
+                  </span>
+                )}
+              </div>
+            </li>
+          );
+        })}
+      </ul>
+      {sorted.length > VISIBLE_ACTIONS && (
+        <button
+          type="button"
+          onClick={() => setExpanded((v) => !v)}
+          style={{
+            width: '100%', padding: '10px 16px', border: 0, borderTop: '1px solid #f1f2f6', background: '#fafafa',
+            color: '#a35b00', fontSize: 13, fontWeight: 600, cursor: 'pointer', textAlign: 'left',
+          }}
+        >
+          {expanded ? 'Minder tonen' : `Toon ${hidden} meer`}
+        </button>
+      )}
+    </section>
   );
 }
 
