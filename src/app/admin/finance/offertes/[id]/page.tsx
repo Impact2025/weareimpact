@@ -43,7 +43,7 @@ export default function QuoteEditorPage({ params }: { params: Promise<{ id: stri
   const [copied, setCopied] = useState(false);
 
   const [f, setF] = useState<{
-    reference: string; title: string; subtitle: string; issuedOn: string; validUntil: string; vatRate: number;
+    reference: string; title: string; subtitle: string; coverNote: string; issuedOn: string; validUntil: string; vatRate: number;
     client: Party; sections: QuoteSection[]; lines: EditLine[]; schedule: ScheduleItem[];
   } | null>(null);
 
@@ -58,7 +58,7 @@ export default function QuoteEditorPage({ params }: { params: Promise<{ id: stri
       setEvents(data.events);
       setInvoices(data.invoices);
       setProblems(data.problems);
-      setF({ reference: q.reference, title: q.title, subtitle: q.subtitle, issuedOn: q.issuedOn, validUntil: q.validUntil, vatRate: q.vatRate, client: q.client, sections: q.sections, lines: toEditLines(q.lines), schedule: q.schedule });
+      setF({ reference: q.reference, title: q.title, subtitle: q.subtitle, coverNote: q.coverNote, issuedOn: q.issuedOn, validUntil: q.validUntil, vatRate: q.vatRate, client: q.client, sections: q.sections, lines: toEditLines(q.lines), schedule: q.schedule });
       setDirty(false);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Laden mislukt');
@@ -124,6 +124,22 @@ export default function QuoteEditorPage({ params }: { params: Promise<{ id: stri
     }
   }
 
+  async function testMail() {
+    if (dirty && !(await save())) return;
+    setBusy('test');
+    setError(null);
+    try {
+      const res = await fetch(`/api/admin/finance/quotes/${id}/testmail`, { method: 'POST' });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Testmail mislukt');
+      setNotice(`Testmail naar ${data.to}`);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Testmail mislukt');
+    } finally {
+      setBusy(null);
+    }
+  }
+
   async function duplicate() {
     setBusy('dup');
     const res = await fetch(`/api/admin/finance/quotes/${id}/duplicate`, { method: 'POST' });
@@ -184,6 +200,9 @@ export default function QuoteEditorPage({ params }: { params: Promise<{ id: stri
             <Button variant="outline" size="sm" onClick={save} disabled={!dirty || busy !== null}>
               {busy === 'save' ? <Loader2 size={15} className="mr-2 animate-spin" aria-hidden /> : <Save size={15} className="mr-2" aria-hidden />}Opslaan
             </Button>
+            <Button variant="outline" size="sm" onClick={testMail} disabled={busy !== null}>
+              {busy === 'test' ? <Loader2 size={15} className="mr-2 animate-spin" aria-hidden /> : <Send size={15} className="mr-2" aria-hidden />}Testmail
+            </Button>
             {confirmSend ? (
               <span className="flex items-center gap-2 rounded-lg bg-orange-50 px-3 py-1.5 text-sm">
                 Versturen naar <strong>{f.client.invoiceEmail || '?'}</strong>?
@@ -227,6 +246,17 @@ export default function QuoteEditorPage({ params }: { params: Promise<{ id: stri
                 <div><label className={label}>Btw %</label><input type="number" className={field} disabled={locked} value={f.vatRate} onChange={(e) => patch({ vatRate: Number(e.target.value) })} /></div>
               </div>
             </div>
+          </Panel>
+
+          <Panel title="Bericht in de mail" hint="Optioneel. Komt bovenaan de mail waarmee je de offerte verstuurt, vóór de standaardtekst.">
+            <textarea
+              className={field + ' min-h-[120px]'}
+              disabled={locked}
+              maxLength={2000}
+              placeholder="Bijvoorbeeld: Fijn dat we zo goed hebben afgestemd. In de offerte staat alles wat we bespraken…"
+              value={f.coverNote}
+              onChange={(e) => patch({ coverNote: e.target.value })}
+            />
           </Panel>
 
           <Panel title="Opdrachtgever" hint="Wordt bij het bedrijf onthouden voor de volgende offerte.">

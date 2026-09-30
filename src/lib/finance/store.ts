@@ -51,6 +51,7 @@ export function rowToQuote(r: Row): Quote {
     token: r.token as string,
     title: r.title as string,
     subtitle: (r.subtitle as string) ?? '',
+    coverNote: (r.cover_note as string) ?? '',
     dealId: (r.deal_id as string) ?? null,
     companyId: (r.company_id as string) ?? null,
     contactId: (r.contact_id as string) ?? null,
@@ -166,6 +167,7 @@ export interface QuoteInput {
   reference?: string;
   title: string;
   subtitle: string;
+  coverNote: string;
   dealId: string | null;
   companyId: string | null;
   contactId: string | null;
@@ -182,9 +184,9 @@ export async function insertQuote(input: QuoteInput): Promise<Quote> {
   await ensureFinanceSchema();
   const reference = input.reference || (await makeReference(input.client.legalName || input.title));
   const rows = await sql`
-    INSERT INTO quotes (reference, token, title, subtitle, deal_id, company_id, contact_id, client,
+    INSERT INTO quotes (reference, token, title, subtitle, cover_note, deal_id, company_id, contact_id, client,
       issued_on, valid_until, sections, lines, schedule, vat_rate)
-    VALUES (${reference}, ${newToken()}, ${input.title}, ${input.subtitle}, ${input.dealId}, ${input.companyId},
+    VALUES (${reference}, ${newToken()}, ${input.title}, ${input.subtitle}, ${input.coverNote}, ${input.dealId}, ${input.companyId},
       ${input.contactId}, ${JSON.stringify(input.client)}::jsonb, ${input.issuedOn}, ${input.validUntil},
       ${JSON.stringify(input.sections)}::jsonb, ${JSON.stringify(input.lines)}::jsonb,
       ${JSON.stringify(input.schedule)}::jsonb, ${input.vatRate})
@@ -198,7 +200,7 @@ export async function insertQuote(input: QuoteInput): Promise<Quote> {
 export async function updateQuoteDraft(id: string, input: QuoteInput): Promise<Quote | null> {
   await ensureFinanceSchema();
   const rows = await sql`
-    UPDATE quotes SET reference = ${input.reference ?? ''}, title = ${input.title}, subtitle = ${input.subtitle},
+    UPDATE quotes SET reference = ${input.reference ?? ''}, title = ${input.title}, subtitle = ${input.subtitle}, cover_note = ${input.coverNote},
       deal_id = ${input.dealId}, company_id = ${input.companyId}, contact_id = ${input.contactId},
       client = ${JSON.stringify(input.client)}::jsonb, issued_on = ${input.issuedOn}, valid_until = ${input.validUntil},
       sections = ${JSON.stringify(input.sections)}::jsonb, lines = ${JSON.stringify(input.lines)}::jsonb,

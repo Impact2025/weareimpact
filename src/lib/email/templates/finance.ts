@@ -19,6 +19,16 @@ const firstName = (full: string) => full.trim().split(/\s+/)[0] || '';
 
 // ---------- offerte ----------
 
+/** Persoonlijk bericht als paragrafen: lege regel = nieuwe alinea, enkele regel = regeleinde. */
+function coverNoteHtml(note: string | undefined): string {
+  const clean = (note ?? '').trim();
+  if (!clean) return '';
+  return clean
+    .split(/\n\s*\n/)
+    .map((p) => `<p style="${P}">${esc(p.trim()).replace(/\n/g, '<br>')}</p>`)
+    .join('');
+}
+
 export function quoteSentEmail(d: {
   signerName: string;
   title: string;
@@ -26,22 +36,29 @@ export function quoteSentEmail(d: {
   url: string;
   validUntil: string;
   totalExclCents: number;
+  coverNote?: string;
+  /** Testverzending: duidelijke banner en onderwerp. */
+  test?: boolean;
 }): Mail {
   const hi = firstName(d.signerName) ? `Hoi ${esc(firstName(d.signerName))},` : 'Hoi,';
+  const testBanner = d.test
+    ? `<p style="margin: 0 0 20px; padding: 10px 14px; background: #fef3c7; border-radius: 8px; font-size: 14px; color: #92400e;"><strong>Testmail.</strong> Dit is een voorbeeld van de mail die de klant krijgt. De knop werkt pas nadat de offerte is verstuurd.</p>`
+    : '';
   const body = `
+    ${testBanner}
     <p style="${P}">${hi}</p>
+    ${coverNoteHtml(d.coverNote)}
     <p style="${P}">Hierbij mijn offerte <strong>${esc(d.title)}</strong>. Je kunt hem online bekijken en met één klik akkoord geven. De PDF zit als bijlage bij deze mail.</p>
     ${emailCard(`
       <p style="margin: 0; font-size: 15px; color: #0f172a;"><strong>Referentie:</strong> ${esc(d.reference)}</p>
-      <p style="margin: 6px 0 0; font-size: 15px; color: #0f172a;"><strong>Investering:</strong> ${formatEuro(d.totalExclCents)} excl. btw</p>
       <p style="margin: 6px 0 0; font-size: 15px; color: #0f172a;"><strong>Geldig tot:</strong> ${nlDate(d.validUntil)}</p>`)}
     ${emailButton('Bekijk en geef akkoord', d.url)}
     <p style="${P} margin-top: 24px;">Vragen of iets aanpassen? Reageer gewoon op deze mail.</p>
     ${emailSignature()}`;
   return {
-    subject: `Offerte ${d.reference}: ${d.title}`,
+    subject: `${d.test ? '[TEST] ' : ''}Offerte ${d.reference}: ${d.title}`,
     html: emailShell({ preheader: `Offerte ${d.reference}, geldig tot ${nlDate(d.validUntil)}.`, title: 'Jouw offerte', subtitle: d.title, body }),
-    text: `${hi.replace(/&[a-z]+;/g, '')}\n\nHierbij mijn offerte "${d.title}" (${d.reference}), ${formatEuro(d.totalExclCents)} excl. btw, geldig tot ${nlDate(d.validUntil)}.\nBekijk en geef akkoord: ${d.url}\n\nVincent van Munster\nWeAreImpact`,
+    text: `${hi.replace(/&[a-z]+;/g, '')}\n\n${d.coverNote?.trim() ? `${d.coverNote.trim()}\n\n` : ''}Hierbij mijn offerte "${d.title}" (${d.reference}), geldig tot ${nlDate(d.validUntil)}.\nBekijk en geef akkoord: ${d.url}\n\nVincent van Munster\nWeAreImpact`,
   };
 }
 

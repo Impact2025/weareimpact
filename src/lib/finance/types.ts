@@ -126,6 +126,8 @@ export interface Quote {
   token: string;
   title: string;
   subtitle: string;
+  /** Persoonlijk bericht boven de standaardtekst van de verzendmail (optioneel). */
+  coverNote: string;
   dealId: string | null;
   companyId: string | null;
   contactId: string | null;

@@ -138,6 +138,7 @@ export async function sendQuote(id: string): Promise<Quote> {
     url: `${WEB_BASE}/offerte/${quote.token}`,
     validUntil: quote.validUntil,
     totalExclCents: totals.subtotalCents,
+    coverNote: quote.coverNote,
   });
   const result = await sendEmail({
     to: quote.client.invoiceEmail,
@@ -159,6 +160,36 @@ export async function sendQuote(id: string): Promise<Quote> {
     `${quote.title}, ${formatEuro(totals.subtotalCents)} excl. btw, naar ${quote.client.invoiceEmail}.`,
   );
   return (await getQuote(id))!;
+}
+
+/**
+ * Testverzending: dezelfde mail en pdf als bij echt versturen, maar zonder iets aan de offerte
+ * of het CRM te veranderen. Standaard naar de eigenaar, of naar een opgegeven adres.
+ */
+export async function sendQuoteTestMail(id: string, to: string = OWNER_EMAIL): Promise<string> {
+  const quote = await getQuote(id);
+  if (!quote) throw new FlowError('Offerte niet gevonden');
+  const settings = await getFinanceSettings();
+  const pdf = await renderQuotePdf(quote, settings);
+  const mail = quoteSentEmail({
+    signerName: quote.client.signerName,
+    title: quote.title,
+    reference: quote.reference,
+    url: `${WEB_BASE}/offerte/${quote.token}`,
+    validUntil: quote.validUntil,
+    totalExclCents: quoteTotals(quote).subtotalCents,
+    coverNote: quote.coverNote,
+    test: true,
+  });
+  const result = await sendEmail({
+    to,
+    subject: mail.subject,
+    html: mail.html,
+    text: mail.text,
+    attachments: [{ filename: `Offerte ${quote.reference} (test).pdf`, content: pdf }],
+  });
+  if (!result.success) throw new FlowError(result.error || 'Testmail versturen mislukt');
+  return to;
 }
 
 // ---------- klant opent / accepteert / wijst af ----------

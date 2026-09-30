@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { duplicateQuote } from '@/lib/finance/create';
-import { FlowError, sendQuote } from '@/lib/finance/flow';
+import { FlowError, sendQuote, sendQuoteTestMail } from '@/lib/finance/flow';
 import { renderQuotePdf } from '@/lib/finance/pdf';
 import { getFinanceSettings } from '@/lib/finance/settings';
 import { getQuote } from '@/lib/finance/store';
@@ -27,6 +27,9 @@ export async function POST(_req: NextRequest, { params }: Ctx) {
   try {
     if (action === 'send') {
       return NextResponse.json({ quote: await sendQuote(id) });
+    }
+    if (action === 'testmail') {
+      return NextResponse.json({ to: await sendQuoteTestMail(id) });
     }
     if (action === 'duplicate') {
       const source = await getQuote(id);

@@ -92,6 +92,7 @@ export function parseQuoteInput(body: unknown): { input: QuoteInput | null; erro
       reference: str(o.reference, 60) || undefined,
       title,
       subtitle: str(o.subtitle, 240),
+      coverNote: str(o.coverNote, 2000),
       dealId: str(o.dealId, 60) || null,
       companyId: str(o.companyId, 60) || null,
       contactId: str(o.contactId, 60) || null,
