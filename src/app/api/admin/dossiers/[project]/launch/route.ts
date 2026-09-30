@@ -18,7 +18,7 @@ export async function GET(
   const { project: slug } = await params;
 
   const projects = await sql`
-    SELECT slug, name, client_name, template, site_url, probe_url, go_live_date, live_at, reminders_enabled, last_reminder_at, weekly_enabled, last_weekly_at
+    SELECT slug, name, client_name, template, site_url, probe_url, go_live_date, live_at, reminders_enabled, last_reminder_at, weekly_enabled, last_weekly_at, milestone_mails_enabled
     FROM crm_projects WHERE slug = ${slug}
   `;
   if (projects.length === 0) {
@@ -62,6 +62,14 @@ export async function PATCH(
   }
   if (body.weeklyEnabled !== undefined) {
     await sql`UPDATE crm_projects SET weekly_enabled = ${!!body.weeklyEnabled} WHERE slug = ${slug}`;
+  }
+  if (body.milestoneMailsEnabled !== undefined) {
+    if (body.milestoneMailsEnabled) {
+      // Aanzetten geeft geen terugwerkende mails: wat al klaar is telt als gemeld.
+      await sql`UPDATE crm_milestones SET client_notified_at = NOW()
+                WHERE project_slug = ${slug} AND status = 'done' AND client_notified_at IS NULL`;
+    }
+    await sql`UPDATE crm_projects SET milestone_mails_enabled = ${!!body.milestoneMailsEnabled} WHERE slug = ${slug}`;
   }
   if (body.remindersEnabled !== undefined) {
     await sql`UPDATE crm_projects SET reminders_enabled = ${!!body.remindersEnabled} WHERE slug = ${slug}`;

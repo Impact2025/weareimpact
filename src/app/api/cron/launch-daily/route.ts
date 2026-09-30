@@ -7,6 +7,7 @@ import { getLaunchOverviews } from '@/lib/launch/briefing';
 import { runAndStoreChecks } from '@/lib/launch/run-checks';
 import { generateLaunchClientReminderEmail, generateLaunchDigestEmail } from '@/lib/email/templates/launch-mails';
 import { generateLaunchWeeklyEmail } from '@/lib/email/templates/launch-weekly';
+import { generateMilestonesDoneEmail } from '@/lib/email/templates/launch-milestones';
 import { buildWeeklyReport } from '@/lib/launch/weekly';
 import { getClientEmail } from '@/lib/launch/client-contact';
 
@@ -66,7 +67,7 @@ async function run(request: NextRequest) {
     const overviews = await getLaunchOverviews();
 
     const settings = await sql`
-      SELECT slug, name, reminders_enabled, last_reminder_at, weekly_enabled, last_weekly_at
+      SELECT slug, name, reminders_enabled, last_reminder_at, weekly_enabled, last_weekly_at, milestone_mails_enabled
       FROM crm_projects WHERE template IS NOT NULL AND live_at IS NULL
     `;
 
@@ -98,9 +99,54 @@ async function run(request: NextRequest) {
       const res = await sendEmail({ to, ...generateLaunchWeeklyEmail({ report, portalUrl: url }) });
       if (res.success) {
         await sql`UPDATE crm_projects SET last_weekly_at = NOW(), last_reminder_at = NOW() WHERE slug = ${slug}`;
+        // Het weekbericht meldt de afgeronde stappen al; geen aparte mail erbovenop.
+        await sql`UPDATE crm_milestones SET client_notified_at = NOW()
+                  WHERE project_slug = ${slug} AND status = 'done' AND client_notified_at IS NULL`;
         weeklySent.push(report.projectName);
       } else {
         weeklySkipped.push({ slug, reason: `mail mislukt: ${String(res.error).slice(0, 120)}` });
+      }
+    }
+
+    // Afgeronde, klantzichtbare stappen (opt-in): één gebundelde mail per project per run.
+    // Stappen die de klant zelf doet slaan we over — die weet het al.
+    const milestoneMailsSent: string[] = [];
+    const milestoneMailsSkipped: { slug: string; reason: string }[] = [];
+    for (const s of settings) {
+      if (!s.milestone_mails_enabled) continue;
+      const slug = s.slug as string;
+      const done = await sql`
+        SELECT id, title, owner FROM crm_milestones
+        WHERE project_slug = ${slug} AND status = 'done' AND client_visible = TRUE AND client_notified_at IS NULL
+        ORDER BY completed_at ASC NULLS LAST, sort_order ASC
+      `;
+      if (done.length === 0) continue;
+      const ids = done.map((d) => d.id as string);
+      const forClient = done.filter((d) => d.owner !== 'klant').map((d) => ({ title: d.title as string }));
+      if (forClient.length === 0) {
+        if (!dry) await sql`UPDATE crm_milestones SET client_notified_at = NOW() WHERE id = ANY(${ids}::uuid[])`;
+        continue;
+      }
+      const to = await getClientEmail(slug);
+      if (!to) {
+        milestoneMailsSkipped.push({ slug, reason: 'geen klant-e-mail bekend' });
+        continue;
+      }
+      if (dry) {
+        milestoneMailsSent.push(`${s.name} (dry-run → ${to}, ${forClient.length} stappen)`);
+        continue;
+      }
+      const { url } = await createMagicLink(slug, 'klant', to);
+      const res = await sendEmail({
+        to,
+        ...generateMilestonesDoneEmail({ projectName: s.name as string, portalUrl: url, done: forClient }),
+      });
+      if (res.success) {
+        await sql`UPDATE crm_milestones SET client_notified_at = NOW() WHERE id = ANY(${ids}::uuid[])`;
+        await sql`UPDATE crm_projects SET last_reminder_at = NOW() WHERE slug = ${slug}`;
+        milestoneMailsSent.push(s.name as string);
+      } else {
+        milestoneMailsSkipped.push({ slug, reason: `mail mislukt: ${String(res.error).slice(0, 120)}` });
       }
     }
 
@@ -143,7 +189,7 @@ async function run(request: NextRequest) {
       const mail = generateLaunchDigestEmail({
         atRisk,
         onTrack: overviews.filter((o) => o.risks.length === 0),
-        remindersSent: [...weeklySent, ...remindersSent],
+        remindersSent: [...weeklySent, ...milestoneMailsSent, ...remindersSent],
       });
       digestSent = (await sendEmail({ to: VINCENT, ...mail })).success;
     }
@@ -156,6 +202,8 @@ async function run(request: NextRequest) {
       checkErrors,
       weeklySent,
       weeklySkipped,
+      milestoneMailsSent,
+      milestoneMailsSkipped,
       remindersSent,
       remindersSkipped,
       atRisk: atRisk.map((o) => ({ slug: o.slug, risks: o.risks })),

@@ -30,6 +30,10 @@ async function main() {
   await sql`UPDATE crm_milestones SET completed_at = updated_at WHERE status = 'done' AND completed_at IS NULL`;
   await sql`ALTER TABLE crm_projects ADD COLUMN IF NOT EXISTS weekly_enabled BOOLEAN NOT NULL DEFAULT FALSE`;
   await sql`ALTER TABLE crm_projects ADD COLUMN IF NOT EXISTS last_weekly_at TIMESTAMPTZ`;
+  await sql`ALTER TABLE crm_projects ADD COLUMN IF NOT EXISTS milestone_mails_enabled BOOLEAN NOT NULL DEFAULT FALSE`;
+  await sql`ALTER TABLE crm_milestones ADD COLUMN IF NOT EXISTS client_notified_at TIMESTAMPTZ`;
+  // Bestaande afgeronde stappen tellen als "al gemeld", zodat aanzetten geen terugwerkende mails geeft.
+  await sql`UPDATE crm_milestones SET client_notified_at = NOW() WHERE status = 'done' AND client_notified_at IS NULL`;
 
   await sql`
     CREATE TABLE IF NOT EXISTS crm_launch_checks (
