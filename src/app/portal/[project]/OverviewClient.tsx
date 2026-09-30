@@ -113,7 +113,23 @@ export default function OverviewClient({ projectSlug, audience }: { projectSlug:
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
       {yourTurn.length > 0 && (
-        <YourTurn items={yourTurn} />
+        <YourTurn
+          items={yourTurn}
+          projectSlug={projectSlug}
+          audience={audience}
+          onCompleted={(id) =>
+            setData((d) =>
+              d
+                ? {
+                    ...d,
+                    milestones: d.milestones.map((m) =>
+                      m.id === id ? { ...m, status: 'done', completed_at: new Date().toISOString() } : m,
+                    ),
+                  }
+                : d,
+            )
+          }
+        />
       )}
 
       {showPhases && (
@@ -225,6 +241,11 @@ export default function OverviewClient({ projectSlug, audience }: { projectSlug:
 
 const VISIBLE_ACTIONS = 3;
 
+const actionBtn: React.CSSProperties = {
+  padding: '6px 12px', fontSize: 13, fontWeight: 600, borderRadius: 8, cursor: 'pointer',
+  background: '#fff', color: '#1a1a2e', border: '1px solid #d1d5db',
+};
+
 function dueInfo(due: string | null): { label: string; bg: string; fg: string } | null {
   if (!due) return null;
   const day = (d: Date) => new Date(d.toLocaleDateString('en-CA', { timeZone: 'Europe/Amsterdam' })).getTime();
@@ -236,8 +257,41 @@ function dueInfo(due: string | null): { label: string; bg: string; fg: string } 
   return { label: `Voor ${date}`, bg: '#f1f2f6', fg: '#555' };
 }
 
-function YourTurn({ items }: { items: Milestone[] }) {
+function YourTurn({
+  items, projectSlug, audience, onCompleted,
+}: { items: Milestone[]; projectSlug: string; audience: Audience; onCompleted: (id: string) => void }) {
   const [expanded, setExpanded] = useState(false);
+  const [notice, setNotice] = useState<string | null>(null);
+  const [openComment, setOpenComment] = useState<string | null>(null);
+  const [draft, setDraft] = useState('');
+  const [busy, setBusy] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  async function submit(m: Milestone, payload: { complete?: boolean; comment?: string }) {
+    setBusy(m.id);
+    setError(null);
+    try {
+      const res = await fetch(`/api/crm/portal/${projectSlug}/${audience}/milestones/${m.id}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      const json = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(json.error || 'Opslaan lukte niet. Probeer het zo nog eens.');
+      if (payload.comment) {
+        setOpenComment(null);
+        setDraft('');
+      }
+      setNotice(payload.complete ? 'Afgevinkt. Vincent krijgt hier bericht van.' : 'Je opmerking is verstuurd naar Vincent.');
+      window.setTimeout(() => setNotice(null), 5000);
+      if (payload.complete) onCompleted(m.id);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Opslaan lukte niet.');
+    } finally {
+      setBusy(null);
+    }
+  }
+
   const sorted = [...items].sort((a, b) => {
     if (a.due_date && b.due_date) return new Date(a.due_date).getTime() - new Date(b.due_date).getTime();
     if (a.due_date) return -1;
@@ -267,6 +321,16 @@ function YourTurn({ items }: { items: Milestone[] }) {
           {items.length} {items.length === 1 ? 'punt' : 'punten'}
         </span>
       </header>
+      {notice && (
+        <div role="status" style={{ background: '#ecfdf5', color: '#047857', fontSize: 13, fontWeight: 600, padding: '8px 16px' }}>
+          ✓ {notice}
+        </div>
+      )}
+      {error && (
+        <div role="alert" style={{ background: '#fef2f2', color: '#b91c1c', fontSize: 13, fontWeight: 600, padding: '8px 16px' }}>
+          {error}
+        </div>
+      )}
       <ul style={{ listStyle: 'none', margin: 0, padding: 0 }}>
         {shown.map((m, i) => {
           const due = dueInfo(m.due_date);
@@ -295,6 +359,43 @@ function YourTurn({ items }: { items: Milestone[] }) {
                   >
                     {due.label}
                   </span>
+                )}
+                <div style={{ display: 'flex', gap: 8, marginTop: 10, flexWrap: 'wrap' }}>
+                  <button
+                    type="button"
+                    disabled={busy === m.id}
+                    onClick={() => submit(m, { complete: true })}
+                    style={{ ...actionBtn, background: '#10b981', color: '#fff', border: '1px solid #10b981' }}
+                  >
+                    {busy === m.id ? 'Bezig…' : '✓ Afvinken'}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => { setOpenComment(openComment === m.id ? null : m.id); setDraft(''); }}
+                    style={actionBtn}
+                  >
+                    Opmerking
+                  </button>
+                </div>
+                {openComment === m.id && (
+                  <div style={{ marginTop: 10 }}>
+                    <textarea
+                      value={draft}
+                      onChange={(e) => setDraft(e.target.value)}
+                      maxLength={2000}
+                      rows={3}
+                      placeholder="Schrijf hier je opmerking of vraag…"
+                      style={{ width: '100%', boxSizing: 'border-box', padding: 8, fontSize: 14, border: '1px solid #d1d5db', borderRadius: 8, fontFamily: 'inherit' }}
+                    />
+                    <button
+                      type="button"
+                      disabled={!draft.trim() || busy === m.id}
+                      onClick={() => submit(m, { comment: draft })}
+                      style={{ ...actionBtn, marginTop: 6, background: '#1a1a2e', color: '#fff', border: '1px solid #1a1a2e', opacity: draft.trim() ? 1 : 0.5 }}
+                    >
+                      Versturen
+                    </button>
+                  </div>
                 )}
               </div>
             </li>
