@@ -1,16 +1,7 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { isValidAdminSessionToken } from '@/lib/admin-session';
-
-// Constant-time string vergelijking (voorkomt timing-aanvallen op de API-key).
-function timingSafeEqual(a: string, b: string): boolean {
-  if (a.length !== b.length) return false;
-  let diff = 0;
-  for (let i = 0; i < a.length; i++) {
-    diff |= a.charCodeAt(i) ^ b.charCodeAt(i);
-  }
-  return diff === 0;
-}
+import { isValidServiceKey } from '@/lib/service-keys';
 
 const BLOCKED_COUNTRIES = ['CN', 'SG', 'IR', 'RU', 'VN', 'IN'];
 
@@ -79,13 +70,11 @@ export async function middleware(request: NextRequest) {
   if (valid) return NextResponse.next();
 
   // Service-to-service bypass: cron/automation jobs mogen /api/admin/* bellen
-  // met een geldige x-api-key header (CRON_API_KEY). Vergelijking is
+  // met een geldige x-api-key header (CRON_API_KEY of CRON_API_KEYS). Vergelijking is
   // constant-time om timing-aanvallen te voorkomen. Laat de cookie-sessie
   // ongemoeid — dit is puur een additioneel, niet-sessions pad voor bots.
   if (isProtectedApi) {
-    const apiKey = request.headers.get('x-api-key');
-    const expected = process.env.CRON_API_KEY;
-    if (apiKey && expected && timingSafeEqual(apiKey, expected)) {
+    if (isValidServiceKey(request.headers.get('x-api-key'))) {
       return NextResponse.next();
     }
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
