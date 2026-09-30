@@ -63,7 +63,7 @@ describe('planTerms: percentage-termijnen (sprint)', () => {
       schedule,
       lines: [line({ unitPriceCents: 175000 }), line({ description: 'Nazorg', quantity: 14, unitPriceCents: 0 })],
     });
-    expect(terms[0].lines.map((l) => l.description)).toEqual(['Regel (50%)']);
+    expect(terms[0].lines.map((l) => l.description)).toEqual(['Regel (termijn 1 van 2)']);
   });
 });
 

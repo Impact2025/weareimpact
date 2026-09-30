@@ -145,7 +145,7 @@ function Header({ logo, tag, meta, settings }: { logo: Buffer | null; tag: strin
         {logo ? <Image src={logo} style={s.logo} /> : null}
         <View>
           <Text style={s.brand}>{settings.tradeName || 'WeAreImpact'}</Text>
-          <Text style={s.tagline}>AI & innovatie in het sociaal domein</Text>
+          <Text style={s.tagline}>AI & Innovatie met een sociaal hart.</Text>
         </View>
       </View>
       <View>
@@ -441,7 +441,8 @@ function InvoiceDoc({ invoice, settings, logo }: { invoice: Invoice; settings: F
           <View style={s.payBox} wrap={false}>
             <Text style={s.partyLabel}>BETALEN</Text>
             <Text style={s.p}>
-              Gelieve <Text style={s.bold}>{formatEuro(invoice.totalCents)}</Text> over te maken
+              Gelieve <Text style={s.bold}>{formatEuro(invoice.totalCents)}</Text>
+              <Text>{"  over te maken"}</Text>
               {invoice.dueOn ? <Text> uiterlijk <Text style={s.bold}>{nlDate(invoice.dueOn)}</Text></Text> : null}
               {settings.iban ? <Text> op IBAN <Text style={s.bold}>{settings.iban}</Text> t.n.v. {settings.legalName}</Text> : null}
               , onder vermelding van <Text style={s.bold}>{number}</Text>.

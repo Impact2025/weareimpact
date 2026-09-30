@@ -78,3 +78,13 @@ export function parseEuroToCents(input: string | number): number | null {
 export function centsToInput(cents: number): string {
   return (cents / 100).toFixed(2).replace('.', ',');
 }
+
+/**
+ * Factuurnummer in het formaat van de boekhouding: FA-26-019 (jaar met twee cijfers, volgnummer
+ * met minimaal drie cijfers). Creditnota's hebben een eigen reeks: FA-26-C001.
+ */
+export function formatInvoiceNumber(year: number, sequence: number, credit = false): string {
+  const yy = String(year % 100).padStart(2, '0');
+  const n = String(sequence).padStart(3, '0');
+  return `FA-${yy}-${credit ? 'C' : ''}${n}`;
+}

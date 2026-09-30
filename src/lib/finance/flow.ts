@@ -9,7 +9,7 @@ import {
 import { ensureDossierForDeal } from '@/lib/crm/dossierFromDeal';
 import { ensureCompanyAndContact } from '@/lib/crm/ensureContact';
 import { ensureFinanceSchema } from './schema';
-import { computeTotals, lineNetCents, formatEuro } from './money';
+import { computeTotals, lineNetCents, formatEuro, formatInvoiceNumber } from './money';
 import { invoiceLinesFor } from './plan';
 import { getFinanceSettings } from './settings';
 import { renderInvoicePdf, renderQuotePdf } from './pdf';
@@ -342,7 +342,7 @@ async function nextInvoiceNumber(credit: boolean): Promise<string> {
     ON CONFLICT (key) DO UPDATE SET value = finance_counters.value + 1
     RETURNING value`;
   const n = Number(rows[0].value);
-  return credit ? `${year}-C${String(n).padStart(3, '0')}` : `${year}-${String(n).padStart(4, '0')}`;
+  return formatInvoiceNumber(year, n, credit);
 }
 
 export async function sendInvoice(id: string, opts: { reminder?: boolean } = {}): Promise<Invoice> {

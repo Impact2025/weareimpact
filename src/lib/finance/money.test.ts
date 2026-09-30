@@ -5,6 +5,7 @@ import {
   lineNetCents,
   lineRegularCents,
   parseEuroToCents,
+  formatInvoiceNumber,
   splitByPercent,
 } from './money';
 
@@ -114,5 +115,26 @@ describe('parseEuroToCents', () => {
 
   it('draait terug met centsToInput', () => {
     expect(parseEuroToCents(centsToInput(375050))).toBe(375050);
+  });
+});
+
+describe('formatInvoiceNumber', () => {
+  it('volgt het formaat van de boekhouding', () => {
+    expect(formatInvoiceNumber(2026, 19)).toBe('FA-26-019');
+    expect(formatInvoiceNumber(2026, 1)).toBe('FA-26-001');
+    expect(formatInvoiceNumber(2027, 105)).toBe('FA-27-105');
+  });
+
+  it('groeit door na 999 zonder af te kappen', () => {
+    expect(formatInvoiceNumber(2026, 1000)).toBe('FA-26-1000');
+  });
+
+  it('geeft creditnota\'s een eigen reeks', () => {
+    expect(formatInvoiceNumber(2026, 1, true)).toBe('FA-26-C001');
+  });
+
+  it('sorteert als tekst in de juiste volgorde tot 999', () => {
+    const nums = [99, 100, 19, 20].map((n) => formatInvoiceNumber(2026, n)).sort();
+    expect(nums).toEqual(['FA-26-019', 'FA-26-020', 'FA-26-099', 'FA-26-100']);
   });
 });

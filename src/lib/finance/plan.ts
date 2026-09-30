@@ -29,7 +29,7 @@ export function invoiceLinesFor(quote: Pick<Quote, 'lines' | 'schedule'>, item: 
       const net = lineNetCents(l);
       if (net === 0) return null;
       return {
-        description: `${l.description} (${item.percent ?? 0}%)`,
+        description: `${l.description} (termijn ${at + 1} van ${pctItems.length})`,
         detail: l.detail,
         quantity: 1,
         unit: '',
