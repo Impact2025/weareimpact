@@ -59,6 +59,14 @@ export function Footer() {
               </li>
               <li>
                 <Link
+                  href="/ai-projectmanager"
+                  className="text-sm hover:text-orange-400 transition-colors"
+                >
+                  AI-projectmanager
+                </Link>
+              </li>
+              <li>
+                <Link
                   href="/programmamanager-digitale-transformatie"
                   className="text-sm hover:text-orange-400 transition-colors"
                 >

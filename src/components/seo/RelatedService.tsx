@@ -22,6 +22,22 @@ interface Service {
 
 const SERVICES: Service[] = [
   {
+    anchor: 'AI-projectmanager',
+    href: '/ai-projectmanager',
+    sentence:
+      'Wil je dat iemand dit traject van pilot tot productie trekt? Ik werk als {link} voor gemeenten, zorg en welzijn.',
+    match: [
+      'ai-projectmanager',
+      'ai projectmanager',
+      'pilot naar productie',
+      'pilot-naar-productie',
+      'go/no-go',
+      'go-no-go',
+      'ai-implementatie-in-6-fases',
+      'projecten-stranden',
+    ],
+  },
+  {
     anchor: 'programmamanager digitale transformatie',
     href: '/programmamanager-digitale-transformatie',
     sentence:

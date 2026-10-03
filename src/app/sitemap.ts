@@ -111,6 +111,31 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.85,
     },
     {
+      url: `${BASE_URL}/ai-projectmanager`,
+      lastModified: new Date('2026-10-03'),
+      changeFrequency: 'monthly',
+      priority: 0.95,
+    },
+    ...[
+      'ai-projectmanager-sociaal-domein',
+      'ai-projectmanager-gemeente',
+      'ai-projectmanager-zorg-welzijn',
+      'interim-ai-projectmanager',
+      'ai-projectmanager-inhuren',
+      'ai-projectmanager-sociaal-ondernemers',
+    ].map((slug) => ({
+      url: `${BASE_URL}/${slug}`,
+      lastModified: new Date('2026-10-03'),
+      changeFrequency: 'monthly' as const,
+      priority: 0.85,
+    })),
+    {
+      url: `${BASE_URL}/ai-projectmanagement-begrippen`,
+      lastModified: new Date('2026-10-03'),
+      changeFrequency: 'monthly',
+      priority: 0.6,
+    },
+    {
       url: `${BASE_URL}/ai-partner-sociaal-domein`,
       lastModified: new Date('2026-08-05'),
       changeFrequency: 'monthly',
