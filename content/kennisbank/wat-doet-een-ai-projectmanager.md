@@ -9,7 +9,7 @@ tags:
   - projectmanagement
   - ai-implementatie
   - rol
-seo_title: "Wat doet een AI-projectmanager? Taken, verschil en wanneer inhuren"
+seo_title: "Wat doet een AI-projectmanager? Taken en wanneer inhuren"
 seo_description: "Wat doet een AI-projectmanager? Uitleg van de rol: taken, wat het niet is, en wanneer je er een nodig hebt bij een AI-project in zorg, welzijn of gemeente."
 seo_keywords:
   - AI-projectmanager

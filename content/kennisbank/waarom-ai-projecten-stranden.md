@@ -9,7 +9,7 @@ tags:
   - valkuilen
   - ai-projectmanager
   - verandermanagement
-seo_title: "Waarom AI-projecten stranden | 7 patronen en wat je eraan doet"
+seo_title: "Waarom AI-projecten stranden: 7 patronen en oplossingen"
 seo_description: "Waarom AI-projecten mislukken: tool vóór probleem, geen eigenaar, privacy te laat, weerstand en pilots zonder vervolg. Zeven patronen met oplossing."
 seo_keywords:
   - waarom AI projecten mislukken
