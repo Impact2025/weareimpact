@@ -31,6 +31,15 @@ export async function POST() {
       )
     `;
 
+    // Kolommen die later zijn toegevoegd (investering/SROI en de ondernemersvariant)
+    await sql`ALTER TABLE impact_calculator_leads ADD COLUMN IF NOT EXISTS investering_kosten NUMERIC(10,2)`;
+    await sql`ALTER TABLE impact_calculator_leads ADD COLUMN IF NOT EXISTS avoided_verzuim_euro NUMERIC(12,2)`;
+    await sql`ALTER TABLE impact_calculator_leads ADD COLUMN IF NOT EXISTS sroi_ratio NUMERIC(6,2)`;
+    await sql`ALTER TABLE impact_calculator_leads ADD COLUMN IF NOT EXISTS profiel VARCHAR(30) DEFAULT 'welzijn'`;
+    await sql`ALTER TABLE impact_calculator_leads ADD COLUMN IF NOT EXISTS proces VARCHAR(50)`;
+    await sql`ALTER TABLE impact_calculator_leads ADD COLUMN IF NOT EXISTS uren_per_week NUMERIC(6,1)`;
+    await sql`ALTER TABLE impact_calculator_leads ADD COLUMN IF NOT EXISTS terugverdientijd_weken NUMERIC(6,1)`;
+
     await sql`CREATE INDEX IF NOT EXISTS idx_impact_calc_leads_created ON impact_calculator_leads(created_at DESC)`;
     await sql`CREATE INDEX IF NOT EXISTS idx_impact_calc_leads_status ON impact_calculator_leads(status)`;
 

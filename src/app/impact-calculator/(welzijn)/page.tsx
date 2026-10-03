@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { fmtN, fmtEuro, fmtRatio, ImpactSlider, ResultCard } from '@/components/impact-calculator/shared';
 
 // --- Rekenkern ---
 const WERKUREN_PER_WEEK = 36;
@@ -112,88 +113,6 @@ function calculate(
     avoidedVerzuimEuro,
     sroiRatio,
   };
-}
-
-function fmtN(n: number): string {
-  return Math.round(n).toLocaleString('nl-NL');
-}
-
-function fmtEuro(n: number): string {
-  const rounded = n >= 100000 ? Math.round(n / 1000) * 1000 : Math.round(n / 500) * 500;
-  return `€ ${rounded.toLocaleString('nl-NL')}`;
-}
-
-function fmtRatio(n: number): string {
-  return n.toLocaleString('nl-NL', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
-}
-
-// --- Slider ---
-interface SliderProps {
-  label: string;
-  value: number;
-  min: number;
-  max: number;
-  step: number;
-  display: string;
-  sublabel: string;
-  benchmark?: { value: number; label: string };
-  onChange: (v: number) => void;
-}
-
-function ImpactSlider({ label, value, min, max, step, display, sublabel, benchmark, onChange }: SliderProps) {
-  const pct = ((value - min) / (max - min)) * 100;
-  const benchmarkPct = benchmark ? ((benchmark.value - min) / (max - min)) * 100 : null;
-  return (
-    <div className="mb-7 last:mb-0">
-      <div className="flex justify-between items-baseline mb-1">
-        <span className="text-xs font-bold text-slate-500 uppercase tracking-widest">{label}</span>
-        <span className="text-2xl font-bold text-orange-600 tabular-nums leading-none">{display}</span>
-      </div>
-      <p className="text-xs text-slate-400 mb-3 leading-tight">{sublabel}</p>
-      <div className="relative pt-1 pb-4">
-        <input
-          type="range"
-          min={min}
-          max={max}
-          step={step}
-          value={value}
-          onChange={(e) => onChange(Number(e.target.value))}
-          className="impact-slider w-full"
-          style={{ backgroundSize: `${pct}% 100%` }}
-        />
-        {benchmarkPct !== null && (
-          <div
-            className="absolute top-0 flex flex-col items-center pointer-events-none"
-            style={{ left: `calc(${benchmarkPct}% - 1px)` }}
-          >
-            <div className="w-0.5 h-3 bg-slate-400/70 rounded-full mt-1" />
-            <span className="text-[9px] text-slate-400 font-semibold mt-0.5 whitespace-nowrap">
-              {benchmark!.label}
-            </span>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
-
-// --- Resultaat kaart ---
-interface ResultCardProps {
-  label: string;
-  value: string;
-  sub: string;
-  detail: string;
-}
-
-function ResultCard({ label, value, sub, detail }: ResultCardProps) {
-  return (
-    <div className="bg-white rounded-3xl p-8 border border-slate-100 flex flex-col h-full">
-      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3">{label}</p>
-      <p className="text-4xl font-bold text-slate-900 leading-none mb-2 tabular-nums">{value}</p>
-      <p className="text-sm font-medium text-slate-700 mb-3 leading-snug">{sub}</p>
-      <p className="text-xs text-slate-500 leading-relaxed mt-auto">{detail}</p>
-    </div>
-  );
 }
 
 // --- Hoofd pagina ---
@@ -296,6 +215,12 @@ export default function ImpactCalculatorPage() {
               <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
             </Button>
           </div>
+          <p className="text-sm text-slate-400 mt-8">
+            Sociaal of duurzaam ondernemer, met een kleiner team?{' '}
+            <Link href="/impact-calculator/sociaal-ondernemer" className="text-orange-600 font-medium hover:text-orange-700 underline-offset-2 hover:underline">
+              Gebruik de calculator voor ondernemers
+            </Link>
+          </p>
         </div>
 
         <div className="absolute bottom-10 left-1/2 -translate-x-1/2 text-slate-400 animate-bounce">
@@ -578,44 +503,6 @@ export default function ImpactCalculatorPage() {
             </div>
           </div>
         </div>
-        </div>
-      </section>
-
-      {/* ── Social proof ── */}
-      <section className="py-24 bg-[#1e293b] text-white">
-        <div className="container mx-auto px-6 max-w-4xl">
-          <div className="grid md:grid-cols-2 gap-12 items-center">
-            <div>
-              <div className="inline-block px-3 py-1 bg-slate-800 text-orange-400 rounded-full text-xs font-bold uppercase tracking-widest mb-6">
-                Uit de praktijk
-              </div>
-              <blockquote className="text-2xl font-light leading-relaxed text-white mb-6 italic">
-                &ldquo;Sinds we AI inzetten voor verslaglegging, zie ik mijn team weer{' '}
-                <strong className="font-medium not-italic">met een glimlach bij cliënten</strong>{' '}
-                vandaan komen. Het voelt alsof we een extra collega hebben aangenomen.&rdquo;
-              </blockquote>
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-orange-600 rounded-full flex items-center justify-center font-bold text-lg">M</div>
-                <div>
-                  <p className="font-medium">Directeur Welzijnsorganisatie</p>
-                  <p className="text-slate-400 text-sm">40 medewerkers, regio Utrecht</p>
-                </div>
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              {[
-                { value: '5,2 uur', label: 'teruggewonnen per medewerker/week', color: 'text-orange-400' },
-                { value: '€ 180k', label: 'operationele waarde per jaar (team van 25)', color: 'text-emerald-400' },
-                { value: '0%', label: 'extra personeel nodig', color: 'text-blue-400' },
-                { value: '4–6 wk', label: 'implementatietijd', color: 'text-violet-400' },
-              ].map(({ value, label, color }) => (
-                <div key={label} className="bg-slate-800 rounded-2xl p-5 border border-slate-700">
-                  <p className={`text-2xl font-bold ${color} mb-1`}>{value}</p>
-                  <p className="text-xs text-slate-400 leading-tight">{label}</p>
-                </div>
-              ))}
-            </div>
-          </div>
         </div>
       </section>
 

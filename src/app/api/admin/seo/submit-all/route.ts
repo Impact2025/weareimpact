@@ -25,6 +25,7 @@ const STATIC_URLS = [
   '/ai-projectmanagement-begrippen',
   '/kwartiermaker-ai-sociaal-domein',
   '/impact-calculator',
+  '/impact-calculator/sociaal-ondernemer',
   '/contact',
   '/vincent-van-munster',
   '/interim-verandermanagement-ai-sociaal-domein',

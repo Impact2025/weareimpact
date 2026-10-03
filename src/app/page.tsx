@@ -453,6 +453,12 @@ export default function Home() {
                   <ArrowRight size={18} />
                 </Button>
               </Link>
+              <p className="mt-4 text-sm text-slate-400">
+                Sociaal of duurzaam ondernemer?{' '}
+                <Link href="/impact-calculator/sociaal-ondernemer" className="text-orange-400 hover:text-orange-300 font-medium underline-offset-2 hover:underline">
+                  Reken met jouw eigen proces
+                </Link>
+              </p>
             </div>
             <div className="bg-slate-800/80 rounded-3xl p-8 border border-slate-700">
               <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-6">Voorbeeld: team van 30 medewerkers</p>

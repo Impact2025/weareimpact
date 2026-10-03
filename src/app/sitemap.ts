@@ -211,6 +211,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.8,
     },
     {
+      url: `${BASE_URL}/impact-calculator/sociaal-ondernemer`,
+      lastModified: new Date('2026-10-03'),
+      changeFrequency: 'monthly',
+      priority: 0.8,
+    },
+    {
       url: `${BASE_URL}/iris`,
       lastModified: new Date('2026-08-30'),
       changeFrequency: 'weekly',
