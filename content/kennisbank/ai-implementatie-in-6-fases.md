@@ -107,6 +107,8 @@ Vanaf dag één wordt gewerkt aan overdracht. Wie neemt het over? Staat alles ge
 
 **Wat als de pilot mislukt?** Dan heb je goedkoop geleerd wat niet werkt.
 
+**Gratis hulpmiddel:** het [AI-projectplan op één pagina](/ai-projectmanager-templates#ai-projectplan) werkt de zes fases uit tot een plan dat je kunt invullen.
+
 ## Hulp nodig?
 
 Wil je dit niet alleen doen? Plan een gratis gesprek via [WeAreImpact.nl](/contact), of begin met de [AI-scan](/ai-scan).

@@ -130,6 +130,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.85,
     })),
     {
+      url: `${BASE_URL}/ai-projectmanager-templates`,
+      lastModified: new Date('2026-10-03'),
+      changeFrequency: 'monthly',
+      priority: 0.8,
+    },
+    {
       url: `${BASE_URL}/ai-projectmanagement-begrippen`,
       lastModified: new Date('2026-10-03'),
       changeFrequency: 'monthly',

@@ -21,6 +21,7 @@ const STATIC_URLS = [
   '/interim-ai-projectmanager',
   '/ai-projectmanager-inhuren',
   '/ai-projectmanager-sociaal-ondernemers',
+  '/ai-projectmanager-templates',
   '/ai-projectmanagement-begrippen',
   '/kwartiermaker-ai-sociaal-domein',
   '/impact-calculator',

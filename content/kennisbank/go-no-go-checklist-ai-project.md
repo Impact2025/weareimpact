@@ -85,6 +85,8 @@ Gebruik dezelfde lijst na de pilot, aangevuld met: halen we het succescriterium?
 
 **Wat als de antwoorden onduidelijk zijn?** Dan is het voorlopig nee.
 
+**Download de checklist als invulbare PDF:** [Go/no-go-checklist, gratis](/ai-projectmanager-templates#go-no-go-checklist).
+
 ## Hulp nodig?
 
 Wil je een tweede paar ogen op jullie go/no-go? Ik doe dat als [AI-projectmanager](/ai-projectmanager). Plan een gratis gesprek via [WeAreImpact.nl](/contact).

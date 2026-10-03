@@ -88,6 +88,8 @@ Een project dat niet werkt maar ook niet formeel eindigt, kost jaren aan aandach
 
 **Hoe voorkom ik stranden?** Klein beginnen, vooraf meten, eigenaar en privacy regelen, besluitmoment vastleggen.
 
+**Gratis hulpmiddel:** de [risicomatrix voor een AI-project](/ai-projectmanager-templates#risicomatrix) bevat deze patronen met een eerste maatregel.
+
 ## Hulp nodig?
 
 Herken je er meer dan twee? Dan is een [AI-projectmanager](/ai-projectmanager) geen luxe. Plan een gratis gesprek via [WeAreImpact.nl](/contact).
