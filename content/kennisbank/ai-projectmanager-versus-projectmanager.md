@@ -82,6 +82,8 @@ Bij een eerste AI-project, bij gevoelige gegevens, of bij een pilot die moet ops
 
 **Wat is het grootste verschil?** Onzekerheid over de uitkomst.
 
+**Gratis hulpmiddel:** de [risicomatrix](/ai-projectmanager-templates#risicomatrix) bevat de AI-specifieke risico's waar een gewone projectplanning vaak aan voorbijgaat.
+
 ## Hulp nodig?
 
 Plan een gratis gesprek via [WeAreImpact.nl](/contact).

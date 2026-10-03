@@ -1,5 +1,5 @@
 import { emailShell, emailButton, emailCard, emailSignature } from './emailLayout';
-import { downloadUrl, type AiPmDownload } from '@/lib/ai-pm-downloads';
+import { AI_PM_DOWNLOADS, downloadUrl, type AiPmDownload } from '@/lib/ai-pm-downloads';
 
 interface Data {
   organisatie?: string;
@@ -12,6 +12,15 @@ export function generateAiPmDownloadEmail({ organisatie, download }: Data): {
   text: string;
 } {
   const url = downloadUrl(download);
+  const isToolkit = download.id === 'toolkit';
+  const listHtml = isToolkit
+    ? emailCard(`
+                <p style="margin: 0 0 10px; font-size: 14px; color: #1e293b;"><strong>Of download ze los:</strong></p>
+                ${AI_PM_DOWNLOADS.map((d) => `<p style="margin: 0 0 6px; font-size: 14px;"><a href="${downloadUrl(d)}" style="color: #ea580c;">${d.short}</a></p>`).join('')}
+              `)
+    : '';
+  const textLines = AI_PM_DOWNLOADS.map((d) => `- ${d.short}: ${downloadUrl(d)}`);
+  const listText = isToolkit ? ['', 'Los te downloaden:', ...textLines, ''].join('\n') : '';
   const greeting = `Hoi${organisatie ? ` (${organisatie})` : ''},`;
   const subject = `Je download: ${download.short}`;
 
@@ -21,7 +30,9 @@ export function generateAiPmDownloadEmail({ organisatie, download }: Data): {
                 Bedankt voor je aanvraag. Hier is <strong>${download.title}</strong>.
               </p>
 
-              ${emailButton('Download de PDF', url)}
+              ${emailButton(isToolkit ? 'Download de toolkit (zip)' : 'Download de PDF', url)}
+
+              ${listHtml}
 
               ${emailCard(`
                 <p style="margin: 0; font-size: 14px; line-height: 1.6; color: #1e293b;">
@@ -46,7 +57,7 @@ export function generateAiPmDownloadEmail({ organisatie, download }: Data): {
 
 Bedankt voor je aanvraag. Hier is ${download.title}:
 ${url}
-
+${listText}
 Je krijgt van mij geen vervolgmails of nieuwsbrief naar aanleiding van deze download. Hulp bij een AI-project? Reply op deze mail of plan een gratis gesprek via https://weareimpact.nl/ai-projectmanager
 
 Vincent van Munster

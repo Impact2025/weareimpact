@@ -83,6 +83,8 @@ Leg vast wie wat heeft besloten en waarom. Een korte, eerlijke documentatie van 
 
 **Wanneer is een DPIA nodig?** Bij waarschijnlijk hoog risico voor betrokkenen.
 
+**Gratis hulpmiddel:** de [privacychecklist voor een AI-project](/ai-projectmanager-templates#privacychecklist) zet deze stappen om in zestien vragen. Het is geen juridisch advies.
+
 ## Hulp nodig?
 
 Plan een gratis gesprek via [WeAreImpact.nl](/contact), of lees de [AVG-checklist voor zorg](/kennisbank/privacy-ai-zorg-avg-checklist).

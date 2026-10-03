@@ -85,6 +85,8 @@ Wat mij steeds opvalt: de techniek is zelden het probleem. Het probleem is dat b
 
 **Helpt LEGO Serious Play?** Ja, om zorgen bespreekbaar te maken.
 
+**Gratis hulpmiddel:** de [stakeholderkaart](/ai-projectmanager-templates#stakeholderkaart) geeft per groep de zorgen, wat ze nodig hebben en hoe je ze betrekt.
+
 ## Hulp nodig?
 
 Plan een gratis gesprek via [WeAreImpact.nl](/contact), of lees meer over mijn aanpak voor [change management bij digitale transformatie](/change-management-digitale-transformatie).

@@ -82,6 +82,8 @@ Drie keer ja: bijsturen. Anders: stoppen.
 
 **Wat doe je met de lessen?** Eén pagina, delen met de organisatie.
 
+**Gratis hulpmiddel:** het [besluit- en leerblad](/ai-projectmanager-templates#besluit-leerblad) bevat de zes signalen en een vak om je besluit en je lessen vast te leggen.
+
 ## Hulp nodig?
 
 Twijfel je over een lopend project? Als [AI-projectmanager](/ai-projectmanager) geef ik een eerlijk oordeel. Plan een gratis gesprek via [WeAreImpact.nl](/contact).

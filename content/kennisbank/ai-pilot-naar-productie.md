@@ -88,6 +88,8 @@ Het grote misverstand is dat opschalen "meer van hetzelfde" is. Het is een ander
 
 **Wie moet het beheren?** Iemand binnen de eigen organisatie met tijd en mandaat.
 
+**Gratis hulpmiddel:** het [overdrachtsplan voor een AI-project](/ai-projectmanager-templates#overdrachtsplan) beschrijft wie wat doet na de overdracht en wanneer je klaar bent.
+
 ## Hulp nodig?
 
 Zit je pilot vast? Als [interim AI-projectmanager](/interim-ai-projectmanager) kijk ik binnen twee weken wat er nodig is. Plan een gratis gesprek via [WeAreImpact.nl](/contact).

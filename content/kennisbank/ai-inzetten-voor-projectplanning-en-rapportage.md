@@ -84,6 +84,8 @@ Gebruik voor werk geen gratis consumentenversies. Zorg voor een verwerkersoveree
 
 **Wat is een goedkeuringsstap?** Een vast mensmoment vóór iets wordt gebruikt.
 
+**Gratis hulpmiddel:** gebruik het [meetblad](/ai-projectmanager-templates#meetblad) om vooraf en achteraf te meten wat AI in je projectwerk oplevert.
+
 ## Hulp nodig?
 
 Wil je dit in jouw projectteam opzetten? Plan een gratis gesprek via [WeAreImpact.nl](/contact).

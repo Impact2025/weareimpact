@@ -83,6 +83,8 @@ Ik kom sneller bij het probleem door 25 jaar ervaring in het sociaal domein en d
 
 **Is een vaste prijs mogelijk?** Voor afgebakende pilots en sprints wel.
 
+**Gratis hulpmiddel:** de [inhuurvergelijker](/ai-projectmanager-templates#inhuurvergelijker) zet zzp, bureau en intern naast elkaar op totale kosten per resultaat.
+
 ## Hulp nodig?
 
 Wil je een concreet voorstel voor jouw situatie? Plan een gratis gesprek via [WeAreImpact.nl](/contact) of lees meer over [AI-projectmanager inhuren](/ai-projectmanager-inhuren).

@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { trackEvents, event } from '@/components/analytics';
 import type { AiPmDownload } from '@/lib/ai-pm-downloads';
 
-export function DownloadCard({ d }: { d: AiPmDownload }) {
+export function DownloadCard({ d, highlight = false }: { d: AiPmDownload; highlight?: boolean }) {
   const [open, setOpen] = useState(false);
   const [email, setEmail] = useState('');
   const [organisatie, setOrganisatie] = useState('');
@@ -41,13 +41,13 @@ export function DownloadCard({ d }: { d: AiPmDownload }) {
   }
 
   return (
-    <div className="bg-white rounded-3xl border border-slate-100 p-8 flex flex-col shadow-sm">
+    <div className={`rounded-3xl border p-8 flex flex-col shadow-sm h-full ${highlight ? 'bg-orange-50 border-orange-200' : 'bg-white border-slate-100'}`}>
       <div className="w-11 h-11 bg-orange-50 rounded-2xl flex items-center justify-center mb-5">
         <FileText className="text-orange-600" size={22} />
       </div>
-      <h2 className="text-xl font-bold text-slate-900 mb-2">{d.title}</h2>
+      <h3 className="text-xl font-bold text-slate-900 mb-2">{d.title}</h3>
       <p className="text-slate-600 leading-relaxed text-[0.95rem] mb-3">{d.description}</p>
-      <p className="text-xs uppercase tracking-wider text-slate-400 mb-5">PDF · {d.pages}</p>
+      <p className="text-xs uppercase tracking-wider text-slate-400 mb-5">{d.file.endsWith('.zip') ? '' : 'PDF · '}{d.pages}</p>
       <Link href={d.related.href} className="text-sm text-orange-600 underline mb-6">
         {d.related.label}
       </Link>

@@ -232,14 +232,14 @@ export function AiPmLanding({ page: p }: { page: AiPmPage }) {
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-8">
             <div>
               <h2 className="text-2xl md:text-3xl font-bold text-slate-900">Gratis hulpmiddelen voor je AI-project</h2>
-              <p className="text-slate-600 mt-2">Drie documenten die ik zelf gebruik. Direct bruikbaar.</p>
+              <p className="text-slate-600 mt-2">{AI_PM_DOWNLOADS.length} documenten die ik zelf gebruik, van kick-off tot overdracht.</p>
             </div>
             <TrackedLink href="/ai-projectmanager-templates" ctaName="templates_all" location={`ai_pm_${p.slug}_downloads`} className="text-orange-600 font-semibold underline whitespace-nowrap">
-              Alle templates bekijken
+              Alle {AI_PM_DOWNLOADS.length} templates bekijken
             </TrackedLink>
           </div>
           <div className="grid md:grid-cols-3 gap-4">
-            {AI_PM_DOWNLOADS.map((d) => (
+            {AI_PM_DOWNLOADS.filter((d) => d.featured).map((d) => (
               <TrackedLink key={d.id} href={`/ai-projectmanager-templates#${d.id}`} ctaName={`template_${d.id}`} location={`ai_pm_${p.slug}_downloads`} className="group block rounded-2xl border border-slate-100 bg-slate-50 p-6 hover:border-orange-300 hover:bg-orange-50/40 transition-all">
                 <FileText className="text-orange-600 mb-3" size={22} />
                 <h3 className="font-bold text-slate-900 mb-1 group-hover:text-orange-700">{d.short}</h3>

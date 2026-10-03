@@ -95,6 +95,8 @@ Goed: een eerlijk antwoord, ook over jezelf. Slecht: "niets".
 
 **Waarschuwingssignalen?** Zie hierboven.
 
+**Gratis hulpmiddel:** de [scorekaart voor het kennismakingsgesprek](/ai-projectmanager-templates#scorekaart) zet deze tien vragen en de waarschuwingssignalen op één blad.
+
 ## Hulp nodig?
 
 Stel deze vragen gerust aan mij: plan een gratis gesprek van 30 minuten via [WeAreImpact.nl](/contact). Meer over de voorwaarden staat bij [AI-projectmanager inhuren](/ai-projectmanager-inhuren).

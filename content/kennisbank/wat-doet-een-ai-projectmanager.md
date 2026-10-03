@@ -92,6 +92,8 @@ Niet voor elke toepassing. Een medewerker die ChatGPT gebruikt voor een conceptm
 
 **Wanneer heb ik er een nodig?** Zodra een toepassing meer is dan een persoonlijke tool, zie hierboven.
 
+**Gratis hulpmiddel:** de [complete toolkit](/ai-projectmanager-templates#toolkit) bevat alle 11 templates die ik in AI-projecten gebruik, van kick-off tot overdracht.
+
 ## Hulp nodig?
 
 Ik werk als [AI-projectmanager](/ai-projectmanager) voor gemeenten, zorg en welzijn. Plan een gratis gesprek van 30 minuten via [WeAreImpact.nl](/contact).

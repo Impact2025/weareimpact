@@ -109,6 +109,8 @@ Vanaf dag één wordt gewerkt aan overdracht. Wie neemt het over? Staat alles ge
 
 **Gratis hulpmiddel:** het [AI-projectplan op één pagina](/ai-projectmanager-templates#ai-projectplan) werkt de zes fases uit tot een plan dat je kunt invullen.
 
+**Ook handig:** de [kick-off agenda](/ai-projectmanager-templates#kickoff-agenda) voor fase 2 en het [meetblad voor nulmeting en nameting](/ai-projectmanager-templates#meetblad) voor fase 1 en 4.
+
 ## Hulp nodig?
 
 Wil je dit niet alleen doen? Plan een gratis gesprek via [WeAreImpact.nl](/contact), of begin met de [AI-scan](/ai-scan).

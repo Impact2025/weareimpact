@@ -90,6 +90,8 @@ Een project dat niet werkt maar ook niet formeel eindigt, kost jaren aan aandach
 
 **Gratis hulpmiddel:** de [risicomatrix voor een AI-project](/ai-projectmanager-templates#risicomatrix) bevat deze patronen met een eerste maatregel.
 
+**Ook handig:** de [go/no-go-checklist](/ai-projectmanager-templates#go-no-go-checklist) helpt om vooraf te zien of je project een van deze patronen heeft.
+
 ## Hulp nodig?
 
 Herken je er meer dan twee? Dan is een [AI-projectmanager](/ai-projectmanager) geen luxe. Plan een gratis gesprek via [WeAreImpact.nl](/contact).
