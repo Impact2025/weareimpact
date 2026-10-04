@@ -1,19 +1,46 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { sql } from '@/lib/db/neon';
 import { sendEmail } from '@/lib/email/send';
 import { rateLimit, getClientIp } from '@/lib/rate-limit';
-import { getDownload, downloadUrl } from '@/lib/ai-pm-downloads';
+import { getDownload, downloadUrl, trackedUrl } from '@/lib/ai-pm-downloads';
+import {
+  CONSENT_VERSION,
+  EMAIL_RE,
+  cleanPath,
+  cleanReferrer,
+  cleanTag,
+  emailDomain,
+  hasMailServer,
+  hashIp,
+  isDisposable,
+  scoreLead,
+  segmentFor,
+} from '@/lib/ai-pm-leads';
+import {
+  countRecentByIp,
+  insertDownloadLead,
+  markDelivery,
+  previousResourceCount,
+  recentlyNotified,
+} from '@/lib/download-leads';
 import { generateAiPmDownloadEmail } from '@/lib/email/templates/ai-pm-download';
+import { generateAiPmDownloadNotificationEmail } from '@/lib/email/templates/ai-pm-download-notification';
 
 export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
 
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+const NOTIFY_EMAIL = 'v.munster@weareimpact.nl';
+const MAX_PER_IP_PER_HOUR = 8;
 
 export async function POST(request: NextRequest) {
   try {
     const ip = getClientIp(request);
-    const limit = rateLimit(`ai-pm-download:${ip}`, 8, 60 * 60 * 1000);
-    if (!limit.success) {
+    const ipHash = hashIp(ip);
+
+    // Twee lagen: snel in het geheugen, en een harde limiet in de database (geldt over alle instanties).
+    if (!rateLimit(`ai-pm-download:${ip}`, MAX_PER_IP_PER_HOUR, 60 * 60 * 1000).success) {
+      return NextResponse.json({ error: 'Te veel aanvragen. Probeer het later opnieuw.' }, { status: 429 });
+    }
+    if ((await countRecentByIp(ipHash)) >= MAX_PER_IP_PER_HOUR) {
       return NextResponse.json({ error: 'Te veel aanvragen. Probeer het later opnieuw.' }, { status: 429 });
     }
 
@@ -28,40 +55,103 @@ export async function POST(request: NextRequest) {
     if (!EMAIL_RE.test(email) || email.length > 254) {
       return NextResponse.json({ error: 'Ongeldig e-mailadres' }, { status: 400 });
     }
-    // Eenvoudige honeypot: bots vullen dit verborgen veld wel in.
+    // Honeypot: bots vullen het verborgen veld in. We doen alsof het gelukt is, maar slaan niets op.
     if (body.website) {
       return NextResponse.json({ success: true, url: downloadUrl(download) });
     }
-
-    // Lead opslaan (zelfde tabel als de AI-Proof checklist) en activiteit loggen.
-    // Let op: email_sent blijft bewust FALSE. De cron /api/cron/checklist-followups
-    // selecteert op email_sent = TRUE; deze downloaders hebben geen opvolgmails
-    // aangevraagd en de bevestigingsmail belooft er ook geen.
-    await sql`
-      INSERT INTO checklist_leads (email, organisatie, source, created_at)
-      VALUES (${email}, ${organisatie}, ${'ai-pm-' + download.id}, NOW())
-      ON CONFLICT (email) DO UPDATE SET
-        organisatie = COALESCE(EXCLUDED.organisatie, checklist_leads.organisatie),
-        updated_at = NOW()
-    `;
-    await sql`
-      INSERT INTO activity_log (type, title, description, metadata)
-      VALUES (
-        'lead',
-        ${'Download: ' + download.short},
-        ${email},
-        ${JSON.stringify({ email, organisatie, source: 'ai-pm-' + download.id })}
-      )
-    `;
-
-    const tpl = generateAiPmDownloadEmail({ organisatie: organisatie ?? undefined, download });
-    const sent = await sendEmail({ to: email, subject: tpl.subject, html: tpl.html, text: tpl.text });
-    if (!sent.success) {
-      console.error('AI-PM download mail mislukt:', sent.error);
+    if (isDisposable(email)) {
+      return NextResponse.json(
+        { error: 'Wegwerp-e-mailadressen kunnen we niet gebruiken. Vul een e-mailadres in waar je echt bereikbaar bent.' },
+        { status: 400 },
+      );
+    }
+    if (!(await hasMailServer(emailDomain(email)))) {
+      return NextResponse.json(
+        { error: 'Dit e-mailadres lijkt niet te bestaan. Controleer de spelling en probeer het opnieuw.' },
+        { status: 400 },
+      );
     }
 
-    // De link wordt ook direct teruggegeven, zodat de bezoeker niet op de mail hoeft te wachten.
-    return NextResponse.json({ success: true, url: downloadUrl(download), emailed: sent.success });
+    // Segmentering en scoring
+    const previous = await previousResourceCount(email);
+    const segment = segmentFor(email, organisatie);
+    const score = scoreLead({
+      segment,
+      hasOrganisation: !!organisatie,
+      isToolkit: download.id === 'toolkit',
+      previousResources: previous,
+    });
+
+    const sourcePage = cleanPath(body.sourcePage);
+    const referrer = cleanReferrer(body.referrer);
+    const utmSource = cleanTag(body.utm_source);
+    const utmMedium = cleanTag(body.utm_medium);
+    const utmCampaign = cleanTag(body.utm_campaign);
+    const followup = body.followup === true;
+
+    const leadId = await insertDownloadLead({
+      email,
+      organisatie,
+      resource: download.id,
+      sourcePage,
+      referrer,
+      utmSource,
+      utmMedium,
+      utmCampaign,
+      segment,
+      score,
+      ipHash,
+      consentVersion: CONSENT_VERSION,
+      followupOptin: followup,
+    });
+
+    // 1. Bevestiging met de gevolgde link naar de bezoeker
+    const tpl = generateAiPmDownloadEmail({ organisatie: organisatie ?? undefined, download, leadId });
+    const sent = await sendEmail({ to: email, subject: tpl.subject, html: tpl.html, text: tpl.text });
+    if (sent.success) await markDelivery(leadId, { emailed: true });
+    else console.error('AI-PM download mail mislukt:', sent.error);
+
+    // 2. Melding aan Vincent, maar maximaal één per persoon per zes uur
+    try {
+      if (!(await recentlyNotified(email))) {
+        const note = generateAiPmDownloadNotificationEmail({
+          email,
+          organisatie,
+          documentTitle: download.title,
+          segment,
+          score,
+          sourcePage,
+          referrer,
+          utm: [utmSource, utmMedium, utmCampaign].filter(Boolean).join(' / ') || null,
+          followupOptin: followup,
+          previousResources: previous,
+        });
+        const n = await sendEmail({ to: NOTIFY_EMAIL, subject: note.subject, html: note.html, text: note.text, replyTo: email });
+        if (n.success) await markDelivery(leadId, { notified: true });
+      }
+    } catch (e) {
+      console.error('AI-PM download melding mislukt:', e);
+    }
+
+    // 3. Alleen met expliciete opt-in: nieuwsbrief via de bestaande dubbele bevestiging
+    if (followup) {
+      try {
+        await fetch(new URL('/api/newsletter', request.url), {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, source: 'ai-pm-download' }),
+        });
+      } catch (e) {
+        console.error('AI-PM opt-in nieuwsbrief mislukt:', e);
+      }
+    }
+
+    return NextResponse.json({
+      success: true,
+      url: trackedUrl(leadId, download.id),
+      emailed: sent.success,
+      followup,
+    });
   } catch (error) {
     console.error('AI-PM download error:', error);
     return NextResponse.json({ error: 'Er ging iets mis' }, { status: 500 });

@@ -97,6 +97,12 @@ export default function PrivacyPage() {
                     termijn: '2 jaar',
                   },
                   {
+                    activiteit: 'Gratis templates en toolkit (download)',
+                    gegevens: 'E-mailadres, organisatie (optioneel), gekozen document, bezochte pagina en verwijzende site, versleutelde (gehashte) afkorting van het IP-adres tegen misbruik, of het document is geopend',
+                    grondslag: 'Gerechtvaardigd belang (aangevraagd document sturen, inzicht in gebruik). Tips per mail alleen met toestemming (double opt-in)',
+                    termijn: '24 maanden, daarna geanonimiseerd (tenzij CRM-contact of opt-in)',
+                  },
+                  {
                     activiteit: 'Nieuwsbrief',
                     gegevens: 'E-mailadres, aanmeldingsbron',
                     grondslag: 'Toestemming (double opt-in)',
@@ -162,6 +168,7 @@ export default function PrivacyPage() {
                       ['Activiteitenlog (intern)', 'Naam, e-mail, type actie, tijdstip', 'Gerechtvaardigd belang', '1 jaar'],
                       ['Chat — Iris', 'Berichtinhoud, sessie-ID, pagina-URL', 'Toestemming / gerechtvaardigd belang', '1 jaar'],
                       ['Afspraakplanning', 'Naam, e-mail, telefoon, organisatie', 'Uitvoering overeenkomst', '2 jaar'],
+                      ['Gratis templates (download)', 'E-mail, organisatie (optioneel), document, bezochte pagina, verwijzende site, gehashte IP-afkorting, geopend ja/nee', 'Gerechtvaardigd belang; tips alleen met toestemming', '24 maanden, daarna anoniem'],
                       ['Nieuwsbrief', 'E-mailadres, aanmeldingsbron', 'Toestemming (double opt-in)', 'Tot uitschrijving + 6 mnd'],
                       ['AI-scan', 'Sector, uitdaging, AI-niveau, advies', 'Gerechtvaardigd belang', '2 jaar'],
                       ['CRM', 'Naam, functie, bedrijf, deal-info', 'Overeenkomst / ger. belang', 'Relatie + 2 jaar'],

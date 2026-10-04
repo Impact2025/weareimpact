@@ -188,6 +188,11 @@ export function downloadUrl(d: AiPmDownload): string {
   return `${BASE_URL}/downloads/${d.file}`;
 }
 
+/** Gevolgde link: logt dat de lead het document opent en stuurt door naar het bestand. */
+export function trackedUrl(leadId: string, downloadId: string): string {
+  return `${BASE_URL}/api/ai-pm-download/open/${leadId}?d=${encodeURIComponent(downloadId)}`;
+}
+
 export function downloadsByPhase(): { phase: DownloadPhase; items: AiPmDownload[] }[] {
   return (Object.keys(PHASE_LABELS) as DownloadPhase[]).map((phase) => ({
     phase,

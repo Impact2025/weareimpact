@@ -51,6 +51,19 @@ const SOURCE_UNION = `
   UNION ALL
   SELECT 'scan', id::text, NULL, email, NULL, NULL, CONCAT_WS(' · ', matched_traject, LEFT(result, 300)), created_at
   FROM scan_leads
+  UNION ALL
+  SELECT 'ai_pm_download', (ARRAY_AGG(id::text ORDER BY created_at))[1], NULL, MAX(email), NULL,
+    (ARRAY_AGG(organisatie ORDER BY created_at DESC) FILTER (WHERE organisatie IS NOT NULL))[1],
+    CONCAT_WS(' · ',
+      CASE WHEN MAX(score) >= 4 THEN 'WARM' END,
+      'Template: ' || STRING_AGG(DISTINCT resource, ', '),
+      MAX(segment),
+      'score ' || MAX(score) || '/5',
+      CASE WHEN BOOL_OR(followup_optin) THEN 'opt-in tips' END),
+    MAX(created_at)
+  FROM download_leads
+  WHERE email IS NOT NULL AND anonymized_at IS NULL
+  GROUP BY LOWER(email)
 `;
 
 export type InboxStatus = 'open' | 'converted' | 'dismissed';

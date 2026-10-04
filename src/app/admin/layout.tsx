@@ -34,6 +34,7 @@ import {
   Mic,
   Inbox,
   Receipt,
+  Download,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import IrisVoiceButton from '@/components/admin/IrisVoiceButton';
@@ -63,6 +64,7 @@ const sidebarSections: { title?: string; items: SidebarItem[] }[] = [
     title: 'Klanten',
     items: [
       { label: 'Binnenkomend', href: '/admin/inbox', icon: Inbox },
+      { label: 'Downloads', href: '/admin/downloads', icon: Download },
       {
         label: 'CRM',
         href: '/admin/crm',

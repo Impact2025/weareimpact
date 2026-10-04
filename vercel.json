@@ -19,6 +19,10 @@
     {
       "path": "/api/cron/send-scheduled-newsletters",
       "schedule": "*/15 * * * *"
+    },
+    {
+      "path": "/api/cron/download-retention",
+      "schedule": "0 3 1 * *"
     }
   ],
   "redirects": [

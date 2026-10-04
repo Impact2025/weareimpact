@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Download, Loader2, CheckCircle, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -8,14 +8,48 @@ import { Input } from '@/components/ui/input';
 import { trackEvents, event } from '@/components/analytics';
 import type { AiPmDownload } from '@/lib/ai-pm-downloads';
 
+const ATTR_KEY = 'wai_attr';
+
+/** Eerste aanraking van de sessie: UTM-tags en verwijzende site. Staat alleen in sessionStorage en gaat mee bij een aanvraag. */
+function captureAttribution() {
+  try {
+    if (sessionStorage.getItem(ATTR_KEY)) return;
+    const q = new URLSearchParams(window.location.search);
+    sessionStorage.setItem(
+      ATTR_KEY,
+      JSON.stringify({
+        utm_source: q.get('utm_source'),
+        utm_medium: q.get('utm_medium'),
+        utm_campaign: q.get('utm_campaign'),
+        referrer: document.referrer || null,
+      }),
+    );
+  } catch {
+    /* sessionStorage geblokkeerd: niet erg */
+  }
+}
+
+function readAttribution(): Record<string, string | null> {
+  try {
+    return JSON.parse(sessionStorage.getItem(ATTR_KEY) || '{}');
+  } catch {
+    return {};
+  }
+}
+
 export function DownloadCard({ d, highlight = false }: { d: AiPmDownload; highlight?: boolean }) {
   const [open, setOpen] = useState(false);
   const [email, setEmail] = useState('');
   const [organisatie, setOrganisatie] = useState('');
   const [website, setWebsite] = useState(''); // honeypot
+  const [followup, setFollowup] = useState(false); // optionele opt-in, nooit vooraf aangevinkt
+
+  useEffect(() => {
+    captureAttribution();
+  }, []);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
-  const [result, setResult] = useState<{ url: string; emailed: boolean } | null>(null);
+  const [result, setResult] = useState<{ url: string; emailed: boolean; followup: boolean } | null>(null);
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -25,11 +59,19 @@ export function DownloadCard({ d, highlight = false }: { d: AiPmDownload; highli
       const res = await fetch('/api/ai-pm-download', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, organisatie, website, resource: d.id }),
+        body: JSON.stringify({
+          email,
+          organisatie,
+          website,
+          resource: d.id,
+          followup,
+          sourcePage: window.location.pathname,
+          ...readAttribution(),
+        }),
       });
       const data = await res.json();
       if (!res.ok || !data.success) throw new Error(data.error || 'mislukt');
-      setResult({ url: data.url, emailed: !!data.emailed });
+      setResult({ url: data.url, emailed: !!data.emailed, followup: !!data.followup });
       trackEvents.downloadResource(d.id);
       event({ action: 'generate_lead', category: 'Lead', label: `ai_pm_${d.id}` });
     } catch (err) {
@@ -64,10 +106,11 @@ export function DownloadCard({ d, highlight = false }: { d: AiPmDownload; highli
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 text-emerald-900 font-semibold underline"
             >
-              <Download size={16} /> Open de PDF
+              <Download size={16} /> {d.file.endsWith('.zip') ? 'Download de toolkit' : 'Open de PDF'}
             </a>
             <p className="text-xs text-emerald-800 mt-2">
               {result.emailed ? 'Ik heb de link ook gemaild.' : 'De mail kon niet worden verstuurd, bewaar deze link.'}
+              {result.followup ? ' Je krijgt nog een mail om je aanmelding voor de tips te bevestigen.' : ''}
             </p>
           </div>
         ) : !open ? (
@@ -109,17 +152,26 @@ export function DownloadCard({ d, highlight = false }: { d: AiPmDownload; highli
               aria-hidden="true"
               className="hidden"
             />
-            {error && <p className="text-sm text-red-600">{error}</p>}
+            <label className="flex items-start gap-2 text-sm text-slate-600 leading-snug cursor-pointer">
+              <input
+                type="checkbox"
+                checked={followup}
+                onChange={(e) => setFollowup(e.target.checked)}
+                className="mt-1 h-4 w-4 accent-orange-600"
+              />
+              <span>Ja, stuur me af en toe een tip over AI-projecten (maximaal één keer per maand, altijd afmeldbaar).</span>
+            </label>
+            {error && <p className="text-sm text-red-600" role="alert">{error}</p>}
             <Button
               type="submit"
               disabled={busy}
               className="w-full px-6 py-3 bg-orange-600 text-white rounded-full font-semibold hover:bg-orange-700 flex items-center justify-center gap-2"
             >
               {busy ? <Loader2 className="animate-spin" size={18} /> : <Download size={18} />}
-              Stuur mij de PDF
+              {d.file.endsWith('.zip') ? 'Stuur mij de toolkit' : 'Stuur mij de PDF'}
             </Button>
             <p className="text-xs text-slate-500 leading-relaxed">
-              Ik gebruik je e-mailadres alleen om je de download te sturen en om te weten wie het document gebruikt. Je krijgt geen nieuwsbrief of vervolgmails. Zie het{' '}
+              Ik gebruik je e-mailadres om je het document te sturen en om te zien welke documenten worden gebruikt. Zonder vinkje krijg je geen nieuwsbrief of vervolgmails. Ik bewaar dit maximaal 24 maanden. Zie het{' '}
               <Link href="/privacy" className="underline">privacybeleid</Link>.
             </p>
           </form>

@@ -10,6 +10,7 @@ export const INBOX_SOURCES = {
   cv_download: { label: 'CV-download', adminHref: null },
   doorbraak_download: { label: 'Doorbraak-download', adminHref: null },
   scan: { label: 'Scan', adminHref: null },
+  ai_pm_download: { label: 'Template-download', adminHref: '/admin/downloads' },
 } as const;
 
 export type InboxSource = keyof typeof INBOX_SOURCES;

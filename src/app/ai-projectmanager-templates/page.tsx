@@ -70,7 +70,7 @@ const breadcrumb = {
 const faqs = [
   {
     q: 'Zijn de templates echt gratis?',
-    a: 'Ja. Je laat je e-mailadres achter zodat ik je de link kan sturen en weet wie de documenten gebruikt. Je krijgt geen nieuwsbrief en geen vervolgmails.',
+    a: 'Ja. Je laat je e-mailadres achter zodat ik je de link kan sturen en weet wie de documenten gebruikt. Je krijgt geen vervolgmails, tenzij je er zelf voor kiest (een optioneel vinkje, nooit vooraf aangevinkt).',
   },
   {
     q: 'Wat zijn de bestanden?',
@@ -118,7 +118,7 @@ export default function TemplatesPage() {
           Van kick-off tot overdracht: de documenten die ik zelf gebruik als AI-projectmanager. Geen verkooppraatje, maar invullen, bespreken met je opdrachtgever en beslissen.
         </p>
         <p className="text-slate-500 mb-12 max-w-3xl">
-          Je krijgt de PDF direct op het scherm en per mail. Geen nieuwsbrief, geen vervolgmails. Lees ook de{' '}
+          Je krijgt de PDF direct op het scherm en per mail. Geen vervolgmails, tenzij je zelf kiest voor af en toe een tip. Lees ook de{' '}
           <Link href="/blog/gratis-templates-ai-project" className="text-orange-600 underline">uitleg in welke volgorde je ze gebruikt</Link>.
         </p>
 
