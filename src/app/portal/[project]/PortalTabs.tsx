@@ -4,33 +4,56 @@ import { useState } from 'react';
 import type { Audience } from '@/lib/crm/portal-session';
 import ChatClient from './ChatClient';
 import OverviewClient from './OverviewClient';
+import VragenTab from './VragenTab';
 import V2Client from './V2Client';
 
 // V2-ideeën zijn projectspecifiek (BokaBord/Hans); alleen tonen voor projecten in deze lijst.
 const V2_PROJECTS: string[] = [];
 
 export default function PortalTabs({ projectSlug, audience }: { projectSlug: string; audience: Audience }) {
-  const [tab, setTab] = useState<'chat' | 'overview' | 'v2'>('chat');
+  const [tab, setTab] = useState<'chat' | 'overview' | 'vragen' | 'v2'>('chat');
+  const [openVragen, setOpenVragen] = useState(0);
+  const [totaalVragen, setTotaalVragen] = useState(0);
+  const [gekozen, setGekozen] = useState(false);
+  // Wie vragen te beantwoorden heeft, landt direct op de tab Vragen.
+  const actief = !gekozen && openVragen > 0 ? 'vragen' : tab;
+  const kies = (t: typeof tab) => { setGekozen(true); setTab(t); };
   const showV2 = V2_PROJECTS.includes(projectSlug);
 
   return (
     <div>
       <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
-        <button onClick={() => setTab('chat')} style={tabButtonStyle(tab === 'chat')}>
+        <button onClick={() => kies('chat')} style={tabButtonStyle(actief === 'chat')}>
           Gesprek
         </button>
-        <button onClick={() => setTab('overview')} style={tabButtonStyle(tab === 'overview')}>
+        {totaalVragen > 0 && (
+          <button onClick={() => kies('vragen')} style={tabButtonStyle(actief === 'vragen')}>
+            Vragen
+            {openVragen > 0 && (
+              <span style={{ marginLeft: 8, background: '#f59e0b', color: '#fff', borderRadius: 999, padding: '1px 8px', fontSize: 12 }}>
+                {openVragen}
+              </span>
+            )}
+          </button>
+        )}
+        <button onClick={() => kies('overview')} style={tabButtonStyle(actief === 'overview')}>
           Voortgang
         </button>
         {showV2 && (
-          <button onClick={() => setTab('v2')} style={tabButtonStyle(tab === 'v2')}>
+          <button onClick={() => kies('v2')} style={tabButtonStyle(actief === 'v2')}>
             V2
           </button>
         )}
       </div>
-      {tab === 'chat' ? (
+      <VragenTab
+        projectSlug={projectSlug}
+        audience={audience}
+        zichtbaar={actief === 'vragen'}
+        onTelling={(open, totaal) => { setOpenVragen(open); setTotaalVragen(totaal); }}
+      />
+      {actief === 'vragen' ? null : actief === 'chat' ? (
         <ChatClient projectSlug={projectSlug} audience={audience} />
-      ) : tab === 'overview' ? (
+      ) : actief === 'overview' ? (
         <OverviewClient projectSlug={projectSlug} audience={audience} />
       ) : showV2 ? (
         <V2Client />

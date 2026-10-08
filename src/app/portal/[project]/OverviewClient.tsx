@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import type { Audience } from '@/lib/crm/portal-session';
-import Vragen, { VRAGEN_FASE, type Reactie } from './Vragen';
+import { VRAGEN_FASE, type Reactie } from './Vragen';
 
 interface Milestone {
   id: string;
@@ -89,11 +89,13 @@ export default function OverviewClient({ projectSlug, audience }: { projectSlug:
   const isNew = (m: Milestone) =>
     lastSeen !== null && m.status === 'done' && m.completed_at !== null && new Date(m.completed_at).getTime() > lastSeen;
   const recentlyDone = data.milestones
+    .filter((m) => m.phase !== VRAGEN_FASE)
     .filter((m) => m.status === 'done' && m.completed_at)
     .sort((a, b) => new Date(b.completed_at as string).getTime() - new Date(a.completed_at as string).getTime())
     .slice(0, 6);
 
-  const { milestones, agreements, actions } = data;
+  const { agreements, actions } = data;
+  const milestones = data.milestones.filter((m) => m.phase !== VRAGEN_FASE);
   const nothingShared = milestones.length === 0 && agreements.length === 0 && actions.length === 0;
 
   if (nothingShared) {
@@ -104,7 +106,6 @@ export default function OverviewClient({ projectSlug, audience }: { projectSlug:
     );
   }
 
-  const vragen = milestones.filter((m) => m.phase === VRAGEN_FASE);
   const yourTurn = milestones.filter((m) => m.owner === 'klant' && m.status !== 'done' && !m.blocked && m.phase !== VRAGEN_FASE);
   const phaseOrder: string[] = [];
   for (const m of milestones) {
@@ -115,32 +116,6 @@ export default function OverviewClient({ projectSlug, audience }: { projectSlug:
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-      {vragen.length > 0 && (
-        <Vragen
-          items={vragen.map((m) => ({ ...m, comments: m.comments ?? [] }))}
-          projectSlug={projectSlug}
-          audience={audience}
-          onAnswered={(id, antwoord) =>
-            setData((d) =>
-              d
-                ? {
-                    ...d,
-                    milestones: d.milestones.map((m) =>
-                      m.id === id
-                        ? {
-                            ...m,
-                            status: 'done',
-                            completed_at: m.completed_at ?? new Date().toISOString(),
-                            comments: [...(m.comments ?? []), { author: 'klant', body: antwoord, created_at: new Date().toISOString() }],
-                          }
-                        : m,
-                    ),
-                  }
-                : d,
-            )
-          }
-        />
-      )}
       {yourTurn.length > 0 && (
         <YourTurn
           items={yourTurn}
