@@ -6,8 +6,12 @@ import ChatClient from './ChatClient';
 import OverviewClient from './OverviewClient';
 import V2Client from './V2Client';
 
+// V2-ideeën zijn projectspecifiek (BokaBord/Hans); alleen tonen voor projecten in deze lijst.
+const V2_PROJECTS: string[] = [];
+
 export default function PortalTabs({ projectSlug, audience }: { projectSlug: string; audience: Audience }) {
   const [tab, setTab] = useState<'chat' | 'overview' | 'v2'>('chat');
+  const showV2 = V2_PROJECTS.includes(projectSlug);
 
   return (
     <div>
@@ -18,16 +22,20 @@ export default function PortalTabs({ projectSlug, audience }: { projectSlug: str
         <button onClick={() => setTab('overview')} style={tabButtonStyle(tab === 'overview')}>
           Voortgang
         </button>
-        <button onClick={() => setTab('v2')} style={tabButtonStyle(tab === 'v2')}>
-          V2
-        </button>
+        {showV2 && (
+          <button onClick={() => setTab('v2')} style={tabButtonStyle(tab === 'v2')}>
+            V2
+          </button>
+        )}
       </div>
       {tab === 'chat' ? (
         <ChatClient projectSlug={projectSlug} audience={audience} />
       ) : tab === 'overview' ? (
         <OverviewClient projectSlug={projectSlug} audience={audience} />
-      ) : (
+      ) : showV2 ? (
         <V2Client />
+      ) : (
+        <ChatClient projectSlug={projectSlug} audience={audience} />
       )}
     </div>
   );

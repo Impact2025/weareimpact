@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import DossierDashboard from './DossierDashboard';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   Select,
@@ -411,7 +412,7 @@ export default function DossierDetailPage() {
   }
 
   return (
-    <div className="p-6 max-w-3xl mx-auto space-y-6">
+    <div className="p-6 max-w-5xl mx-auto space-y-6">
       <div>
         <div className="flex items-center justify-between gap-3">
           <h1 className="text-2xl font-bold capitalize">{projectSlug.replace(/-/g, ' ')}</h1>
@@ -462,6 +463,19 @@ export default function DossierDetailPage() {
         </p>
       </div>
 
+      <DossierDashboard
+        questions={questions}
+        milestones={milestones}
+        actions={actions}
+        messages={messages}
+        summaries={summaries}
+        documentCount={documents?.length ?? null}
+        agreementCount={agreements?.length ?? null}
+        crm={crmLink}
+      />
+
+      <details className="group">
+        <summary className="cursor-pointer text-sm font-semibold py-2">Briefing (verslag intakegesprek)</summary>
       <Card>
         <CardContent className="pt-6 space-y-3">
           <h2 className="font-semibold">Briefing (verslag intakegesprek)</h2>
@@ -484,6 +498,7 @@ export default function DossierDetailPage() {
           </div>
         </CardContent>
       </Card>
+      </details>
 
       <Card>
         <CardContent className="pt-6 space-y-3">
