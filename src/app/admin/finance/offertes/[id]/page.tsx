@@ -144,6 +144,23 @@ export default function QuoteEditorPage({ params }: { params: Promise<{ id: stri
     }
   }
 
+  async function resend() {
+    setBusy('resend');
+    setError(null);
+    try {
+      const res = await fetch(`/api/admin/finance/quotes/${id}/resend`, { method: 'POST' });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Opnieuw versturen mislukt');
+      await load();
+      setNotice(`Opnieuw verstuurd naar ${data.to}`);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Opnieuw versturen mislukt');
+    } finally {
+      setConfirmSend(false);
+      setBusy(null);
+    }
+  }
+
   async function duplicate() {
     setBusy('dup');
     const res = await fetch(`/api/admin/finance/quotes/${id}/duplicate`, { method: 'POST' });
@@ -223,6 +240,17 @@ export default function QuoteEditorPage({ params }: { params: Promise<{ id: stri
         {locked && (
           <>
             <Button variant="outline" size="sm" onClick={copyLink}>{copied ? <Check size={15} className="mr-2" aria-hidden /> : <Copy size={15} className="mr-2" aria-hidden />}{copied ? 'Gekopieerd' : 'Klantlink'}</Button>
+            {confirmSend ? (
+              <span className="flex items-center gap-2 rounded-lg bg-orange-50 px-3 py-1.5 text-sm">
+                Opnieuw versturen naar <strong>{f.client.invoiceEmail || '?'}</strong>?
+                <Button size="sm" className="bg-orange-600 hover:bg-orange-700" onClick={resend} disabled={busy !== null}>Ja, verstuur</Button>
+                <button className="text-slate-500 hover:text-slate-800" onClick={() => setConfirmSend(false)}>Annuleer</button>
+              </span>
+            ) : (
+              <Button variant="outline" size="sm" onClick={() => setConfirmSend(true)} disabled={busy !== null}>
+                {busy === 'resend' ? <Loader2 size={15} className="mr-2 animate-spin" aria-hidden /> : <Send size={15} className="mr-2" aria-hidden />}Opnieuw versturen
+              </Button>
+            )}
             <Button variant="outline" size="sm" onClick={duplicate} disabled={busy !== null}>Nieuwe versie</Button>
           </>
         )}

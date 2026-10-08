@@ -173,6 +173,36 @@ export async function sendQuote(id: string): Promise<Quote> {
 }
 
 /**
+ * Opnieuw versturen na een inhoudelijke wijziging: dezelfde mail en pdf aan de klant, zonder
+ * status, deal of CRM aan te raken. Alleen voor offertes die al verstuurd zijn.
+ */
+export async function resendQuote(id: string): Promise<string> {
+  const quote = await getQuote(id);
+  if (!quote) throw new FlowError('Offerte niet gevonden');
+  if (quote.status === 'concept') throw new FlowError('Deze offerte is nog niet verstuurd.');
+  const mail = quoteSentEmail({
+    signerName: quote.client.signerName,
+    title: quote.title,
+    reference: quote.reference,
+    url: `${WEB_BASE}/offerte/${quote.token}`,
+    validUntil: quote.validUntil,
+    totalExclCents: quoteTotals(quote).subtotalCents,
+    coverNote: quote.coverNote,
+  });
+  const pdf = await renderQuotePdf(quote, await getFinanceSettings());
+  const result = await sendEmail({
+    to: quote.client.invoiceEmail,
+    subject: mail.subject,
+    html: mail.html,
+    text: mail.text,
+    attachments: [{ filename: `Offerte ${quote.reference}.pdf`, content: pdf }],
+  });
+  if (!result.success) throw new FlowError(result.error || 'Mail versturen mislukt');
+  await logEvent('quote', id, 'opnieuw_verzonden', { to: quote.client.invoiceEmail });
+  return quote.client.invoiceEmail;
+}
+
+/**
  * Testverzending: dezelfde mail en pdf als bij echt versturen, maar zonder iets aan de offerte
  * of het CRM te veranderen. Standaard naar de eigenaar, of naar een opgegeven adres.
  */
