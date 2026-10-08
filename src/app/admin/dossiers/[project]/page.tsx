@@ -10,6 +10,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import DossierDashboard from './DossierDashboard';
+import { CompanyShowcase } from '@/components/showcase/CompanyShowcase';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   Select,
@@ -473,6 +474,18 @@ export default function DossierDetailPage() {
         agreementCount={agreements?.length ?? null}
         crm={crmLink}
       />
+
+      {crmLink?.companyId && (
+        <details className="group rounded-xl border border-orange-200 bg-white p-4">
+          <summary className="cursor-pointer text-sm font-semibold">Showcase en klantvragen (alleen intern)</summary>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Afspraken, de zes korte vragen aan de klant en het showcase-concept. Dit blok is nooit zichtbaar voor de klant.
+          </p>
+          <div className="mt-4">
+            <CompanyShowcase companyId={crmLink.companyId} />
+          </div>
+        </details>
+      )}
 
       <details className="group">
         <summary className="cursor-pointer text-sm font-semibold py-2">Briefing (verslag intakegesprek)</summary>

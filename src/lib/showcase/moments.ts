@@ -132,7 +132,7 @@ export const MOMENTS: Record<MomentKey, MomentDef> = {
     ],
     fallbackFollowup: 'Hoe zou je een collega uitleggen waarom je voor ons koos?',
     followupFocus:
-      'Vraag waar ze nog over twijfelden en wat die twijfel wegnam. Noemen ze geen twijfel, vraag dan hoe ze een collega zouden uitleggen waarom ze voor ons kozen. Noem geen concurrenten.',
+      'Pak hun antwoord op en vraag wat hen daarin het meest overtuigde, of hoe ze het aan een collega zouden uitleggen. Veronderstel niet dat er twijfel was. Noem geen concurrenten.',
     thanks: 'Dank je wel. Dit helpt me om het juiste te bouwen.',
   },
   tussen: {
@@ -161,7 +161,8 @@ export const MOMENTS: Record<MomentKey, MomentDef> = {
       },
     ],
     fallbackFollowup: 'Wat zou ik anders moeten doen?',
-    followupFocus: 'Vraag wat Vincent anders zou moeten doen, in één korte vraag.',
+    followupFocus:
+      'Vraag wat Vincent in de rest van het traject meer of juist minder zou moeten doen. Spreek over "ik" als Vincent, niet over "Vincent" in de derde persoon.',
     thanks: 'Dank je wel. Ik neem het mee in de rest van het traject.',
   },
   dag1: {

@@ -58,3 +58,38 @@ WeAreImpact
 Deze vraag wordt voor mij klaargezet door Iris, mijn AI-assistent. Je antwoord lees ik zelf.`;
   return { subject: def.subject, html, text };
 }
+
+/** Naar de klant: de showcasetekst ter goedkeuring. */
+export function showcaseReviewEmail(d: { firstName: string | null; url: string; anonymous: boolean }): {
+  subject: string;
+  html: string;
+  text: string;
+} {
+  const hi = d.firstName ? `Hoi ${d.firstName},` : 'Hoi,';
+  const intro = d.anonymous
+    ? 'Je gaf aan dat ik ons traject anoniem als voorbeeld mag laten zien. Ik heb een tekst klaargezet, zonder jullie naam en zonder herkenbare gegevens.'
+    : 'Je gaf aan dat ik ons traject als voorbeeld mag laten zien. Ik heb een tekst klaargezet die ik graag eerst aan jou voorleg.';
+  const body = `
+    <p style="${P}">${hi}</p>
+    <p style="${P}">${intro}</p>
+    <p style="${P}">Je ziet precies wat er op de site zou komen. Er verschijnt niets zonder jouw akkoord. Je kunt ook iets laten aanpassen of liever niet meedoen.</p>
+    ${emailButton('Bekijk de tekst', d.url)}
+    ${emailSignature()}`;
+  const html = emailShell({
+    preheader: 'Er verschijnt niets zonder jouw akkoord.',
+    title: 'Mag dit als voorbeeld?',
+    subtitle: 'Bekijk de tekst en beslis zelf',
+    body,
+  });
+  const text = `${hi}
+
+${intro}
+
+Je ziet precies wat er op de site zou komen. Er verschijnt niets zonder jouw akkoord. Je kunt ook iets laten aanpassen of liever niet meedoen.
+
+Bekijk de tekst: ${d.url}
+
+Vincent van Munster
+WeAreImpact`;
+  return { subject: 'Mag dit als voorbeeld? Bekijk de tekst', html, text };
+}

@@ -15,6 +15,15 @@ import {
   setCaseField,
   skipRequest,
 } from '@/lib/showcase/flow';
+import {
+  checkReadyForReview,
+  getCase,
+  publishCase,
+  saveCase,
+  sendForReview,
+  suggestIntro,
+  unpublishCase,
+} from '@/lib/showcase/case';
 import { MOMENTS, type AppointmentKind, type MomentKey } from '@/lib/showcase/moments';
 
 export const dynamic = 'force-dynamic';
@@ -39,6 +48,8 @@ export async function GET(request: NextRequest) {
           title: d.title as string,
           stage: d.stage as string,
           draft: await buildCaseDraft(d.id as string),
+          case: await getCase(d.id as string),
+          problems: await checkReadyForReview(d.id as string),
         })),
     );
     return NextResponse.json({
@@ -101,6 +112,28 @@ export async function POST(request: NextRequest) {
       case 'appointment-status':
         if (!['gepland', 'geweest', 'niet_doorgegaan'].includes(String(body.status))) throw new ShowcaseError('Onbekende status.');
         await setAppointmentStatus(String(body.id), body.status);
+        return NextResponse.json({ success: true });
+      case 'case-save': {
+        const saved = await saveCase(String(body.dealId), {
+          headline: body.headline,
+          intro: body.intro,
+          displayName: body.displayName,
+          authorName: body.authorName,
+          authorRole: body.authorRole,
+          quoteKeys: Array.isArray(body.quoteKeys) ? body.quoteKeys : undefined,
+        });
+        return NextResponse.json({ success: true, case: saved });
+      }
+      case 'case-suggest':
+        return NextResponse.json({ success: true, intro: await suggestIntro(String(body.dealId)) });
+      case 'case-send': {
+        const { email } = await sendForReview(String(body.dealId));
+        return NextResponse.json({ success: true, email });
+      }
+      case 'case-publish':
+        return NextResponse.json({ success: true, ...(await publishCase(String(body.dealId))) });
+      case 'case-unpublish':
+        await unpublishCase(String(body.dealId));
         return NextResponse.json({ success: true });
       case 'consent':
         await setCaseField(String(body.dealId), 'consent', String(body.value));

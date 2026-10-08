@@ -10,15 +10,10 @@ import {
   type AppointmentKind,
   type MomentKey,
 } from '@/lib/showcase/moments';
-import type { Appointment, CaseDraft, ShowcaseRequest } from '@/lib/showcase/flow';
+import type { Appointment, ShowcaseRequest } from '@/lib/showcase/flow';
+import { CaseCard, type DraftRow } from './CaseCard';
 
 type RequestRow = ShowcaseRequest & { momentName: string };
-interface DraftRow {
-  dealId: string;
-  title: string;
-  stage: string;
-  draft: CaseDraft;
-}
 interface Data {
   appointments: Appointment[];
   requests: RequestRow[];
@@ -92,7 +87,7 @@ export function CompanyShowcase({ companyId }: { companyId: string }) {
     load();
   }, [load]);
 
-  async function act(key: string, body: Record<string, unknown>) {
+  async function act(key: string, body: Record<string, unknown>): Promise<void> {
     setBusy(key);
     setError(null);
     try {
@@ -289,95 +284,5 @@ function PlanAppointment({
         {busy ? 'Plannen…' : 'Afspraak plannen'}
       </button>
     </div>
-  );
-}
-
-function CaseCard({ row, act, busy }: { row: DraftRow; act: (key: string, body: Record<string, unknown>) => void; busy: string | null }) {
-  const { draft, dealId } = row;
-  const m = draft.metrics;
-  const tempo: string[] = [];
-  if (m.daysIntakeToQuote != null) tempo.push(`${m.daysIntakeToQuote} dagen van eerste gesprek naar offerte`);
-  if (m.daysQuoteToAccept != null) tempo.push(`${m.daysQuoteToAccept} dagen tot akkoord`);
-  if (m.daysAcceptToLive != null) tempo.push(`${m.daysAcceptToLive} dagen van akkoord naar livegang`);
-  if (m.daysEarlyVsPlan != null) tempo.push(m.daysEarlyVsPlan >= 0 ? `${m.daysEarlyVsPlan} dagen eerder dan gepland` : `${Math.abs(m.daysEarlyVsPlan)} dagen later dan gepland`);
-  if (m.milestonesTotal > 0) tempo.push(`${m.milestonesDone} van ${m.milestonesTotal} milestones klaar`);
-
-  return (
-    <section className="rounded-2xl border border-orange-200 bg-orange-50/40 p-5">
-      <h3 className="text-lg font-semibold">Showcase-concept: {row.title}</h3>
-
-      <div className="mt-3 flex flex-wrap items-center gap-3 text-sm">
-        <span className="font-medium text-slate-700">Toestemming:</span>
-        {(['onbekend', 'naam', 'anoniem', 'nee'] as const).map((c) => (
-          <button
-            key={c}
-            disabled={busy === `c-${dealId}`}
-            onClick={() => act(`c-${dealId}`, { action: 'consent', dealId, value: c })}
-            className={`rounded-lg border px-3 py-1 text-xs font-semibold ${draft.consent === c ? 'border-orange-600 bg-orange-600 text-white' : 'border-slate-200 bg-white text-slate-600'}`}
-          >
-            {c === 'onbekend' ? 'Onbekend' : c === 'naam' ? 'Met naam' : c === 'anoniem' ? 'Anoniem' : 'Nee'}
-          </button>
-        ))}
-      </div>
-
-      {draft.headline ? (
-        <div className="mt-4 rounded-xl bg-white p-4">
-          <p className="text-2xl font-bold text-slate-900">{draft.headline}</p>
-          <p className="text-sm text-slate-500">{draft.hoursSaved} uur per week minder.</p>
-          <label className="mt-2 flex items-center gap-2 text-sm text-slate-700">
-            <input
-              type="checkbox"
-              checked={!draft.open.some((o) => o.includes('urenwinst'))}
-              onChange={(e) => act(`h-${dealId}`, { action: 'hours-confirmed', dealId, value: e.target.checked })}
-            />
-            De klant heeft deze urenwinst bevestigd
-          </label>
-        </div>
-      ) : (
-        <p className="mt-4 text-sm text-slate-500">Nog geen voor- en nameting van uren.</p>
-      )}
-
-      {tempo.length > 0 && (
-        <ul className="mt-4 list-disc space-y-1 pl-5 text-sm text-slate-700">
-          {tempo.map((t) => <li key={t}>{t}</li>)}
-        </ul>
-      )}
-
-      {draft.scope.length > 0 && (
-        <div className="mt-4 text-sm">
-          <p className="font-medium text-slate-700">Past bij de wensen</p>
-          <ul className="mt-1 space-y-1">
-            {draft.scope.map((s) => (
-              <li key={s.item} className="flex justify-between gap-4 text-slate-700"><span>{s.item}</span><span className="font-semibold">{s.fit}</span></li>
-            ))}
-          </ul>
-        </div>
-      )}
-
-      {draft.quotes.length > 0 && (
-        <div className="mt-4 space-y-3">
-          <p className="text-sm font-medium text-slate-700">Letterlijke citaten</p>
-          {draft.quotes.map((q, i) => (
-            <figure key={i} className="rounded-lg bg-white p-3">
-              <blockquote className="text-slate-900">&ldquo;{q.text}&rdquo;</blockquote>
-              <figcaption className="mt-1 text-xs text-slate-500">{q.moment}: {q.question}</figcaption>
-            </figure>
-          ))}
-        </div>
-      )}
-
-      <div className="mt-4">
-        {draft.readyToPublish ? (
-          <p className="rounded-lg bg-green-100 p-3 text-sm font-medium text-green-800">Alles staat klaar. Leg de tekst nog aan de klant voor voordat je publiceert.</p>
-        ) : (
-          <div>
-            <p className="text-sm font-medium text-slate-700">Nog open</p>
-            <ul className="mt-1 list-disc space-y-0.5 pl-5 text-sm text-slate-600">
-              {draft.open.map((o) => <li key={o}>{o}</li>)}
-            </ul>
-          </div>
-        )}
-      </div>
-    </section>
   );
 }

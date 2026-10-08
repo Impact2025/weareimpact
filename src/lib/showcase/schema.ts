@@ -67,4 +67,26 @@ async function create() {
       notes TEXT NOT NULL DEFAULT '',
       updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     )`;
+
+  // Redactie en goedkeuring van de showcase. De snapshot is precies wat de klant goedkeurt en wat later gepubliceerd wordt.
+  const cols = [
+    'slug TEXT',
+    "status TEXT NOT NULL DEFAULT 'concept'",
+    'headline TEXT',
+    'intro TEXT',
+    'display_name TEXT',
+    'author_name TEXT',
+    'author_role TEXT',
+    "quote_keys JSONB NOT NULL DEFAULT '[]'::jsonb",
+    'snapshot JSONB',
+    'review_token TEXT',
+    'review_sent_at TIMESTAMPTZ',
+    'client_comment TEXT',
+    'approved_at TIMESTAMPTZ',
+    'approved_name TEXT',
+    'published_at TIMESTAMPTZ',
+  ];
+  for (const c of cols) await sql.query(`ALTER TABLE showcase_cases ADD COLUMN IF NOT EXISTS ${c}`);
+  await sql`CREATE UNIQUE INDEX IF NOT EXISTS uq_showcase_cases_slug ON showcase_cases(slug) WHERE slug IS NOT NULL`;
+  await sql`CREATE UNIQUE INDEX IF NOT EXISTS uq_showcase_cases_review ON showcase_cases(review_token) WHERE review_token IS NOT NULL`;
 }

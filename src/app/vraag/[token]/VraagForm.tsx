@@ -13,6 +13,8 @@ const chip = (on: boolean) =>
   }`;
 
 export function VraagForm({ view }: { view: RequestView }) {
+  // Opende de klant een link die al beantwoord was? Dan zeggen we dat, in plaats van "dank je wel".
+  const [answeredOnLoad] = useState(view.answered);
   const [answers, setAnswers] = useState<Record<string, AnswerValue>>({});
   const [step, setStep] = useState<'vragen' | 'vervolg' | 'klaar'>(
     view.answered ? (view.followupQuestion && !view.followupDone ? 'vervolg' : 'klaar') : 'vragen',
@@ -83,10 +85,11 @@ export function VraagForm({ view }: { view: RequestView }) {
   }
 
   if (step === 'klaar') {
+    const before = answeredOnLoad;
     return (
       <div className="space-y-3 text-center">
-        <h1 className="text-2xl font-bold text-slate-900">Dank je wel!</h1>
-        <p className="text-slate-600">{thanks ?? 'Je antwoord is binnen.'}</p>
+        <h1 className="text-2xl font-bold text-slate-900">{before ? 'Je antwoord is al binnen' : 'Dank je wel!'}</h1>
+        <p className="text-slate-600">{before ? 'Dank je wel. Je hoeft niets meer te doen.' : (thanks ?? 'Je antwoord is binnen.')}</p>
         <p className="pt-2 text-sm text-slate-400">Vincent leest elk antwoord zelf.</p>
       </div>
     );

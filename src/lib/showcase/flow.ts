@@ -187,6 +187,7 @@ export async function createAppointment(input: {
   if (Number.isNaN(input.startsAt.getTime())) throw new ShowcaseError('Ongeldige datum of tijd.');
   const endsAt = new Date(input.startsAt.getTime() + input.durationMin * 60_000);
   const dealId = input.dealId ?? (await resolveDealForCompany(input.companyId));
+  const contactId = input.contactId ?? (await primaryContact(input.companyId))?.id ?? null;
   const [company] = await sql`SELECT name FROM companies WHERE id = ${input.companyId}`;
   const title = input.title?.trim() || `${APPOINTMENT_KIND_LABEL[input.kind]} ${(company?.name as string) ?? ''}`.trim();
 
@@ -208,13 +209,13 @@ export async function createAppointment(input: {
 
   const rows = await sql`
     INSERT INTO appointments (deal_id, company_id, contact_id, project_slug, kind, title, starts_at, ends_at, calendar_event_id, booking_request_id)
-    VALUES (${dealId}, ${input.companyId}, ${input.contactId ?? null}, ${input.projectSlug ?? null}, ${input.kind}, ${title},
+    VALUES (${dealId}, ${input.companyId}, ${contactId}, ${input.projectSlug ?? null}, ${input.kind}, ${title},
       ${input.startsAt.toISOString()}, ${endsAt.toISOString()}, ${eventId}, ${input.bookingRequestId ?? null})
     ON CONFLICT (booking_request_id) DO UPDATE SET title = EXCLUDED.title
     RETURNING *`;
   await crmActivity(
     input.companyId,
-    input.contactId ?? null,
+    contactId,
     dealId,
     `${APPOINTMENT_KIND_LABEL[input.kind]} gepland`,
     `${input.startsAt.toLocaleString('nl-NL', { timeZone: 'Europe/Amsterdam', dateStyle: 'long', timeStyle: 'short' })}.`,
@@ -669,7 +670,7 @@ export interface CaseDraft {
   hoursBefore: number | null;
   hoursAfter: number | null;
   hoursSaved: number | null;
-  quotes: { moment: string; question: string; text: string }[];
+  quotes: { key: string; moment: string; question: string; text: string }[];
   scope: { item: string; fit: string }[];
   nps: number | null;
   metrics: DealMetrics;
@@ -700,10 +701,10 @@ export async function buildCaseDraft(dealId: string): Promise<CaseDraft> {
     for (const q of def.questions) {
       const v = r.answers[q.key];
       if (q.type === 'text' && typeof v === 'string' && v.trim().length > 3) {
-        quotes.push({ moment: def.name, question: q.label, text: v.trim() });
+        quotes.push({ key: `${r.id}:${q.key}`, moment: def.name, question: q.label, text: v.trim() });
       }
     }
-    if (r.followupAnswer && r.followupQuestion) quotes.push({ moment: def.name, question: r.followupQuestion, text: r.followupAnswer });
+    if (r.followupAnswer && r.followupQuestion) quotes.push({ key: `${r.id}:followup`, moment: def.name, question: r.followupQuestion, text: r.followupAnswer });
     if (typeof r.answers.uren_voor === 'number') hoursBefore = r.answers.uren_voor;
     if (typeof r.answers.uren_na === 'number') hoursAfter = r.answers.uren_na;
     if (typeof r.answers.nps === 'number') nps = r.answers.nps;
