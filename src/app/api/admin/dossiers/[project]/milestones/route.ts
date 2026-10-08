@@ -15,10 +15,16 @@ export async function GET(
   const { project: projectSlug } = await params;
 
   const milestones = await sql`
-    SELECT id, title, description, prd_section, status, due_date, sort_order, client_visible, phase, owner, blocking, check_key
-    FROM crm_milestones
-    WHERE project_slug = ${projectSlug}
-    ORDER BY sort_order ASC, created_at ASC
+    SELECT m.id, m.title, m.description, m.prd_section, m.status, m.due_date, m.sort_order, m.client_visible,
+           m.phase, m.owner, m.blocking, m.check_key,
+           COALESCE((
+             SELECT json_agg(json_build_object('author', c.author, 'body', c.body, 'created_at', c.created_at)
+                             ORDER BY c.created_at)
+             FROM crm_milestone_comments c WHERE c.milestone_id = m.id
+           ), '[]'::json) AS comments
+    FROM crm_milestones m
+    WHERE m.project_slug = ${projectSlug}
+    ORDER BY m.sort_order ASC, m.created_at ASC
   `;
 
   return NextResponse.json({ milestones });

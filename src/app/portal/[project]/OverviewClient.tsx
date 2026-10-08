@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import type { Audience } from '@/lib/crm/portal-session';
+import Vragen, { VRAGEN_FASE, type Reactie } from './Vragen';
 
 interface Milestone {
   id: string;
@@ -13,6 +14,7 @@ interface Milestone {
   owner: string;
   blocked: boolean;
   completed_at: string | null;
+  comments?: Reactie[];
 }
 
 interface Agreement {
@@ -102,7 +104,8 @@ export default function OverviewClient({ projectSlug, audience }: { projectSlug:
     );
   }
 
-  const yourTurn = milestones.filter((m) => m.owner === 'klant' && m.status !== 'done' && !m.blocked);
+  const vragen = milestones.filter((m) => m.phase === VRAGEN_FASE);
+  const yourTurn = milestones.filter((m) => m.owner === 'klant' && m.status !== 'done' && !m.blocked && m.phase !== VRAGEN_FASE);
   const phaseOrder: string[] = [];
   for (const m of milestones) {
     const p = m.phase ?? 'Overig';
@@ -112,6 +115,32 @@ export default function OverviewClient({ projectSlug, audience }: { projectSlug:
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+      {vragen.length > 0 && (
+        <Vragen
+          items={vragen.map((m) => ({ ...m, comments: m.comments ?? [] }))}
+          projectSlug={projectSlug}
+          audience={audience}
+          onAnswered={(id, antwoord) =>
+            setData((d) =>
+              d
+                ? {
+                    ...d,
+                    milestones: d.milestones.map((m) =>
+                      m.id === id
+                        ? {
+                            ...m,
+                            status: 'done',
+                            completed_at: m.completed_at ?? new Date().toISOString(),
+                            comments: [...(m.comments ?? []), { author: 'klant', body: antwoord, created_at: new Date().toISOString() }],
+                          }
+                        : m,
+                    ),
+                  }
+                : d,
+            )
+          }
+        />
+      )}
       {yourTurn.length > 0 && (
         <YourTurn
           items={yourTurn}
@@ -323,7 +352,7 @@ function YourTurn({
       </header>
       {notice && (
         <div role="status" style={{ background: '#ecfdf5', color: '#047857', fontSize: 13, fontWeight: 600, padding: '8px 16px' }}>
-          ✓ {notice}
+          {notice}
         </div>
       )}
       {error && (
@@ -367,7 +396,7 @@ function YourTurn({
                     onClick={() => submit(m, { complete: true })}
                     style={{ ...actionBtn, background: '#10b981', color: '#fff', border: '1px solid #10b981' }}
                   >
-                    {busy === m.id ? 'Bezig…' : '✓ Afvinken'}
+                    {busy === m.id ? 'Bezig…' : 'Afvinken'}
                   </button>
                   <button
                     type="button"

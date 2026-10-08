@@ -26,7 +26,12 @@ export async function GET(
   const [milestones, agreements, actions] = await Promise.all([
     sql`
       SELECT m.id, m.title, m.description, m.status, m.due_date, m.phase, m.owner, m.completed_at,
-             EXISTS (SELECT 1 FROM crm_milestones d WHERE d.id = m.depends_on AND d.status <> 'done') AS blocked
+             EXISTS (SELECT 1 FROM crm_milestones d WHERE d.id = m.depends_on AND d.status <> 'done') AS blocked,
+             COALESCE((
+               SELECT json_agg(json_build_object('author', c.author, 'body', c.body, 'created_at', c.created_at)
+                               ORDER BY c.created_at)
+               FROM crm_milestone_comments c WHERE c.milestone_id = m.id
+             ), '[]'::json) AS comments
       FROM crm_milestones m
       WHERE m.project_slug = ${projectSlug} AND m.client_visible = TRUE
       ORDER BY m.sort_order ASC, m.created_at ASC
