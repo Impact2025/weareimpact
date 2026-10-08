@@ -1,7 +1,7 @@
 import { sql } from '@/lib/db/neon';
 import { getFinanceSettings } from './settings';
 import { applyClientName, getTemplate } from './templates';
-import { EMPTY_PARTY, getClientParty, insertQuote, makeReference } from './store';
+import { EMPTY_PARTY, getClientParty, getQuote, insertQuote, logEvent, makeReference } from './store';
 import type { Party, Quote } from './types';
 
 const isoDay = (d: Date) =>
@@ -58,6 +58,12 @@ export async function createQuoteFromTemplate(opts: {
 
 /** Nieuwe versie van een bestaande offerte (bv. na aanpassing). De oude blijft ongewijzigd staan. */
 export async function duplicateQuote(source: Quote): Promise<Quote> {
+  // Eén openstaand concept per vervolgversie: liever dat hergebruiken dan een tweede maken.
+  const open = await sql`SELECT id FROM quotes WHERE replaces_id = ${source.id} AND status = 'concept' LIMIT 1`;
+  if (open[0]) {
+    const existing = await getQuote(open[0].id as string);
+    if (existing) return existing;
+  }
   const settings = await getFinanceSettings();
   const now = new Date();
   const base = source.reference.replace(/-v\d+$/, '');
@@ -81,6 +87,7 @@ export async function duplicateQuote(source: Quote): Promise<Quote> {
     schedule: source.schedule,
     vatRate: source.vatRate,
   });
-  await sql`UPDATE quotes SET version = ${nextVersion} WHERE id = ${copy.id}`;
-  return { ...copy, version: nextVersion };
+  await sql`UPDATE quotes SET version = ${nextVersion}, replaces_id = ${source.id} WHERE id = ${copy.id}`;
+  await logEvent('quote', source.id, 'nieuwe_versie', { reference: copy.reference });
+  return { ...copy, version: nextVersion, replacesId: source.id };
 }

@@ -271,15 +271,17 @@ function SectionView({ section, number, quote }: { section: QuoteSection; number
     );
   }
   if (section.kind === 'stats' || section.kind === 'phases') {
+    // Meer dan vier blokken naast elkaar worden te smal voor de titels: dan onder elkaar.
+    const stacked = section.items.length > 4;
     return (
-      <View wrap={false}>
+      <View wrap={stacked}>
         {heading}
         {section.body ? <Body text={section.body} /> : null}
-        <View style={s.cards}>
+        <View style={stacked ? { marginBottom: 12 } : s.cards}>
           {section.items.map((it, i) => (
             <React.Fragment key={i}>
-              {i > 0 ? <View style={s.cardGap} /> : null}
-              <View style={s.card}>
+              {i > 0 ? <View style={stacked ? { height: 6 } : s.cardGap} /> : null}
+              <View style={stacked ? [s.card, { flex: 0, flexGrow: 0, flexBasis: 'auto' }] : s.card} wrap={false}>
                 {section.kind === 'stats' ? (
                   <>
                     <Text style={s.statValue}>{it.label}</Text>

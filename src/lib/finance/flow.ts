@@ -46,6 +46,7 @@ export function validateQuote(q: Quote): string[] {
   if (!q.client.invoiceEmail.trim()) problems.push('E-mailadres van de opdrachtgever ontbreekt.');
   if (!q.client.signerName.trim()) problems.push('Naam van de tekenbevoegde ontbreekt.');
   if (q.validUntil < today()) problems.push('De geldigheidsdatum ligt in het verleden.');
+  if (q.replacesId && !q.changeNote.trim()) problems.push('Beschrijf kort wat er is gewijzigd ten opzichte van de vorige versie.');
   const billable = q.lines.filter((l) => !l.optional);
   if (billable.length === 0) problems.push('Voeg minstens één prijsregel toe.');
   if (q.schedule.length === 0) problems.push('Stel een betaalschema in.');
@@ -97,6 +98,12 @@ export async function sendQuote(id: string): Promise<Quote> {
   const problems = validateQuote(quote);
   if (problems.length > 0) throw new FlowError(problems.join(' '));
 
+  // Een nieuwe versie vervangt de vorige; was die al geaccepteerd of afgewezen, dan eerst overleggen.
+  const previous = quote.replacesId ? await getQuote(quote.replacesId) : null;
+  if (previous && (previous.status === 'akkoord' || previous.status === 'afgewezen')) {
+    throw new FlowError(`Versie ${previous.version} is al ${previous.status === 'akkoord' ? 'geaccepteerd' : 'afgewezen'}. Verstuur geen nieuwe versie zonder dat te overleggen.`);
+  }
+
   // Een offerte aan een nieuwe klant maakt het bedrijf en contact zelf aan in het CRM.
   if (!quote.companyId) {
     const { companyId, contactId } = await ensureCompanyAndContact(
@@ -141,6 +148,8 @@ export async function sendQuote(id: string): Promise<Quote> {
     validUntil: quote.validUntil,
     totalExclCents: totals.subtotalCents,
     coverNote: quote.coverNote,
+    version: quote.version,
+    changeNote: quote.changeNote,
   });
   const result = await sendEmail({
     to: quote.client.invoiceEmail,
@@ -156,6 +165,12 @@ export async function sendQuote(id: string): Promise<Quote> {
   }
 
   await logEvent('quote', id, 'verzonden', { to: quote.client.invoiceEmail });
+  if (previous) {
+    const replaced = await sql`
+      UPDATE quotes SET status = 'vervangen', updated_at = NOW()
+      WHERE id = ${previous.id} AND status IN ('verzonden','bekeken') RETURNING id`;
+    if (replaced.length > 0) await logEvent('quote', previous.id, 'vervangen', { door: quote.reference });
+  }
   // Bestaand klantdossier koppelen aan de deal, zodat launch, go-live en facturatie bij elkaar horen.
   if (quote.linkSlug && dealId) {
     try {
@@ -180,6 +195,7 @@ export async function resendQuote(id: string): Promise<string> {
   const quote = await getQuote(id);
   if (!quote) throw new FlowError('Offerte niet gevonden');
   if (quote.status === 'concept') throw new FlowError('Deze offerte is nog niet verstuurd.');
+  if (quote.status === 'vervangen') throw new FlowError('Deze versie is vervangen door een nieuwere. Stuur die opnieuw.');
   const mail = quoteSentEmail({
     signerName: quote.client.signerName,
     title: quote.title,
@@ -188,6 +204,8 @@ export async function resendQuote(id: string): Promise<string> {
     validUntil: quote.validUntil,
     totalExclCents: quoteTotals(quote).subtotalCents,
     coverNote: quote.coverNote,
+    version: quote.version,
+    changeNote: quote.changeNote,
   });
   const pdf = await renderQuotePdf(quote, await getFinanceSettings());
   const result = await sendEmail({
@@ -219,6 +237,8 @@ export async function sendQuoteTestMail(id: string, to: string = OWNER_EMAIL): P
     validUntil: quote.validUntil,
     totalExclCents: quoteTotals(quote).subtotalCents,
     coverNote: quote.coverNote,
+    version: quote.version,
+    changeNote: quote.changeNote,
     test: true,
   });
   const result = await sendEmail({
@@ -290,6 +310,7 @@ export async function acceptQuote(token: string, input: AcceptInput): Promise<Qu
     const q = await getQuoteByToken(token);
     if (!q) throw new FlowError('Deze link is niet (meer) geldig.');
     if (q.status === 'akkoord') throw new FlowError('Deze offerte is al geaccepteerd.');
+    if (q.status === 'vervangen') throw new FlowError('Er is een nieuwere versie van deze offerte. Open de link in je mail opnieuw.');
     if (q.status === 'verlopen') throw new FlowError('Deze offerte is verlopen. Neem contact op voor een nieuwe.');
     throw new FlowError('Deze offerte kan niet meer worden geaccepteerd.');
   }

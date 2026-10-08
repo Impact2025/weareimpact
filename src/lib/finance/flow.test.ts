@@ -93,6 +93,12 @@ describe('validateQuote', () => {
     expect(validateQuote(quote())).toEqual([]);
   });
 
+  it('eist bij een nieuwe versie een wijzigingsregel voor de klant', () => {
+    const problems = validateQuote(quote({ replacesId: 'q1', changeNote: '  ' }));
+    expect(problems).toContain('Beschrijf kort wat er is gewijzigd ten opzichte van de vorige versie.');
+    expect(validateQuote(quote({ replacesId: 'q1', changeNote: 'Website-herbouw toegevoegd' }))).toEqual([]);
+  });
+
   it('eist naam, e-mail en tekenbevoegde van de opdrachtgever', () => {
     const q = quote({ client: { ...quote().client, legalName: '', invoiceEmail: ' ', signerName: '' } });
     expect(validateQuote(q)).toHaveLength(3);

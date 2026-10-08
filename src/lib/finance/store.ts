@@ -52,6 +52,8 @@ export function rowToQuote(r: Row): Quote {
     title: r.title as string,
     subtitle: (r.subtitle as string) ?? '',
     coverNote: (r.cover_note as string) ?? '',
+    replacesId: (r.replaces_id as string) ?? null,
+    changeNote: (r.change_note as string) ?? '',
     linkSlug: (r.link_slug as string) ?? null,
     dealId: (r.deal_id as string) ?? null,
     companyId: (r.company_id as string) ?? null,
@@ -129,6 +131,19 @@ export async function getQuoteByToken(token: string): Promise<Quote | null> {
   return rows[0] ? rowToQuote(rows[0]) : null;
 }
 
+/** Token van de nieuwste verstuurde versie die deze offerte vervangt (volgt de keten v1 → v2 → v3). */
+export async function getSuccessorToken(id: string): Promise<string | null> {
+  let current = id;
+  let token: string | null = null;
+  for (let i = 0; i < 20; i++) {
+    const rows = await sql`SELECT id, token FROM quotes WHERE replaces_id = ${current} AND status <> 'concept' LIMIT 1`;
+    if (!rows[0]) break;
+    current = rows[0].id as string;
+    token = rows[0].token as string;
+  }
+  return token;
+}
+
 export async function listQuotes(opts: { companyId?: string; dealId?: string } = {}): Promise<Quote[]> {
   await ensureFinanceSchema();
   const rows = await sql`
@@ -169,6 +184,7 @@ export interface QuoteInput {
   title: string;
   subtitle: string;
   coverNote: string;
+  changeNote?: string;
   linkSlug: string | null;
   dealId: string | null;
   companyId: string | null;
@@ -202,7 +218,7 @@ export async function insertQuote(input: QuoteInput): Promise<Quote> {
 export async function updateQuoteDraft(id: string, input: QuoteInput): Promise<Quote | null> {
   await ensureFinanceSchema();
   const rows = await sql`
-    UPDATE quotes SET reference = ${input.reference ?? ''}, title = ${input.title}, subtitle = ${input.subtitle}, cover_note = ${input.coverNote}, link_slug = ${input.linkSlug},
+    UPDATE quotes SET reference = ${input.reference ?? ''}, title = ${input.title}, subtitle = ${input.subtitle}, cover_note = ${input.coverNote}, change_note = ${input.changeNote ?? ''}, link_slug = ${input.linkSlug},
       deal_id = ${input.dealId}, company_id = ${input.companyId}, contact_id = ${input.contactId},
       client = ${JSON.stringify(input.client)}::jsonb, issued_on = ${input.issuedOn}, valid_until = ${input.validUntil},
       sections = ${JSON.stringify(input.sections)}::jsonb, lines = ${JSON.stringify(input.lines)}::jsonb,

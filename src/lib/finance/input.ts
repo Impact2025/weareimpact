@@ -93,6 +93,7 @@ export function parseQuoteInput(body: unknown): { input: QuoteInput | null; erro
       title,
       subtitle: str(o.subtitle, 240),
       coverNote: str(o.coverNote, 2000),
+      changeNote: str(o.changeNote, 500),
       linkSlug: str(o.linkSlug, 60) || null,
       dealId: str(o.dealId, 60) || null,
       companyId: str(o.companyId, 60) || null,

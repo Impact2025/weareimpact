@@ -1,4 +1,4 @@
-export type QuoteStatus = 'concept' | 'verzonden' | 'bekeken' | 'akkoord' | 'afgewezen' | 'verlopen';
+export type QuoteStatus = 'concept' | 'verzonden' | 'bekeken' | 'akkoord' | 'afgewezen' | 'verlopen' | 'vervangen';
 export type InvoiceStatus = 'concept' | 'verzonden' | 'betaald' | 'achterstallig' | 'gecrediteerd';
 
 export const QUOTE_STATUS_LABEL: Record<QuoteStatus, string> = {
@@ -8,6 +8,7 @@ export const QUOTE_STATUS_LABEL: Record<QuoteStatus, string> = {
   akkoord: 'Akkoord',
   afgewezen: 'Afgewezen',
   verlopen: 'Verlopen',
+  vervangen: 'Vervangen',
 };
 
 export const INVOICE_STATUS_LABEL: Record<InvoiceStatus, string> = {
@@ -25,6 +26,7 @@ export const QUOTE_STATUS_TONE: Record<QuoteStatus, string> = {
   akkoord: 'bg-green-100 text-green-700',
   afgewezen: 'bg-red-100 text-red-700',
   verlopen: 'bg-amber-100 text-amber-800',
+  vervangen: 'bg-slate-200 text-slate-600',
 };
 
 export const INVOICE_STATUS_TONE: Record<InvoiceStatus, string> = {
@@ -128,6 +130,10 @@ export interface Quote {
   subtitle: string;
   /** Persoonlijk bericht boven de standaardtekst van de verzendmail (optioneel). */
   coverNote: string;
+  /** Offerte die door deze versie wordt vervangen (alleen bij v2 en hoger). */
+  replacesId: string | null;
+  /** Korte uitleg voor de klant: wat is er gewijzigd t.o.v. de vorige versie. */
+  changeNote: string;
   /** Slug van het bestaande klantdossier (launch) waaraan deze offerte wordt gekoppeld. */
   linkSlug: string | null;
   dealId: string | null;

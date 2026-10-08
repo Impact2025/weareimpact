@@ -83,6 +83,12 @@ export function QuoteView({ quote, own, daysLeft, preview = false }: Props) {
 
       <StatusBanner status={status} acceptedAt={acceptedAt} acceptedName={acceptedName} validUntil={quote.validUntil} email={own.email} declineReason={quote.declineReason} />
 
+      {quote.version > 1 && quote.changeNote.trim() && (
+        <div className="border-b border-orange-200 bg-orange-50 px-4 py-3 text-center text-sm text-orange-900">
+          <strong>Aangepaste versie (v{quote.version}).</strong> Deze vervangt de vorige. Gewijzigd: {quote.changeNote}
+        </div>
+      )}
+
       {/* Hero */}
       <section className="mx-auto max-w-6xl px-4 pb-6 pt-10 sm:px-6 sm:pt-14">
         <p className="text-xs font-semibold uppercase tracking-[0.18em] text-orange-600">Offertevoorstel · {quote.reference}</p>

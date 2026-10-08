@@ -1,7 +1,8 @@
 import type { Metadata } from 'next';
+import { redirect } from 'next/navigation';
 import { QuoteView } from '@/components/finance/QuoteView';
 import { getFinanceSettings } from '@/lib/finance/settings';
-import { getQuoteByToken } from '@/lib/finance/store';
+import { getQuoteByToken, getSuccessorToken } from '@/lib/finance/store';
 
 export const dynamic = 'force-dynamic';
 
@@ -24,6 +25,12 @@ export default async function OffertePage({ params }: { params: Promise<{ token:
         </div>
       </main>
     );
+  }
+
+  // Oude link van een vervangen versie: stuur door naar de nieuwste, zodat niemand een oude versie ondertekent.
+  if (quote.status === 'vervangen') {
+    const next = await getSuccessorToken(quote.id);
+    if (next) redirect(`/offerte/${next}`);
   }
 
   const settings = await getFinanceSettings();

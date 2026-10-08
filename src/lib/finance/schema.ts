@@ -59,6 +59,14 @@ async function create() {
   await sql`ALTER TABLE quotes ADD COLUMN IF NOT EXISTS cover_note TEXT NOT NULL DEFAULT ''`;
   // Bestaand klantdossier (launch) waar deze offerte bij hoort; wordt bij verzenden aan de deal gekoppeld.
   await sql`ALTER TABLE quotes ADD COLUMN IF NOT EXISTS link_slug TEXT`;
+  // Versiebeheer: v2 verwijst naar v1, en v1 krijgt de status 'vervangen' zodra v2 is verstuurd.
+  await sql`ALTER TABLE quotes ADD COLUMN IF NOT EXISTS replaces_id UUID REFERENCES quotes(id) ON DELETE SET NULL`;
+  await sql`ALTER TABLE quotes ADD COLUMN IF NOT EXISTS change_note TEXT NOT NULL DEFAULT ''`;
+  await sql`ALTER TABLE quotes DROP CONSTRAINT IF EXISTS quotes_status_check`;
+  await sql`
+    ALTER TABLE quotes ADD CONSTRAINT quotes_status_check
+      CHECK (status IN ('concept','verzonden','bekeken','akkoord','afgewezen','verlopen','vervangen'))`;
+  await sql`CREATE INDEX IF NOT EXISTS idx_quotes_replaces ON quotes(replaces_id)`;
   await sql`CREATE INDEX IF NOT EXISTS idx_quotes_deal ON quotes(deal_id)`;
   await sql`CREATE INDEX IF NOT EXISTS idx_quotes_company ON quotes(company_id)`;
   await sql`CREATE INDEX IF NOT EXISTS idx_quotes_status ON quotes(status)`;

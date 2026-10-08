@@ -44,7 +44,7 @@ export default function QuoteEditorPage({ params }: { params: Promise<{ id: stri
   const [dossiers, setDossiers] = useState<{ slug: string; name: string }[]>([]);
 
   const [f, setF] = useState<{
-    reference: string; title: string; subtitle: string; coverNote: string; linkSlug: string | null; issuedOn: string; validUntil: string; vatRate: number;
+    reference: string; title: string; subtitle: string; coverNote: string; changeNote: string; linkSlug: string | null; issuedOn: string; validUntil: string; vatRate: number;
     client: Party; sections: QuoteSection[]; lines: EditLine[]; schedule: ScheduleItem[];
   } | null>(null);
 
@@ -59,7 +59,7 @@ export default function QuoteEditorPage({ params }: { params: Promise<{ id: stri
       setEvents(data.events);
       setInvoices(data.invoices);
       setProblems(data.problems);
-      setF({ reference: q.reference, title: q.title, subtitle: q.subtitle, coverNote: q.coverNote, linkSlug: q.linkSlug, issuedOn: q.issuedOn, validUntil: q.validUntil, vatRate: q.vatRate, client: q.client, sections: q.sections, lines: toEditLines(q.lines), schedule: q.schedule });
+      setF({ reference: q.reference, title: q.title, subtitle: q.subtitle, coverNote: q.coverNote, changeNote: q.changeNote, linkSlug: q.linkSlug, issuedOn: q.issuedOn, validUntil: q.validUntil, vatRate: q.vatRate, client: q.client, sections: q.sections, lines: toEditLines(q.lines), schedule: q.schedule });
       setDirty(false);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Laden mislukt');
@@ -240,7 +240,7 @@ export default function QuoteEditorPage({ params }: { params: Promise<{ id: stri
         {locked && (
           <>
             <Button variant="outline" size="sm" onClick={copyLink}>{copied ? <Check size={15} className="mr-2" aria-hidden /> : <Copy size={15} className="mr-2" aria-hidden />}{copied ? 'Gekopieerd' : 'Klantlink'}</Button>
-            {confirmSend ? (
+            {quote.status !== 'vervangen' && (confirmSend ? (
               <span className="flex items-center gap-2 rounded-lg bg-orange-50 px-3 py-1.5 text-sm">
                 Opnieuw versturen naar <strong>{f.client.invoiceEmail || '?'}</strong>?
                 <Button size="sm" className="bg-orange-600 hover:bg-orange-700" onClick={resend} disabled={busy !== null}>Ja, verstuur</Button>
@@ -250,8 +250,8 @@ export default function QuoteEditorPage({ params }: { params: Promise<{ id: stri
               <Button variant="outline" size="sm" onClick={() => setConfirmSend(true)} disabled={busy !== null}>
                 {busy === 'resend' ? <Loader2 size={15} className="mr-2 animate-spin" aria-hidden /> : <Send size={15} className="mr-2" aria-hidden />}Opnieuw versturen
               </Button>
-            )}
-            <Button variant="outline" size="sm" onClick={duplicate} disabled={busy !== null}>Nieuwe versie</Button>
+            ))}
+            {quote.status !== 'vervangen' && <Button variant="outline" size="sm" onClick={duplicate} disabled={busy !== null}>Nieuwe versie</Button>}
           </>
         )}
       </div>
@@ -279,6 +279,19 @@ export default function QuoteEditorPage({ params }: { params: Promise<{ id: stri
               </div>
             </div>
           </Panel>
+
+          {(quote.replacesId || f.changeNote) && (
+            <Panel title="Wat is er gewijzigd?" hint={`Verplicht voor versie ${quote.version}. Komt in de mail en bovenaan de offerte te staan, zodat de klant meteen ziet wat anders is. Bij versturen wordt de vorige versie automatisch vervangen.`}>
+              <textarea
+                className={field + ' min-h-[80px]'}
+                disabled={locked}
+                maxLength={500}
+                placeholder="Bijvoorbeeld: Herbouw van de website kosteloos toegevoegd; prijs ongewijzigd."
+                value={f.changeNote}
+                onChange={(e) => patch({ changeNote: e.target.value })}
+              />
+            </Panel>
+          )}
 
           <Panel title="Bericht in de mail" hint="Optioneel. Komt bovenaan de mail waarmee je de offerte verstuurt, vóór de standaardtekst.">
             <textarea
