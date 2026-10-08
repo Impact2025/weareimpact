@@ -127,17 +127,18 @@ export default function ChatClient({ projectSlug, audience }: { projectSlug: str
               whiteSpace: 'pre-wrap',
             }}
           >
-            {m.content}
+            {m.content.replace(/\*\*/g, '')}
           </div>
         ))}
         <div ref={bottomRef} />
       </div>
 
-      {finished ? (
-        <p style={{ color: '#2f7a3c', background: '#eef7ef', padding: 12, borderRadius: 8, fontSize: 14 }}>
-          Bedankt! Je antwoorden zijn opgeslagen. Je kunt dit venster sluiten.
+      {finished && (
+        <p style={{ color: '#2f7a3c', background: '#eef7ef', padding: 12, borderRadius: 8, fontSize: 14, margin: 0 }}>
+          Je antwoorden zijn opgeslagen. Je kunt hier nog steeds vragen stellen of iets aanvullen.
         </p>
-      ) : (
+      )}
+      {(
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
           {uploadError && (
             <p style={{ color: '#a12', background: '#fdecec', padding: 10, borderRadius: 8, fontSize: 13 }}>
