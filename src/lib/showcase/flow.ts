@@ -585,12 +585,16 @@ ${given}`;
     const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY, timeout: 9000, maxRetries: 1 });
     const res = await client.messages.create({
       model: FOLLOWUP_MODEL,
-      max_tokens: 120,
+      max_tokens: 300,
+      // Zonder dit gaat het hele tokenbudget op aan denkwerk en komt er geen tekst terug.
+      thinking: { type: 'disabled' },
       messages: [{ role: 'user', content: prompt }],
     });
     const block = res.content.find((b) => b.type === 'text');
     const text = block && block.type === 'text' ? block.text : null;
-    return cleanFollowup(text, r.moment) ?? fallback;
+    const cleaned = cleanFollowup(text, r.moment);
+    if (!cleaned) console.warn('Vervolgvraag afgewezen, terugval gebruikt:', text);
+    return cleaned ?? fallback;
   } catch (err) {
     console.error('Vervolgvraag maken mislukt:', err);
     return fallback;
