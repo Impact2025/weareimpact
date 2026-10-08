@@ -6,25 +6,28 @@ import ChatClient from './ChatClient';
 import OverviewClient from './OverviewClient';
 import VragenTab from './VragenTab';
 import V2Client from './V2Client';
+import DashboardClient from './DashboardClient';
 
 // V2-ideeën zijn projectspecifiek (BokaBord/Hans); alleen tonen voor projecten in deze lijst.
 const V2_PROJECTS: string[] = [];
 
 export default function PortalTabs({ projectSlug, audience }: { projectSlug: string; audience: Audience }) {
-  const [tab, setTab] = useState<'chat' | 'overview' | 'vragen' | 'v2'>('chat');
+  const [tab, setTab] = useState<'dashboard' | 'chat' | 'overview' | 'vragen' | 'v2'>('dashboard');
   const [openVragen, setOpenVragen] = useState(0);
   const [totaalVragen, setTotaalVragen] = useState(0);
-  const [gekozen, setGekozen] = useState(false);
-  // Wie vragen te beantwoorden heeft, landt direct op de tab Vragen.
-  const actief = !gekozen && openVragen > 0 ? 'vragen' : tab;
-  const kies = (t: typeof tab) => { setGekozen(true); setTab(t); };
+  // Openingsscherm is het overzicht; open vragen staan daar bovenaan als banner.
+  const actief = tab;
+  const kies = (t: typeof tab) => setTab(t);
   const showV2 = V2_PROJECTS.includes(projectSlug);
 
   return (
     <div>
-      <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
-        <button onClick={() => kies('chat')} style={tabButtonStyle(actief === 'chat')}>
-          Gesprek
+      <div style={{ display: 'flex', gap: 8, marginBottom: 16, flexWrap: 'wrap' }}>
+        <button onClick={() => kies('dashboard')} style={tabButtonStyle(actief === 'dashboard')}>
+          Overzicht
+        </button>
+        <button onClick={() => kies('overview')} style={tabButtonStyle(actief === 'overview')}>
+          Voortgang
         </button>
         {totaalVragen > 0 && (
           <button onClick={() => kies('vragen')} style={tabButtonStyle(actief === 'vragen')}>
@@ -36,8 +39,8 @@ export default function PortalTabs({ projectSlug, audience }: { projectSlug: str
             )}
           </button>
         )}
-        <button onClick={() => kies('overview')} style={tabButtonStyle(actief === 'overview')}>
-          Voortgang
+        <button onClick={() => kies('chat')} style={tabButtonStyle(actief === 'chat')}>
+          Vraag of document
         </button>
         {showV2 && (
           <button onClick={() => kies('v2')} style={tabButtonStyle(actief === 'v2')}>
@@ -51,8 +54,17 @@ export default function PortalTabs({ projectSlug, audience }: { projectSlug: str
         zichtbaar={actief === 'vragen'}
         onTelling={(open, totaal) => { setOpenVragen(open); setTotaalVragen(totaal); }}
       />
-      {actief === 'vragen' ? null : actief === 'chat' ? (
-        <ChatClient projectSlug={projectSlug} audience={audience} />
+      {actief === 'vragen' ? null : actief === 'dashboard' ? (
+        <DashboardClient projectSlug={projectSlug} audience={audience} openVragen={openVragen} onNavigate={kies} />
+      ) : actief === 'chat' ? (
+        <>
+          <p style={{ fontSize: 15, lineHeight: 1.5, color: '#444', margin: '0 0 12px' }}>
+            Iris loopt met je door een paar vragen. Antwoord in je eigen woorden en schrijf gerust
+            uitgebreid, hoe meer je deelt, hoe beter we je kunnen helpen. Je kunt ook een document
+            delen (pdf of tekst). Je kunt dit venster altijd sluiten en later verdergaan.
+          </p>
+          <ChatClient projectSlug={projectSlug} audience={audience} />
+        </>
       ) : actief === 'overview' ? (
         <OverviewClient projectSlug={projectSlug} audience={audience} />
       ) : showV2 ? (

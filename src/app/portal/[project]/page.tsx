@@ -52,9 +52,8 @@ export default async function PortalPage({
       <div style={styles.card}>
         <h1 style={styles.title}>{project.name}</h1>
         <p style={styles.text}>
-          Iris loopt met je door een paar vragen. Antwoord in je eigen woorden en schrijf gerust
-          uitgebreid — hoe meer je deelt, hoe beter we je kunnen helpen. Je kunt dit venster
-          altijd sluiten en later verdergaan.
+          Welkom in het voortgangsportaal van {project.name}. Hier volg je de status en oplevering
+          van het werk volgens onze afspraken, beantwoord je vragen en deel je documenten.
         </p>
         <PortalTabs projectSlug={projectSlug} audience={audience} />
       </div>
