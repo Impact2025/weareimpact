@@ -2,7 +2,7 @@ import { randomBytes } from 'crypto';
 import { sql } from '@/lib/db/neon';
 import { sendEmail } from '@/lib/email/send';
 import { showcaseRequestEmail } from '@/lib/email/templates/showcase';
-import { getOpenRouter, DEFAULT_MODELS } from '@/lib/ai/openrouter';
+import Anthropic from '@anthropic-ai/sdk';
 import { submitFeedback } from '@/lib/crm/aftercare';
 import { blockTime } from '@/lib/google-calendar';
 import { amsterdamParts } from '@/lib/time/amsterdam';
@@ -25,6 +25,8 @@ import {
 } from './moments';
 
 const WEB_BASE = 'https://weareimpact.nl';
+// De vervolgvraag gaat rechtstreeks naar de Claude API; snel en goedkoop model is genoeg voor één korte vraag.
+const FOLLOWUP_MODEL = 'claude-haiku-5-5';
 const DAY = 86_400_000;
 const HOUR = 3_600_000;
 
@@ -552,7 +554,7 @@ async function makeFollowup(r: ShowcaseRequest, def: MomentDef, answers: Answers
   // Zonder bruikbaar tekstantwoord valt Iris terug op de algemene vraag.
   const quoteable = pickQuote(answers, ['pijn', 'demo_reactie', 'besluit', 'toelichting']);
   if (!quoteable && r.moment !== 'tussen' && r.moment !== 'dag1') return fallback;
-  if (!process.env.OPENROUTER_API_KEY) return fallback;
+  if (!process.env.ANTHROPIC_API_KEY) return fallback;
 
   const facts: string[] = [];
   if (r.context.companyName) facts.push(`Bedrijf: ${r.context.companyName}`);
@@ -580,16 +582,14 @@ Hun antwoorden:
 ${given}`;
 
   try {
-    const call = getOpenRouter().chat.completions.create({
-      model: DEFAULT_MODELS.chat,
+    const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY, timeout: 9000, maxRetries: 1 });
+    const res = await client.messages.create({
+      model: FOLLOWUP_MODEL,
       max_tokens: 120,
       messages: [{ role: 'user', content: prompt }],
     });
-    const res = await Promise.race([
-      call,
-      new Promise<null>((resolve) => setTimeout(() => resolve(null), 9000)),
-    ]);
-    const text = res ? res.choices[0]?.message?.content : null;
+    const block = res.content.find((b) => b.type === 'text');
+    const text = block && block.type === 'text' ? block.text : null;
     return cleanFollowup(text, r.moment) ?? fallback;
   } catch (err) {
     console.error('Vervolgvraag maken mislukt:', err);
