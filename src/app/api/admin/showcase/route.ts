@@ -9,6 +9,7 @@ import {
   listAppointments,
   listRequests,
   resolveDealForCompany,
+  runShowcaseRound,
   sendRequest,
   setAppointmentStatus,
   setCaseField,
@@ -68,6 +69,9 @@ export async function POST(request: NextRequest) {
         const outcome = await sendRequest(String(body.id), { force: true });
         return NextResponse.json({ success: true, outcome });
       }
+      case 'round':
+        // Dezelfde ronde als de uurlijkse cron, handmatig te starten (met dry:true alleen kijken).
+        return NextResponse.json({ success: true, result: await runShowcaseRound({ dry: body.dry === true }) });
       case 'skip':
         await skipRequest(String(body.id));
         return NextResponse.json({ success: true });
