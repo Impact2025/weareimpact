@@ -48,6 +48,7 @@ import {
 } from '@/components/crm';
 import { CompanyJourney } from '@/components/crm/CompanyJourney';
 import { CompanyFinance } from '@/components/finance/CompanyFinance';
+import { CompanyShowcase } from '@/components/showcase/CompanyShowcase';
 import { industryLabels, companySizeLabels, formatDate } from '@/lib/crm/labels';
 import type { CompanyJourney as Journey } from '@/lib/crm/journey';
 import type { Company, Contact, Deal, Activity, CrmTask } from '@/lib/crm/types';
@@ -269,7 +270,7 @@ export default function CompanyDetailPage({ params }: { params: Promise<{ id: st
         {/* Tabs */}
         <div className="lg:col-span-2">
           <Tabs defaultValue="contacts">
-            <TabsList className="grid w-full grid-cols-7">
+            <TabsList className="grid w-full grid-cols-8">
               <TabsTrigger value="contacts" className="flex items-center gap-1">
                 <Users size={14} />
                 <span className="hidden sm:inline">Contacten</span>
@@ -289,7 +290,10 @@ export default function CompanyDetailPage({ params }: { params: Promise<{ id: st
                 <Receipt size={14} />
                 <span className="hidden sm:inline">Financiën</span>
               </TabsTrigger>
-              <TabsTrigger value="tasks" className="flex items-center gap-1">
+              <TabsTrigger value="showcase" className="flex items-center gap-1">
+Showcase
+</TabsTrigger>
+<TabsTrigger value="tasks" className="flex items-center gap-1">
                 <CheckSquare size={14} />
                 <span className="hidden sm:inline">Taken</span>
                 <Badge variant="secondary" className="ml-1 h-5 px-1.5">{tasks.length}</Badge>
@@ -397,6 +401,10 @@ export default function CompanyDetailPage({ params }: { params: Promise<{ id: st
             {/* Tasks Tab */}
             <TabsContent value="finance" className="mt-4">
               <CompanyFinance companyId={id} />
+            </TabsContent>
+
+            <TabsContent value="showcase" className="mt-4">
+              <CompanyShowcase companyId={id} />
             </TabsContent>
 
             <TabsContent value="tasks" className="mt-4">

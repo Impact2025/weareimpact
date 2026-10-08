@@ -21,6 +21,10 @@
       "schedule": "*/15 * * * *"
     },
     {
+      "path": "/api/cron/showcase-daily",
+      "schedule": "5 * * * *"
+    },
+    {
       "path": "/api/cron/download-retention",
       "schedule": "0 3 1 * *"
     }

@@ -25,6 +25,7 @@ interface Props {
 export function QuoteView({ quote, own, daysLeft, preview = false }: Props) {
   const [status, setStatus] = useState(quote.status);
   const [acceptedAt, setAcceptedAt] = useState(quote.acceptedAt);
+  const [showcaseToken, setShowcaseToken] = useState<string | null>(null);
   const [acceptedName, setAcceptedName] = useState(quote.acceptedName);
   const acceptRef = useRef<HTMLElement>(null);
 
@@ -229,13 +230,14 @@ export function QuoteView({ quote, own, daysLeft, preview = false }: Props) {
               <span className="text-orange-600">{sectionNumber + 1}</span>Akkoord
             </h2>
             {status === 'akkoord' ? (
-              <AcceptedCard name={acceptedName} role={quote.acceptedRole} at={acceptedAt} client={quote.client.legalName} reference={quote.reference} token={quote.token} />
+              <AcceptedCard name={acceptedName} role={quote.acceptedRole} at={acceptedAt} client={quote.client.legalName} reference={quote.reference} token={quote.token} showcaseToken={showcaseToken} />
             ) : open ? (
               <AcceptForm
                 quote={quote}
                 own={own}
                 preview={preview}
-                onAccepted={(at, name) => {
+                onAccepted={(at, name, token) => {
+                  setShowcaseToken(token);
                   setStatus('akkoord');
                   setAcceptedAt(at);
                   setAcceptedName(name);
@@ -340,7 +342,7 @@ function StatusBanner({ status, acceptedAt, acceptedName, validUntil, email, dec
   return null;
 }
 
-function AcceptedCard({ name, role, at, client, reference, token }: { name: string | null; role: string | null; at: string | null; client: string; reference: string; token: string }) {
+function AcceptedCard({ name, role, at, client, reference, token, showcaseToken }: { name: string | null; role: string | null; at: string | null; client: string; reference: string; token: string; showcaseToken: string | null }) {
   return (
     <div className="rounded-2xl border border-green-200 bg-white p-6 sm:p-8">
       <div className="flex items-start gap-4">
@@ -357,6 +359,13 @@ function AcceptedCard({ name, role, at, client, reference, token }: { name: stri
         <li className="flex gap-3"><span className="font-bold text-orange-600">2</span>Ik neem binnen twee werkdagen contact op voor de planning.</li>
         <li className="flex gap-3"><span className="font-bold text-orange-600">3</span>De factuur voor de eerste termijn volgt separaat.</li>
       </ol>
+      {showcaseToken && (
+        <div className="mt-6 rounded-xl border border-orange-200 bg-orange-50 p-4">
+          <p className="font-semibold text-slate-900">Twee korte vragen, helemaal vrijblijvend</p>
+          <p className="mt-1 text-sm text-slate-600">Wat gaf de doorslag? Het kost een halve minuut en ik lees het zelf.</p>
+          <a href={`/vraag/${showcaseToken}`} className="mt-3 inline-flex rounded-lg bg-orange-600 px-4 py-2 text-sm font-semibold text-white hover:bg-orange-700">Beantwoord de vragen</a>
+        </div>
+      )}
       <a href={`/api/offerte/${token}/pdf`} target="_blank" rel="noopener" className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-orange-700 hover:underline">
         <FileText size={16} aria-hidden /> Download offerte {reference} (PDF)
       </a>
@@ -364,7 +373,7 @@ function AcceptedCard({ name, role, at, client, reference, token }: { name: stri
   );
 }
 
-function AcceptForm({ quote, own, preview, onAccepted, onDeclined }: { quote: Quote; own: OwnParty; preview: boolean; onAccepted: (at: string, name: string) => void; onDeclined: () => void }) {
+function AcceptForm({ quote, own, preview, onAccepted, onDeclined }: { quote: Quote; own: OwnParty; preview: boolean; onAccepted: (at: string, name: string, showcaseToken: string | null) => void; onDeclined: () => void }) {
   const [name, setName] = useState(quote.client.signerName);
   const [role, setRole] = useState(quote.client.signerRole);
   const [confirm, setConfirm] = useState(false);
@@ -384,7 +393,7 @@ function AcceptForm({ quote, own, preview, onAccepted, onDeclined }: { quote: Qu
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Er ging iets mis');
-      if (action === 'accept') onAccepted(data.acceptedAt ?? new Date().toISOString(), name);
+      if (action === 'accept') onAccepted(data.acceptedAt ?? new Date().toISOString(), name, data.showcaseToken ?? null);
       else onDeclined();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Er ging iets mis');

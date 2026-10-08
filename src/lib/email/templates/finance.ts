@@ -67,6 +67,8 @@ export function quoteAcceptedClientEmail(d: {
   title: string;
   reference: string;
   firstInvoiceNote: string;
+  /** Link naar de twee korte vragen bij akkoord (optioneel). */
+  showcaseUrl?: string;
 }): Mail {
   const hi = firstName(d.signerName) ? `Hoi ${esc(firstName(d.signerName))},` : 'Hoi,';
   const body = `
@@ -75,6 +77,7 @@ export function quoteAcceptedClientEmail(d: {
     ${emailCard(`<p style="margin: 0; font-size: 15px; color: #0f172a;"><strong>Wat er nu gebeurt</strong></p>
       <p style="margin: 6px 0 0; font-size: 15px; color: #334155;">Ik neem binnen twee werkdagen contact op voor de planning. ${esc(d.firstInvoiceNote)}</p>`)}
     <p style="${P}">Je bevestiging met datum en tijd staat als PDF in de bijlage.</p>
+    ${d.showcaseUrl ? `<p style="${P}">Heb je een halve minuut? Ik ben benieuwd wat de doorslag gaf: <a href="${d.showcaseUrl}" style="color: #ea580c; font-weight: 600;">twee korte vragen</a>. Helemaal vrijblijvend.</p>` : ''}
     ${emailSignature()}`;
   return {
     subject: `Bevestiging akkoord: ${d.title}`,

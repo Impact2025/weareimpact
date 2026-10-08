@@ -9,6 +9,7 @@ import { generateSprintbriefInviteEmail } from '@/lib/email/templates/sprintbrie
 import { pushBookingLead } from '@/lib/agentos-bridge';
 import { ensureDealForBooking } from '@/lib/crm/dealFromBooking';
 import { getSprintTitle } from '@/lib/intake/sprintbrief-questions';
+import { registerApprovedBooking } from '@/lib/showcase/booking';
 
 const WEB_BASE = 'https://weareimpact.nl';
 
@@ -147,6 +148,7 @@ export async function GET(request: NextRequest) {
   // AI Diagnose & Doorbraak Sprint: bij goedkeuring meteen een CRM-deal
   // aanmaken en de klant de sprint-specifieke Sprintbrief laten invullen,
   // zodat Vincent zich vóór de sprintdag kan voorbereiden.
+  let sprintDealId: string | null = null;
   if (bookingRequest.booking_type.startsWith('sprint-')) {
     try {
       const dealId = await ensureDealForBooking({
@@ -160,6 +162,7 @@ export async function GET(request: NextRequest) {
         },
       });
 
+      sprintDealId = dealId;
       const sprintbriefToken = randomUUID();
       await sql`
         UPDATE booking_requests SET deal_id = ${dealId}, sprintbrief_token = ${sprintbriefToken} WHERE id = ${id}
@@ -183,6 +186,28 @@ export async function GET(request: NextRequest) {
       // Mag de goedkeuring zelf nooit blokkeren — de afspraak staat al vast.
       console.error('Failed to create deal / send sprintbrief for approved sprint booking:', dealError);
     }
+  }
+
+  // Elke goedgekeurde afspraak hangt aan een bedrijf, contact en deal en staat als afspraak in het systeem;
+  // daarop start de vraagronde na afloop. Mag de goedkeuring nooit blokkeren.
+  try {
+    await registerApprovedBooking({
+      bookingRequestId: id,
+      bookingType: bookingRequest.booking_type,
+      customer: {
+        name: bookingRequest.customer_name,
+        email: bookingRequest.customer_email,
+        phone: bookingRequest.customer_phone,
+        organization: bookingRequest.customer_organization,
+        website: bookingRequest.customer_website,
+      },
+      startTime: result.booking.startTime,
+      durationMinutes: result.booking.duration,
+      calendarEventId: result.booking.id,
+      dealId: sprintDealId,
+    });
+  } catch (registerError) {
+    console.error('Failed to register approved booking as appointment:', registerError);
   }
 
   await pushBookingLead({

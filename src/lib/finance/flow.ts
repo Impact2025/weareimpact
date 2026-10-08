@@ -8,6 +8,7 @@ import {
 } from '@/lib/email/templates/finance';
 import { ensureDossierForDeal } from '@/lib/crm/dossierFromDeal';
 import { ensureCompanyAndContact } from '@/lib/crm/ensureContact';
+import { openAcceptMoment } from '@/lib/showcase/flow';
 import { ensureFinanceSchema } from './schema';
 import { computeTotals, lineNetCents, formatEuro, formatInvoiceNumber } from './money';
 import { invoiceLinesFor } from './plan';
@@ -291,7 +292,15 @@ export async function acceptQuote(token: string, input: AcceptInput): Promise<Qu
     const note = first
       ? `Factuur ${first.termLabel ? `(${first.termLabel.toLowerCase()})` : ''} volgt separaat.`
       : 'De facturen volgen volgens het afgesproken schema.';
-    const mail = quoteAcceptedClientEmail({ signerName: name, title: quote.title, reference: quote.reference, firstInvoiceNote: note });
+    // Eerste vraagmoment (doorslag + toestemming): staat klaar op de bedankpagina en in de bevestigingsmail.
+    let showcaseUrl: string | undefined;
+    try {
+      const showcaseToken = quote.dealId ? await openAcceptMoment(quote.dealId, quote.companyId, quote.contactId) : null;
+      if (showcaseToken) showcaseUrl = `${WEB_BASE}/vraag/${showcaseToken}`;
+    } catch (err) {
+      console.error('Vraagmoment bij akkoord mislukt:', err);
+    }
+    const mail = quoteAcceptedClientEmail({ signerName: name, title: quote.title, reference: quote.reference, firstInvoiceNote: note, showcaseUrl });
     await sendEmail({
       to: quote.client.invoiceEmail,
       subject: mail.subject,

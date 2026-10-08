@@ -4,6 +4,7 @@ import { renderQuotePdf } from '@/lib/finance/pdf';
 import { getFinanceSettings } from '@/lib/finance/settings';
 import { getQuoteByToken } from '@/lib/finance/store';
 import { getClientIp, rateLimit } from '@/lib/rate-limit';
+import { openAcceptMoment } from '@/lib/showcase/flow';
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
@@ -43,7 +44,14 @@ export async function POST(request: NextRequest, { params }: Ctx) {
         ip,
         userAgent: request.headers.get('user-agent'),
       });
-      return NextResponse.json({ success: true, acceptedAt: quote.acceptedAt });
+      // Idempotent: het vraagmoment is al aangemaakt tijdens het akkoord, dit haalt alleen het token op.
+      let showcaseToken: string | null = null;
+      try {
+        showcaseToken = quote.dealId ? await openAcceptMoment(quote.dealId, quote.companyId, quote.contactId) : null;
+      } catch (err) {
+        console.error('Vraagmoment ophalen mislukt:', err);
+      }
+      return NextResponse.json({ success: true, acceptedAt: quote.acceptedAt, showcaseToken });
     }
     if (action === 'decline') {
       await declineQuote(token, typeof body.reason === 'string' ? body.reason : null);
