@@ -2,7 +2,7 @@ import { randomBytes } from 'crypto';
 import { sql } from '@/lib/db/neon';
 import { sendEmail } from '@/lib/email/send';
 import { showcaseRequestEmail } from '@/lib/email/templates/showcase';
-import { getClaude, MODELS } from '@/lib/ai/claude';
+import { getOpenRouter, DEFAULT_MODELS } from '@/lib/ai/openrouter';
 import { submitFeedback } from '@/lib/crm/aftercare';
 import { blockTime } from '@/lib/google-calendar';
 import { amsterdamParts } from '@/lib/time/amsterdam';
@@ -552,7 +552,7 @@ async function makeFollowup(r: ShowcaseRequest, def: MomentDef, answers: Answers
   // Zonder bruikbaar tekstantwoord valt Iris terug op de algemene vraag.
   const quoteable = pickQuote(answers, ['pijn', 'demo_reactie', 'besluit', 'toelichting']);
   if (!quoteable && r.moment !== 'tussen' && r.moment !== 'dag1') return fallback;
-  if (!process.env.ANTHROPIC_API_KEY) return fallback;
+  if (!process.env.OPENROUTER_API_KEY) return fallback;
 
   const facts: string[] = [];
   if (r.context.companyName) facts.push(`Bedrijf: ${r.context.companyName}`);
@@ -580,8 +580,8 @@ Hun antwoorden:
 ${given}`;
 
   try {
-    const call = getClaude().chat.completions.create({
-      model: MODELS.HAIKU,
+    const call = getOpenRouter().chat.completions.create({
+      model: DEFAULT_MODELS.chat,
       max_tokens: 120,
       messages: [{ role: 'user', content: prompt }],
     });
@@ -589,7 +589,7 @@ ${given}`;
       call,
       new Promise<null>((resolve) => setTimeout(() => resolve(null), 9000)),
     ]);
-    const text = res && 'choices' in res ? res.choices[0]?.message?.content : null;
+    const text = res ? res.choices[0]?.message?.content : null;
     return cleanFollowup(text, r.moment) ?? fallback;
   } catch (err) {
     console.error('Vervolgvraag maken mislukt:', err);
