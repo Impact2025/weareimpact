@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { sql } from '@/lib/db/neon';
 import { amsterdamDateTime } from '@/lib/time/amsterdam';
 import {
@@ -130,11 +131,21 @@ export async function POST(request: NextRequest) {
         const { email } = await sendForReview(String(body.dealId));
         return NextResponse.json({ success: true, email });
       }
-      case 'case-publish':
-        return NextResponse.json({ success: true, ...(await publishCase(String(body.dealId))) });
-      case 'case-unpublish':
+      case 'case-publish': {
+        const { slug } = await publishCase(String(body.dealId));
+        // Meteen zichtbaar: de publieke pagina's zijn gecachet.
+        revalidatePath('/showcases');
+        revalidatePath(`/showcases/${slug}`);
+        return NextResponse.json({ success: true, slug });
+      }
+      case 'case-unpublish': {
+        const before = await getCase(String(body.dealId));
         await unpublishCase(String(body.dealId));
+        // Intrekken moet direct werken, niet pas na de cachetijd.
+        revalidatePath('/showcases');
+        if (before?.slug) revalidatePath(`/showcases/${before.slug}`);
         return NextResponse.json({ success: true });
+      }
       case 'consent':
         await setCaseField(String(body.dealId), 'consent', String(body.value));
         return NextResponse.json({ success: true });
