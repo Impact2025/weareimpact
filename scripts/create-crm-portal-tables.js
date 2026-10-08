@@ -204,6 +204,12 @@ async function createCrmPortalTables() {
     `;
     console.log('✅ Created index: idx_crm_documents_project');
 
+    // Documenten die WeAreImpact bewust deelt met de klant (tab "Documenten" in het portaal).
+    // Het bestand zelf staat in file_data, zodat downloads achter de portaalsessie blijven.
+    await sql`ALTER TABLE crm_documents ADD COLUMN IF NOT EXISTS client_visible BOOLEAN NOT NULL DEFAULT FALSE`;
+    await sql`ALTER TABLE crm_documents ADD COLUMN IF NOT EXISTS description TEXT`;
+    await sql`ALTER TABLE crm_documents ADD COLUMN IF NOT EXISTS file_data BYTEA`;
+
     // Onderscheidt een samenvatting die Iris zelf tijdens het gesprek heeft
     // gemaakt (finish_conversation) van een die Vincent achteraf handmatig
     // heeft laten genereren als vangnet wanneer Iris dat zelf niet deed.

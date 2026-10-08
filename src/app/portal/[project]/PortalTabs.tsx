@@ -7,13 +7,15 @@ import OverviewClient from './OverviewClient';
 import VragenTab from './VragenTab';
 import V2Client from './V2Client';
 import DashboardClient from './DashboardClient';
+import DocumentenTab from './DocumentenTab';
 
 // V2-ideeën zijn projectspecifiek (BokaBord/Hans); alleen tonen voor projecten in deze lijst.
 const V2_PROJECTS: string[] = [];
 
 export default function PortalTabs({ projectSlug, audience }: { projectSlug: string; audience: Audience }) {
-  const [tab, setTab] = useState<'dashboard' | 'chat' | 'overview' | 'vragen' | 'v2'>('dashboard');
+  const [tab, setTab] = useState<'dashboard' | 'chat' | 'overview' | 'vragen' | 'documenten' | 'v2'>('dashboard');
   const [openVragen, setOpenVragen] = useState(0);
+  const [aantalDocumenten, setAantalDocumenten] = useState(0);
   const [totaalVragen, setTotaalVragen] = useState(0);
   // Openingsscherm is het overzicht; open vragen staan daar bovenaan als banner.
   const actief = tab;
@@ -39,6 +41,11 @@ export default function PortalTabs({ projectSlug, audience }: { projectSlug: str
             )}
           </button>
         )}
+        {aantalDocumenten > 0 && (
+          <button onClick={() => kies('documenten')} style={tabButtonStyle(actief === 'documenten')}>
+            Documenten
+          </button>
+        )}
         <button onClick={() => kies('chat')} style={tabButtonStyle(actief === 'chat')}>
           Vraag of document
         </button>
@@ -54,7 +61,13 @@ export default function PortalTabs({ projectSlug, audience }: { projectSlug: str
         zichtbaar={actief === 'vragen'}
         onTelling={(open, totaal) => { setOpenVragen(open); setTotaalVragen(totaal); }}
       />
-      {actief === 'vragen' ? null : actief === 'dashboard' ? (
+      <DocumentenTab
+        projectSlug={projectSlug}
+        audience={audience}
+        zichtbaar={actief === 'documenten'}
+        onTelling={setAantalDocumenten}
+      />
+      {actief === 'vragen' || actief === 'documenten' ? null : actief === 'dashboard' ? (
         <DashboardClient projectSlug={projectSlug} audience={audience} openVragen={openVragen} onNavigate={kies} />
       ) : actief === 'chat' ? (
         <>
