@@ -93,3 +93,50 @@ Vincent van Munster
 WeAreImpact`;
   return { subject: 'Mag dit als voorbeeld? Bekijk de tekst', html, text };
 }
+
+const escHtml = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+/** Naar Vincent zelf: een klant heeft een vraag beantwoord (of de vervolgvraag). */
+export function showcaseAnswerEmail(d: {
+  company: string;
+  contactName: string | null;
+  momentName: string;
+  lines: { label: string; value: string }[];
+  followup?: { question: string; answer: string };
+  concerning: boolean;
+  adminUrl: string;
+}): { subject: string; html: string; text: string } {
+  const who = d.contactName ? `${d.contactName} van ${d.company}` : d.company;
+  const kind = d.followup ? 'Vervolgantwoord' : 'Antwoord';
+  const subject = `${d.concerning ? 'Let op: ' : ''}${kind} van ${d.company} (${d.momentName})`;
+
+  const rows = d.followup
+    ? [{ label: d.followup.question, value: d.followup.answer }]
+    : d.lines;
+  const answers = rows
+    .map(
+      (l) => `<p style="margin: 0 0 4px; font-size: 13px; color: #64748b;">${escHtml(l.label)}</p>
+        <p style="margin: 0 0 16px; font-size: 16px; line-height: 1.5; color: #0f172a;"><strong>${escHtml(l.value)}</strong></p>`,
+    )
+    .join('');
+  const warn = d.concerning
+    ? `<p style="${P} background-color: #fef2f2; border-radius: 8px; padding: 12px 16px; color: #991b1b;"><strong>Dit antwoord vraagt aandacht.</strong> Iris stelde geen vervolgvraag en er staat een urgente taak voor je klaar om te bellen.</p>`
+    : '';
+  const body = `
+    <p style="${P}">${escHtml(who)} heeft de vraag bij <strong>${escHtml(d.momentName)}</strong> beantwoord.</p>
+    ${warn}
+    ${answers}
+    ${emailButton('Open in admin', d.adminUrl)}`;
+  const html = emailShell({
+    preheader: rows[0] ? rows[0].value.slice(0, 90) : 'Nieuw antwoord',
+    title: d.followup ? 'Vervolgantwoord binnen' : 'Antwoord binnen',
+    subtitle: who,
+    body,
+  });
+  const text = `${who} heeft de vraag bij "${d.momentName}" beantwoord.
+
+${d.concerning ? 'LET OP: dit antwoord vraagt aandacht; er staat een urgente taak klaar.\n\n' : ''}${rows.map((l) => `${l.label}\n${l.value}`).join('\n\n')}
+
+Open in admin: ${d.adminUrl}`;
+  return { subject, html, text };
+}

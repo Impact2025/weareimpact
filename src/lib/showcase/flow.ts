@@ -1,7 +1,7 @@
 import { randomBytes } from 'crypto';
 import { sql } from '@/lib/db/neon';
 import { sendEmail } from '@/lib/email/send';
-import { showcaseRequestEmail } from '@/lib/email/templates/showcase';
+import { showcaseAnswerEmail, showcaseRequestEmail } from '@/lib/email/templates/showcase';
 import Anthropic from '@anthropic-ai/sdk';
 import { submitFeedback } from '@/lib/crm/aftercare';
 import { blockTime } from '@/lib/google-calendar';
@@ -25,6 +25,7 @@ import {
 } from './moments';
 
 const WEB_BASE = 'https://weareimpact.nl';
+const OWNER_EMAIL = 'v.munster@weareimpact.nl';
 // De vervolgvraag gaat rechtstreeks naar de Claude API; snel en goedkoop model is genoeg voor één korte vraag.
 const FOLLOWUP_MODEL = 'claude-haiku-5-5';
 const DAY = 86_400_000;
@@ -516,14 +517,46 @@ export async function submitAnswers(token: string, raw: Record<string, unknown>)
   return { followup, thanks: thanksText(def, { ...r, answers }) };
 }
 
-async function afterAnswered(r: ShowcaseRequest, answers: Answers, concerning: boolean) {
-  const def = MOMENTS[r.moment];
-  const lines: string[] = [];
+/** Antwoorden leesbaar, met de vraag erbij; hergebruikt voor de CRM-notitie en de melding aan Vincent. */
+function formatAnswers(def: MomentDef, answers: Answers): { label: string; value: string }[] {
+  const out: { label: string; value: string }[] = [];
   for (const q of def.questions) {
     const v = answers[q.key];
-    if (v == null) continue;
-    lines.push(`${q.label} ${typeof v === 'object' ? JSON.stringify(v) : v}`);
+    if (v == null || v === '') continue;
+    let value: string;
+    if (Array.isArray(v)) value = v.map((w) => WORDS.find((x) => x.value === w)?.label ?? String(w)).join(', ');
+    else if (typeof v === 'object') value = Object.entries(v).map(([k, x]) => `${k}: ${x}`).join(', ');
+    else value = q.options?.find((o) => o.value === String(v))?.label ?? String(v);
+    out.push({ label: q.label, value });
   }
+  return out;
+}
+
+/** Eén korte mail aan Vincent zodra de klant antwoordt; mag het antwoord van de klant nooit blokkeren. */
+async function notifyAnswer(r: ShowcaseRequest, parts: { lines: { label: string; value: string }[]; concerning: boolean; followup?: { question: string; answer: string } }) {
+  try {
+    const def = MOMENTS[r.moment];
+    const [co] = r.companyId ? await sql`SELECT name FROM companies WHERE id = ${r.companyId}` : [];
+    const contact = r.companyId ? await primaryContact(r.companyId, r.contactId) : null;
+    const mail = showcaseAnswerEmail({
+      company: (co?.name as string) ?? 'een klant',
+      contactName: contact?.firstName ?? null,
+      momentName: def.name,
+      lines: parts.lines,
+      followup: parts.followup,
+      concerning: parts.concerning,
+      adminUrl: r.companyId ? `${WEB_BASE}/admin/crm/bedrijven/${r.companyId}` : `${WEB_BASE}/admin/crm`,
+    });
+    await sendEmail({ to: OWNER_EMAIL, subject: mail.subject, html: mail.html, text: mail.text });
+  } catch (err) {
+    console.error('Melding van klantantwoord mislukt:', err);
+  }
+}
+
+async function afterAnswered(r: ShowcaseRequest, answers: Answers, concerning: boolean) {
+  const def = MOMENTS[r.moment];
+  const formatted = formatAnswers(def, answers);
+  const lines = formatted.map((l) => `${l.label} ${l.value}`);
   await crmActivity(r.companyId, r.contactId, r.dealId, `Antwoord: ${def.name}`, lines.join('\n'));
 
   if (r.moment === 'akkoord' && r.dealId && r.companyId && typeof answers.consent === 'string') {
@@ -546,6 +579,7 @@ async function afterAnswered(r: ShowcaseRequest, answers: Answers, concerning: b
       'urgent',
     );
   }
+  await notifyAnswer(r, { lines: formatted, concerning });
 }
 
 // ---------- vervolgvraag ----------
