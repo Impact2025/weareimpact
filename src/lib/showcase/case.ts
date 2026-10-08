@@ -181,7 +181,8 @@ Geef alleen de tekst.`;
     const res = await client.messages.create({
       model: 'claude-sonnet-5-5',
       max_tokens: 400,
-      thinking: { type: 'disabled' },
+      // Dit model wil geen 'disabled'; 'between_tools' laat het zonder denkblok antwoorden.
+      thinking: { type: 'between_tools' },
       messages: [{ role: 'user', content: prompt }],
     });
     const block = res.content.find((b) => b.type === 'text');
