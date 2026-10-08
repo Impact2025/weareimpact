@@ -7,7 +7,7 @@ describe('emailSignature', () => {
   it('bevat groet, logo, slogan en naam', () => {
     expect(html).toContain('Hartelijke groet,');
     expect(html).toContain('WeAreImpact_hart.png');
-    expect(html).toContain('AI &amp; Innovatie met een sociaal hart.');
+    expect(html).toContain('Procesversneller voor sociale en duurzame ondernemers.');
     expect(html).toContain('Vincent van Munster');
   });
 

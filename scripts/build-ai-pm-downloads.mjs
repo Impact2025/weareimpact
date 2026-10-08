@@ -45,7 +45,7 @@ function wrap(d, body) {
 ${d.landscape ? 'body{font-size:9pt;line-height:1.35}p{margin-bottom:4px}td{font-size:8.4pt;padding:3px 6px}th{padding:5px 6px}.write{height:24px}.top{margin-bottom:5px}h1{font-size:17pt;margin:2px 0}.sub{font-size:9.2pt;margin-bottom:2px}.rule{margin:2px 0 6px}h2{margin:8px 0 4px}.box{padding:6px 10px;margin:6px 0}' : ''}${d.compact ? '.write{height:24px}td{padding:3px 7px}.top{margin-bottom:8px}h1{font-size:20pt;margin-top:2px}.rule{margin:3px 0 8px}h2{margin:9px 0 4px}.box{margin:6px 0}' : ''}</style></head>
 <body>
 <div class="top">
-  <div class="brand"><img class="logo" src="../../public/WeAreImpact_hart.png" alt="WeAreImpact"><div><div class="name">WeAreImpact</div><div class="tag">AI &amp; Innovatie met een sociaal hart.</div></div></div>
+  <div class="brand"><img class="logo" src="../../public/WeAreImpact_hart.png" alt="WeAreImpact"><div><div class="name">WeAreImpact</div><div class="tag">Procesversneller voor sociale en duurzame ondernemers.</div></div></div>
   <div class="meta"><div class="doctag">${d.tag}</div><div>Versie: oktober 2026</div><div>weareimpact.nl/ai-projectmanager</div></div>
 </div>
 <h1>${d.title}</h1>

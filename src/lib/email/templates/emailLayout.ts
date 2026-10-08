@@ -172,7 +172,7 @@ export function emailSignature(greeting: string | false = 'Hartelijke groet,'): 
                   </td>
                   <td style="vertical-align: middle;">
                     <div style="font-size: 26px; line-height: 1.1; font-weight: 700; color: #0f172a;">WeAre<span style="color: #ea580c;">Impact</span></div>
-                    <div style="margin-top: 4px; font-size: 13px; line-height: 1.3; font-style: italic; color: #0f172a;">AI &amp; Innovatie met een sociaal hart.</div>
+                    <div style="margin-top: 4px; font-size: 13px; line-height: 1.3; font-style: italic; color: #0f172a;">Procesversneller voor sociale en duurzame ondernemers.</div>
                   </td>
                 </tr>
               </table>

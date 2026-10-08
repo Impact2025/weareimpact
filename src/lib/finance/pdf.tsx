@@ -145,7 +145,7 @@ function Header({ logo, tag, meta, settings }: { logo: Buffer | null; tag: strin
         {logo ? <Image src={logo} style={s.logo} /> : null}
         <View>
           <Text style={s.brand}>{settings.tradeName || 'WeAreImpact'}</Text>
-          <Text style={s.tagline}>AI & Innovatie met een sociaal hart.</Text>
+          <Text style={s.tagline}>Procesversneller voor sociale en duurzame ondernemers.</Text>
         </View>
       </View>
       <View>
