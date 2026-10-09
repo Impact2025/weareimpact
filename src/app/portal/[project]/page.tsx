@@ -1,6 +1,7 @@
 import { cookies } from 'next/headers';
 import { sql } from '@/lib/db/neon';
 import { resolvePortalAudience } from '@/lib/crm/portal-session';
+import { isConversationalProject } from '@/lib/crm/chat';
 import PortalTabs from './PortalTabs';
 
 export const dynamic = 'force-dynamic';
@@ -55,7 +56,7 @@ export default async function PortalPage({
           Welkom in het voortgangsportaal van {project.name}. Hier volg je de status en oplevering
           van het werk volgens onze afspraken, beantwoord je vragen en deel je documenten.
         </p>
-        <PortalTabs projectSlug={projectSlug} audience={audience} pulseEnabled={!!project.pulse_enabled} initialTab={tab} />
+        <PortalTabs projectSlug={projectSlug} audience={audience} pulseEnabled={!!project.pulse_enabled} initialTab={tab} conversational={isConversationalProject(projectSlug)} />
       </div>
     </main>
   );

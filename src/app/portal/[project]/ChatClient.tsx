@@ -26,6 +26,7 @@ export default function ChatClient({
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [finished, setFinished] = useState(false);
+  const [progress, setProgress] = useState<{ answered: number; total: number } | null>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -38,6 +39,7 @@ export default function ChatClient({
         content: m.content,
       }));
       setFinished(!!data.finished);
+      if (data.progress) setProgress(data.progress);
 
       if (isPulse && !data.pulse) {
         setMessages([{ role: 'assistant', content: 'Er staat op dit moment geen weekcheck open. Je krijgt vrijdag een uitnodiging van me.' }]);
@@ -54,6 +56,7 @@ export default function ChatClient({
         const openData = await openRes.json();
         setMessages([{ role: 'assistant', content: openData.reply }]);
         setFinished(!!openData.finished);
+        if (openData.progress) setProgress(openData.progress);
       } else {
         setMessages(history);
       }
@@ -81,6 +84,7 @@ export default function ChatClient({
       const data = await res.json();
       setMessages((prev) => [...prev, { role: 'assistant', content: data.reply }]);
       setFinished(!!data.finished);
+      if (data.progress) setProgress(data.progress);
     } finally {
       setSending(false);
     }
@@ -126,6 +130,14 @@ export default function ChatClient({
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+      {!isPulse && progress && progress.total > 0 && (
+        <div style={{ fontSize: 13, color: '#666' }}>
+          <div style={{ background: '#e5e7eb', borderRadius: 4, height: 6, overflow: 'hidden' }}>
+            <div style={{ background: '#f97316', height: 6, width: `${Math.round((progress.answered / progress.total) * 100)}%` }} />
+          </div>
+          <div style={{ marginTop: 4 }}>{progress.answered} van {progress.total} onderwerpen besproken</div>
+        </div>
+      )}
       <div style={chatBoxStyle}>
         {messages.map((m, i) => (
           <div
@@ -145,6 +157,9 @@ export default function ChatClient({
             {m.content.replace(/\*\*/g, '')}
           </div>
         ))}
+        {(sending || uploading) && (
+          <div style={{ alignSelf: 'flex-start', color: '#888', fontSize: 14, padding: '4px 4px' }}>Iris schrijft…</div>
+        )}
         <div ref={bottomRef} />
       </div>
 

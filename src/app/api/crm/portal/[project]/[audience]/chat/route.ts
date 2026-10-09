@@ -3,8 +3,14 @@ import { cookies } from 'next/headers';
 import type { ChatCompletionMessageParam } from 'openai/resources/chat/completions';
 import { sql } from '@/lib/db/neon';
 import { isValidPortalSessionToken, portalCookieName, isAudience, type Audience } from '@/lib/crm/portal-session';
-import { getOpenRouter, DEFAULT_MODELS } from '@/lib/ai/openrouter';
-import { buildChatSystemPrompt, crmChatTools, executeCrmChatTool, type DossierQuestion } from '@/lib/crm/chat';
+import { getClaude, DEFAULT_MODELS, MODELS } from '@/lib/ai/claude';
+import {
+  buildChatSystemPrompt,
+  crmChatTools,
+  executeCrmChatTool,
+  isConversationalProject,
+  type DossierQuestion,
+} from '@/lib/crm/chat';
 import {
   DOCUMENT_INLINE_THRESHOLD,
   documentReferenceLabel,
@@ -21,6 +27,14 @@ async function requireProjectSession(projectSlug: string, audience: Audience): P
   const store = await cookies();
   const token = store.get(portalCookieName(projectSlug, audience))?.value;
   return isValidPortalSessionToken(token, projectSlug, audience);
+}
+
+async function getProgress(projectSlug: string, audience: Audience) {
+  const rows = await sql`
+    SELECT COUNT(*)::int AS total, COUNT(*) FILTER (WHERE status = 'answered')::int AS answered
+    FROM crm_questions WHERE project_slug = ${projectSlug} AND audience = ${audience} AND origin = 'admin'
+  `;
+  return { answered: rows[0]?.answered ?? 0, total: rows[0]?.total ?? 0 };
 }
 
 export async function GET(
@@ -42,7 +56,7 @@ export async function GET(
     SELECT id FROM crm_chat_summaries WHERE project_slug = ${projectSlug} AND audience = ${audience} LIMIT 1
   `;
 
-  return NextResponse.json({ messages, finished: summary.length > 0 });
+  return NextResponse.json({ messages, finished: summary.length > 0, progress: await getProgress(projectSlug, audience) });
 }
 
 export async function POST(
@@ -120,10 +134,13 @@ export async function POST(
     `;
   }
 
+  const conversational = isConversationalProject(projectSlug);
+  const chatModel = conversational ? MODELS.SONNET : DEFAULT_MODELS.chat;
+
   try {
-    const client = getOpenRouter();
+    const client = getClaude();
     const convo: ChatCompletionMessageParam[] = [
-      { role: 'system', content: buildChatSystemPrompt(project.name, questions, project.intake_notes, audience) },
+      { role: 'system', content: buildChatSystemPrompt(project.name, questions, project.intake_notes, audience, conversational) },
       ...historyRows.map((m) => ({ role: m.role as 'user' | 'assistant', content: m.content })),
       ...(fullTextForThisTurn
         ? [{ role: 'user' as const, content: fullTextForThisTurn }]
@@ -136,7 +153,7 @@ export async function POST(
     let finishCalled = false;
     for (let round = 0; round < MAX_TOOL_ROUNDS; round++) {
       const resp = await client.chat.completions.create({
-        model: DEFAULT_MODELS.chat,
+        model: chatModel,
         messages: convo,
         tools: crmChatTools,
         tool_choice: 'auto',
@@ -170,7 +187,7 @@ export async function POST(
 
     if (!finalContent) {
       const finalResp = await client.chat.completions.create({
-        model: DEFAULT_MODELS.chat,
+        model: chatModel,
         messages: convo,
         temperature: 0.5,
         max_tokens: 500,
@@ -204,7 +221,7 @@ export async function POST(
               'vervolgstappen voor Vincent.',
           });
           const wrapResp = await client.chat.completions.create({
-            model: DEFAULT_MODELS.chat,
+            model: chatModel,
             messages: convo,
             tools: crmChatTools,
             tool_choice: { type: 'function', function: { name: 'finish_conversation' } },
@@ -241,7 +258,11 @@ export async function POST(
       SELECT id FROM crm_chat_summaries WHERE project_slug = ${projectSlug} AND audience = ${audience} LIMIT 1
     `;
 
-    return NextResponse.json({ reply: finalContent, finished: summary.length > 0 });
+    return NextResponse.json({
+      reply: finalContent,
+      finished: summary.length > 0,
+      progress: await getProgress(projectSlug, audience),
+    });
   } catch (error) {
     console.error('CRM chat error:', error);
     return NextResponse.json({ error: 'Chat mislukt' }, { status: 500 });

@@ -17,11 +17,13 @@ export default function PortalTabs({
   audience,
   pulseEnabled = false,
   initialTab,
+  conversational = false,
 }: {
   projectSlug: string;
   audience: Audience;
   pulseEnabled?: boolean;
   initialTab?: string;
+  conversational?: boolean;
 }) {
   const [tab, setTab] = useState<'dashboard' | 'chat' | 'overview' | 'vragen' | 'documenten' | 'v2' | 'pulse'>(
     initialTab === 'pulse' && pulseEnabled ? 'pulse' : 'dashboard',
@@ -59,7 +61,7 @@ export default function PortalTabs({
           </button>
         )}
         <button onClick={() => kies('chat')} style={tabButtonStyle(actief === 'chat')}>
-          Vraag of document
+          {conversational ? 'Gesprek met Iris' : 'Vraag of document'}
         </button>
         {pulseEnabled && (
           <button onClick={() => kies('pulse')} style={tabButtonStyle(actief === 'pulse')}>
@@ -88,11 +90,18 @@ export default function PortalTabs({
         <DashboardClient projectSlug={projectSlug} audience={audience} openVragen={openVragen} onNavigate={kies} />
       ) : actief === 'chat' ? (
         <>
+          {conversational ? (
+            <p style={{ fontSize: 15, lineHeight: 1.5, color: '#444', margin: '0 0 12px' }}>
+              Een gesprek met Iris over hoe jij werkt. Antwoord zoals je het aan een collega zou vertellen,
+              kort mag ook. Je kunt altijd stoppen en later verdergaan; je kunt ook een document delen.
+            </p>
+          ) : (
           <p style={{ fontSize: 15, lineHeight: 1.5, color: '#444', margin: '0 0 12px' }}>
             Iris loopt met je door een paar vragen. Antwoord in je eigen woorden en schrijf gerust
             uitgebreid, hoe meer je deelt, hoe beter we je kunnen helpen. Je kunt ook een document
             delen (pdf of tekst). Je kunt dit venster altijd sluiten en later verdergaan.
           </p>
+          )}
           <ChatClient projectSlug={projectSlug} audience={audience} />
         </>
       ) : actief === 'pulse' ? (
