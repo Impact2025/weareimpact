@@ -126,9 +126,9 @@ function tabButtonStyle(active: boolean): React.CSSProperties {
   return {
     padding: '8px 16px',
     borderRadius: 8,
-    border: active ? 'none' : '1px solid #d1d5db',
-    background: active ? '#1a1a2e' : '#fff',
-    color: active ? '#fff' : '#444',
+    border: active ? '1px solid #a5b4fc' : '1px solid #e5e7eb',
+    background: active ? '#eef2ff' : '#fff',
+    color: active ? '#3730a3' : '#555',
     fontSize: 14,
     fontWeight: 600,
     cursor: 'pointer',

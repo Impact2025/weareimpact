@@ -26,6 +26,7 @@ export default function ChatClient({
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [finished, setFinished] = useState(false);
+  const [focus, setFocus] = useState(false);
   const [progress, setProgress] = useState<{ answered: number; total: number } | null>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -144,8 +145,9 @@ export default function ChatClient({
             key={i}
             style={{
               alignSelf: m.role === 'user' ? 'flex-end' : 'flex-start',
-              background: m.role === 'user' ? '#1a1a2e' : '#f1f2f6',
-              color: m.role === 'user' ? '#fff' : '#1a1a2e',
+              background: m.role === 'user' ? '#ffedd5' : '#eef2ff',
+              border: `1px solid ${m.role === 'user' ? '#fed7aa' : '#c7d2fe'}`,
+              color: '#1a1a2e',
               padding: '10px 14px',
               borderRadius: 14,
               maxWidth: '80%',
@@ -169,12 +171,13 @@ export default function ChatClient({
         </p>
       )}
       {!(isPulse && finished) && (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8, background: '#f5f7ff', border: '1px solid #c7d2fe', borderRadius: 14, padding: 14 }}>
           {uploadError && (
             <p style={{ color: '#a12', background: '#fdecec', padding: 10, borderRadius: 8, fontSize: 13 }}>
               {uploadError}
             </p>
           )}
+          <label style={{ fontSize: 13, fontWeight: 700, color: '#4338ca' }}>Jouw antwoord</label>
           <textarea
             value={input}
             onChange={(e) => setInput(e.target.value)}
@@ -184,9 +187,11 @@ export default function ChatClient({
                 send();
               }
             }}
-            placeholder="Schrijf hier gerust uitgebreid je antwoord… (Shift+Enter voor een nieuwe regel)"
-            rows={5}
-            style={inputStyle}
+            placeholder="Typ hier je antwoord…"
+            rows={3}
+            style={{ ...inputStyle, ...(focus ? inputFocusStyle : null) }}
+            onFocus={() => setFocus(true)}
+            onBlur={() => setFocus(false)}
             disabled={sending}
           />
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8 }}>
@@ -215,7 +220,7 @@ export default function ChatClient({
               disabled={sending || !input.trim()}
               style={buttonStyle}
             >
-              {sending ? '…' : 'Versturen'}
+              {sending ? '…' : 'Versturen →'}
             </button>
           </div>
         </div>
@@ -228,9 +233,9 @@ const chatBoxStyle: React.CSSProperties = {
   display: 'flex',
   flexDirection: 'column',
   gap: 10,
-  background: '#fff',
-  border: '1px solid #e5e7eb',
-  borderRadius: 12,
+  background: '#fbfcff',
+  border: '1px solid #e0e7ff',
+  borderRadius: 14,
   padding: 16,
   minHeight: 300,
   maxHeight: '60vh',
@@ -242,14 +247,23 @@ const inputStyle: React.CSSProperties = {
   boxSizing: 'border-box',
   padding: '12px 14px',
   borderRadius: 8,
-  border: '1px solid #d1d5db',
+  border: '2px solid #a5b4fc',
+  background: '#fff',
+  color: '#1a1a2e',
   fontSize: 15,
   fontFamily: 'inherit',
   resize: 'vertical',
+  outline: 'none',
+  transition: 'border-color .15s, box-shadow .15s',
+};
+
+const inputFocusStyle: React.CSSProperties = {
+  borderColor: '#4f46e5',
+  boxShadow: '0 0 0 4px rgba(79,70,229,0.15)',
 };
 
 const buttonStyle: React.CSSProperties = {
-  background: '#1a1a2e',
+  background: '#4f46e5',
   color: '#fff',
   border: 'none',
   borderRadius: 8,

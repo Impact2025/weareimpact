@@ -100,19 +100,19 @@ export default function DashboardClient({
         </button>
       )}
 
-      <section style={{ ...card, padding: 20 }}>
+      <section style={{ ...card, padding: 22, background: 'linear-gradient(135deg, #fff7ed 0%, #ffffff 60%)', border: '1px solid #fed7aa' }}>
         <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 12 }}>
           <div>
-            <div style={{ fontSize: 13, color: '#777', fontWeight: 600 }}>Totale voortgang</div>
-            <div style={{ fontSize: 40, fontWeight: 800, color: '#1a1a2e', lineHeight: 1.1 }}>{pct}%</div>
+            <div style={{ fontSize: 12, color: '#c2410c', fontWeight: 700, letterSpacing: 0.6, textTransform: 'uppercase' }}>Totale voortgang</div>
+            <div style={{ fontSize: 44, fontWeight: 800, color: '#1a1a2e', lineHeight: 1.1 }}>{pct}%</div>
           </div>
           <div style={{ textAlign: 'right', fontSize: 13, color: '#666' }}>
             {klaar.length} van {totaal} onderdelen klaar
             {urenTotaal > 0 && <div>{urenKlaar} van {urenTotaal} uur opgeleverd</div>}
           </div>
         </div>
-        <div style={{ height: 10, background: '#e5e7eb', borderRadius: 5, overflow: 'hidden', marginTop: 14 }}>
-          <div style={{ width: `${pct}%`, height: '100%', background: pct === 100 ? '#10b981' : '#f97316', transition: 'width .4s' }} />
+        <div style={{ height: 10, background: '#ffedd5', borderRadius: 5, overflow: 'hidden', marginTop: 14 }}>
+          <div style={{ width: `${pct}%`, height: '100%', background: pct === 100 ? 'linear-gradient(90deg,#34d399,#10b981)' : 'linear-gradient(90deg,#fb923c,#f97316)', borderRadius: 5, transition: 'width .4s' }} />
         </div>
         {laatsteKlaar?.completed_at && (
           <div style={{ marginTop: 12, fontSize: 13, color: '#666' }}>
@@ -122,16 +122,16 @@ export default function DashboardClient({
       </section>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10 }}>
-        <Tegel getal={klaar.length} label="Klaar" kleur="#2f7a3c" bg="#eef7ef" />
-        <Tegel getal={bezig.length} label="Mee bezig" kleur="#a35b00" bg="#fff4e0" />
-        <Tegel getal={nog.length} label="Nog te doen" kleur="#555" bg="#f1f2f6" />
+        <Tegel getal={klaar.length} label="Klaar" kleur="#15803d" bg="#ecfdf3" rand="#bbf7d0" />
+        <Tegel getal={bezig.length} label="Mee bezig" kleur="#c2410c" bg="#fff7ed" rand="#fed7aa" />
+        <Tegel getal={nog.length} label="Nog te doen" kleur="#4338ca" bg="#eef2ff" rand="#c7d2fe" />
       </div>
 
       {bezig.length > 0 && (
         <section>
           <h2 style={kop}>Hier werken we nu aan</h2>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-            {bezig.map((m) => <Rij key={m.id} m={m} accent="#f59e0b" />)}
+            {bezig.map((m) => <Rij key={m.id} m={m} accent="#f97316" bg="#fffaf5" />)}
           </div>
         </section>
       )}
@@ -140,7 +140,7 @@ export default function DashboardClient({
         <section>
           <h2 style={kop}>Hierna</h2>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-            {eerstvolgende.map((m) => <Rij key={m.id} m={m} accent="#d1d5db" />)}
+            {eerstvolgende.map((m) => <Rij key={m.id} m={m} accent="#818cf8" bg="#f8f9ff" />)}
           </div>
         </section>
       )}
@@ -149,7 +149,8 @@ export default function DashboardClient({
         <section>
           <h2 style={kop}>Per onderdeel</h2>
           <div style={{ ...card, display: 'flex', flexDirection: 'column', gap: 12 }}>
-            {fases.map((fase) => {
+            {fases.map((fase, fi) => {
+              const kleur = FASE_KLEUREN[fi % FASE_KLEUREN.length];
               const items = milestones.filter((m) => (m.phase ?? 'Overig') === fase);
               const done = items.filter((m) => m.status === 'done').length;
               const p = Math.round((done / items.length) * 100);
@@ -158,8 +159,8 @@ export default function DashboardClient({
                   <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 14 }}>
                     <span>{fase}</span><span style={{ color: '#888' }}>{done}/{items.length}</span>
                   </div>
-                  <div style={{ height: 6, background: '#e5e7eb', borderRadius: 3, overflow: 'hidden', marginTop: 4 }}>
-                    <div style={{ width: `${p}%`, height: '100%', background: p === 100 ? '#10b981' : '#f97316' }} />
+                  <div style={{ height: 7, background: kleur.licht, borderRadius: 4, overflow: 'hidden', marginTop: 5 }}>
+                    <div style={{ width: `${p}%`, height: '100%', background: p === 100 ? '#10b981' : kleur.vol, borderRadius: 4 }} />
                   </div>
                 </div>
               );
@@ -168,7 +169,7 @@ export default function DashboardClient({
         </section>
       )}
 
-      <section style={{ ...card, display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between' }}>
+      <section style={{ ...card, background: '#eef2ff', border: '1px solid #c7d2fe', display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between' }}>
         <div>
           <div style={{ fontWeight: 700, color: '#1a1a2e', fontSize: 15 }}>Een vraag of iets te delen?</div>
           <div style={{ fontSize: 13, color: '#666', marginTop: 2 }}>Stel een vraag, of deel een document (pdf of tekst).</div>
@@ -179,19 +180,27 @@ export default function DashboardClient({
   );
 }
 
-function Tegel({ getal, label, kleur, bg }: { getal: number; label: string; kleur: string; bg: string }) {
+const FASE_KLEUREN = [
+  { vol: '#f97316', licht: '#ffedd5' },
+  { vol: '#6366f1', licht: '#e0e7ff' },
+  { vol: '#0ea5e9', licht: '#e0f2fe' },
+  { vol: '#14b8a6', licht: '#ccfbf1' },
+  { vol: '#ec4899', licht: '#fce7f3' },
+];
+
+function Tegel({ getal, label, kleur, bg, rand }: { getal: number; label: string; kleur: string; bg: string; rand: string }) {
   return (
-    <div style={{ background: bg, borderRadius: 12, padding: '14px 12px', textAlign: 'center' }}>
+    <div style={{ background: bg, border: `1px solid ${rand}`, borderRadius: 12, padding: '14px 12px', textAlign: 'center' }}>
       <div style={{ fontSize: 28, fontWeight: 800, color: kleur, lineHeight: 1.1 }}>{getal}</div>
       <div style={{ fontSize: 12, fontWeight: 600, color: kleur, marginTop: 2 }}>{label}</div>
     </div>
   );
 }
 
-function Rij({ m, accent }: { m: Milestone; accent: string }) {
+function Rij({ m, accent, bg }: { m: Milestone; accent: string; bg: string }) {
   const uren = urenUitTitel(m.title);
   return (
-    <div style={{ ...card, borderLeft: `4px solid ${accent}` }}>
+    <div style={{ ...card, background: bg, borderLeft: `4px solid ${accent}` }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8 }}>
         <span style={{ fontWeight: 600, fontSize: 15, color: '#1a1a2e' }}>{schoneTitel(m.title)}</span>
         {uren > 0 && <span style={{ fontSize: 12, color: '#888', whiteSpace: 'nowrap' }}>{uren} uur</span>}
@@ -212,7 +221,7 @@ const card: React.CSSProperties = {
 const kop: React.CSSProperties = { fontSize: 16, fontWeight: 700, color: '#1a1a2e', margin: '0 0 8px' };
 
 const knop: React.CSSProperties = {
-  background: '#1a1a2e', color: '#fff', border: 'none', borderRadius: 8,
+  background: '#4f46e5', color: '#fff', border: 'none', borderRadius: 8,
   padding: '10px 16px', fontSize: 14, fontWeight: 600, cursor: 'pointer',
 };
 
