@@ -103,7 +103,13 @@ export default function ChatClient({
         method: 'POST',
         body: formData,
       });
-      const uploadData = await uploadRes.json();
+      // Een te groot bestand (Vercel kapt rond 4,5 MB af) geeft geen JSON terug.
+      const uploadData = await uploadRes.json().catch(() => ({
+        error:
+          uploadRes.status === 413
+            ? 'Dit bestand is te groot (maximaal ongeveer 4 MB). Plak de belangrijkste tekst in het gesprek, of deel een kleiner bestand.'
+            : 'Upload mislukt. Probeer het opnieuw, of plak de tekst in het gesprek.',
+      }));
       if (!uploadRes.ok) {
         setUploadError(uploadData.error ?? 'Upload mislukt.');
         setMessages((prev) => prev.slice(0, -1));

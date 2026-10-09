@@ -19,15 +19,12 @@ export const MAX_UPLOAD_BYTES = 15 * 1024 * 1024;
 export async function extractTextFromFile(file: File): Promise<string> {
   const type = file.type;
   if (type === 'application/pdf') {
-    const { PDFParse } = await import('pdf-parse');
-    const buffer = Buffer.from(await file.arrayBuffer());
-    const parser = new PDFParse({ data: buffer });
-    try {
-      const result = await parser.getText();
-      return result.text;
-    } finally {
-      await parser.destroy();
-    }
+    // unpdf: pdfjs-build voor serverless, zonder canvas/DOMMatrix. pdf-parse v2 faalde op Vercel
+    // omdat @napi-rs/canvas daar niet in de bundel zat ("DOMMatrix is not defined").
+    const { extractText, getDocumentProxy } = await import('unpdf');
+    const pdf = await getDocumentProxy(new Uint8Array(await file.arrayBuffer()));
+    const { text } = await extractText(pdf, { mergePages: true });
+    return text;
   }
   // text/plain, text/markdown, text/csv
   return await file.text();
