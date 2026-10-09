@@ -51,11 +51,24 @@ export default async function PortalPage({
   return (
     <main style={styles.page}>
       <div style={styles.card}>
-        <h1 style={styles.title}>{project.name}</h1>
-        <p style={styles.text}>
-          Welkom in het voortgangsportaal van {project.name}. Hier volg je de status en oplevering
-          van het werk volgens onze afspraken, beantwoord je vragen en deel je documenten.
-        </p>
+        {isConversationalProject(projectSlug) ? (
+          <>
+            <h1 style={styles.title}>{String(project.name).split(':')[0]}</h1>
+            <p style={styles.text}>
+              Hier houden we samen bij waar de vrijdagen staan: wat klaar is, waar we nu aan werken en wat
+              er nog komt. Praat tussendoor met Iris over hoe jij werkt; hoe meer ze weet, hoe beter de vrijdagen
+              aansluiten.
+            </p>
+          </>
+        ) : (
+          <>
+            <h1 style={styles.title}>{project.name}</h1>
+            <p style={styles.text}>
+              Welkom in het voortgangsportaal van {project.name}. Hier volg je de status en oplevering
+              van het werk volgens onze afspraken, beantwoord je vragen en deel je documenten.
+            </p>
+          </>
+        )}
         <PortalTabs projectSlug={projectSlug} audience={audience} pulseEnabled={!!project.pulse_enabled} initialTab={tab} conversational={isConversationalProject(projectSlug)} />
       </div>
     </main>
