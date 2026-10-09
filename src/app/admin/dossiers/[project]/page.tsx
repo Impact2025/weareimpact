@@ -66,6 +66,15 @@ interface Document {
   preview: string;
 }
 
+interface Pulse {
+  id: string;
+  week_start: string;
+  score: number | null;
+  helped: string | null;
+  adjust: string | null;
+  completed_at: string | null;
+}
+
 interface Milestone {
   id: string;
   title: string;
@@ -123,6 +132,9 @@ export default function DossierDetailPage() {
   const [newAction, setNewAction] = useState('');
   const [newActionOwner, setNewActionOwner] = useState<Action['owner']>('vincent');
 
+  const [pulses, setPulses] = useState<Pulse[] | null>(null);
+  const [pulseEnabled, setPulseEnabled] = useState(false);
+
   const [email, setEmail] = useState('');
   const [sending, setSending] = useState(false);
   const [linkResult, setLinkResult] = useState<{ url: string; expiresAt: string } | null>(null);
@@ -171,6 +183,12 @@ export default function DossierDetailPage() {
     fetch(`/api/admin/dossiers/${projectSlug}/agreements`)
       .then((res) => res.json())
       .then((data) => setAgreements(data.agreements ?? []));
+    fetch(`/api/admin/dossiers/${projectSlug}/pulses`)
+      .then((res) => res.json())
+      .then((data) => {
+        setPulses(data.pulses ?? []);
+        setPulseEnabled(!!data.enabled);
+      });
     fetch(`/api/admin/dossiers/${projectSlug}/actions`)
       .then((res) => res.json())
       .then((data) => setActions(data.actions ?? []));
@@ -258,6 +276,15 @@ export default function DossierDetailPage() {
     } finally {
       setSending(false);
     }
+  }
+
+  async function togglePulse() {
+    await fetch(`/api/admin/dossiers/${projectSlug}/pulses`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ enabled: !pulseEnabled }),
+    });
+    load();
   }
 
   function copyLink() {
@@ -551,6 +578,35 @@ export default function DossierDetailPage() {
                 {copied ? <Check size={14} /> : <Copy size={14} />}
               </Button>
             </div>
+          )}
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardContent className="pt-6 space-y-3">
+          <div className="flex items-center justify-between gap-3">
+            <h2 className="font-semibold">Weekcheck met Iris (vrijdag)</h2>
+            <Button size="sm" variant={pulseEnabled ? 'default' : 'outline'} onClick={togglePulse}>
+              {pulseEnabled ? 'Aan: vrijdag 16:00' : 'Uit'}
+            </Button>
+          </div>
+          <p className="text-xs text-muted-foreground">
+            Iris mailt de klant elke vrijdagmiddag een link naar een korte chat (score, wat hielp, wat bijsturen).
+            Mail gaat naar het adres van de laatst verstuurde inloglink.
+          </p>
+          {pulses && pulses.length > 0 ? (
+            pulses.map((p) => (
+              <div key={p.id} className="text-sm border rounded p-3 space-y-1">
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-muted-foreground">{new Date(p.week_start).toLocaleDateString('nl-NL')}</span>
+                  {p.completed_at ? <Badge>{p.score}/10</Badge> : <Badge variant="outline">nog niet afgerond</Badge>}
+                </div>
+                {p.helped && <p><span className="font-medium">Hielp: </span>{p.helped}</p>}
+                {p.adjust && <p><span className="font-medium">Bijsturen: </span>{p.adjust}</p>}
+              </div>
+            ))
+          ) : (
+            <p className="text-sm text-muted-foreground">Nog geen weekchecks.</p>
           )}
         </CardContent>
       </Card>

@@ -10,10 +10,10 @@ export default async function PortalPage({
   searchParams,
 }: {
   params: Promise<{ project: string }>;
-  searchParams: Promise<{ error?: string }>;
+  searchParams: Promise<{ error?: string; tab?: string }>;
 }) {
   const { project: projectSlug } = await params;
-  const { error } = await searchParams;
+  const { error, tab } = await searchParams;
 
   const store = await cookies();
   const audience = await resolvePortalAudience(projectSlug, (name) => store.get(name)?.value);
@@ -34,7 +34,7 @@ export default async function PortalPage({
     );
   }
 
-  const projectRows = await sql`SELECT name, client_name FROM crm_projects WHERE slug = ${projectSlug}`;
+  const projectRows = await sql`SELECT name, client_name, pulse_enabled FROM crm_projects WHERE slug = ${projectSlug}`;
   const project = projectRows[0];
 
   if (!project) {
@@ -55,7 +55,7 @@ export default async function PortalPage({
           Welkom in het voortgangsportaal van {project.name}. Hier volg je de status en oplevering
           van het werk volgens onze afspraken, beantwoord je vragen en deel je documenten.
         </p>
-        <PortalTabs projectSlug={projectSlug} audience={audience} />
+        <PortalTabs projectSlug={projectSlug} audience={audience} pulseEnabled={!!project.pulse_enabled} initialTab={tab} />
       </div>
     </main>
   );

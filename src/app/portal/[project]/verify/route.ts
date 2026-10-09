@@ -30,7 +30,9 @@ export async function GET(
   }
 
   const sessionToken = await createPortalSessionToken(projectSlug, result.audience);
-  const response = NextResponse.redirect(new URL(`/portal/${projectSlug}`, request.url));
+  const next = request.nextUrl.searchParams.get('next');
+  const target = next === 'pulse' ? `/portal/${projectSlug}?tab=pulse` : `/portal/${projectSlug}`;
+  const response = NextResponse.redirect(new URL(target, request.url));
 
   // Een eerdere sessie voor een andere doelgroep van hetzelfde project mag
   // nooit voorrang krijgen op de doelgroep die de gebruiker zojuist met deze

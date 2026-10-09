@@ -12,8 +12,20 @@ import DocumentenTab from './DocumentenTab';
 // V2-ideeën zijn projectspecifiek (BokaBord/Hans); alleen tonen voor projecten in deze lijst.
 const V2_PROJECTS: string[] = [];
 
-export default function PortalTabs({ projectSlug, audience }: { projectSlug: string; audience: Audience }) {
-  const [tab, setTab] = useState<'dashboard' | 'chat' | 'overview' | 'vragen' | 'documenten' | 'v2'>('dashboard');
+export default function PortalTabs({
+  projectSlug,
+  audience,
+  pulseEnabled = false,
+  initialTab,
+}: {
+  projectSlug: string;
+  audience: Audience;
+  pulseEnabled?: boolean;
+  initialTab?: string;
+}) {
+  const [tab, setTab] = useState<'dashboard' | 'chat' | 'overview' | 'vragen' | 'documenten' | 'v2' | 'pulse'>(
+    initialTab === 'pulse' && pulseEnabled ? 'pulse' : 'dashboard',
+  );
   const [openVragen, setOpenVragen] = useState(0);
   const [aantalDocumenten, setAantalDocumenten] = useState(0);
   const [totaalVragen, setTotaalVragen] = useState(0);
@@ -49,6 +61,11 @@ export default function PortalTabs({ projectSlug, audience }: { projectSlug: str
         <button onClick={() => kies('chat')} style={tabButtonStyle(actief === 'chat')}>
           Vraag of document
         </button>
+        {pulseEnabled && (
+          <button onClick={() => kies('pulse')} style={tabButtonStyle(actief === 'pulse')}>
+            Weekcheck
+          </button>
+        )}
         {showV2 && (
           <button onClick={() => kies('v2')} style={tabButtonStyle(actief === 'v2')}>
             V2
@@ -77,6 +94,13 @@ export default function PortalTabs({ projectSlug, audience }: { projectSlug: str
             delen (pdf of tekst). Je kunt dit venster altijd sluiten en later verdergaan.
           </p>
           <ChatClient projectSlug={projectSlug} audience={audience} />
+        </>
+      ) : actief === 'pulse' ? (
+        <>
+          <p style={{ fontSize: 15, lineHeight: 1.5, color: '#444', margin: '0 0 12px' }}>
+            Een korte weekcheck met Iris: drie vragen, ongeveer twee minuten.
+          </p>
+          <ChatClient projectSlug={projectSlug} audience={audience} mode="pulse" />
         </>
       ) : actief === 'overview' ? (
         <OverviewClient projectSlug={projectSlug} audience={audience} />

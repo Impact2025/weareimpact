@@ -8,7 +8,17 @@ interface Message {
   content: string;
 }
 
-export default function ChatClient({ projectSlug, audience }: { projectSlug: string; audience: Audience }) {
+export default function ChatClient({
+  projectSlug,
+  audience,
+  mode = 'chat',
+}: {
+  projectSlug: string;
+  audience: Audience;
+  mode?: 'chat' | 'pulse';
+}) {
+  const endpoint = `/api/crm/portal/${projectSlug}/${audience}/${mode}`;
+  const isPulse = mode === 'pulse';
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(true);
@@ -21,7 +31,7 @@ export default function ChatClient({ projectSlug, audience }: { projectSlug: str
 
   useEffect(() => {
     async function init() {
-      const res = await fetch(`/api/crm/portal/${projectSlug}/${audience}/chat`);
+      const res = await fetch(endpoint);
       const data = await res.json();
       const history: Message[] = (data.messages ?? []).map((m: { role: string; content: string }) => ({
         role: m.role,
@@ -29,9 +39,14 @@ export default function ChatClient({ projectSlug, audience }: { projectSlug: str
       }));
       setFinished(!!data.finished);
 
+      if (isPulse && !data.pulse) {
+        setMessages([{ role: 'assistant', content: 'Er staat op dit moment geen weekcheck open. Je krijgt vrijdag een uitnodiging van me.' }]);
+        setLoading(false);
+        return;
+      }
       if (history.length === 0) {
         // Eerste bezoek: laat Iris zelf het gesprek openen.
-        const openRes = await fetch(`/api/crm/portal/${projectSlug}/${audience}/chat`, {
+        const openRes = await fetch(endpoint, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ message: '' }),
@@ -45,7 +60,7 @@ export default function ChatClient({ projectSlug, audience }: { projectSlug: str
       setLoading(false);
     }
     init();
-  }, [projectSlug, audience]);
+  }, [projectSlug, audience, endpoint]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -58,7 +73,7 @@ export default function ChatClient({ projectSlug, audience }: { projectSlug: str
     setMessages((prev) => [...prev, { role: 'user', content: text }]);
     setSending(true);
     try {
-      const res = await fetch(`/api/crm/portal/${projectSlug}/${audience}/chat`, {
+      const res = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message: text }),
@@ -90,7 +105,7 @@ export default function ChatClient({ projectSlug, audience }: { projectSlug: str
         return;
       }
       setSending(true);
-      const chatRes = await fetch(`/api/crm/portal/${projectSlug}/${audience}/chat`, {
+      const chatRes = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message: '', documentId: uploadData.documentId }),
@@ -135,10 +150,10 @@ export default function ChatClient({ projectSlug, audience }: { projectSlug: str
 
       {finished && (
         <p style={{ color: '#2f7a3c', background: '#eef7ef', padding: 12, borderRadius: 8, fontSize: 14, margin: 0 }}>
-          Je antwoorden zijn opgeslagen. Je kunt hier nog steeds vragen stellen of iets aanvullen.
+          {isPulse ? 'Bedankt, je weekcheck is binnen.' : 'Je antwoorden zijn opgeslagen. Je kunt hier nog steeds vragen stellen of iets aanvullen.'}
         </p>
       )}
-      {(
+      {!(isPulse && finished) && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
           {uploadError && (
             <p style={{ color: '#a12', background: '#fdecec', padding: 10, borderRadius: 8, fontSize: 13 }}>
@@ -160,7 +175,7 @@ export default function ChatClient({ projectSlug, audience }: { projectSlug: str
             disabled={sending}
           />
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8 }}>
-            <div>
+            <div style={isPulse ? { display: 'none' } : undefined}>
               <input
                 ref={fileInputRef}
                 type="file"
