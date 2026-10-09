@@ -25,6 +25,10 @@
       "schedule": "5 * * * *"
     },
     {
+      "path": "/api/cron/chat-idle",
+      "schedule": "30 * * * *"
+    },
+    {
       "path": "/api/cron/pulse-weekly",
       "schedule": "0 14 * * 5"
     },
